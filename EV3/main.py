@@ -51,11 +51,11 @@ def moveBackward():
 
 
 def turnRight():
-    pass
+    motorLeft.run_timed(speed_sp=100, time_sp = 100)
 
 
 def turnLeft():
-    pass
+    motorRight.run_timed(speed_sp=100, time_sp=100)
 
 def keepDistance():
     if(abs(sonar.value() - obstacle_detection_distance) > 100):
@@ -73,6 +73,7 @@ def lineFinished():
 
 ##################### MAIN #################################
 
+"""
 dictionary = {
     "Monalisa" : ["Forward", "Left", "Right"]
 }
@@ -87,20 +88,18 @@ for command in commands:
                 moveForward()
             else:
                 keepDistance()
-
-
     elif(command == "Left"):
-        pass
+        turnLeft()
     elif(command == "Right"):
-        pass
+        turnRight()
     else:
         pass
 
 """
+
 while(1):
     if(not isThereObstacle()):
         moveForward()
     else:
         keepDistance()
 
-"""
