@@ -29,13 +29,13 @@ class MainActivity : AppCompatActivity() {
                 button("Start") {
                     textSize = 32f
                     onClick { startActivity<SelectLanguageActivity>() }
+                    onLongClick { startActivity<TempActivity>(); true } //This line should be removed after Client Demo 1
                 }
-
             }
         }
         uploadToServer("TESTING") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
-
     }
+
     @Suppress("DEPRECATION") // Removes some of the messages, can't do much about the import warnings though
     fun uploadToServer(command: String) {
         async {
