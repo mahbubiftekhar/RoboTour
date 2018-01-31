@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">RoboTour</string>
+    <string name="search">Search</string>
+    <string name="speech">Microphone</string>
+    <string name="title_activity_bluetooth">BluetoothActivity</string>
+    <string name="btn_ON">1</string>
+    <string name="btn_OFF">off</string>
+</resources>
