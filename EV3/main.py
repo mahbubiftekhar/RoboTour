@@ -91,10 +91,6 @@ while (True):
     i=0
     if(commands[i] == "Forward"):
         moveForward(300, 5000)
-    elif(commands[i] == "Left"):
-        turnLeft(10)
-    elif(commands[i] == "Right"):
-        turnRight(10)
     elif(commands[i] == "Backward"):
         moveBackward(300, 5000)
     elif(commands[i] == "Speak"):
@@ -102,7 +98,11 @@ while (True):
     elif(commands[i] == "Goaround"):
         while(commands[i+1] != None and commands[i+1] != "Stop"):
             turnLeft(10)
-    elif(len(commands) == 0):
+    elif(commands[i] == "Left"):
+        turnLeft(10)
+    elif(commands[i] == "Right"):
+        turnRight(10)
+    elif(len(commands) == i):
         print("All commands finished")
     else:
         pass
