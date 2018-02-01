@@ -106,7 +106,6 @@ while (True):
         print("All commands finished")
     else:
         pass
-
     i+=1
 
 """
