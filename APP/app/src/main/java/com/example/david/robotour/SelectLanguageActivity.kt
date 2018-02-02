@@ -1,5 +1,6 @@
 package com.example.david.robotour
 
+import android.content.Intent
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -53,4 +54,18 @@ class SelectLanguageActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    override fun onBackPressed() {
+        /* override the back button, so the user is promted when they wish to leave the app */
+        alert("Are you sure you want to exit?") {
+            positiveButton {
+                /*The user wishes to close the app, so be it - there loss*/
+                super.onBackPressed() //Call the normal onBackPressed to take user back
+            }
+            negativeButton {
+                /*If the user changes their minds*/
+            }
+        }.show()
+    }
+
 }

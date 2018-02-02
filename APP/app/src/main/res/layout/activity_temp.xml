@@ -68,8 +68,7 @@
                 android:layout_weight="1"
                 android:text="STOP"
                 android:background="@drawable/buttonxml"
-                android:id="@+id/STOP"
-                />
+                android:id="@+id/STOP" />
         </LinearLayout>
 
     </LinearLayout>

@@ -1,8 +1,10 @@
 package com.example.david.robotour
 
+import android.content.Intent
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import org.jetbrains.anko.*
 import java.io.IOException
 import org.apache.http.NameValuePair
@@ -13,6 +15,21 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 
 class MainActivity : AppCompatActivity() {
+
+    /* override the back button, so the user is promted when they wish to leave the app */
+    override fun onBackPressed() {
+        /* override the back button, so the user is promted when they wish to leave the app */
+        alert("Are you sure you want to exit?") {
+            positiveButton {
+                /*The user wishes to close the app, so be it - there loss*/
+                super.onBackPressed() //Call the normal onBackPressed to take user back
+            }
+            negativeButton {
+                /*If the user changes their minds*/
+            }
+        }.show()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar

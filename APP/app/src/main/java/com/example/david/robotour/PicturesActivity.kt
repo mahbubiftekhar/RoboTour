@@ -17,6 +17,7 @@ import java.util.*
 
 class PicturesActivity : AppCompatActivity() {
     data class ArtPiece(val name: String, val artist: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int)
+
     private val allArtPieces = ArrayList<ArtPiece>()
     private var shownArtPieces = ArrayList<ArtPiece>()
     private val REQ_CODE_SPEECH_INPUT = 100
@@ -193,7 +194,17 @@ class PicturesActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
+    override fun onBackPressed() {
+        /* override the back button, so the user is promted when they wish to leave the app */
+        alert("Are you sure you want to exit?") {
+            positiveButton {
+                super.onBackPressed() //Call the normal onBackPressed to take user back
+            }
+            negativeButton {
+                /*If the user changes their minds do nothing*/
+            }
+        }.show()
+    }
 
     fun askSpeechInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -201,7 +212,7 @@ class PicturesActivity : AppCompatActivity() {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art piece are you looking for?")
         try {
-            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT)
+            async { startActivityForResult(intent, REQ_CODE_SPEECH_INPUT) }
         } catch (a: ActivityNotFoundException) {
         } catch (e: java.lang.RuntimeException) {
         } catch(e: java.lang.IllegalArgumentException) {
@@ -233,8 +244,8 @@ class PicturesActivity : AppCompatActivity() {
                             for (artPiece in queriedArtPieces) {
                                 shownArtPieces.add(artPiece)
                             }
-                            if(queriedArtPieces.size == 0 ) {
-                            //Do something if no results are found
+                            if (queriedArtPieces.size == 0) {
+                                //Do something if no results are found
                             }
                             queriedArtPieces.clear()
                             adapter.notifyDataSetChanged()

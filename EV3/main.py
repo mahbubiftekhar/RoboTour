@@ -2,9 +2,17 @@
 # Core imports
 import time
 import ev3dev.ev3 as ev3
+from urllib.request import urlopen
+import re
+
 
 ####################### GLOBAL VARIABLE ####################
 obstacle_detection_distance = 250 # in mm
+link = "https://homepages.inf.ed.ac.uk/s1553593/receiver.php"
+command = ""
+previouscommandid = "1"
+currentcommandid = "0"
+
 
 ############################################################
 
@@ -45,9 +53,18 @@ def getArtPiecesFromApp(): # returns an list of direction commands
     pieces = ["Monalisa"]
     return pieces # returns list
 
-def getCommandsFromServer():
-    commands = ["Speak", "Forward", "Goaround", "Stop"]
-    return commands
+def getCommandFromServer():
+    global currentcommandid
+    global previouscommandid
+    f = urlopen(link) #open url
+    myfile = f.read() #read url contents
+    string = myfile.decode("utf-8") #convert bytearray to string
+    array = re.split('-', string)
+    command = array[0]
+    currentcommandid = array[1]
+    #print("currentcommandid fun:" + currentcommandid)
+    #print("previouscommandid fun:" + previouscommandid)
+    return command
 
 def moveForward(speed, time):
     motorLeft.run_timed(speed_sp=speed, time_sp=time)
@@ -62,16 +79,18 @@ def moveBackward(speed, time):
 
 def turnRight(degree):
     motorLeft.run_timed(speed_sp=100, time_sp = degree*10)
+    motorRight.run_timed(speed_sp=-100, time_sp = degree*10)
 
 def turnLeft(degree):
     motorRight.run_timed(speed_sp=100, time_sp=degree*10)
+    motorLeft.run_timed(speed_sp=-100, time_sp=degree*10)
 
 def stopWheelMotor():
     motorLeft.stop()
     motorRight.stop()
 
 def speak(string):
-    ev3.Sound.speak(string).wait()
+    ev3.Sound.speak(string)
 
 def lineFinished():
     return False
@@ -87,26 +106,25 @@ dictionary = {
 #direction = dictionary[artPieces[0]]
 
 while (True):
-    commands = getCommandsFromServer()
-    i=0
-    if(commands[i] == "Forward"):
-        moveForward(300, 5000)
-    elif(commands[i] == "Backward"):
-        moveBackward(300, 5000)
-    elif(commands[i] == "Speak"):
-        speak("Hello, I am RoboTour")
-    elif(commands[i] == "Goaround"):
-        while(commands[i+1] != None and commands[i+1] != "Stop"):
-            turnLeft(10)
-    elif(commands[i] == "Left"):
-        turnLeft(10)
-    elif(commands[i] == "Right"):
-        turnRight(10)
-    elif(len(commands) == i):
-        print("All commands finished")
-    else:
-        pass
-    i+=1
+    #print("currentcommandid before:" + currentcommandid)
+    #print("previouscommandid before" + previouscommandid)
+    command = getCommandFromServer()
+    if (previouscommandid != currentcommandid):
+        previouscommandid = currentcommandid
+        #print("currentcommandid after:" + currentcommandid)
+        #print("previouscommandid after" + previouscommandid)
+        if(command == "STOP"):
+            stopWheelMotor()
+        elif(command == "FORWARD"):
+            moveForward(300, 5000)
+        elif(command == "BACKWARDS"):
+            moveBackward(300, 5000)
+        elif(command == "SPEAK"):
+            speak("Hello, I am RoboTour")
+        elif(command == "GOAROUND"):
+                turnLeft(10000)
+        else:
+            pass
 
 """
 
@@ -132,8 +150,8 @@ for command in commands:
             turnRight(10)
     else:
         pass
-        
-        
+
+
 while(1):
     if(not isThereObstacle()):
         moveForward()
