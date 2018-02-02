@@ -23,7 +23,7 @@ class NavigatingActivity : AppCompatActivity() {
     }
 
     fun cancelGuide(){
-        // This function should cancel the guide
+        // This function should cancel the guide, done async for speed
     }
 
     fun getPicture(){
