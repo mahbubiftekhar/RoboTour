@@ -4,6 +4,7 @@ import time
 import ev3dev.ev3 as ev3
 from urllib.request import urlopen
 import re
+import  _thread
 
 
 ####################### GLOBAL VARIABLE ####################
@@ -32,22 +33,6 @@ else:
 ############################################################
 
 ##################### FUNCTIONS ############################
-def isThereObstacle():
-    print(sonar.value())
-    if(sonar.value() < obstacle_detection_distance):
-        print("Obstacle detected.")
-        return True
-    else:
-        print("No obstacle detected.")
-        return False
-
-def isKeepDistance():
-    if(abs(sonar.value() - obstacle_detection_distance) > 100):
-        return True
-    else:
-        return False
-
-
 def getArtPiecesFromApp(): # returns an list of direction commands
     #example
     pieces = ["Monalisa"]
@@ -95,15 +80,47 @@ def speak(string):
 def lineFinished():
     return False
 
+def onPauseCommand():
+    pass
+
+def onResumeCommand():
+    pass
+
+##################### Multithreading #######################
+def isThereObstacle():
+    print(sonar.value())
+    if(sonar.value() < obstacle_detection_distance):
+        print("Obstacle detected.")
+        speak("There is an obstacle detected.")
+        return True
+    else:
+        print("No obstacle detected.")
+        return False
+
+def isKeepDistance():
+    if(abs(sonar.value() - obstacle_detection_distance) > 100):
+        return True
+    else:
+        return False
+
+def obstacleAvoidance(self):
+    if(isThereObstacle()):
+        if (isKeepDistance()):
+            onPauseCommand()
+            moveBackward(200,100)
+
+_thread.start_new_thread(obstacleAvoidance, ())
+
+############################################################
+
 ##################### MAIN #################################
-
-
 dictionary = {
     "Monalisa" : ["Forward", "Left", "Right"]
 }
 
 #artPieces = getArtPiecesFromApp()
 #direction = dictionary[artPieces[0]]
+command
 
 while (True):
     #print("currentcommandid before:" + currentcommandid)
@@ -152,10 +169,6 @@ for command in commands:
         pass
 
 
-while(1):
-    if(not isThereObstacle()):
-        moveForward()
-    else:
-        keepDistance()
+
 
 """
