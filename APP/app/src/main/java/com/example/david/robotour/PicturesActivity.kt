@@ -48,7 +48,7 @@ class PicturesActivity : AppCompatActivity() {
                 "Depicts the goddess Venus arriving at the shore after her birth",
                 "Stellt die Göttin Venus dar, die nach ihrer Geburt am Ufer ankommt",
                 "Représente la déesse Vénus arrivant au rivage après sa naissance",
-                "描绘女神出生后到达岸边的女神",
+                "意大利文艺复兴时期画家桑德罗·波提切利最著名的作品之一，根据波利齐安诺的长诗吉奥斯特纳而作，描绘罗马神话中女神维纳斯从海中诞生的情景。",
                 "Representa a la diosa Venus llegando a la orilla después de su nacimiento",
                 R.drawable.birthofvenus, 0))
         allArtPieces.add(ArtPiece("The Creation of Adam",
@@ -75,7 +75,7 @@ class PicturesActivity : AppCompatActivity() {
                 "The title of the painting, which is known in English as Mona Lisa, comes from a description by Renaissance art historian Giorgio Vasari",
                 "Insert German Description",
                 "Insert French Desc",
-                "Insert Chinese Desc",
+                "文艺复兴时期画家列奥纳多·达·芬奇所绘的肖像画。",
                 "Insert Spanish Desc", R.drawable.thelastsupper, 4))
         allArtPieces.add(ArtPiece("Napoleon Crossing the Alps",
                 "Jacques-Louis David", "Oil on canvas equestrian portrait of Napoleon Bonaparte painted by the French artist Jacques-Louis David between 1801 and 1805",
