@@ -4,12 +4,8 @@ import time
 import ev3dev.ev3 as ev3
 from urllib.request import urlopen
 import re
-<<<<<<< HEAD
-import  _thread
-=======
 from threading import Thread
 
->>>>>>> origin/master
 
 
 ####################### GLOBAL VARIABLE ####################
@@ -98,39 +94,6 @@ def lineFinished():
 
 def onPauseCommand():
     pass
-<<<<<<< HEAD
-
-def onResumeCommand():
-    pass
-
-##################### Multithreading #######################
-def isThereObstacle():
-    print(sonar.value())
-    if(sonar.value() < obstacle_detection_distance):
-        print("Obstacle detected.")
-        speak("There is an obstacle detected.")
-        return True
-    else:
-        print("No obstacle detected.")
-        return False
-
-def isKeepDistance():
-    if(abs(sonar.value() - obstacle_detection_distance) > 100):
-        return True
-    else:
-        return False
-
-def obstacleAvoidance(self):
-    if(isThereObstacle()):
-        if (isKeepDistance()):
-            onPauseCommand()
-            moveBackward(200,100)
-
-_thread.start_new_thread(obstacleAvoidance, ())
-
-############################################################
-
-=======
 
 def onResumeCommand():
     pass
@@ -149,12 +112,10 @@ def isThereObstacle():
 def keepDistance():
     if(abs(sonar.value() - obstacle_detection_distance) > 100):
         moveBackward(100,100)
-
 class ObstacleAvoidanceThread(Thread):
     def __init__(self):
         ''' Constructor. '''
         Thread.__init__(self)
-
     def run(self):
         while(True):
             if(isThereObstacle()):
@@ -180,7 +141,6 @@ obstacleAvoidanceThread.start()
 
 t = Thread(target=obstacleAvoidance)
 t.start()
->>>>>>> origin/master
 ##################### MAIN #################################
 dictionary = {
     "Monalisa" : ["Forward", "Left", "Right"]
@@ -188,7 +148,6 @@ dictionary = {
 
 #artPieces = getArtPiecesFromApp()
 #direction = dictionary[artPieces[0]]
-command
 
 while (True):
     #print("currentcommandid before:" + currentcommandid)
@@ -219,7 +178,6 @@ def waitForMotor(motor):
     while motor.state==["running"]:
         print('Motor is still running')
         time.sleep(0.1)
-
 for command in commands:
     if(command == "Forward"):
         while(not lineFinished()):
@@ -236,16 +194,9 @@ for command in commands:
             turnRight(10)
     else:
         pass
-
-<<<<<<< HEAD
-
-
-=======
 while(1):
     if(not isThereObstacle()):
         moveForward(300, 100)
     else:
         keepDistance()
->>>>>>> origin/master
-
 """
