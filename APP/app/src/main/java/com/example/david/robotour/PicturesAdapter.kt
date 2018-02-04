@@ -31,7 +31,7 @@ class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val langua
                 orientation = LinearLayout.HORIZONTAL
 
                 imageView {
-                    val imageID = list.get(i).imageID
+                    val imageID = list[i].imageID
                     image = resources.getDrawable(imageID)
                 }
                 tableLayout {

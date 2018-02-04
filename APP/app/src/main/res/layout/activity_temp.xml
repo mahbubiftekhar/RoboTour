@@ -18,20 +18,20 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/SPEAK"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="SPEAK"
                 android:background="@drawable/buttonxml"
-                android:id="@+id/SPEAK"/>
+                android:text="SPEAK" />
 
             <Button
+                android:id="@+id/FORWARD"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
-                android:text="FORWARD"
-                android:id="@+id/FORWARD"/>
+                android:text="FORWARD" />
         </LinearLayout>
 
         <LinearLayout
@@ -41,34 +41,44 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/RIGHT"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="BACKWARDS"
                 android:background="@drawable/buttonxml"
+                android:text="RIGHT" />
+
+            <Button
+                android:id="@+id/LEFT"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="LEFT" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
                 android:id="@+id/BACKWARDS"
-                />
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="BACKWARDS" />
 
             <Button
+                android:id="@+id/STOP"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
-                android:text="DOUGHTNUT"
-                android:id="@+id/GOAROUND" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-            <Button
-                android:layout_width="0dip"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="STOP"
-                android:background="@drawable/buttonxml"
-                android:id="@+id/STOP" />
+                android:text="STOP" />
         </LinearLayout>
 
     </LinearLayout>
