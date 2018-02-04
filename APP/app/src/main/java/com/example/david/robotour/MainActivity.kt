@@ -17,18 +17,6 @@ import org.apache.http.message.BasicNameValuePair
 class MainActivity : AppCompatActivity() {
 
     /* override the back button, so the user is promted when they wish to leave the app */
-    override fun onBackPressed() {
-        /* override the back button, so the user is promted when they wish to leave the app */
-        alert("Are you sure you want to exit?") {
-            positiveButton {
-                /*The user wishes to close the app, so be it - there loss*/
-                super.onBackPressed() //Call the normal onBackPressed to take user back
-            }
-            negativeButton {
-                /*If the user changes their minds*/
-            }
-        }.show()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,22 +41,21 @@ class MainActivity : AppCompatActivity() {
         uploadToServer("TESTING") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
     }
 
-    @Suppress("DEPRECATION") // Removes some of the messages, can't do much about the import warnings though
+    @Suppress("DEPRECATION") // Removes some of the warming messages, can't do much about the import warnings though
     fun uploadToServer(command: String) {
         async {
             val httpclient = DefaultHttpClient()
-            val httppost = HttpPost("http://homepages.inf.ed.ac.uk/s1553593/receiver.php")
+            val httpPost = HttpPost("http://homepages.inf.ed.ac.uk/s1553593/receiver.php")
             try {
                 val nameValuePairs = ArrayList<NameValuePair>(4)
                 nameValuePairs.add(BasicNameValuePair("command", "Command: $command"))
-                httppost.entity = UrlEncodedFormEntity(nameValuePairs)
-                httpclient.execute(httppost)
+                httpPost.entity = UrlEncodedFormEntity(nameValuePairs)
+                httpclient.execute(httpPost)
             } catch (e: ClientProtocolException) {
                 // TODO Auto-generated catch block
             } catch (e: IOException) {
                 // TODO Auto-generated catch block
             }
-            println("FINNISHED")
         }
     }
 }

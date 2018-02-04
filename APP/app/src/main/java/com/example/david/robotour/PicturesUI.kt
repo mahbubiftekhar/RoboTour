@@ -9,7 +9,6 @@ class PicturesUI(private val PicturesAdapter : PicturesAdapter, val language:Str
             verticalLayout {
                 listView {
                     adapter = PicturesAdapter
-
                     onItemClick { _, _, _, _ ->
                         when (language) {
                             "English" -> {

@@ -4,7 +4,12 @@ import time
 import ev3dev.ev3 as ev3
 from urllib.request import urlopen
 import re
+<<<<<<< HEAD
 import  _thread
+=======
+from threading import Thread
+
+>>>>>>> origin/master
 
 
 ####################### GLOBAL VARIABLE ####################
@@ -21,12 +26,20 @@ currentcommandid = "0"
 sonar = ev3.UltrasonicSensor(ev3.INPUT_2)
 sonar.mode = 'US-DIST-CM' # Will return value in mm
 motorHand = ev3.LargeMotor('outB')
-motorLeft=ev3.LargeMotor('outA')
-motorRight=ev3.LargeMotor('outC')
+motorLeft = ev3.LargeMotor('outA')
+motorRight= ev3.LargeMotor('outC')
 
 if(motorHand.connected & sonar.connected & motorLeft.connected & motorRight.connected):
     print('All sensors and motors connected')
 else:
+    if(not motorHand.connected):
+        print("MotorHand not connected")
+    if(not sonar.connected):
+        print("Sonar not connected")
+    if(not motorLeft.connected):
+        print("MotorLeft not connected")
+    if(not motorRight.connected):
+        print("MotorRight not connected")
     print('Please check all sensors and actuators are connected.')
     exit()
 
@@ -41,7 +54,9 @@ def getArtPiecesFromApp(): # returns an list of direction commands
 def getCommandFromServer():
     global currentcommandid
     global previouscommandid
+
     f = urlopen(link) #open url
+
     myfile = f.read() #read url contents
     string = myfile.decode("utf-8") #convert bytearray to string
     array = re.split('-', string)
@@ -63,14 +78,15 @@ def moveBackward(speed, time):
     motorRight.run_timed(speed_sp=-speed, time_sp=time)
 
 def turnRight(degree):
-    motorLeft.run_timed(speed_sp=100, time_sp = degree*10)
-    motorRight.run_timed(speed_sp=-100, time_sp = degree*10)
+    motorLeft.run_timed(speed_sp=200, time_sp = degree*10)
+    motorRight.run_timed(speed_sp=-200, time_sp = degree*10)
 
 def turnLeft(degree):
-    motorRight.run_timed(speed_sp=100, time_sp=degree*10)
-    motorLeft.run_timed(speed_sp=-100, time_sp=degree*10)
+    motorRight.run_timed(speed_sp=300, time_sp=degree*10)
+    motorLeft.run_timed(speed_sp=-300, time_sp=degree*10)
 
 def stopWheelMotor():
+    print(sonar.value())
     motorLeft.stop()
     motorRight.stop()
 
@@ -82,6 +98,7 @@ def lineFinished():
 
 def onPauseCommand():
     pass
+<<<<<<< HEAD
 
 def onResumeCommand():
     pass
@@ -113,6 +130,57 @@ _thread.start_new_thread(obstacleAvoidance, ())
 
 ############################################################
 
+=======
+
+def onResumeCommand():
+    pass
+
+##################### Multithreading #######################
+def isThereObstacle():
+    #print(sonar.value())
+    if(sonar.value() < obstacle_detection_distance):
+        #print("Obstacle detected.")
+        #speak("There is an obstacle detected.")
+        return True
+    else:
+        #print("No obstacle detected.")
+        return False
+"""
+def keepDistance():
+    if(abs(sonar.value() - obstacle_detection_distance) > 100):
+        moveBackward(100,100)
+
+class ObstacleAvoidanceThread(Thread):
+    def __init__(self):
+        ''' Constructor. '''
+        Thread.__init__(self)
+
+    def run(self):
+        while(True):
+            if(isThereObstacle()):
+                keepDistance()
+"""
+
+def obstacleAvoidance():
+    while(True):
+        if(command=="FORWARD"):
+            if(isThereObstacle()):
+                stopWheelMotor()
+
+
+############################################################
+
+speak("Carson, we love you. Group 18. ")
+
+"""
+obstacleAvoidanceThread = ObstacleAvoidanceThread()
+obstacleAvoidanceThread.setName("ObstacleAvoidanceThread")
+obstacleAvoidanceThread.start()
+"""
+
+t = Thread(target=obstacleAvoidance)
+t.start()
+>>>>>>> origin/master
 ##################### MAIN #################################
 dictionary = {
     "Monalisa" : ["Forward", "Left", "Right"]
@@ -133,18 +201,19 @@ while (True):
         if(command == "STOP"):
             stopWheelMotor()
         elif(command == "FORWARD"):
-            moveForward(300, 5000)
+            moveForward(300, 10000)
         elif(command == "BACKWARDS"):
             moveBackward(300, 5000)
         elif(command == "SPEAK"):
             speak("Hello, I am RoboTour")
-        elif(command == "GOAROUND"):
-                turnLeft(10000)
+        elif(command == "RIGHT"):
+            turnRight(10000)
+        elif(command == "LEFT"):
+            turnLeft(10000)
         else:
             pass
 
 """
-
 def waitForMotor(motor):
     time.sleep(0.1)         # Make sure that motor has time to start
     while motor.state==["running"]:
@@ -168,7 +237,15 @@ for command in commands:
     else:
         pass
 
+<<<<<<< HEAD
 
 
+=======
+while(1):
+    if(not isThereObstacle()):
+        moveForward(300, 100)
+    else:
+        keepDistance()
+>>>>>>> origin/master
 
 """
