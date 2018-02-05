@@ -9,7 +9,7 @@ from threading import Thread
 
 
 ####################### GLOBAL VARIABLE ####################
-obstacle_detection_distance = 250 # in mm
+obstacle_detection_distance = 200 # in mm
 link = "https://homepages.inf.ed.ac.uk/s1553593/receiver.php"
 command = ""
 previouscommandid = "1"
@@ -21,11 +21,12 @@ currentcommandid = "0"
 ####################### SETUP SENSORS ######################
 sonar = ev3.UltrasonicSensor(ev3.INPUT_2)
 sonar.mode = 'US-DIST-CM' # Will return value in mm
-motorHand = ev3.LargeMotor('outB')
-motorLeft = ev3.LargeMotor('outA')
-motorRight= ev3.LargeMotor('outC')
+motorHand = ev3.LargeMotor('outC')
+motorLeft = ev3.LargeMotor('outB')
+motorRight= ev3.LargeMotor('outD')
 
-if(motorHand.connected & sonar.connected & motorLeft.connected & motorRight.connected):
+if(motorHand.connected & sonar.connected &
+       motorLeft.connected & motorRight.connected):
     print('All sensors and motors connected')
 else:
     if(not motorHand.connected):
@@ -82,7 +83,7 @@ def turnLeft(degree):
     motorLeft.run_timed(speed_sp=-300, time_sp=degree*10)
 
 def stopWheelMotor():
-    print(sonar.value())
+    #print(sonar.value())
     motorLeft.stop()
     motorRight.stop()
 
@@ -162,7 +163,7 @@ while (True):
         elif(command == "FORWARD"):
             moveForward(300, 10000)
         elif(command == "BACKWARDS"):
-            moveBackward(300, 5000)
+            moveBackward(300, 10000)
         elif(command == "SPEAK"):
             speak("Hello, I am RoboTour")
         elif(command == "RIGHT"):
