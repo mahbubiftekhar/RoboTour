@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="mybackground">#FFFFFF</color>
+    <color name="roboTourTeal">#24E8EA</color>
+    <color name="highlighted">#42F462</color>
+    <color name="androidsBackground">#EEEEEE</color>
 </resources>

@@ -1,6 +1,8 @@
 package com.example.david.robotour
 
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -10,9 +12,10 @@ import java.util.ArrayList
 
 class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val language:String) : BaseAdapter() {
 
+    val selected = BooleanArray(count, { _ -> false})
+
     // /Describe ListView Layout using Anko
     override fun getView(i: Int, v: View?, parent: ViewGroup?): View {
-
         //Change text depending on language selected
         val languageText = when (language) {
             "English" ->  list[i].English_Desc
@@ -22,7 +25,7 @@ class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val langua
             "German" ->  list[i].German_Desc
             else -> ""
         }
-        return with(parent!!.context) {
+        val element = with(parent!!.context) {
             //Layout for a list view item
             linearLayout {
                 id = 0
@@ -52,6 +55,13 @@ class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val langua
                 }
             }
         }
+        if (selected[i] == true) {
+            element.background = ColorDrawable(Color.parseColor("#42F462"))
+        } else {
+            element.background = ColorDrawable(Color.parseColor("#EEEEEE"))
+        }
+
+        return element
     }
      //Returns the String stored at position x of the list
     override fun getItem(i: Int): String {

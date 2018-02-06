@@ -14,11 +14,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import java.util.*
 
+val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
 class PicturesActivity : AppCompatActivity() {
     data class ArtPiece(val name: String, val artist: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int)
 
-    private val allArtPieces = ArrayList<ArtPiece>()
     private var shownArtPieces = ArrayList<ArtPiece>()
     private val REQ_CODE_SPEECH_INPUT = 100
     private var queriedArtPieces = ArrayList<ArtPiece>()

@@ -106,7 +106,7 @@ class TempActivity : AppCompatActivity() {
             } catch (e: IOException) {
                 // TODO Auto-generated catch block
             }
-            println("FINNISHED")
+            println("FINISHED")
         }
     }
 

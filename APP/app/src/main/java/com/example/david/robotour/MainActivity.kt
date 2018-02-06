@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
                     backgroundColor = Color.TRANSPARENT //Removes gray border
                 }.lparams {
                     bottomMargin = dip(4)
-                    topMargin = dip(20)
+                    topMargin = dip(10)
                 }
                 button("Start") {
                     textSize = 32f
