@@ -1,5 +1,6 @@
 package com.example.david.robotour
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
@@ -8,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import org.jetbrains.anko.*
 import android.content.Intent
+import android.preference.PreferenceManager
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.view.inputmethod.InputMethodManager
@@ -26,13 +28,45 @@ class PicturesActivity : AppCompatActivity() {
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     private var voiceInput: TextView? = null
 
+    @SuppressLint("ApplySharedPref")
+    fun saveString(key: String, value: String) {
+        /* Function to save an SharedPreference value which holds an String*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val editor = sharedPreferences.edit()
+        editor.putString(key, value)
+        editor.commit()
+    }
+
+    fun loadString(key: String): String {
+        /*Function to load an SharedPreference value which holds an String*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
+        val savedValue = sharedPreferences.getString(key, "False")
+        return savedValue
+    }
+    fun resetSharedPref () {
+        /* This function is for if we are leaving this activity, this function will asynchronously reset all the shared pref values*/
+        async{
+            //Resetting all to false
+            for (i in 0..9){
+                saveString(i.toString(), "False")
+            }
+        }
+    }
+    fun alternateShared(Position:Int){
+        val old = loadString(Position.toString())
+        if(old == "True"){
+            saveString(Position.toString(), "False")
+        } else {
+            saveString(Position.toString(), "True")
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         //Obtain language from SelectLanguageActivity
         val language = intent.getStringExtra("language")
-
         when (language) {
             "English" -> supportActionBar?.title = "Select Picture"
             "German" -> supportActionBar?.title = "Wähle ein Bild"
@@ -76,14 +110,9 @@ class PicturesActivity : AppCompatActivity() {
                 "The title of the painting, which is known in English as Mona Lisa, comes from a description by Renaissance art historian Giorgio Vasari",
                 "Insert German Description",
                 "Insert French Desc",
-<<<<<<< HEAD
                 "文艺复兴时期画家列奥纳多·达·芬奇所绘的肖像画。",
-                "Insert Spanish Desc", R.drawable.thelastsupper, 4))
-=======
-                "Insert Chinese Desc",
-                "Insert Spanish Desc",
-                R.drawable.monalisa, 4))
->>>>>>> origin/master
+                "Insert Spanish Desc", R.drawable.monalisa, 4))
+
         allArtPieces.add(ArtPiece("Napoleon Crossing the Alps",
                 "Jacques-Louis David", "Oil on canvas equestrian portrait of Napoleon Bonaparte painted by the French artist Jacques-Louis David between 1801 and 1805",
                 "Öl auf Leinwand Reiterporträt von Napoleon Bonaparte von dem französischen Künstler Jacques-Louis David zwischen 1801 und 1805 gemalt",
@@ -156,6 +185,7 @@ class PicturesActivity : AppCompatActivity() {
                 }
             }
             R.id.search_button -> {
+                /*
                 alert {
                     //Force Keyboard to open
                     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -194,21 +224,22 @@ class PicturesActivity : AppCompatActivity() {
                         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
                     }
                 }.show()
-
+                */
 
             }
         //Go to SpeechActivity (hopefully an alertdialog in the fi
         // nal implementation)
             R.id.mic_button -> {
-                askSpeechInput()
+                // askSpeechInput() //Commented out for CD1
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onBackPressed(){
+    override fun onBackPressed() {
         super.onBackPressed()
     }
+
     fun askSpeechInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)

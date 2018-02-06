@@ -43,7 +43,6 @@ class TempActivity : AppCompatActivity() {
             uploadToServer("STOP") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
             async{
                val a = URL("http://homepages.inf.ed.ac.uk/s1553593/monalisa.php").readText()
-               println("+++" + a)
            }
         }
         RIGHT.setOnClickListener{

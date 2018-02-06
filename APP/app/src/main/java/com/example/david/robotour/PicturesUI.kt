@@ -84,7 +84,7 @@ class PicturesUI(private val PicturesAdapter : PicturesAdapter, val language:Str
                     }
                 }
             }
-            button("Start Tour") {
+            /* button("Start Tour") {
                 textSize = 32f
                 background = ColorDrawable(resources.getColor(R.color.roboTourTeal))
                 onClick {
@@ -112,7 +112,7 @@ class PicturesUI(private val PicturesAdapter : PicturesAdapter, val language:Str
                 height = wrapContent
                 alignParentBottom()
                 gravity = Gravity.BOTTOM
-            }
+            } */
         }
     }
 }

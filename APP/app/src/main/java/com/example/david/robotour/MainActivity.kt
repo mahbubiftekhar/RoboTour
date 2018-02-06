@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        uploadToServer("TESTING") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
+        //uploadToServer("TESTING") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
     }
 
     @Suppress("DEPRECATION") // Removes some of the warming messages, can't do much about the import warnings though
@@ -52,9 +52,7 @@ class MainActivity : AppCompatActivity() {
                 httpPost.entity = UrlEncodedFormEntity(nameValuePairs)
                 httpclient.execute(httpPost)
             } catch (e: ClientProtocolException) {
-                // TODO Auto-generated catch block
             } catch (e: IOException) {
-                // TODO Auto-generated catch block
             }
         }
     }

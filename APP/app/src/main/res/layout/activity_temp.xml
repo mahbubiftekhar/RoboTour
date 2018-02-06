@@ -41,20 +41,20 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/RIGHT"
-                android:layout_width="0dip"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/buttonxml"
-                android:text="RIGHT" />
-
-            <Button
                 android:id="@+id/LEFT"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
-                android:text="LEFT" />
+                android:text="ANTI-CLOCKWISE" />
+
+            <Button
+                android:id="@+id/RIGHT"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="CLOCKWISE" />
 
         </LinearLayout>
 

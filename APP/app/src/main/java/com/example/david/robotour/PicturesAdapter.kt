@@ -1,8 +1,11 @@
 package com.example.david.robotour
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
+import android.preference.PreferenceManager
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -13,6 +16,7 @@ import java.util.ArrayList
 class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val language:String) : BaseAdapter() {
 
     val selected = BooleanArray(count, { _ -> false})
+
 
     // /Describe ListView Layout using Anko
     override fun getView(i: Int, v: View?, parent: ViewGroup?): View {
@@ -55,8 +59,9 @@ class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val langua
                 }
             }
         }
-        if (selected[i] == true) {
+        if (selected[i]) {
             element.background = ColorDrawable(Color.parseColor("#42F462"))
+
         } else {
             element.background = ColorDrawable(Color.parseColor("#EEEEEE"))
         }
