@@ -12,7 +12,8 @@ import android.widget.LinearLayout
 import org.jetbrains.anko.*
 import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.design.floatingActionButton
-class PicturesUI(private val PicturesAdapter : PicturesAdapter, val language:String) : AnkoComponent<PicturesActivity> {
+
+class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: String) : AnkoComponent<PicturesActivity> {
     lateinit var a: String
 
     override fun createView(ui: AnkoContext<PicturesActivity>): View = with(ui) {
@@ -33,13 +34,23 @@ class PicturesUI(private val PicturesAdapter : PicturesAdapter, val language:Str
                 }
             }
             when (language) {
-                "Spanish" -> {a = "Empezar recorrido"}
-                "German" -> {a = "Tour starten"}
-                "French" -> {a = "Tour initial"}
-                "Chinese" -> {a = "Start tour"}
-                else -> {a = "Start tour"}
+                "Spanish" -> {
+                    a = "Empezar recorrido"
+                }
+                "German" -> {
+                    a = "Tour starten"
+                }
+                "French" -> {
+                    a = "Tour initial"
+                }
+                "Chinese" -> {
+                    a = "开始旅游"
+                }
+                else -> {
+                    a = "Start tour"
+                }
             }
-             button(a) {
+            button(a) {
                 textSize = 32f
                 background = ColorDrawable(resources.getColor(R.color.roboTourTeal))
                 onClick {
