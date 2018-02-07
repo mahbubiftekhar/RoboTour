@@ -20,6 +20,7 @@ val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
 class PicturesActivity : AppCompatActivity() {
     data class ArtPiece(val name: String, val artist: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int)
+
     private var shownArtPieces = ArrayList<ArtPiece>()
     private val REQ_CODE_SPEECH_INPUT = 100
     private var queriedArtPieces = ArrayList<ArtPiece>()
@@ -42,18 +43,25 @@ class PicturesActivity : AppCompatActivity() {
         val savedValue = sharedPreferences.getString(key, "False")
         return savedValue
     }
-    fun resetSharedPref () {
+
+    fun resetSharedPref() {
         /* This function is for if we are leaving this activity, this function will asynchronously reset all the shared pref values*/
-        async{
+        async {
             //Resetting all to false
-            for (i in 0..9){
+            for (i in 0..9) {
                 saveString(i.toString(), "False")
             }
         }
     }
-    fun alternateShared(Position:Int){
+    fun sendList(){
+        /*This function will upload to the server the required items simply*/
+
+    }
+
+    fun alternateShared(Position: Int) {
+        /*This function should be called when the user clicks the button for a particular item, only pass the position*/
         val old = loadString(Position.toString())
-        if(old == "True"){
+        if (old == "True") {
             saveString(Position.toString(), "False")
         } else {
             saveString(Position.toString(), "True")
@@ -63,7 +71,6 @@ class PicturesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
 
         //Obtain language from SelectLanguageActivity
         val language = intent.getStringExtra("language")
@@ -108,10 +115,10 @@ class PicturesActivity : AppCompatActivity() {
                 R.drawable.girlwithpearlearring, 3))
         allArtPieces.add(ArtPiece("Mona Lisa", "Leonardo da Vinci",
                 "The title of the painting, which is known in English as Mona Lisa, comes from a description by Renaissance art historian Giorgio Vasari",
-                "Insert German Description",
-                "Insert French Desc",
+                "Der Titel des Gemäldes, der auf Englisch als Mona Lisa bekannt ist, stammt aus einer Beschreibung des Renaissance-Kunsthistorikers Giorgio Vasari",
+                "Le titre de la peinture, qui est connu en anglais comme Mona Lisa, vient d'une description par l'historien d'art de la Renaissance Giorgio Vasari",
                 "文艺复兴时期画家列奥纳多·达·芬奇所绘的肖像画。",
-                "Insert Spanish Desc", R.drawable.monalisa, 4))
+                "El título de la pintura, que se conoce en inglés como Mona Lisa, proviene de una descripción del historiador del arte del Renacimiento Giorgio Vasari.", R.drawable.monalisa, 4))
 
         allArtPieces.add(ArtPiece("Napoleon Crossing the Alps",
                 "Jacques-Louis David", "Oil on canvas equestrian portrait of Napoleon Bonaparte painted by the French artist Jacques-Louis David between 1801 and 1805",
@@ -122,11 +129,9 @@ class PicturesActivity : AppCompatActivity() {
                 R.drawable.napoleoncrossingthealps, 5))
         allArtPieces.add(ArtPiece("The Starry Night", "Vincent van Gogh",
                 "The night sky depicted by van Gogh in the Starry Night painting is brimming with whirling clouds, shining stars, and a bright crescent moon.",
-                "Der Nachthimmel, den van Gogh in der Sternennacht zeigt, ist voll von wirbelnden Wolken, leuchtenden Sternen und einer hellen Mondsichel.\n" +
-                        "",
+                "Der Nachthimmel, den van Gogh in der Sternennacht zeigt, ist voll von wirbelnden Wolken, leuchtenden Sternen und einer hellen Mondsichel.\n" + "",
                 "Le ciel nocturne représenté par Van Gogh dans la peinture de la nuit étoilée déborde de nuages tourbillonnants, ",
-                "梵高在“星夜之画”中描绘的夜空充满了旋云，闪亮的星星和明亮的新月。\n" +
-                        "梵高在“星夜之画”中描绘的夜空充满了旋云，闪亮的星星和明亮的新月。\n" +
+                "梵高在“星夜之画”中描绘的夜空充满了旋云，闪亮的星星和明亮的新月。\n" + "梵高在“星夜之画”中描绘的夜空充满了旋云，闪亮的星星和明亮的新月。\n" +
                         "梵高在“星夜之画”中描绘的夜空充满了旋云，闪亮的星星和明亮的新月。\n",
                 "El cielo nocturno representado por Van Gogh en la pintura de la Noche Estrellada rebosa de nubes giratorias, estrellas brillantes y una brillante luna creciente.\n" +
                         "", R.drawable.starrynight, 6))
@@ -188,14 +193,14 @@ class PicturesActivity : AppCompatActivity() {
                 alert {
                     //Force Keyboard to open
                     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    title = "This is the title"
+                    title = "Please enter painting you wish to go to"
                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
                     customView {
                         val input = editText {
                             inputType = TYPE_CLASS_TEXT
                         }
                         val regEx = Regex("[^A-Za-z0-9]")
-                        positiveButton("Okay") {
+                        positiveButton("Search") {
                             //Hide keyboard
                             imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
                             searchedForPainting = true
@@ -234,14 +239,22 @@ class PicturesActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
+        alert("Are you sure you want to leave? Your selection will be lost"){
+            positiveButton {
+                resetSharedPref() /*This will reset all the shared preferences*/
+                super.onBackPressed() // Call super.onBackPressed
+            }
+            negativeButton {
+                /*Do nothing*/
+            }
+        }.show()
     }
 
     fun askSpeechInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art piece are you looking for?")
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
         try {
             async { startActivityForResult(intent, REQ_CODE_SPEECH_INPUT) }
         } catch (a: ActivityNotFoundException) {

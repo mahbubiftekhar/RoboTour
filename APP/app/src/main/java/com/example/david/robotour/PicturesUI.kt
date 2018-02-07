@@ -12,8 +12,9 @@ import android.widget.LinearLayout
 import org.jetbrains.anko.*
 import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.design.floatingActionButton
-
 class PicturesUI(private val PicturesAdapter : PicturesAdapter, val language:String) : AnkoComponent<PicturesActivity> {
+    lateinit var a: String
+
     override fun createView(ui: AnkoContext<PicturesActivity>): View = with(ui) {
         return relativeLayout() {
             verticalLayout {
@@ -21,60 +22,7 @@ class PicturesUI(private val PicturesAdapter : PicturesAdapter, val language:Str
                     adapter = PicturesAdapter
                     //val selected = BooleanArray(adapter.count, { _ -> false})
                     onItemClick { _, view, i, _ ->
-                        /*when (language) {
-                            "English" -> {
-                                alert("Do you want to go to this painting?") {
-                                    positiveButton("Yes") {
-                                        val progressDialog = indeterminateProgressDialog("Stuff")
-                                        //if 2 users
-                                        progressDialog.show()
-                                        async {
-                                            //replace this with once other user has pressed button
-                                            Thread.sleep(2000)
-                                            uiThread {
-                                                progressDialog.dismiss()
-                                            }
-                                        }
 
-                                    }
-                                    negativeButton("No") { }
-                                }.show()
-                            }
-                            "German" -> {
-                                alert("Wollen Sie zu diesem Bild gehen?") {
-                                    positiveButton("Ja") { }
-                                    negativeButton("Nein") { }
-                                }.show()
-                            }
-                            "Chinese" -> {
-                                alert("你想去这幅画吗？") {
-                                    positiveButton("是") { }
-                                    negativeButton("没有") { }
-                                }.show()
-                            }
-                            "French" -> {
-                                alert("Voulez-vous aller à cette peinture?") {
-                                    positiveButton("Oui") { }
-                                    negativeButton("Non") { }
-                                }.show()
-                            }
-                            "Spanish" -> {
-                                alert("Quieres ir a esta pintura?") {
-                                    positiveButton("Sí") { }
-                                    negativeButton("No") { }
-                                }.show()
-                            }
-                            else -> {
-                                alert("Follow RoboTour") {
-                                    positiveButton("YES"){
-
-                                    }
-                                    negativeButton("NO"){
-
-                                    }
-                                }.show()
-                            }
-                        } */
                         if (!PicturesAdapter.selected[i]) {
                             view?.background = ColorDrawable(resources.getColor(R.color.highlighted))
                         } else {
@@ -84,7 +32,14 @@ class PicturesUI(private val PicturesAdapter : PicturesAdapter, val language:Str
                     }
                 }
             }
-             button("Start Tour") {
+            when (language) {
+                "Spanish" -> {a = "Empezar recorrido"}
+                "German" -> {a = "Tour starten"}
+                "French" -> {a = "Tour initial"}
+                "Chinese" -> {a = "Start tour"}
+                else -> {a = "Start tour"}
+            }
+             button(a) {
                 textSize = 32f
                 background = ColorDrawable(resources.getColor(R.color.roboTourTeal))
                 onClick {

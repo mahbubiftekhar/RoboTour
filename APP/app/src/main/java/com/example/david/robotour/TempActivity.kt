@@ -101,11 +101,8 @@ class TempActivity : AppCompatActivity() {
                 httppost.entity = UrlEncodedFormEntity(nameValuePairs)
                 httpclient.execute(httppost)
             } catch (e: ClientProtocolException) {
-                // TODO Auto-generated catch block
             } catch (e: IOException) {
-                // TODO Auto-generated catch block
             }
-            println("FINISHED")
         }
     }
 

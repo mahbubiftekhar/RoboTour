@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.view.Gravity
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
@@ -14,12 +13,13 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
-import org.jetbrains.anko.custom.customView
 import java.io.IOException
 
 class NavigatingActivity : AppCompatActivity() {
     val userid = ""
+    fun constantCheck(){
 
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
