@@ -20,7 +20,6 @@ val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
 class PicturesActivity : AppCompatActivity() {
     data class ArtPiece(val name: String, val artist: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int)
-
     private var shownArtPieces = ArrayList<ArtPiece>()
     private val REQ_CODE_SPEECH_INPUT = 100
     private var queriedArtPieces = ArrayList<ArtPiece>()
@@ -64,6 +63,7 @@ class PicturesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
 
         //Obtain language from SelectLanguageActivity
         val language = intent.getStringExtra("language")
@@ -185,7 +185,6 @@ class PicturesActivity : AppCompatActivity() {
                 }
             }
             R.id.search_button -> {
-                /*
                 alert {
                     //Force Keyboard to open
                     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -224,13 +223,11 @@ class PicturesActivity : AppCompatActivity() {
                         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
                     }
                 }.show()
-                */
-
             }
         //Go to SpeechActivity (hopefully an alertdialog in the fi
         // nal implementation)
             R.id.mic_button -> {
-                // askSpeechInput() //Commented out for CD1
+                askSpeechInput() //Commented out for CD1
             }
         }
         return super.onOptionsItemSelected(item)

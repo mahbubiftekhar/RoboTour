@@ -28,7 +28,7 @@ class NavigatingActivity : AppCompatActivity() {
         //Obtain language from PicturesUI
         val language = intent.getStringExtra("language")
 
-        async{
+        async {
             getPicture() //Asynchronously get the picture
             uiThread {
                 createView(language)
@@ -36,7 +36,7 @@ class NavigatingActivity : AppCompatActivity() {
         }
     }
 
-    private fun createView(language : String) {
+    private fun createView(language: String) {
         verticalLayout {
             textView() {
                 text = allArtPieces[0].name
@@ -56,10 +56,10 @@ class NavigatingActivity : AppCompatActivity() {
             textView() {
                 when (language) {
                     "English" -> text = allArtPieces[0].English_Desc
-                    "French" ->  text = allArtPieces[0].French_Desc
-                    "Chinese" ->  text = allArtPieces[0].Chinese_Desc
-                    "Spanish" ->  text = allArtPieces[0].Spanish_Desc
-                    "German" ->  text = allArtPieces[0].German_Desc
+                    "French" -> text = allArtPieces[0].French_Desc
+                    "Chinese" -> text = allArtPieces[0].Chinese_Desc
+                    "Spanish" -> text = allArtPieces[0].Spanish_Desc
+                    "German" -> text = allArtPieces[0].German_Desc
                     else -> text = ""
                 }
                 textSize = 16f
@@ -74,8 +74,8 @@ class NavigatingActivity : AppCompatActivity() {
                         width = wrapContent
                         onClick {
                             alert("Are you sure you want to skip to the next painting?") {
-                                positiveButton {  }
-                                negativeButton {  }
+                                positiveButton { }
+                                negativeButton { }
                             }.show()
                         }
                     }
@@ -84,8 +84,8 @@ class NavigatingActivity : AppCompatActivity() {
                         width = wrapContent
                         onClick {
                             alert("Do you want to go stop RoboTour?") {
-                                positiveButton {  }
-                                negativeButton {  }
+                                positiveButton { }
+                                negativeButton { }
                             }.show()
                         }
                     }
@@ -96,8 +96,8 @@ class NavigatingActivity : AppCompatActivity() {
                         width = matchParent
                         onClick {
                             alert("Are you sure you want to cancel the tour?") {
-                                positiveButton {  }
-                                negativeButton {  }
+                                positiveButton { }
+                                negativeButton { }
                             }.show()
                         }
                     }
@@ -132,8 +132,8 @@ class NavigatingActivity : AppCompatActivity() {
                         width = matchParent
                         onClick {
                             alert("Do you want to go to the toilet?") {
-                                positiveButton {  }
-                                negativeButton {  }
+                                positiveButton { }
+                                negativeButton { }
                             }.show()
                         }
                     }
@@ -142,8 +142,8 @@ class NavigatingActivity : AppCompatActivity() {
                         width = matchParent
                         onClick {
                             alert("Do you want to go to the exit?") {
-                                positiveButton {  }
-                                negativeButton {  }
+                                positiveButton { }
+                                negativeButton { }
                             }.show()
                         }
                     }
@@ -159,14 +159,15 @@ class NavigatingActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun cancelGuideTotal(){
+    fun cancelGuideTotal() {
 
     }
 
 
-    fun skip(){
+    fun skip() {
 
     }
+
     fun sendPUT(command: String, url: String) {
         async {
             val httpclient = DefaultHttpClient()
@@ -184,7 +185,8 @@ class NavigatingActivity : AppCompatActivity() {
             println("FINISHED")
         }
     }
-    private fun getPicture(){
+
+    private fun getPicture() {
 
     }
 
