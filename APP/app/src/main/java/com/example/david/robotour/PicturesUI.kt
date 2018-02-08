@@ -11,12 +11,11 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
     var navigate = ""
 
     override fun createView(ui: AnkoContext<PicturesActivity>): View = with(ui) {
-
         return relativeLayout {
             when (language) {
                 "Spanish" -> {
                     a = "Empezar recorrido"
-                    navigate = "zu ausgewählten Bildern navigieren?"
+                    navigate = "Navegar a obras de arte seleccionadas?"
                 }
                 "German" -> {
                     a = "Tour starten"
@@ -40,12 +39,13 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                     adapter = PicturesAdapter
                     //val selected = BooleanArray(adapter.count, { _ -> false})
                     onItemClick { _, view, i, _ ->
-                        if (!PicturesAdapter.selected[i]) {
-                            view?.background = ColorDrawable(resources.getColor(R.color.highlighted))
-                        } else {
+                        val picID = PicturesAdapter.getItem(i)
+                        if (allArtPieces[picID].selected) {
                             view?.background = ColorDrawable(resources.getColor(R.color.androidsBackground))
+                        } else {
+                            view?.background = ColorDrawable(resources.getColor(R.color.highlighted))
                         }
-                        PicturesAdapter.selected[i] = !PicturesAdapter.selected[i]
+                        allArtPieces[picID].selected = !allArtPieces[picID].selected
                     }
                 }.lparams { width = matchParent; height = dip(0); weight = 1.0f }
                 button(a) {

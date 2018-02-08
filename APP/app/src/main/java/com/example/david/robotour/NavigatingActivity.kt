@@ -15,6 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
 import java.io.IOException
+import java.net.URL
 
 class NavigatingActivity : AppCompatActivity() {
 
@@ -33,10 +34,6 @@ class NavigatingActivity : AppCompatActivity() {
     var toilet = ""
     var toiletDesc = ""
     var changeSpeed = ""
-
-    fun constantCheck() {
-
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -192,7 +189,7 @@ class NavigatingActivity : AppCompatActivity() {
                                 }
                             }.show()
                         }
-                    }.lparams { leftMargin=dip(2) ; rightMargin=dip(6) }
+                    }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
                     button(stop) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                         textSize = 24f
@@ -205,7 +202,7 @@ class NavigatingActivity : AppCompatActivity() {
                                 negativeButton(negative) { }
                             }.show()
                         }
-                    }.lparams { rightMargin=2 }
+                    }.lparams { rightMargin = 2 }
                 }.lparams { bottomMargin = dip(10) }
                 tableRow {
                     button(cancelTour) {
@@ -220,7 +217,7 @@ class NavigatingActivity : AppCompatActivity() {
                                 negativeButton(negative) { }
                             }.show()
                         }
-                    }.lparams { leftMargin=dip(2) ; rightMargin=dip(6) }
+                    }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
                     button(changeSpeed) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                         textSize = 24f
@@ -272,7 +269,7 @@ class NavigatingActivity : AppCompatActivity() {
                                 }
                             }
                         }
-                    }.lparams { rightMargin=2 }
+                    }.lparams { rightMargin = 2 }
                 }.lparams { bottomMargin = dip(10) }
                 tableRow {
                     button(toilet) {
@@ -285,7 +282,7 @@ class NavigatingActivity : AppCompatActivity() {
                                 negativeButton(negative) { }
                             }.show()
                         }
-                    }.lparams { leftMargin=dip(2) ; rightMargin=dip(6) }
+                    }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
                     button(exit) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                         textSize = 24f
@@ -296,7 +293,7 @@ class NavigatingActivity : AppCompatActivity() {
                                 negativeButton(negative) { }
                             }.show()
                         }
-                    }.lparams { rightMargin=2 }
+                    }.lparams { rightMargin = 2 }
                 }.lparams { bottomMargin = dip(10) }
             }
         }
@@ -313,7 +310,8 @@ class NavigatingActivity : AppCompatActivity() {
         sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/$userid.php")
         switchToMain()
     }
-    fun switchToMain(){
+
+    fun switchToMain() {
         startActivity<TempActivity>()
     }
 
@@ -321,6 +319,47 @@ class NavigatingActivity : AppCompatActivity() {
         /*This function should show a pop up saying "waiting for partner to respond, */
     }
 
+    fun constantCheck() {
+        async {
+            for (i in 0..9) {
+                val a = URL("http://homepages.inf.ed.ac.uk/s1553593/$i.php").readText()
+                if (a == "N") {
+                    setTitleAndImage(a.toInt())
+                    break
+                }
+            }
+        }
+        async {
+            val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
+            if(a == "2"){
+                alert(""){
+                    positiveButton("Yes"){
+                        skipImmediately()
+                    }
+                    negativeButton ("No"){
+                        rejectSkip()
+                    }
+                }
+            }
+        }
+    }
+
+    fun setTitleAndImage(id: Int) {
+
+    }
+
+    fun rejectSkip(){
+        async {
+            sendPUT("N", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+        }
+    }
+
+    fun skipImmediately (){
+        /*This function is only when both users have agreed to skip the next item*/
+        async {
+            sendPUT("Y", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+        }
+    }
     fun skip() {
         async {
             sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
@@ -344,7 +383,8 @@ class NavigatingActivity : AppCompatActivity() {
             httppost.entity = UrlEncodedFormEntity(nameValuePairs)
             httpclient.execute(httppost)
         } catch (e: ClientProtocolException) {
-        } catch (e: IOException) { }
+        } catch (e: IOException) {
+        }
     }
 
     private fun getPicture() {

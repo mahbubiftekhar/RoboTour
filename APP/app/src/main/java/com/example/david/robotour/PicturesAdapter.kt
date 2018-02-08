@@ -15,8 +15,7 @@ import java.util.ArrayList
 
 class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val language:String) : BaseAdapter() {
 
-    val selected = BooleanArray(count, { _ -> false})
-
+    var selected = BooleanArray(count, {_ -> false})
 
     // /Describe ListView Layout using Anko
     override fun getView(i: Int, v: View?, parent: ViewGroup?): View {
@@ -59,9 +58,8 @@ class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val langua
                 }
             }
         }
-        if (selected[i]) {
+        if (list[i].selected) {
             element.background = ColorDrawable(Color.parseColor("#42F462"))
-
         } else {
             element.background = ColorDrawable(Color.parseColor("#EEEEEE"))
         }
@@ -69,8 +67,8 @@ class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val langua
         return element
     }
      //Returns the String stored at position x of the list
-    override fun getItem(i: Int): String {
-        return list[i].name
+    override fun getItem(i: Int): Int {
+        return list[i].eV3ID
     }
     //Returns the length of the list
     override fun getCount(): Int {
