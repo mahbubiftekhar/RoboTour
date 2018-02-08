@@ -33,6 +33,7 @@ class NavigatingActivity : AppCompatActivity() {
     var toilet = ""
     var toiletDesc = ""
     var changeSpeed = ""
+
     fun constantCheck() {
 
     }
@@ -191,7 +192,7 @@ class NavigatingActivity : AppCompatActivity() {
                                 }
                             }.show()
                         }
-                    }
+                    }.lparams { leftMargin=dip(2) ; rightMargin=dip(6) }
                     button(stop) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                         textSize = 24f
@@ -204,7 +205,7 @@ class NavigatingActivity : AppCompatActivity() {
                                 negativeButton(negative) { }
                             }.show()
                         }
-                    }
+                    }.lparams { rightMargin=2 }
                 }.lparams { bottomMargin = dip(10) }
                 tableRow {
                     button(cancelTour) {
@@ -219,7 +220,7 @@ class NavigatingActivity : AppCompatActivity() {
                                 negativeButton(negative) { }
                             }.show()
                         }
-                    }
+                    }.lparams { leftMargin=dip(2) ; rightMargin=dip(6) }
                     button(changeSpeed) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                         textSize = 24f
@@ -229,7 +230,7 @@ class NavigatingActivity : AppCompatActivity() {
                                 customView {
                                     verticalLayout {
                                         listView {
-                                            var options: List<String> = emptyList()
+                                            val options: List<String>
                                             var SelectSpeed = ""
                                             when (language) {
                                                 "English" -> {
@@ -271,7 +272,7 @@ class NavigatingActivity : AppCompatActivity() {
                                 }
                             }
                         }
-                    }
+                    }.lparams { rightMargin=2 }
                 }.lparams { bottomMargin = dip(10) }
                 tableRow {
                     button(toilet) {
@@ -284,7 +285,7 @@ class NavigatingActivity : AppCompatActivity() {
                                 negativeButton(negative) { }
                             }.show()
                         }
-                    }
+                    }.lparams { leftMargin=dip(2) ; rightMargin=dip(6) }
                     button(exit) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                         textSize = 24f
@@ -295,7 +296,7 @@ class NavigatingActivity : AppCompatActivity() {
                                 negativeButton(negative) { }
                             }.show()
                         }
-                    }
+                    }.lparams { rightMargin=2 }
                 }.lparams { bottomMargin = dip(10) }
             }
         }

@@ -120,7 +120,8 @@ class PicturesActivity : AppCompatActivity() {
                 "Der Titel des Gemäldes, der auf Englisch als Mona Lisa bekannt ist, stammt aus einer Beschreibung des Renaissance-Kunsthistorikers Giorgio Vasari",
                 "Le titre de la peinture, qui est connu en anglais comme Mona Lisa, vient d'une description par l'historien d'art de la Renaissance Giorgio Vasari",
                 "文艺复兴时期画家列奥纳多·达·芬奇所绘的肖像画。",
-                "El título de la pintura, que se conoce en inglés como Mona Lisa, proviene de una descripción del historiador del arte del Renacimiento Giorgio Vasari.", R.drawable.monalisa, 4))
+                "El título de la pintura, que se conoce en inglés como Mona Lisa, proviene de una descripción del historiador del arte del Renacimiento Giorgio Vasari.",
+                R.drawable.monalisa, 4))
 
         allArtPieces.add(ArtPiece("Napoleon Crossing the Alps",
                 "Jacques-Louis David", "Oil on canvas equestrian portrait of Napoleon Bonaparte painted by the French artist Jacques-Louis David between 1801 and 1805",
