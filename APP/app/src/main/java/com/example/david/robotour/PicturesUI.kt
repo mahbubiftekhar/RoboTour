@@ -1,20 +1,13 @@
 package com.example.david.robotour
 
-import android.app.AlertDialog
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.View
-import android.view.ViewManager
-import android.widget.Button
-import android.widget.LinearLayout
 import org.jetbrains.anko.*
-import org.jetbrains.anko.custom.ankoView
-import org.jetbrains.anko.design.floatingActionButton
 
 class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: String) : AnkoComponent<PicturesActivity> {
     lateinit var a: String
+    var navigate = ""
 
     override fun createView(ui: AnkoContext<PicturesActivity>): View = with(ui) {
         return relativeLayout() {
@@ -23,7 +16,6 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                     adapter = PicturesAdapter
                     //val selected = BooleanArray(adapter.count, { _ -> false})
                     onItemClick { _, view, i, _ ->
-
                         if (!PicturesAdapter.selected[i]) {
                             view?.background = ColorDrawable(resources.getColor(R.color.highlighted))
                         } else {
@@ -31,30 +23,37 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                         }
                         PicturesAdapter.selected[i] = !PicturesAdapter.selected[i]
                     }
-                }
+                }.lparams{bottomMargin = dip(60)}
             }
             when (language) {
                 "Spanish" -> {
                     a = "Empezar recorrido"
+                    navigate = "zu ausgewählten Bildern navigieren?"
                 }
                 "German" -> {
                     a = "Tour starten"
+                    navigate = "zu ausgewählten Bildern navigieren?"
+
                 }
                 "French" -> {
                     a = "Tour initial"
+                    navigate = "naviguer vers l'illustration sélectionnée?"
                 }
                 "Chinese" -> {
                     a = "开始旅游"
+                    navigate = "导航到选定的艺术品？"
                 }
                 else -> {
                     a = "Start tour"
+                    navigate = "navigate to selected artwork?"
                 }
             }
             button(a) {
                 textSize = 32f
                 background = ColorDrawable(resources.getColor(R.color.roboTourTeal))
                 onClick {
-                    alert("Do you want RoboTour to guide you to the highlighted paintings?") {
+                    //need to translate here
+                    alert(navigate) {
                         positiveButton("Yes") {
                             val progressDialog = indeterminateProgressDialog("Waiting for other user to select paintings...")
                             //if 2 users

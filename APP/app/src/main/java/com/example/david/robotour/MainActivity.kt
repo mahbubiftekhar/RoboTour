@@ -5,9 +5,18 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import org.jetbrains.anko.*
+import android.content.Intent
+
+
 
 class MainActivity : AppCompatActivity() {
+
     /* override the back button, so the user is promted when they wish to leave the app */
+    override fun onBackPressed(){
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_HOME)
+        startActivity(intent)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar

@@ -14,6 +14,7 @@ import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import kotlinx.android.synthetic.*
 import java.util.*
 
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
@@ -71,6 +72,7 @@ class PicturesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        clearFindViewByIdCache()
 
         //Obtain language from SelectLanguageActivity
         val language = intent.getStringExtra("language")
@@ -158,9 +160,11 @@ class PicturesActivity : AppCompatActivity() {
                 R.drawable.waterlillies, 9))
 
         //Copies arraylist with a new pointer (simple copy creates search bug)
+        shownArtPieces.clear() // clear the arraylist
         for (artPiece in allArtPieces) {
             shownArtPieces.add(artPiece)
         }
+        clearFindViewByIdCache()
         adapter = PicturesAdapter(shownArtPieces, language)      //update adapter
         val ui = PicturesUI(adapter, language)                //define Anko UI Layout to be used
         ui.setContentView(this)                 //Set Anko UI to this Activity
@@ -172,6 +176,7 @@ class PicturesActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_pictures, menu)
         return true
     }
+
 
     //Define Functions upon actionbar button pressed
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -229,10 +234,8 @@ class PicturesActivity : AppCompatActivity() {
                     }
                 }.show()
             }
-        //Go to SpeechActivity (hopefully an alertdialog in the fi
-        // nal implementation)
             R.id.mic_button -> {
-                askSpeechInput() //Commented out for CD1
+                askSpeechInput()
             }
         }
         return super.onOptionsItemSelected(item)
@@ -241,7 +244,11 @@ class PicturesActivity : AppCompatActivity() {
     override fun onBackPressed() {
         alert("Are you sure you want to leave? Your selection will be lost"){
             positiveButton {
-                resetSharedPref() /*This will reset all the shared preferences*/
+               async{
+                   clearFindViewByIdCache()
+                   allArtPieces.clear()
+                   resetSharedPref() /*This will reset all the shared preferences*/
+               }
                 super.onBackPressed() // Call super.onBackPressed
             }
             negativeButton {

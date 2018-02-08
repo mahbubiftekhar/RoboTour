@@ -109,7 +109,7 @@ class NavigatingActivity : AppCompatActivity() {
                 positive = "ja"
                 negative = "Nein"
                 skip = "Springe zum nächsten Bild"
-                skipDesc = "Möchtest du das nächste Bild wirklich überspringen?"
+                skipDesc = "Überspringen?"
                 stop = "Stoppen Sie RoboTour"
                 stopDesc = "Möchtest du RoboTour wirklich stoppen?"
                 cancelTour = "Tour abbrechen"
