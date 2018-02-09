@@ -7,6 +7,10 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.view.Gravity
+import android.widget.ImageView
+import android.widget.TextView
+import com.example.david.robotour.R.id.imageView
+import com.example.david.robotour.R.id.text
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -18,7 +22,8 @@ import java.io.IOException
 import java.net.URL
 
 class NavigatingActivity : AppCompatActivity() {
-
+    val btnHgt = 77
+    var btnTextSize = 24f
     var buttonTitle = ""
     var positive = ""
     var negative = ""
@@ -35,6 +40,10 @@ class NavigatingActivity : AppCompatActivity() {
     var toiletDesc = ""
     var changeSpeed = ""
 
+    var imageView : ImageView? = null
+    var titleView : TextView? = null
+    var descriptionView : TextView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
@@ -46,32 +55,32 @@ class NavigatingActivity : AppCompatActivity() {
             "English" -> {
                 positive = "Yes"
                 negative = "No"
-                skip = "Skip to next Painting"
+                skip = "Skip Painting"
                 skipDesc = "Are you sure you want to skip to the next painting?"
                 stop = "Stop RoboTour"
                 stopDesc = "Are you sure you want to stop RoboTour?"
                 cancelTour = "Cancel tour"
                 cancelDesc = "Are you sure you want to cancel the tour?"
-                exit = "Take me to the exit"
+                exit = "Exit"
                 exitDesc = "Do you want to go to the exit?"
-                toilet = "Take me to the toilet"
+                toilet = "Toilet"
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "Change speed"
             }
             "French" -> {
                 positive = "Oui"
                 negative = "Non"
-                skip = "Passer à la suivante"
+                skip = "Sauter Peinture"
                 skipDesc = "Êtes-vous sûr de vouloir passer à la peinture suivante?"
                 stop = "Arrêtez RoboTour"
                 stopDesc = "Êtes-vous sûr de vouloir arrêter RoboTour?"
-                cancelTour = "Annuler la visite"
+                cancelTour = "Annuler Visite"
                 cancelDesc = "Êtes-vous sûr de vouloir annuler la visite?"
-                exit = "Emmenez-moi à la sortie"
+                exit = "Sortie"
                 exitDesc = "Voulez-vous aller à la sortie?"
-                toilet = "Emmène-moi aux toilettes"
+                toilet = "W.C."
                 toiletDesc = "Voulez-vous aller aux toilettes?"
-                changeSpeed = "Changer la vitesse"
+                changeSpeed = "Changer Vitesse"
             }
             "Chinese" -> {
                 positive = "是的"
@@ -89,83 +98,77 @@ class NavigatingActivity : AppCompatActivity() {
                 changeSpeed = "改变速度"
             }
             "Spanish" -> {
-                positive = "sí"
+                positive = "Sí"
                 negative = "No."
-                skip = "¿Estás seguro de que quieres saltar a la próxima pintura"
+                skip = "Saltar Pintura"
                 skipDesc = "¿Estás seguro de que quieres saltar a la próxima pintura?"
-                stop = "Stop RoboTour"
-                stopDesc = "Are you sure you want to stop RoboTour?"
-                cancelTour = "Cancell robotour"
+                stop = "Detener RoboTour"
+                stopDesc = "¿Estás seguro de que quieres detener RoboTour?"
+                cancelTour = "Cancelar RoboTour"
                 cancelDesc = "¿Seguro que quieres cancelar el tour?"
-                exit = "Llévame a la salida"
+                exit = "Salida"
                 exitDesc = "¿Quieres ir a la salida?"
-                toilet = "Llévame al baño"
+                toilet = "Baño"
                 toiletDesc = "¿Quieres ir al baño?"
-                changeSpeed = "Cambiar la velocidad"
+                changeSpeed = "Cambiar Velocidad"
             }
             "German" -> {
-                positive = "ja"
+                positive = "Ja"
                 negative = "Nein"
-                skip = "Springe zum nächsten Bild"
-                skipDesc = "Überspringen?"
-                stop = "Stoppen Sie RoboTour"
-                stopDesc = "Möchtest du RoboTour wirklich stoppen?"
+                skip = "Bild Überspringen"
+                skipDesc = "Wollen Sie dieses Bild Überspringen?"
+                stop = "RoboTour Stoppen"
+                stopDesc = "Möchtest Sie RoboTour stoppen?"
                 cancelTour = "Tour abbrechen"
-                cancelDesc = "Möchtest du die Tour wirklich abbrechen?"
-                exit = "Bring mich zum Ausgang"
-                exitDesc = "Willst du zum Ausgang gehen?"
-                toilet = "Bring mich auf die Toilette"
-                toiletDesc = "Willst du auf die Toilette gehen?"
-                changeSpeed = "Geschwindigkeit ändern"
+                cancelDesc = "Möchten Sie die Tour wirklich abbrechen?"
+                exit = "Ausgang"
+                exitDesc = "Wollen sie zum Ausgang gehen?"
+                toilet = "W.C."
+                toiletDesc = "Wollen sie zum W.C. gehen?"
+                changeSpeed = "Geschwindig keit ändern"
+                btnTextSize = 20f
             }
             else -> {
                 positive = "Yes"
                 negative = "No"
-                skip = "Skip to next Painting"
+                skip = "Skip Painting"
                 skipDesc = "Are you sure you want to skip to the next painting?"
                 stop = "Stop RoboTour"
                 stopDesc = "Are you sure you want to stop RoboTour?"
                 cancelTour = "Cancel tour"
                 cancelDesc = "Are you sure you want to cancel the tour?"
-                exit = "Take me to the exit"
+                exit = "Exit"
                 exitDesc = "Do you want to go to the exit?"
-                toilet = "Take me to the toilet"
+                toilet = "W.C."
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "Change speed"
             }
         }
-        async {
-            getPicture() //Asynchronously get the picture
-            uiThread {
-                createView(language)
-            }
-        }
-    }
-
-    private fun createView(language: String) {
+        var id = 1
         verticalLayout {
-            textView {
-                text = allArtPieces[0].name
+            titleView = textView {
+                text = allArtPieces[id].name
                 textSize = 32f
                 typeface = Typeface.DEFAULT_BOLD
                 padding = dip(5)
                 gravity = Gravity.CENTER_HORIZONTAL
             }
             //get image the pictures.php file that is true
-            imageView(allArtPieces[0].imageID) {
+            imageView = imageView(allArtPieces[id].imageID) {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
                 gravity = Gravity.CENTER_HORIZONTAL
             }.lparams {
                 bottomMargin = dip(10)
                 topMargin = dip(10)
             }
-            textView {
+            //view.setImageDrawable(resources.getDrawable(allArtPieces[1].imageID))
+            descriptionView = textView {
                 when (language) {
-                    "English" -> text = allArtPieces[0].English_Desc
-                    "French" -> text = allArtPieces[0].French_Desc
-                    "Chinese" -> text = allArtPieces[0].Chinese_Desc
-                    "Spanish" -> text = allArtPieces[0].Spanish_Desc
-                    "German" -> text = allArtPieces[0].German_Desc
+                    "English" -> text = allArtPieces[id].English_Desc
+                    "French" -> text = allArtPieces[id].French_Desc
+                    "Chinese" -> text = allArtPieces[id].Chinese_Desc
+                    "Spanish" -> text = allArtPieces[id].Spanish_Desc
+                    "German" -> text = allArtPieces[id].German_Desc
                     else -> text = ""
                 }
                 textSize = 16f
@@ -177,7 +180,8 @@ class NavigatingActivity : AppCompatActivity() {
                 tableRow {
                     button(skip) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                        textSize = 24f
+                        textSize = btnTextSize
+                        height = dip(btnHgt)
                         width = wrapContent
                         onClick {
                             alert(skipDesc) {
@@ -186,13 +190,18 @@ class NavigatingActivity : AppCompatActivity() {
                                 }
                                 negativeButton(negative) {
                                     //Do nothing
+                                    //imageView.setImageResource(allArtPieces[5].imageID)
+                                    //titleView.text = allArtPieces[5].name
+                                    //descriptionView.text = allArtPieces[5].English_Desc
+
                                 }
                             }.show()
                         }
                     }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
                     button(stop) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                        textSize = 24f
+                        textSize = btnTextSize
+                        height = dip(btnHgt)
                         width = wrapContent
                         onClick {
                             alert(stopDesc) {
@@ -203,11 +212,12 @@ class NavigatingActivity : AppCompatActivity() {
                             }.show()
                         }
                     }.lparams { rightMargin = 2 }
-                }.lparams { bottomMargin = dip(10) }
+                }.lparams { bottomMargin = dip(7) }
                 tableRow {
                     button(cancelTour) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                        textSize = 24f
+                        textSize = btnTextSize
+                        height = dip(btnHgt)
                         width = matchParent
                         onClick {
                             alert(cancelDesc) {
@@ -220,7 +230,8 @@ class NavigatingActivity : AppCompatActivity() {
                     }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
                     button(changeSpeed) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                        textSize = 24f
+                        textSize = btnTextSize
+                        height = dip(btnHgt)
                         width = matchParent
                         onClick {
                             alert {
@@ -270,11 +281,12 @@ class NavigatingActivity : AppCompatActivity() {
                             }
                         }
                     }.lparams { rightMargin = 2 }
-                }.lparams { bottomMargin = dip(10) }
+                }.lparams { bottomMargin = dip(7) }
                 tableRow {
                     button(toilet) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                        textSize = 24f
+                        textSize = btnTextSize
+                        height = dip(btnHgt)
                         width = matchParent
                         onClick {
                             alert(toiletDesc) {
@@ -285,7 +297,8 @@ class NavigatingActivity : AppCompatActivity() {
                     }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
                     button(exit) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                        textSize = 24f
+                        textSize = btnTextSize
+                        height = dip(btnHgt)
                         width = matchParent
                         onClick {
                             alert(exitDesc) {
@@ -294,9 +307,19 @@ class NavigatingActivity : AppCompatActivity() {
                             }.show()
                         }
                     }.lparams { rightMargin = 2 }
-                }.lparams { bottomMargin = dip(10) }
+                }.lparams { bottomMargin = dip(7) }
             }
         }
+        imageView?.setImageResource(allArtPieces[5].imageID)
+        titleView?.text = allArtPieces[5].name
+        descriptionView?.text = allArtPieces[5].English_Desc
+        //showOtherPicture()
+    }
+
+    private fun showOtherPicture() {
+        imageView?.setImageResource(allArtPieces[3].imageID)
+        titleView?.text = allArtPieces[3].name
+        descriptionView?.text = allArtPieces[3].English_Desc
     }
 
     override fun onBackPressed() {
