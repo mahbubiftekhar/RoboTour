@@ -62,7 +62,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                     //replace this with once other user has pressed button
                                     Thread.sleep(2000)
                                     uiThread {
-                                        startActivity<NavigatingActivity>("language" to language)
+                                        startActivity<TempActivity>("language" to language)
                                     }
                                 }
 

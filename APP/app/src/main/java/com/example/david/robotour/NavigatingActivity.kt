@@ -310,6 +310,7 @@ class NavigatingActivity : AppCompatActivity() {
                 }.lparams { bottomMargin = dip(7) }
             }
         }
+        Thread.sleep(4000)
         imageView?.setImageResource(allArtPieces[5].imageID)
         titleView?.text = allArtPieces[5].name
         descriptionView?.text = allArtPieces[5].English_Desc
@@ -347,7 +348,6 @@ class NavigatingActivity : AppCompatActivity() {
             for (i in 0..9) {
                 val a = URL("http://homepages.inf.ed.ac.uk/s1553593/$i.php").readText()
                 if (a == "N") {
-                    setTitleAndImage(a.toInt())
                     break
                 }
             }
@@ -365,10 +365,6 @@ class NavigatingActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    fun setTitleAndImage(id: Int) {
-
     }
 
     fun rejectSkip(){
@@ -409,10 +405,4 @@ class NavigatingActivity : AppCompatActivity() {
         } catch (e: IOException) {
         }
     }
-
-    private fun getPicture() {
-
-    }
-
-
 }
