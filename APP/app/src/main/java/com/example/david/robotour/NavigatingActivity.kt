@@ -1,5 +1,6 @@
 package com.example.david.robotour
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -9,8 +10,6 @@ import android.support.v4.content.res.ResourcesCompat
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.david.robotour.R.id.imageView
-import com.example.david.robotour.R.id.text
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -295,7 +294,7 @@ class NavigatingActivity : AppCompatActivity() {
                             }.show()
                         }
                     }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                    button(exit) {
+                   val a = button(exit) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                         textSize = btnTextSize
                         height = dip(btnHgt)
@@ -314,9 +313,58 @@ class NavigatingActivity : AppCompatActivity() {
         imageView?.setImageResource(allArtPieces[5].imageID)
         titleView?.text = allArtPieces[5].name
         descriptionView?.text = allArtPieces[5].English_Desc
-        //showOtherPicture()
-    }
+        async {
+            println("in here")
+            t.start()
+        }
 
+    }
+    val t: Thread = object : Thread() {
+        override fun run() {
+            while (!isInterrupted) {
+                try {
+                    Thread.sleep(1500) //1000ms = 1 sec
+                    runOnUiThread(object : Runnable {
+                        override fun run() {
+                            async {
+                                for (i in 0..9) {
+                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/$i.php").readText()
+                                    if (a == "N") {
+                                        println("++++ in catch")
+                                        //  imageView?.setImageResource(allArtPieces[i].imageID)
+                                        //  titleView?.text = allArtPieces[i].name
+                                        //  descriptionView?.text = allArtPieces[i].English_Desc
+                                        runOnUiThread{
+                                            imageView?.setImageResource(allArtPieces[9].imageID)
+                                            titleView?.text = "AFTER CLICK"
+                                            descriptionView?.text = "AFTER CLICK"}
+                                        }
+                                        break
+
+                                }
+                            }
+                            async {
+                                val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
+                                if (a == "2") {
+                                    alert("") {
+                                        positiveButton("Yes") {
+                                            skipImmediately()
+                                        }
+                                        negativeButton("No") {
+                                            rejectSkip()
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    })
+                } catch (e: InterruptedException) {
+                    //e.printStackTrace()
+                }
+            }
+        }
+    }
     private fun showOtherPicture() {
         imageView?.setImageResource(allArtPieces[3].imageID)
         titleView?.text = allArtPieces[3].name
@@ -326,8 +374,11 @@ class NavigatingActivity : AppCompatActivity() {
     override fun onBackPressed() {
         /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
         Send the user back to MainActivity */
+        t.interrupt()
+        t.stop()
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+        this.finish()
     }
 
     fun cancelGuideTotal() {

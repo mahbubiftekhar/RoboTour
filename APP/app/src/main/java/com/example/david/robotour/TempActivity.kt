@@ -3,35 +3,22 @@ package com.example.david.robotour
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.preference.PreferenceManager
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
 import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_temp.*
-import org.apache.http.HttpResponse
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
-import org.apache.http.client.ResponseHandler
 import org.apache.http.client.entity.UrlEncodedFormEntity
-import org.apache.http.client.methods.HttpDelete
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
-import org.apache.http.util.EntityUtils
-import org.intellij.lang.annotations.Language
 import org.jetbrains.anko.*
-import java.io.BufferedReader
 import java.io.IOException
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
 import java.net.URL
 
 
 class TempActivity : AppCompatActivity() {
-    val btnHgt = 77
     var btnTextSize = 24f
     var buttonTitle = ""
     var positive = ""
@@ -51,18 +38,18 @@ class TempActivity : AppCompatActivity() {
     var language2 = ""
     var running = true
     var updateTo = ""
-    lateinit var textView_title: TextView
-    lateinit var textView_Text: TextView
-    lateinit var image: ImageView
+    //var textView_title: TextView = findViewById(R.id.title_text)
+    //var textView_Text: TextView = findViewById(R.id.description_Text)
+    //var image: ImageView = findViewById(R.id.artworkPic)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_temp)
-        //Obtain language from PicturesUI
+
+        var textView_title: TextView = findViewById(R.id.title_text)
+        var textView_desc: TextView = findViewById(R.id.description_Text)
+        var image: ImageView = findViewById(R.id.artworkPic)
         val language = intent.getStringExtra("language")
-        textView_title = findViewById(R.id.title_text)
-        textView_Text = findViewById(R.id.description_Text)
-        image = findViewById(R.id.artworkPic)
         language2 = language
         when (language) {
             "English" -> {
@@ -193,6 +180,20 @@ class TempActivity : AppCompatActivity() {
             }.show()
         }
         SPEED.setOnClickListener {
+            async{
+                sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/1.php")
+                sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/2.php")
+                sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/3.php")
+                sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/4.php")
+                sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/0.php")
+                sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/5.php")
+                sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/6.php")
+                sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/7.php")
+                sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/8.php")
+                sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/9.php")
+                sendPUT("N", "http://homepages.inf.ed.ac.uk/s1553593/1.php")
+            }
+
             alert {
                 customView {
                     verticalLayout {
@@ -240,16 +241,60 @@ class TempActivity : AppCompatActivity() {
             }
         }
         EXIT.setOnClickListener {
-            updateTextAndImage(9)
+            //updateTextAndImage(9)
             alert(exitDesc) {
                 positiveButton(positive) { }
                 negativeButton(negative) { }
             }.show()
         }
         //Launch the thread to check that
-        val a = rcv_Ack()
-        a.start()
+        //val a = rcv_Ack()
+        //a.start()
+        async {
+            val t: Thread = object : Thread() {
+                override fun run() {
+                    while (!isInterrupted) {
+                        try {
+                            Thread.sleep(2500) //1000ms = 1 sec
+                            runOnUiThread(object : Runnable {
+                                @SuppressLint("SetTextI18n")
+                                override fun run() {
+                                    async {
+                                        for (i in 0..9) {
+                                            val a = URL("http://homepages.inf.ed.ac.uk/s1553593/$i.php").readText()
+                                            if (a == "N") {
+                                                println("++++ in catch")
+                                                textView_desc.text = allArtPieces[i].English_Desc
+                                                textView_title.text = allArtPieces[i].name
+                                                image.setImageResource(R.drawable.waterlillies)
+                                                break
+                                            }
+                                        }
+                                    }
+                                    async {
+                                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
+                                        if (a == "2") {
+                                            alert("") {
+                                                positiveButton("Yes") {
+                                                    skipImmediately()
+                                                }
+                                                negativeButton("No") {
+                                                    rejectSkip()
+                                                }
+                                            }
+                                        }
+                                    }
 
+                                }
+                            })
+                        } catch (e: InterruptedException) {
+                            //e.printStackTrace()
+                        }
+                    }
+                }
+            }
+            t.run()
+        }
     }
 
     fun updateTextAndImage(id: Int) {
@@ -269,22 +314,25 @@ class TempActivity : AppCompatActivity() {
     }
 
 
-
     fun updateHeader(text: String) {
         /*Update selected style text on screen*/
-        textView_title.text = text
-        textView_title.gravity = Gravity.CENTER
-        textView_title.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER_HORIZONTAL
+        //textView_title.text = text
+        //textView_title.gravity = Gravity.CENTER
+        //textView_title.gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER_HORIZONTAL
     }
 
     fun updateText(text: String) {
         /*Update selected style text on screen*/
-        textView_Text.text = text
+        //textView_Text.text = text
     }
 
     // Thread that receives acknowledgements
     class rcv_Ack : Thread() {
+        // var textView_title: TextView = findViewById(R.id.title_text)
+        // var textView_Text: TextView = findViewById(R.id.description_Text)
+        // var image: ImageView = findViewById(R.id.artworkPic)
         val a = TempActivity()
+
         override fun run() {
             while (true) {
                 a.constantCheck()
@@ -296,10 +344,10 @@ class TempActivity : AppCompatActivity() {
         //try {
         if (android.os.Build.VERSION.SDK_INT > 15) {
             // for API above 15
-            image.background = resources.getDrawable(R.drawable.waterlillies)
+            // image.background = resources.getDrawable(R.drawable.waterlillies)
         } else {
             // for API below 15
-            image.setBackgroundDrawable(resources.getDrawable(R.drawable.waterlillies))
+            // image.setBackgroundDrawable(resources.getDrawable(R.drawable.waterlillies))
         }
     }
 
@@ -316,7 +364,7 @@ class TempActivity : AppCompatActivity() {
     }
 
     fun switchToMain() {
-        startActivity<TempActivity>()
+        startActivity<MainActivity>()
     }
 
     fun showWaitingForPartner() {
@@ -329,8 +377,11 @@ class TempActivity : AppCompatActivity() {
             if (a == "N") {
                 //updateTextAndImage(i)
                 runOnUiThread {
-                    textView_Text.text = "WORKING"
-                    textView_title.text = "WORKING"
+                    //var textView_title: TextView = findViewById(R.id.title_text)
+                    //var textView_Text: TextView = findViewById(R.id.description_Text)
+                    //var image: ImageView = findViewById(R.id.artworkPic)
+                    // textView_Text.text = "WORKING"
+                    // textView_title.text = "WORKING"
                 }
                 break
             }

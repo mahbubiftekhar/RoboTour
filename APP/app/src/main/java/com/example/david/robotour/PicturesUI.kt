@@ -5,6 +5,10 @@ import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import org.jetbrains.anko.*
+import android.support.v4.content.ContextCompat.startActivity
+import android.content.Intent
+
+
 
 class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: String) : AnkoComponent<PicturesActivity> {
     lateinit var a: String
@@ -58,12 +62,8 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                 val progressDialog = indeterminateProgressDialog("Waiting for other user to select paintings...")
                                 //if 2 users
                                 progressDialog.show()
-                                async {
-                                    //replace this with once other user has pressed button
-                                    Thread.sleep(2000)
-                                    uiThread {
-                                        startActivity<TempActivity>("language" to language)
-                                    }
+                                async { progressDialog.dismiss()
+                                        startActivity<NavigatingActivity>("language" to language)
                                 }
 
                             }
@@ -76,4 +76,5 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
             }
         }
     }
+
 }
