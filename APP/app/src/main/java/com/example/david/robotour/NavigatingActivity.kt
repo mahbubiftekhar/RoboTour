@@ -39,10 +39,11 @@ class NavigatingActivity : AppCompatActivity() {
     var toiletDesc = ""
     var changeSpeed = ""
 
-    var imageView : ImageView? = null
-    var titleView : TextView? = null
-    var descriptionView : TextView? = null
+    var imageView: ImageView? = null
+    var titleView: TextView? = null
+    var descriptionView: TextView? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
@@ -143,17 +144,16 @@ class NavigatingActivity : AppCompatActivity() {
                 changeSpeed = "Change speed"
             }
         }
-        var id = 1
+        val id = 1
         verticalLayout {
             titleView = textView {
-                text = allArtPieces[id].name
                 textSize = 32f
                 typeface = Typeface.DEFAULT_BOLD
                 padding = dip(5)
                 gravity = Gravity.CENTER_HORIZONTAL
             }
             //get image the pictures.php file that is true
-            imageView = imageView(allArtPieces[id].imageID) {
+            imageView = imageView {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
                 gravity = Gravity.CENTER_HORIZONTAL
             }.lparams {
@@ -162,14 +162,7 @@ class NavigatingActivity : AppCompatActivity() {
             }
             //view.setImageDrawable(resources.getDrawable(allArtPieces[1].imageID))
             descriptionView = textView {
-                when (language) {
-                    "English" -> text = allArtPieces[id].English_Desc
-                    "French" -> text = allArtPieces[id].French_Desc
-                    "Chinese" -> text = allArtPieces[id].Chinese_Desc
-                    "Spanish" -> text = allArtPieces[id].Spanish_Desc
-                    "German" -> text = allArtPieces[id].German_Desc
-                    else -> text = ""
-                }
+                text = "Thank you for waiting"
                 textSize = 16f
                 typeface = Typeface.DEFAULT
                 padding = dip(10)
@@ -185,7 +178,9 @@ class NavigatingActivity : AppCompatActivity() {
                         onClick {
                             alert(skipDesc) {
                                 positiveButton(positive) {
-                                    skip()
+                                    async {
+                                        skip()
+                                    }
                                 }
                                 negativeButton(negative) {
                                     //Do nothing
@@ -205,7 +200,9 @@ class NavigatingActivity : AppCompatActivity() {
                         onClick {
                             alert(stopDesc) {
                                 positiveButton(positive) {
-                                    stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                    async {
+                                        stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                    }
                                 }
                                 negativeButton(negative) { }
                             }.show()
@@ -221,7 +218,9 @@ class NavigatingActivity : AppCompatActivity() {
                         onClick {
                             alert(cancelDesc) {
                                 positiveButton(positive) {
-                                    cancelGuideTotal()
+                                    async {
+                                        cancelGuideTotal()
+                                    }
                                 }
                                 negativeButton(negative) { }
                             }.show()
@@ -289,12 +288,16 @@ class NavigatingActivity : AppCompatActivity() {
                         width = matchParent
                         onClick {
                             alert(toiletDesc) {
-                                positiveButton(positive) { }
+                                positiveButton(positive) {
+                                    async {
+
+                                    }
+                                }
                                 negativeButton(negative) { }
                             }.show()
                         }
                     }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                   val a = button(exit) {
+                    button(exit) {
                         background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                         textSize = btnTextSize
                         height = dip(btnHgt)
@@ -310,15 +313,15 @@ class NavigatingActivity : AppCompatActivity() {
             }
         }
         Thread.sleep(4000)
-        imageView?.setImageResource(allArtPieces[5].imageID)
-        titleView?.text = allArtPieces[5].name
-        descriptionView?.text = allArtPieces[5].English_Desc
+        //imageView?.setImageResource(allArtPieces[5].imageID)
+        titleView?.text = "RoboTour calculating optimal route"
+        //descriptionView?.text = allArtPieces[5].English_Desc
         async {
-            println("in here")
-            t.start()
+            t.run()
         }
 
     }
+
     val t: Thread = object : Thread() {
         override fun run() {
             while (!isInterrupted) {
@@ -330,16 +333,25 @@ class NavigatingActivity : AppCompatActivity() {
                                 for (i in 0..9) {
                                     val a = URL("http://homepages.inf.ed.ac.uk/s1553593/$i.php").readText()
                                     if (a == "N") {
-                                        println("++++ in catch")
                                         //  imageView?.setImageResource(allArtPieces[i].imageID)
                                         //  titleView?.text = allArtPieces[i].name
                                         //  descriptionView?.text = allArtPieces[i].English_Desc
-                                        runOnUiThread{
-                                            imageView?.setImageResource(allArtPieces[9].imageID)
-                                            titleView?.text = "AFTER CLICK"
-                                            descriptionView?.text = "AFTER CLICK"}
+                                        runOnUiThread {
+                                            //Change the image, text and descrioption
+                                            imageView?.setImageResource(allArtPieces[i].imageID)
+                                            titleView?.text = allArtPieces[i].name
+                                            val language = intent.getStringExtra("language")
+                                            when (language) {
+                                                "English" -> descriptionView?.text = allArtPieces[i].English_Desc
+                                                "French" -> descriptionView?.text =allArtPieces[i].French_Desc
+                                                "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
+                                                "Spanish" -> descriptionView?.text =  allArtPieces[i].Spanish_Desc
+                                                "German" -> descriptionView?.text = allArtPieces[i].German_Desc
+                                                else -> ""
+                                            }
                                         }
                                         break
+                                    }
 
                                 }
                             }
@@ -348,10 +360,14 @@ class NavigatingActivity : AppCompatActivity() {
                                 if (a == "2") {
                                     alert("") {
                                         positiveButton("Yes") {
-                                            skipImmediately()
+                                            async {
+                                                skipImmediately()
+                                            }
                                         }
                                         negativeButton("No") {
-                                            rejectSkip()
+                                            async {
+                                                rejectSkip()
+                                            }
                                         }
                                     }
                                 }
@@ -365,6 +381,7 @@ class NavigatingActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun showOtherPicture() {
         imageView?.setImageResource(allArtPieces[3].imageID)
         titleView?.text = allArtPieces[3].name
@@ -405,12 +422,12 @@ class NavigatingActivity : AppCompatActivity() {
         }
         async {
             val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
-            if(a == "2"){
-                alert(""){
-                    positiveButton("Yes"){
+            if (a == "2") {
+                alert("") {
+                    positiveButton("Yes") {
                         skipImmediately()
                     }
-                    negativeButton ("No"){
+                    negativeButton("No") {
                         rejectSkip()
                     }
                 }
@@ -418,18 +435,19 @@ class NavigatingActivity : AppCompatActivity() {
         }
     }
 
-    fun rejectSkip(){
+    fun rejectSkip() {
         async {
             sendPUT("N", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
         }
     }
 
-    fun skipImmediately (){
+    fun skipImmediately() {
         /*This function is only when both users have agreed to skip the next item*/
         async {
             sendPUT("Y", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
         }
     }
+
     fun skip() {
         async {
             sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
