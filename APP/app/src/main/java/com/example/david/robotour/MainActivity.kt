@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
         intent.addCategory(Intent.CATEGORY_HOME)
         startActivity(intent)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
                 imageView(R.drawable.robotour_small) {
                     backgroundColor = Color.TRANSPARENT //Removes gray border
                 }.lparams {
-                    bottomMargin = dip(4)
+                    bottomMargin = dip(10)
                     topMargin = dip(10)
                 }
                 button("Start") {

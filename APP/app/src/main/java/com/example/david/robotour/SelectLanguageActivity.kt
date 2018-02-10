@@ -17,8 +17,7 @@ class SelectLanguageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // add back button to actionbar
-
-        supportActionBar?.title = "Select Language"
+        supportActionBar?.title = "Select your language"
 
         //Populate List
         languages.add(Language("Chinese", R.drawable.chineseflag_fixed))

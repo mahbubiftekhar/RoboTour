@@ -5,8 +5,6 @@ import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import org.jetbrains.anko.*
-import android.support.v4.content.ContextCompat.startActivity
-import android.content.Intent
 
 
 
@@ -60,7 +58,6 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                         alert(navigate) {
                             positiveButton("Yes") {
                                 val progressDialog = indeterminateProgressDialog("Waiting for other user to select paintings...")
-                                //if 2 users
                                 progressDialog.show()
                                 async {
                                         startActivity<NavigatingActivity>("language" to language)
@@ -78,6 +75,8 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                 lparams { width = matchParent; height = matchParent; orientation = LinearLayout.VERTICAL }
             }
         }
+
+
     }
 
 }

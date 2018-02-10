@@ -17,7 +17,7 @@ class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val langua
 
     var selected = BooleanArray(count, {_ -> false})
 
-    // /Describe ListView Layout using Anko
+    //Describe ListView Layout using Anko
     override fun getView(i: Int, v: View?, parent: ViewGroup?): View {
         //Change text depending on language selected
         val languageText = when (language) {

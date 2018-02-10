@@ -181,10 +181,6 @@ class NavigatingActivity : AppCompatActivity() {
                                 }
                                 negativeButton(negative) {
                                     //Do nothing
-                                    //imageView.setImageResource(allArtPieces[5].imageID)
-                                    //titleView.text = allArtPieces[5].name
-                                    //descriptionView.text = allArtPieces[5].English_Desc
-
                                 }
                             }.show()
                         }
@@ -219,7 +215,9 @@ class NavigatingActivity : AppCompatActivity() {
                                         cancelGuideTotal()
                                     }
                                 }
-                                negativeButton(negative) { }
+                                negativeButton(negative) {
+                                    onBackPressed() //Call on back pressed to take them back to the main activity
+                                }
                             }.show()
                         }
                     }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
@@ -287,7 +285,7 @@ class NavigatingActivity : AppCompatActivity() {
                             alert(toiletDesc) {
                                 positiveButton(positive) {
                                     async {
-
+                                        sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php")
                                     }
                                 }
                                 negativeButton(negative) { }
@@ -301,7 +299,11 @@ class NavigatingActivity : AppCompatActivity() {
                         width = matchParent
                         onClick {
                             alert(exitDesc) {
-                                positiveButton(positive) { }
+                                positiveButton(positive) {
+                                    async{
+                                        sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+                                    }
+                                }
                                 negativeButton(negative) { }
                             }.show()
                         }
