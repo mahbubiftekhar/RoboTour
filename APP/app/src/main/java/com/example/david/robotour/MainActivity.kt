@@ -7,8 +7,6 @@ import android.support.v4.content.res.ResourcesCompat
 import org.jetbrains.anko.*
 import android.content.Intent
 
-
-
 class MainActivity : AppCompatActivity() {
 
     /* override the back button, so the user is promted when they wish to leave the app */

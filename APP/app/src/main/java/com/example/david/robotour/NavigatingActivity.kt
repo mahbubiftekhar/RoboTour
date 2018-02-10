@@ -232,7 +232,7 @@ class NavigatingActivity : AppCompatActivity() {
                                     verticalLayout {
                                         listView {
                                             val options: List<String>
-                                            val SelectSpeed:String
+                                            val SelectSpeed: String
                                             when (language) {
                                                 "English" -> {
                                                     options = listOf("Slow", "Normal", "Fast")
@@ -300,7 +300,7 @@ class NavigatingActivity : AppCompatActivity() {
                         onClick {
                             alert(exitDesc) {
                                 positiveButton(positive) {
-                                    async{
+                                    async {
                                         sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
                                     }
                                 }
@@ -341,9 +341,9 @@ class NavigatingActivity : AppCompatActivity() {
                                             titleView?.text = allArtPieces[i].name
                                             val language = intent.getStringExtra("language")
                                             when (language) {
-                                                "French" -> descriptionView?.text =allArtPieces[i].French_Desc
+                                                "French" -> descriptionView?.text = allArtPieces[i].French_Desc
                                                 "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
-                                                "Spanish" -> descriptionView?.text =  allArtPieces[i].Spanish_Desc
+                                                "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
                                                 "German" -> descriptionView?.text = allArtPieces[i].German_Desc
                                                 else -> descriptionView?.text = allArtPieces[i].English_Desc
                                             }

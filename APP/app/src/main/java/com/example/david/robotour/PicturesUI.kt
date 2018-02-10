@@ -60,7 +60,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                 val progressDialog = indeterminateProgressDialog("Waiting for other user to select paintings...")
                                 progressDialog.show()
                                 async {
-                                        startActivity<NavigatingActivity>("language" to language)
+                                        startActivity<Waiting>("language" to language)
                                     uiThread{
                                         progressDialog.dismiss()
                                     }
