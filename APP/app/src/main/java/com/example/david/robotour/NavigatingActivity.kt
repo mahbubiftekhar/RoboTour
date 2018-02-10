@@ -23,7 +23,6 @@ import java.net.URL
 class NavigatingActivity : AppCompatActivity() {
     val btnHgt = 77
     var btnTextSize = 24f
-    var buttonTitle = ""
     var positive = ""
     var negative = ""
     var skip = ""
@@ -38,7 +37,6 @@ class NavigatingActivity : AppCompatActivity() {
     var toilet = ""
     var toiletDesc = ""
     var changeSpeed = ""
-
     var imageView: ImageView? = null
     var titleView: TextView? = null
     var descriptionView: TextView? = null
@@ -144,7 +142,6 @@ class NavigatingActivity : AppCompatActivity() {
                 changeSpeed = "Change speed"
             }
         }
-        val id = 1
         verticalLayout {
             titleView = textView {
                 textSize = 32f
@@ -237,7 +234,7 @@ class NavigatingActivity : AppCompatActivity() {
                                     verticalLayout {
                                         listView {
                                             val options: List<String>
-                                            var SelectSpeed = ""
+                                            val SelectSpeed:String
                                             when (language) {
                                                 "English" -> {
                                                     options = listOf("Slow", "Normal", "Fast")
@@ -342,12 +339,11 @@ class NavigatingActivity : AppCompatActivity() {
                                             titleView?.text = allArtPieces[i].name
                                             val language = intent.getStringExtra("language")
                                             when (language) {
-                                                "English" -> descriptionView?.text = allArtPieces[i].English_Desc
                                                 "French" -> descriptionView?.text =allArtPieces[i].French_Desc
                                                 "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
                                                 "Spanish" -> descriptionView?.text =  allArtPieces[i].Spanish_Desc
                                                 "German" -> descriptionView?.text = allArtPieces[i].German_Desc
-                                                else -> ""
+                                                else -> descriptionView?.text = allArtPieces[i].English_Desc
                                             }
                                         }
                                         break
@@ -382,17 +378,10 @@ class NavigatingActivity : AppCompatActivity() {
         }
     }
 
-    private fun showOtherPicture() {
-        imageView?.setImageResource(allArtPieces[3].imageID)
-        titleView?.text = allArtPieces[3].name
-        descriptionView?.text = allArtPieces[3].English_Desc
-    }
-
     override fun onBackPressed() {
         /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
         Send the user back to MainActivity */
         t.interrupt()
-        t.stop()
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         this.finish()
@@ -404,35 +393,13 @@ class NavigatingActivity : AppCompatActivity() {
     }
 
     fun switchToMain() {
-        startActivity<TempActivity>()
+        startActivity<MainActivity>()
     }
 
     fun showWaitingForPartner() {
-        /*This function should show a pop up saying "waiting for partner to respond, */
-    }
-
-    fun constantCheck() {
-        async {
-            for (i in 0..9) {
-                val a = URL("http://homepages.inf.ed.ac.uk/s1553593/$i.php").readText()
-                if (a == "N") {
-                    break
-                }
-            }
-        }
-        async {
-            val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
-            if (a == "2") {
-                alert("") {
-                    positiveButton("Yes") {
-                        skipImmediately()
-                    }
-                    negativeButton("No") {
-                        rejectSkip()
-                    }
-                }
-            }
-        }
+        alert("Waiting for other users response") {
+            title = "Waiting for other users response"
+        }.show()
     }
 
     fun rejectSkip() {

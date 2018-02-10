@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                     textSize = 32f
                     background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                     onClick { startActivity<SelectLanguageActivity>() }
-                    onLongClick { startActivity<TempActivity>(); true }
+                    onLongClick { startActivity<NavigatingActivity>(); true }
                 }
             }
         }
