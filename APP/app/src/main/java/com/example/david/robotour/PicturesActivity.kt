@@ -17,7 +17,8 @@ import java.util.*
 
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
-class PicturesActivity : AppCompatActivity() {data class ArtPiece(val name: String, val artist: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int, var selected: Boolean)
+class PicturesActivity : AppCompatActivity() {
+    data class ArtPiece(val name: String, val artist: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int, var selected: Boolean)
 
     private var shownArtPieces = ArrayList<ArtPiece>()
     private val REQ_CODE_SPEECH_INPUT = 100
@@ -142,16 +143,7 @@ class PicturesActivity : AppCompatActivity() {data class ArtPiece(val name: Stri
         when (item.itemId) {
         //If searched paintings bring back all paintings, else go back to SelectLanguageActivity
             android.R.id.home -> {
-                if (searchedForPainting) {
-                    shownArtPieces.clear()
-                    for (artPiece in allArtPieces) {
-                        shownArtPieces.add(artPiece)
-                    }
-                    adapter.notifyDataSetChanged()
-                    searchedForPainting = false
-                } else {
-                    onBackPressed()
-                }
+               onBackPressed()
             }
             R.id.search_button -> {
                 alert {
@@ -201,18 +193,27 @@ class PicturesActivity : AppCompatActivity() {data class ArtPiece(val name: Stri
     }
 
     override fun onBackPressed() {
-        alert("Are you sure you want to leave? Your selection will be lost"){
-            positiveButton {
-               async{
-                   clearFindViewByIdCache()
-                   allArtPieces.clear()
-               }
-                super.onBackPressed() // Call super.onBackPressed
+        if (searchedForPainting) {
+            shownArtPieces.clear()
+            for (artPiece in allArtPieces) {
+                shownArtPieces.add(artPiece)
             }
-            negativeButton {
-                /*Do nothing*/
-            }
-        }.show()
+            adapter.notifyDataSetChanged()
+            searchedForPainting = false
+        } else {
+            alert("Are you sure you want to leave? Your selection will be lost") {
+                positiveButton {
+                    async {
+                        clearFindViewByIdCache()
+                        allArtPieces.clear()
+                    }
+                    super.onBackPressed() // Call super.onBackPressed
+                }
+                negativeButton {
+                    /*Do nothing*/
+                }
+            }.show()
+        }
     }
 
     fun askSpeechInput() {
@@ -221,7 +222,10 @@ class PicturesActivity : AppCompatActivity() {data class ArtPiece(val name: Stri
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
         try {
-            async { startActivityForResult(intent, REQ_CODE_SPEECH_INPUT) }
+            async {
+                searchedForPainting = true
+                startActivityForResult(intent, REQ_CODE_SPEECH_INPUT)
+            }
         } catch (a: ActivityNotFoundException) {
         } catch (e: java.lang.RuntimeException) {
         } catch(e: java.lang.IllegalArgumentException) {

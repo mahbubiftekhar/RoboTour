@@ -23,7 +23,7 @@ class Waiting : AppCompatActivity() {
         language = intent.getStringExtra("language") //Getting the language from the previous activity
 
         when (language) {
-            "English" -> message = "Please Wait For the Other User..."
+            "English" -> message = "Waiting for other user..."
             "German" -> message = "Bitte Warten Sie Auf den Anderen User..."
             "French" -> message = "Veuillez Attendre l'Autre Utilisateur..."
             "Spanish" -> message = "Por Favor Espere al Otro Usuario..."
@@ -53,7 +53,7 @@ class Waiting : AppCompatActivity() {
     }
 
     fun switchToNavigate() {
-        //Thread.sleep(2000) Needs to be readded in later
+        Thread.sleep(3500)
         t.interrupt() // Stop the thread
         clearFindViewByIdCache()
         startActivity<NavigatingActivity>("language" to language) // now we can switch the activity

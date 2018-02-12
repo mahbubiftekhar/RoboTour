@@ -34,13 +34,18 @@
         </activity>
         <activity
             android:name=".PicturesActivity"
-            android:noHistory="true" />
-        <activity android:name=".NavigatingActivity">
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".NavigatingActivity"
+            android:screenOrientation="portrait"
+            >
             android:screenOrientation="portrait"
         </activity>
         <activity
             android:name=".Waiting"
             android:label="@string/title_activity_waiting"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".TempActivity" />
     </application>
