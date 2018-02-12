@@ -11,30 +11,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/title_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="#000000"
-            android:textSize="32dp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/artworkPic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-
-        <TextView
-            android:id="@+id/description_Text"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:fontFamily="Arial"
-            android:textSize="20sp"
-            android:typeface="serif" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dip"
@@ -42,20 +18,19 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/SKIP"
+                android:id="@+id/SPEAK"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
-                android:padding="25dp" />
+                android:text="SPEAK" />
 
             <Button
-                android:id="@+id/STOP"
+                android:id="@+id/FORWARD"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
-                android:padding="25dp"
                 android:text="FORWARD" />
         </LinearLayout>
 
@@ -66,20 +41,20 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/CANCEL"
+                android:id="@+id/LEFT"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
-                android:padding="25dp" />
+                android:text="ANTI-CLOCKWISE" />
 
             <Button
-                android:id="@+id/SPEED"
+                android:id="@+id/RIGHT"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
-                android:padding="25dp" />
+                android:text="CLOCKWISE" />
 
         </LinearLayout>
 
@@ -90,18 +65,20 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/TOILET"
+                android:id="@+id/BACKWARDS"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/buttonxml" />
+                android:background="@drawable/buttonxml"
+                android:text="BACKWARDS" />
 
             <Button
-                android:id="@+id/EXIT"
+                android:id="@+id/STOP"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/buttonxml" />
+                android:background="@drawable/buttonxml"
+                android:text="STOP" />
         </LinearLayout>
 
     </LinearLayout>

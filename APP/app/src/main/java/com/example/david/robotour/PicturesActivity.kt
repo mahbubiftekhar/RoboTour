@@ -1,6 +1,5 @@
 package com.example.david.robotour
 
-import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
@@ -9,7 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 import org.jetbrains.anko.*
 import android.content.Intent
-import android.preference.PreferenceManager
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.view.inputmethod.InputMethodManager
@@ -19,8 +17,7 @@ import java.util.*
 
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
-class PicturesActivity : AppCompatActivity() {
-    data class ArtPiece(val name: String, val artist: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int, var selected: Boolean)
+class PicturesActivity : AppCompatActivity() {data class ArtPiece(val name: String, val artist: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int, var selected: Boolean)
 
     private var shownArtPieces = ArrayList<ArtPiece>()
     private val REQ_CODE_SPEECH_INPUT = 100
@@ -29,45 +26,6 @@ class PicturesActivity : AppCompatActivity() {
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     private var voiceInput: TextView? = null
 
-    @SuppressLint("ApplySharedPref")
-    fun saveString(key: String, value: String) {
-        /* Function to save an SharedPreference value which holds an String*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val editor = sharedPreferences.edit()
-        editor.putString(key, value)
-        editor.commit()
-    }
-
-    fun loadString(key: String): String {
-        /*Function to load an SharedPreference value which holds an String*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
-        val savedValue = sharedPreferences.getString(key, "False")
-        return savedValue
-    }
-
-    fun resetSharedPref() {
-        /* This function is for if we are leaving this activity, this function will asynchronously reset all the shared pref values*/
-        async {
-            //Resetting all to false
-            for (i in 0..9) {
-                saveString(i.toString(), "False")
-            }
-        }
-    }
-    fun sendList(){
-        /*This function will upload to the server the required items simply*/
-
-    }
-
-    fun alternateShared(Position: Int) {
-        /*This function should be called when the user clicks the button for a particular item, only pass the position*/
-        val old = loadString(Position.toString())
-        if (old == "True") {
-            saveString(Position.toString(), "False")
-        } else {
-            saveString(Position.toString(), "True")
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -248,7 +206,6 @@ class PicturesActivity : AppCompatActivity() {
                async{
                    clearFindViewByIdCache()
                    allArtPieces.clear()
-                   resetSharedPref() /*This will reset all the shared preferences*/
                }
                 super.onBackPressed() // Call super.onBackPressed
             }

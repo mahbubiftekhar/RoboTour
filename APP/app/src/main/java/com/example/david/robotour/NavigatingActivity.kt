@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.view.Gravity
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.ScrollView
 import android.widget.TextView
@@ -24,6 +25,8 @@ import java.net.URL
 class NavigatingActivity : AppCompatActivity() {
     val btnHgt = 77
     var btnTextSize = 24f
+    var toggleStBtn = true
+    var alertStBtn = ""
     var positive = ""
     var negative = ""
     var skip = ""
@@ -31,6 +34,8 @@ class NavigatingActivity : AppCompatActivity() {
     val userid = ""
     var stop = ""
     var stopDesc = ""
+    var start = ""
+    var startDesc = ""
     var cancelTour = ""
     var cancelDesc = ""
     var exit = ""
@@ -58,6 +63,8 @@ class NavigatingActivity : AppCompatActivity() {
                 skipDesc = "Are you sure you want to skip to the next painting?"
                 stop = "Stop RoboTour"
                 stopDesc = "Are you sure you want to stop RoboTour?"
+                start = "Start RoboTour"
+                startDesc = "Do you want to start RoboTour?"
                 cancelTour = "Cancel tour"
                 cancelDesc = "Are you sure you want to cancel the tour?"
                 exit = "Exit"
@@ -73,6 +80,8 @@ class NavigatingActivity : AppCompatActivity() {
                 skipDesc = "Êtes-vous sûr de vouloir passer à la peinture suivante?"
                 stop = "Arrêtez RoboTour"
                 stopDesc = "Êtes-vous sûr de vouloir arrêter RoboTour?"
+                start = "Démarrer RoboTour"
+                startDesc = "Voulez-vous démarrer RoboTour?"
                 cancelTour = "Annuler Visite"
                 cancelDesc = "Êtes-vous sûr de vouloir annuler la visite?"
                 exit = "Sortie"
@@ -88,6 +97,8 @@ class NavigatingActivity : AppCompatActivity() {
                 skipDesc = "你确定要跳到下一张画吗？"
                 stop = "停止RoboTour"
                 stopDesc = "你确定要停止RoboTour？"
+                start = "開始 RoboTour"
+                startDesc = "你想開始 RoboTour?"
                 cancelTour = "取消游览"
                 cancelDesc = "你确定要取消游览吗？"
                 exit = "带我去出口"
@@ -103,6 +114,8 @@ class NavigatingActivity : AppCompatActivity() {
                 skipDesc = "¿Estás seguro de que quieres saltar a la próxima pintura?"
                 stop = "Detener RoboTour"
                 stopDesc = "¿Estás seguro de que quieres detener RoboTour?"
+                start = "Iniciar RoboTour"
+                startDesc = "¿Quieres iniciar RoboTour?"
                 cancelTour = "Cancelar RoboTour"
                 cancelDesc = "¿Seguro que quieres cancelar el tour?"
                 exit = "Salida"
@@ -118,6 +131,8 @@ class NavigatingActivity : AppCompatActivity() {
                 skipDesc = "Wollen Sie dieses Bild Überspringen?"
                 stop = "RoboTour Stoppen"
                 stopDesc = "Möchten Sie RoboTour stoppen?"
+                start = "RoboTour Starten"
+                startDesc = "Möchten Sie RoboTour starten?"
                 cancelTour = "Tour abbrechen"
                 cancelDesc = "Möchten Sie die Tour wirklich abbrechen?"
                 exit = "Ausgang"
@@ -134,6 +149,8 @@ class NavigatingActivity : AppCompatActivity() {
                 skipDesc = "Are you sure you want to skip to the next painting?"
                 stop = "Stop RoboTour"
                 stopDesc = "Are you sure you want to stop RoboTour?"
+                start = "Start RoboTour"
+                startDesc = "Do you want to start RoboTour?"
                 cancelTour = "Cancel tour"
                 cancelDesc = "Are you sure you want to cancel the tour?"
                 exit = "Exit"
@@ -193,13 +210,16 @@ class NavigatingActivity : AppCompatActivity() {
                             height = dip(btnHgt)
                             width = wrapContent
                             onClick {
-                                alert(stopDesc) {
+                                if (toggleStBtn) alertStBtn = stopDesc else alertStBtn = startDesc
+                                alert(alertStBtn) {
                                     positiveButton(positive) {
+                                        if (toggleStBtn) text = start else text = stop
+                                        toggleStBtn = !toggleStBtn
                                         async {
                                             stopRoboTour() /*This function will call for RoboTour to be stopped*/
                                         }
                                     }
-                                    negativeButton(negative) { }
+                                negativeButton(negative) { }
                                 }.show()
                             }
                         }.lparams { rightMargin = 2 }
@@ -378,7 +398,6 @@ class NavigatingActivity : AppCompatActivity() {
                         }
                     })
                 } catch (e: InterruptedException) {
-                    //e.printStackTrace()
                 }
             }
         }

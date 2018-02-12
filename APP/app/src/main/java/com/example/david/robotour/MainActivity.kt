@@ -1,5 +1,6 @@
 package com.example.david.robotour
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -8,7 +9,6 @@ import org.jetbrains.anko.*
 import android.content.Intent
 
 class MainActivity : AppCompatActivity() {
-
     /* override the back button, so the user is promted when they wish to leave the app */
     override fun onBackPressed(){
         val intent = Intent(Intent.ACTION_MAIN)
@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
@@ -33,7 +34,14 @@ class MainActivity : AppCompatActivity() {
                     textSize = 32f
                     background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                     onClick { startActivity<SelectLanguageActivity>() }
-                    onLongClick { startActivity<NavigatingActivity>(); true }
+                    onLongClick { startActivity<TempActivity>(); true }
+                }
+                var on = true
+                toggleButton {
+                    onClick { on = !on }
+                    text = "Single User"
+                    textOn = "Multi User"
+                    textOff = "Single User"
                 }
             }
         }

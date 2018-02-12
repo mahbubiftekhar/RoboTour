@@ -4,9 +4,9 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
+import kotlinx.android.synthetic.*
 import org.jetbrains.anko.*
 import java.net.URL
 
@@ -33,10 +33,10 @@ class Waiting : AppCompatActivity() {
 
         verticalLayout {
             webView {
-                  loadUrl("file:///android_asset/robotour_spinning_grey.gif")
-                  settings.loadWithOverviewMode = true
-                  settings.useWideViewPort = true
-                }
+                loadUrl("file:///android_asset/robotour_spinning_grey.gif")
+                settings.loadWithOverviewMode = true
+                settings.useWideViewPort = true
+            }
             textView {
                 textSize = 32f
                 typeface = Typeface.DEFAULT_BOLD
@@ -47,14 +47,15 @@ class Waiting : AppCompatActivity() {
             }
             background = ColorDrawable(Color.parseColor("#EEEEEE"))
         }
-        async{
-            println("We are getting in async")
-            t.run()
+        async {
+            t.start()
         }
     }
 
     fun switchToNavigate() {
+        //Thread.sleep(2000) Needs to be readded in later
         t.interrupt() // Stop the thread
+        clearFindViewByIdCache()
         startActivity<NavigatingActivity>("language" to language) // now we can switch the activity
     }
 
@@ -62,45 +63,25 @@ class Waiting : AppCompatActivity() {
         /*Overridden onBackPressed*/
     }
 
-    fun checkUser1(): Boolean {
-        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-        if (a == "Y") {
-            return true
-        }
-        return false
-    }
-
-    fun checkUser2(): Boolean {
-        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user2.php").readText()
-        if (a == "Y") {
-            return true
-        }
-        return false
-    }
-
     val t: Thread = object : Thread() {
+        /*This thread will check if the other use has made their selection*/
         override fun run() {
             while (!isInterrupted) {
-                println("In thread")
                 try {
-                    Thread.sleep(1000) //1000ms = 1 sec
-                    runOnUiThread(object : Runnable {
-                        override fun run() {
-                            async {
-                                if (user == 1) {
-                                    if (checkUser1()) {
-                                        //If user 1 has made their selection and you are not user 1
-                                        switchToNavigate()
-                                    }
-                                } else {
-                                    //If user 2 has made their selection and you are not user 2
-                                    if (checkUser2()) {
-                                        switchToNavigate()
-                                    }
-                                }
-                            }
+                    if (user == 1) {
+                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user2.php").readText()
+                        if (a == "Y") {
+                            //If user 1 has made their selection and you are not user 1
+                            switchToNavigate()
                         }
-                    })
+                    } else {
+                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/use1.php").readText()
+                        println("USERS ID IS 2")
+                        //If user 2 has made their selection and you are not user 2
+                        if (a == "Y") {
+                            switchToNavigate()
+                        }
+                    }
                 } catch (e: InterruptedException) {
                 }
             }

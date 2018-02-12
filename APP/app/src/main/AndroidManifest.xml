@@ -42,6 +42,7 @@
             android:name=".Waiting"
             android:label="@string/title_activity_waiting"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".TempActivity" />
     </application>
 
 </manifest>
