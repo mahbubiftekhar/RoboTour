@@ -33,10 +33,10 @@ class Waiting : AppCompatActivity() {
 
         verticalLayout {
             webView {
-                loadUrl("file:///android_asset/robotour_spinning_grey.gif")
-                settings.loadWithOverviewMode = true
-                settings.useWideViewPort = true
-            }
+                  loadUrl("file:///android_asset/robotour_spinning_grey.gif")
+                  settings.loadWithOverviewMode = true
+                  settings.useWideViewPort = true
+                }
             textView {
                 textSize = 32f
                 typeface = Typeface.DEFAULT_BOLD
@@ -47,16 +47,10 @@ class Waiting : AppCompatActivity() {
             }
             background = ColorDrawable(Color.parseColor("#EEEEEE"))
         }
-        //Commented to work on splash view
-        /*async {
-            //Running the thread
+        async{
+            println("We are getting in async")
             t.run()
         }
-        //This part is temp until you make me the php files david
-        t.interrupt()
-        Thread.sleep(10000)
-        switchToNavigate()
-        //This above part is temproary*/
     }
 
     fun switchToNavigate() {
@@ -87,6 +81,7 @@ class Waiting : AppCompatActivity() {
     val t: Thread = object : Thread() {
         override fun run() {
             while (!isInterrupted) {
+                println("In thread")
                 try {
                     Thread.sleep(1000) //1000ms = 1 sec
                     runOnUiThread(object : Runnable {
@@ -99,7 +94,7 @@ class Waiting : AppCompatActivity() {
                                     }
                                 } else {
                                     //If user 2 has made their selection and you are not user 2
-                                    if (checkUser1()) {
+                                    if (checkUser2()) {
                                         switchToNavigate()
                                     }
                                 }
