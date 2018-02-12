@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.view.Gravity
 import android.widget.ImageView
+import android.widget.ScrollView
 import android.widget.TextView
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
@@ -116,7 +117,7 @@ class NavigatingActivity : AppCompatActivity() {
                 skip = "Bild Überspringen"
                 skipDesc = "Wollen Sie dieses Bild Überspringen?"
                 stop = "RoboTour Stoppen"
-                stopDesc = "Möchtest Sie RoboTour stoppen?"
+                stopDesc = "Möchten Sie RoboTour stoppen?"
                 cancelTour = "Tour abbrechen"
                 cancelDesc = "Möchten Sie die Tour wirklich abbrechen?"
                 exit = "Ausgang"
@@ -159,161 +160,164 @@ class NavigatingActivity : AppCompatActivity() {
             }
             //view.setImageDrawable(resources.getDrawable(allArtPieces[1].imageID))
             descriptionView = textView {
-                text = "Thank you for waiting"
+                text = ""
                 textSize = 16f
                 typeface = Typeface.DEFAULT
                 padding = dip(10)
             }
-            tableLayout {
-                isStretchAllColumns = true
-                tableRow {
-                    button(skip) {
-                        background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                        textSize = btnTextSize
-                        height = dip(btnHgt)
-                        width = wrapContent
-                        onClick {
-                            alert(skipDesc) {
-                                positiveButton(positive) {
-                                    async {
-                                        skip()
+            relativeLayout {
+                tableLayout {
+                    isStretchAllColumns = true
+                    tableRow {
+                        button(skip) {
+                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                            textSize = btnTextSize
+                            height = dip(btnHgt)
+                            width = wrapContent
+                            onClick {
+                                alert(skipDesc) {
+                                    positiveButton(positive) {
+                                        async {
+                                            skip()
+                                        }
                                     }
-                                }
-                                negativeButton(negative) {
-                                    //Do nothing
-                                }
-                            }.show()
-                        }
-                    }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                    button(stop) {
-                        background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                        textSize = btnTextSize
-                        height = dip(btnHgt)
-                        width = wrapContent
-                        onClick {
-                            alert(stopDesc) {
-                                positiveButton(positive) {
-                                    async {
-                                        stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                    negativeButton(negative) {
+                                        //Do nothing
                                     }
-                                }
-                                negativeButton(negative) { }
-                            }.show()
-                        }
-                    }.lparams { rightMargin = 2 }
-                }.lparams { bottomMargin = dip(7) }
-                tableRow {
-                    button(cancelTour) {
-                        background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                        textSize = btnTextSize
-                        height = dip(btnHgt)
-                        width = matchParent
-                        onClick {
-                            alert(cancelDesc) {
-                                positiveButton(positive) {
-                                    async {
-                                        cancelGuideTotal()
+                                }.show()
+                            }
+                        }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
+                        button(stop) {
+                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                            textSize = btnTextSize
+                            height = dip(btnHgt)
+                            width = wrapContent
+                            onClick {
+                                alert(stopDesc) {
+                                    positiveButton(positive) {
+                                        async {
+                                            stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                        }
                                     }
-                                }
-                                negativeButton(negative) {
-                                    onBackPressed() //Call on back pressed to take them back to the main activity
-                                }
-                            }.show()
-                        }
-                    }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                    button(changeSpeed) {
-                        background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                        textSize = btnTextSize
-                        height = dip(btnHgt)
-                        width = matchParent
-                        onClick {
-                            alert {
-                                customView {
-                                    verticalLayout {
-                                        listView {
-                                            val options: List<String>
-                                            val SelectSpeed: String
-                                            when (language) {
-                                                "English" -> {
-                                                    options = listOf("Slow", "Normal", "Fast")
-                                                    SelectSpeed = "Select speed"
+                                    negativeButton(negative) { }
+                                }.show()
+                            }
+                        }.lparams { rightMargin = 2 }
+                    }.lparams { bottomMargin = dip(8) }
+                    tableRow {
+                        button(cancelTour) {
+                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                            textSize = btnTextSize
+                            height = dip(btnHgt)
+                            width = matchParent
+                            onClick {
+                                alert(cancelDesc) {
+                                    positiveButton(positive) {
+                                        async {
+                                            cancelGuideTotal()
+                                        }
+                                    }
+                                    negativeButton(negative) {
+                                        onBackPressed() //Call on back pressed to take them back to the main activity
+                                    }
+                                }.show()
+                            }
+                        }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
+                        button(changeSpeed) {
+                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                            textSize = btnTextSize
+                            height = dip(btnHgt)
+                            width = matchParent
+                            onClick {
+                                alert {
+                                    customView {
+                                        verticalLayout {
+                                            listView {
+                                                val options: List<String>
+                                                val SelectSpeed: String
+                                                when (language) {
+                                                    "English" -> {
+                                                        options = listOf("Slow", "Normal", "Fast")
+                                                        SelectSpeed = "Select speed"
+                                                    }
+                                                    "French" -> {
+                                                        options = listOf("lent", "Ordinaire", "vite")
+                                                        SelectSpeed = "Sélectionnez la vitesse"
+                                                    }
+                                                    "Chinese" -> {
+                                                        options = listOf("慢", "正常", "快速")
+                                                        SelectSpeed = "选择速度"
+                                                    }
+                                                    "Spanish" -> {
+                                                        options = listOf("lento", "Normal", "rápido")
+                                                        SelectSpeed = "Seleccionar velocidad"
+                                                    }
+                                                    "German" -> {
+                                                        options = listOf("Langsam", "Normal", "Schnell")
+                                                        SelectSpeed = "Wählen Sie Geschwindigkeit"
+                                                    }
+                                                    else -> {
+                                                        options = listOf("Slow", "Normal", "Fast")
+                                                        SelectSpeed = "Select speed"
+                                                    }
                                                 }
-                                                "French" -> {
-                                                    options = listOf("lent", "Ordinaire", "vite")
-                                                    SelectSpeed = "Sélectionnez la vitesse"
-                                                }
-                                                "Chinese" -> {
-                                                    options = listOf("慢", "正常", "快速")
-                                                    SelectSpeed = "选择速度"
-                                                }
-                                                "Spanish" -> {
-                                                    options = listOf("lento", "Normal", "rápido")
-                                                    SelectSpeed = "Seleccionar velocidad"
-                                                }
-                                                "German" -> {
-                                                    options = listOf("Langsam", "Normal", "Schnell")
-                                                    SelectSpeed = "Wählen Sie Geschwindigkeit"
-                                                }
-                                                else -> {
-                                                    options = listOf("Slow", "Normal", "Fast")
-                                                    SelectSpeed = "Select speed"
-                                                }
-                                            }
-                                            selector(SelectSpeed, options) { j ->
-                                                if (j == 0) {
-                                                    toast(options[0])
-                                                } else if (j == 1) {
-                                                    toast(options[1])
-                                                } else {
-                                                    toast(options[2])
+                                                selector(SelectSpeed, options) { j ->
+                                                    if (j == 0) {
+                                                        toast(options[0])
+                                                    } else if (j == 1) {
+                                                        toast(options[1])
+                                                    } else {
+                                                        toast(options[2])
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-                        }
-                    }.lparams { rightMargin = 2 }
-                }.lparams { bottomMargin = dip(7) }
-                tableRow {
-                    button(toilet) {
-                        background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                        textSize = btnTextSize
-                        height = dip(btnHgt)
-                        width = matchParent
-                        onClick {
-                            alert(toiletDesc) {
-                                positiveButton(positive) {
-                                    async {
-                                        sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php")
+                        }.lparams { rightMargin = 2 }
+                    }.lparams { bottomMargin = dip(8) }
+                    tableRow {
+                        button(toilet) {
+                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                            textSize = btnTextSize
+                            height = dip(btnHgt)
+                            width = matchParent
+                            onClick {
+                                alert(toiletDesc) {
+                                    positiveButton(positive) {
+                                        async {
+                                            sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php")
+                                        }
                                     }
-                                }
-                                negativeButton(negative) { }
-                            }.show()
-                        }
-                    }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                    button(exit) {
-                        background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                        textSize = btnTextSize
-                        height = dip(btnHgt)
-                        width = matchParent
-                        onClick {
-                            alert(exitDesc) {
-                                positiveButton(positive) {
-                                    async {
-                                        sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+                                    negativeButton(negative) { }
+                                }.show()
+                            }
+                        }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
+                        button(exit) {
+                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                            textSize = btnTextSize
+                            height = dip(btnHgt)
+                            width = matchParent
+                            onClick {
+                                alert(exitDesc) {
+                                    positiveButton(positive) {
+                                        async {
+                                            sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+                                        }
                                     }
-                                }
-                                negativeButton(negative) { }
-                            }.show()
-                        }
-                    }.lparams { rightMargin = 2 }
-                }.lparams { bottomMargin = dip(7) }
+                                    negativeButton(negative) { }
+                                }.show()
+                            }
+                        }.lparams { rightMargin = 2 }
+                    }.lparams { bottomMargin = dip(15) }
+                }.lparams { alignParentBottom()}
             }
+
         }
         Thread.sleep(4000)
         //imageView?.setImageResource(allArtPieces[5].imageID)
-        titleView?.text = "RoboTour calculating optimal route"
+        titleView?.text = "RoboTour Calculating Optimal Route..."
         //descriptionView?.text = allArtPieces[5].English_Desc
         async {
             t.run()
