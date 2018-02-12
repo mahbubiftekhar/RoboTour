@@ -23,6 +23,7 @@ class TempActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_temp)
+        supportActionBar?.hide() //hide actionbar
 
         SPEAK.setOnClickListener {
             uploadToServer("SPEAK") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
