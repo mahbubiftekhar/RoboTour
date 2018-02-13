@@ -136,7 +136,6 @@ class PicturesActivity : AppCompatActivity() {
             * colour of the start button to grey*/
             override fun run() {
                 while (!isInterrupted) {
-                    println("+++ THREAD EXECUTING")
                     try {
                         val count = allArtPieces.count { it.selected }
                         if (count > 0) {
@@ -149,7 +148,7 @@ class PicturesActivity : AppCompatActivity() {
                             }
 
                         }
-                        Thread.sleep(100)
+                        Thread.sleep(50)
                     } catch (e: InterruptedException) {
                     }
                 }
