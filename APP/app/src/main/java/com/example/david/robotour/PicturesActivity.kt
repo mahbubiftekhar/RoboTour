@@ -134,18 +134,11 @@ class PicturesActivity : AppCompatActivity() {
         val t: Thread = object : Thread() {
             /*This thread will check if the user has selected at least one picture, if they haven't then it will change the background
             * colour of the start button to grey*/
-            //#24E8EA - RoboTour Normal
-            // #D3D3D3 - Grey hex code
             override fun run() {
                 while (!isInterrupted) {
                     println("+++ THREAD EXECUTING")
                     try {
-                        var count = 0
-                        for (i in allArtPieces) {
-                            if (i.selected) {
-                                count++
-                            }
-                        }
+                        val count = allArtPieces.count { it.selected }
                         if (count > 0) {
                             runOnUiThread {
                                 ui.navigateButton.background = ColorDrawable(Color.parseColor("#24E8EA"))
@@ -163,28 +156,6 @@ class PicturesActivity : AppCompatActivity() {
             }
         }
         t.start()
-
-        /*async {
-            while (true) {
-                println("+++ THREAD EXECUTING")
-                try {
-                    var count = 0
-                    for (i in allArtPieces) {
-                        if (i.selected) {
-                            count++
-                        }
-                    }
-                    if (count > 0) {
-                        println("++ UPDATING TO ROBOTOUR COLOUR")
-                        ui.navigateButton.background = ColorDrawable(Color.parseColor("#24E8EA"))
-                    } else {
-                        println("++ UPDATING TO GREY COLOUR")
-                        ui.navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))
-                    }
-                } catch (e: InterruptedException) {
-                }
-            }
-        }*/
     }
 
     //Add mic & search icons in actionbar

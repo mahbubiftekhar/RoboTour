@@ -1,7 +1,6 @@
 package com.example.david.robotour
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.widget.Button
@@ -14,7 +13,6 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
 import java.io.IOException
-import java.net.URL
 import java.util.ArrayList
 
 
@@ -22,31 +20,38 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
     lateinit var a: String
     var navigate = ""
     lateinit var navigateButton: Button
-    fun notifyUser(){
-        //The purpose of this function is to notify the user they don't have enough selected pictures
+    var toastText = ""
+    fun notifyUser() {
+        ctx.toast(toastText)
     }
+
     override fun createView(ui: AnkoContext<PicturesActivity>): View = with(ui) {
         return relativeLayout {
             when (language) {
                 "Spanish" -> {
                     a = "Empezar recorrido"
                     navigate = "Navegar a obras de arte seleccionadas?"
+                    toastText = "Seleccione 1 o más obras de arte para visitar"
                 }
                 "German" -> {
                     a = "Tour starten"
                     navigate = "zu ausgewählten Bildern navigieren?"
+                    toastText = "Bitte wähle 1 oder mehr Kunstwerke aus, die du besuchen möchtest"
                 }
                 "French" -> {
                     a = "Tour initial"
                     navigate = "naviguer vers l'illustration sélectionnée?"
+                    toastText = ""
                 }
                 "Chinese" -> {
                     a = "开始旅游"
                     navigate = "导航到选定的艺术品？"
+                    toastText = "请选择一件或多件作品参观"
                 }
                 else -> {
                     a = "Start tour"
                     navigate = "navigate to selected artwork?"
+                    toastText = "Please select 1 or more artworks to visit"
                 }
             }
             linearLayout {
@@ -67,35 +72,35 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                     textSize = 32f
                     background = ColorDrawable(resources.getColor(R.color.roboTourTeal))
                     onClick {
-                        //need to translate here
-                        alert(navigate) {
-                            var isSelected = 0
-                            allArtPieces
-                                    .filter { it.selected }
-                                    .map { it.eV3ID }
-                                    .forEach { isSelected++ }
-                            if(isSelected==0){
-
-                            } else {
-
-                            }
-                            positiveButton("Yes") {
-                                async {
-                                    sendList()
-                                }
-                                val progressDialog = indeterminateProgressDialog("Waiting for other user to select paintings...")
-                                progressDialog.show()
-                                async {
-                                    startActivity<Waiting>("language" to language)
-                                    uiThread {
-                                        progressDialog.dismiss()
+                        var isSelected = 0
+                        allArtPieces
+                                .filter { it.selected }
+                                .map { it.eV3ID }
+                                .forEach { isSelected++ }
+                        if (isSelected == 0) {
+                            notifyUser()
+                        } else {
+                            //need to translate here
+                            alert(navigate) {
+                                positiveButton("Yes") {
+                                    async {
+                                        sendList()
+                                    }
+                                    val progressDialog = indeterminateProgressDialog("Waiting for other user to select paintings...")
+                                    progressDialog.show()
+                                    async {
+                                        startActivity<Waiting>("language" to language)
+                                        uiThread {
+                                            progressDialog.dismiss()
+                                        }
                                     }
                                 }
-                            }
-                            negativeButton("No") {
-                               // navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))
-                            }
-                        }.show()
+                                negativeButton("No") {
+                                    // navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))
+                                }
+                            }.show()
+                        }
+
                     }
                 }.lparams { width = matchParent; height = wrapContent; weight = 0.0f }
                 lparams { width = matchParent; height = matchParent; orientation = LinearLayout.VERTICAL }
