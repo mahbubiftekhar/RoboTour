@@ -21,6 +21,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
     var navigate = ""
     lateinit var navigateButton: Button
     var toastText = ""
+
     fun notifyUser() {
         Toast.makeText(ctx,toastText,Toast.LENGTH_LONG).show()
     }
