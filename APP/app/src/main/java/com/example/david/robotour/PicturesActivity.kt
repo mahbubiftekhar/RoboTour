@@ -8,6 +8,8 @@ import android.view.Menu
 import android.view.MenuItem
 import org.jetbrains.anko.*
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.view.inputmethod.InputMethodManager
@@ -126,9 +128,63 @@ class PicturesActivity : AppCompatActivity() {
         }
         clearFindViewByIdCache()
         adapter = PicturesAdapter(shownArtPieces, language)      //update adapter
-        val ui = PicturesUI(adapter, language)                //define Anko UI Layout to be used
-        ui.setContentView(this)                 //Set Anko UI to this Activity
+        val ui = PicturesUI(adapter, language, applicationContext)                //define Anko UI Layout to be used
+        ui.setContentView(this)//Set Anko UI to this Activity
         // duration that the device is discoverable
+        val t: Thread = object : Thread() {
+            /*This thread will check if the user has selected at least one picture, if they haven't then it will change the background
+            * colour of the start button to grey*/
+            //#24E8EA - RoboTour Normal
+            // #D3D3D3 - Grey hex code
+            override fun run() {
+                while (!isInterrupted) {
+                    println("+++ THREAD EXECUTING")
+                    try {
+                        var count = 0
+                        for (i in allArtPieces) {
+                            if (i.selected) {
+                                count++
+                            }
+                        }
+                        if (count > 0) {
+                            runOnUiThread {
+                                ui.navigateButton.background = ColorDrawable(Color.parseColor("#24E8EA"))
+                            }
+                        } else {
+                            runOnUiThread {
+                                ui.navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))
+                            }
+
+                        }
+                        Thread.sleep(100)
+                    } catch (e: InterruptedException) {
+                    }
+                }
+            }
+        }
+        t.start()
+
+        /*async {
+            while (true) {
+                println("+++ THREAD EXECUTING")
+                try {
+                    var count = 0
+                    for (i in allArtPieces) {
+                        if (i.selected) {
+                            count++
+                        }
+                    }
+                    if (count > 0) {
+                        println("++ UPDATING TO ROBOTOUR COLOUR")
+                        ui.navigateButton.background = ColorDrawable(Color.parseColor("#24E8EA"))
+                    } else {
+                        println("++ UPDATING TO GREY COLOUR")
+                        ui.navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))
+                    }
+                } catch (e: InterruptedException) {
+                }
+            }
+        }*/
     }
 
     //Add mic & search icons in actionbar
@@ -143,7 +199,7 @@ class PicturesActivity : AppCompatActivity() {
         when (item.itemId) {
         //If searched paintings bring back all paintings, else go back to SelectLanguageActivity
             android.R.id.home -> {
-               onBackPressed()
+                onBackPressed()
             }
             R.id.search_button -> {
                 alert {

@@ -1,7 +1,10 @@
 package com.example.david.robotour
 
+import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.View
+import android.widget.Button
 import android.widget.LinearLayout
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
@@ -11,13 +14,17 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
 import java.io.IOException
+import java.net.URL
 import java.util.ArrayList
 
 
-class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: String) : AnkoComponent<PicturesActivity> {
+class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: String, val ctx: Context) : AnkoComponent<PicturesActivity> {
     lateinit var a: String
     var navigate = ""
-
+    lateinit var navigateButton: Button
+    fun notifyUser(){
+        //The purpose of this function is to notify the user they don't have enough selected pictures
+    }
     override fun createView(ui: AnkoContext<PicturesActivity>): View = with(ui) {
         return relativeLayout {
             when (language) {
@@ -56,12 +63,22 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                         allArtPieces[picID].selected = !allArtPieces[picID].selected
                     }
                 }.lparams { width = matchParent; height = dip(0); weight = 1.0f }
-                button(a) {
+                navigateButton = button(a) {
                     textSize = 32f
                     background = ColorDrawable(resources.getColor(R.color.roboTourTeal))
                     onClick {
                         //need to translate here
                         alert(navigate) {
+                            var isSelected = 0
+                            allArtPieces
+                                    .filter { it.selected }
+                                    .map { it.eV3ID }
+                                    .forEach { isSelected++ }
+                            if(isSelected==0){
+
+                            } else {
+
+                            }
                             positiveButton("Yes") {
                                 async {
                                     sendList()
@@ -75,7 +92,9 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                     }
                                 }
                             }
-                            negativeButton("No") { }
+                            negativeButton("No") {
+                               // navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))
+                            }
                         }.show()
                     }
                 }.lparams { width = matchParent; height = wrapContent; weight = 0.0f }
@@ -84,8 +103,11 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
         }
     }
 
+
     fun sendList() {
         /*This function will upload to the server the required items simply - positive uploads only*/
+        navigateButton.background = ColorDrawable()
+
         allArtPieces
                 .filter { it.selected }
                 .map { it.eV3ID }
