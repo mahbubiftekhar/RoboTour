@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.Toast
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -15,14 +16,13 @@ import org.jetbrains.anko.*
 import java.io.IOException
 import java.util.ArrayList
 
-
 class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: String, val ctx: Context) : AnkoComponent<PicturesActivity> {
     lateinit var a: String
     var navigate = ""
     lateinit var navigateButton: Button
     var toastText = ""
     fun notifyUser() {
-        ctx.toast(toastText)
+        Toast.makeText(ctx,toastText,Toast.LENGTH_LONG).show()
     }
 
     override fun createView(ui: AnkoContext<PicturesActivity>): View = with(ui) {
@@ -86,14 +86,11 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                     async {
                                         sendList()
                                     }
-                                    val progressDialog = indeterminateProgressDialog("Waiting for other user to select paintings...")
-                                    progressDialog.show()
                                     async {
-                                        startActivity<Waiting>("language" to language)
-                                        uiThread {
-                                            progressDialog.dismiss()
-                                        }
+                                        val a = PicturesActivity()
+                                        a.t.interrupt() //Stops the thread
                                     }
+                                    startActivity<Waiting>("language" to language)
                                 }
                                 negativeButton("No") {
                                     // navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))

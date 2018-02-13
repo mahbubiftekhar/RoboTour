@@ -1,8 +1,5 @@
 package com.example.david.robotour
 
-/**
- * Created by MAHBUBIFTEKHAR on 12/02/2018.
- */
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.preference.PreferenceManager

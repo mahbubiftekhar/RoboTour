@@ -10,7 +10,6 @@ import android.support.v4.content.res.ResourcesCompat
 import android.view.Gravity
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.ScrollView
 import android.widget.TextView
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
@@ -46,13 +45,18 @@ class NavigatingActivity : AppCompatActivity() {
     var imageView: ImageView? = null
     var titleView: TextView? = null
     var descriptionView: TextView? = null
+    var stopButton: Button? = null
+    var Skippable = true
+    lateinit var t: Thread
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
         supportActionBar?.hide() //hide actionbar
-
+        async {
+           // sendPUT("2", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+        }
         //Obtain language from PicturesUI
         val language = intent.getStringExtra("language")
         when (language) {
@@ -199,27 +203,38 @@ class NavigatingActivity : AppCompatActivity() {
                                         }
                                     }
                                     negativeButton(negative) {
-                                        //Do nothing
+                                        //Do nothing the user changed their minds
                                     }
                                 }.show()
                             }
                         }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                        button(stop) {
+                        stopButton = button(stop) {
                             background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                             textSize = btnTextSize
                             height = dip(btnHgt)
                             width = wrapContent
                             onClick {
-                                if (toggleStBtn) alertStBtn = stopDesc else alertStBtn = startDesc
+                                if (toggleStBtn) {
+                                    alertStBtn = stopDesc
+                                } else {
+                                    alertStBtn = startDesc
+                                }
                                 alert(alertStBtn) {
                                     positiveButton(positive) {
-                                        if (toggleStBtn) text = start else text = stop
-                                        toggleStBtn = !toggleStBtn
-                                        async {
-                                            stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                        if (!toggleStBtn) {
+                                            text = stop
+                                            async {
+                                                stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                            }
+                                        } else {
+                                            text = start
+                                            async {
+                                                startRoboTour()
+                                            }
                                         }
+                                        toggleStBtn = !toggleStBtn
                                     }
-                                negativeButton(negative) { }
+                                    negativeButton(negative) { }
                                 }.show()
                             }
                         }.lparams { rightMargin = 2 }
@@ -331,75 +346,96 @@ class NavigatingActivity : AppCompatActivity() {
                             }
                         }.lparams { rightMargin = 2 }
                     }.lparams { bottomMargin = dip(15) }
-                }.lparams { alignParentBottom()}
+                }.lparams { alignParentBottom() }
             }
 
         }
         Thread.sleep(4000)
-        //imageView?.setImageResource(allArtPieces[5].imageID)
         titleView?.text = "RoboTour Calculating Optimal Route..."
-        //descriptionView?.text = allArtPieces[5].English_Desc
+        t = object : Thread() {
+            override fun run() {
+                while (!isInterrupted) {
+                    try {
+                        Thread.sleep(1500) //1000ms = 1 sec
+                        runOnUiThread(object : Runnable {
+                            override fun run() {
+                                async {
+                                    for (i in 0..9) {
+                                        //This part checks for updates of the next location we are going to
+                                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/$i.php").readText()
+                                        if (a == "N") {
+                                            runOnUiThread {
+                                                //Change the image, text and descrioption
+                                                imageView?.setImageResource(allArtPieces[i].imageID)
+                                                titleView?.text = allArtPieces[i].name
+                                                val language = intent.getStringExtra("language")
+                                                when (language) {
+                                                    "French" -> descriptionView?.text = allArtPieces[i].French_Desc
+                                                    "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
+                                                    "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
+                                                    "German" -> descriptionView?.text = allArtPieces[i].German_Desc
+                                                    else -> descriptionView?.text = allArtPieces[i].English_Desc
+                                                }
+                                            }
+                                            break
+                                        }
+                                    }
+                                }
+                                async {
+                                    Thread.sleep(200)
+                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
+                                    if (a == "2" && Skippable) {
+                                        Skippable = false
+                                        println("+++GOT HERE")
+                                        runOnUiThread {
+                                            alert(skip) {
+                                                cancellable(false)
+                                                setFinishOnTouchOutside(false)
+                                                positiveButton(positive) {
+                                                    skipImmediately()
+
+                                                }
+                                                negativeButton(negative) {
+                                                    rejectSkip()
+                                                }
+                                            }.show()
+                                        }
+                                    }
+                                }
+                                async {
+                                    //This part checks if the other user has pressed the stop buttons and updates accordingly
+                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/stop.php").readText()
+                                    if (a == "T") {
+                                        runOnUiThread {
+                                            toggleStBtn = true
+                                            stopButton!!.text = start
+                                        }
+                                    } else {
+                                        runOnUiThread {
+                                            stopButton!!.text = stop
+                                            toggleStBtn = false
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        )
+                    } catch (e: InterruptedException) {
+                    }
+                }
+            }
+        }
         async {
+            //Starting the thread which is defined above
             t.run()
         }
 
     }
 
-    val t: Thread = object : Thread() {
-        override fun run() {
-            while (!isInterrupted) {
-                try {
-                    Thread.sleep(1500) //1000ms = 1 sec
-                    runOnUiThread(object : Runnable {
-                        override fun run() {
-                            async {
-                                for (i in 0..9) {
-                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/$i.php").readText()
-                                    if (a == "N") {
-                                        //  imageView?.setImageResource(allArtPieces[i].imageID)
-                                        //  titleView?.text = allArtPieces[i].name
-                                        //  descriptionView?.text = allArtPieces[i].English_Desc
-                                        runOnUiThread {
-                                            //Change the image, text and descrioption
-                                            imageView?.setImageResource(allArtPieces[i].imageID)
-                                            titleView?.text = allArtPieces[i].name
-                                            val language = intent.getStringExtra("language")
-                                            when (language) {
-                                                "French" -> descriptionView?.text = allArtPieces[i].French_Desc
-                                                "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
-                                                "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
-                                                "German" -> descriptionView?.text = allArtPieces[i].German_Desc
-                                                else -> descriptionView?.text = allArtPieces[i].English_Desc
-                                            }
-                                        }
-                                        break
-                                    }
-
-                                }
-                            }
-                            async {
-                                val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
-                                if (a == "2") {
-                                    alert("") {
-                                        positiveButton("Yes") {
-                                            async {
-                                                skipImmediately()
-                                            }
-                                        }
-                                        negativeButton("No") {
-                                            async {
-                                                rejectSkip()
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-                    })
-                } catch (e: InterruptedException) {
-                }
-            }
+    fun toiletAlert() {
+        /*This alert should be pressed when the user wants to */
+        alert{
+            positiveButton {  }
         }
     }
 
@@ -421,15 +457,10 @@ class NavigatingActivity : AppCompatActivity() {
         startActivity<MainActivity>()
     }
 
-    fun showWaitingForPartner() {
-        alert("Waiting for other users response") {
-            title = "Waiting for other users response"
-        }.show()
-    }
-
     fun rejectSkip() {
         async {
-            sendPUT("N", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+            //This function will reject the skip by adding the empty string
+            sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
         }
     }
 
@@ -437,7 +468,10 @@ class NavigatingActivity : AppCompatActivity() {
         /*This function is only when both users have agreed to skip the next item*/
         async {
             sendPUT("Y", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+            Thread.sleep(400)
+            Skippable = true
         }
+
     }
 
     fun skip() {
@@ -452,16 +486,22 @@ class NavigatingActivity : AppCompatActivity() {
         }
     }
 
+    fun startRoboTour() {
+        async {
+            sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
+        }
+    }
+
     fun sendPUT(command: String, url: String) {
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
-        val httppost = HttpPost(url)
+        val httPpost = HttpPost(url)
         try {
             val nameValuePairs = ArrayList<NameValuePair>(4)
             nameValuePairs.add(BasicNameValuePair("command", command))
-            httppost.entity = UrlEncodedFormEntity(nameValuePairs)
-            httpclient.execute(httppost)
+            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+            httpclient.execute(httPpost)
         } catch (e: ClientProtocolException) {
         } catch (e: IOException) {
         }

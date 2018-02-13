@@ -28,7 +28,7 @@ class PicturesActivity : AppCompatActivity() {
     private var searchedForPainting = false //true if we've searched for a painting
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     private var voiceInput: TextView? = null
-
+    lateinit var t: Thread
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,7 +131,7 @@ class PicturesActivity : AppCompatActivity() {
         val ui = PicturesUI(adapter, language, applicationContext)                //define Anko UI Layout to be used
         ui.setContentView(this)//Set Anko UI to this Activity
         // duration that the device is discoverable
-        val t: Thread = object : Thread() {
+        t = object : Thread() {
             /*This thread will check if the user has selected at least one picture, if they haven't then it will change the background
             * colour of the start button to grey*/
             override fun run() {
@@ -139,13 +139,9 @@ class PicturesActivity : AppCompatActivity() {
                     try {
                         val count = allArtPieces.count { it.selected }
                         if (count > 0) {
-                            runOnUiThread {
-                                ui.navigateButton.background = ColorDrawable(Color.parseColor("#24E8EA"))
-                            }
+                            runOnUiThread {ui.navigateButton.background = ColorDrawable(Color.parseColor("#24E8EA")) }
                         } else {
-                            runOnUiThread {
-                                ui.navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))
-                            }
+                            runOnUiThread {ui.navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3")) }
 
                         }
                         Thread.sleep(50)
@@ -229,6 +225,7 @@ class PicturesActivity : AppCompatActivity() {
         } else {
             alert("Are you sure you want to leave? Your selection will be lost") {
                 positiveButton {
+                    t.interrupt() //Stops the thread
                     async {
                         clearFindViewByIdCache()
                         allArtPieces.clear()

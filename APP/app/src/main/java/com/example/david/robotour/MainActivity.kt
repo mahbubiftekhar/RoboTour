@@ -9,7 +9,7 @@ import org.jetbrains.anko.*
 import android.content.Intent
 
 class MainActivity : AppCompatActivity() {
-    /* override the back button, so the user is promted when they wish to leave the app */
+    /* override the back button, so the user is promoted when they wish to leave the app */
     override fun onBackPressed(){
         val intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_HOME)
