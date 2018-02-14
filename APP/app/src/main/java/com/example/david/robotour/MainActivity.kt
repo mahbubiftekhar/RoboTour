@@ -7,12 +7,9 @@ import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import org.jetbrains.anko.*
 import android.content.Intent
-import com.google.cloud.translate.Translate
-import com.google.cloud.translate.TranslateOptions
+
 
 class MainActivity : AppCompatActivity() {
-    private val API_KEY = "32ac0b5a9a4b0edd2714ea6e7c14b0956b683ad0"
-
     /* override the back button, so the user is promoted when they wish to leave the app */
     override fun onBackPressed(){
         val intent = Intent(Intent.ACTION_MAIN)
@@ -24,19 +21,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
-        async {
-            println("+++Start async")
-            val options = TranslateOptions.newBuilder().setApiKey(API_KEY).build()
-            println("+++2")
-            val translate = options.service
-            println("+++3")
-            val translation = translate.translate("Hello World", Translate.TranslateOption.targetLanguage("de"))
-            println("+++4")
-            runOnUiThread{
-                println("+++getting here")
-                println("+++"+translation)
-            }
-        }
             scrollView {
                 //Added in scroll view to work with horizontal orientation
                 verticalLayout {

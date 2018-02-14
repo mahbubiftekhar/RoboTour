@@ -14,6 +14,8 @@ import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import com.google.cloud.translate.Translate
+import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
 import java.util.*
 
@@ -29,7 +31,24 @@ class PicturesActivity : AppCompatActivity() {
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     private var voiceInput: TextView? = null
     lateinit var t: Thread
+    lateinit var translated:MutableList<String>
 
+    fun translate(toTranslate:List<String>):MutableList<String>{
+        /*This function takes a list and returns a list of translated text using Google's API
+        * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
+        * network on main thread exception
+        * */
+        val API_KEY = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finnished
+        for(i in toTranslate){
+            val options = TranslateOptions.newBuilder().setApiKey(API_KEY).build()
+            val translate = options.service
+            val translation = translate.translate("Hello World", Translate.TranslateOption.targetLanguage("de"))
+            translated.add(translation.translatedText)
+        }
+        val a = translated
+        translated.clear()
+        return a
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
