@@ -31,31 +31,35 @@ class PicturesActivity : AppCompatActivity() {
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     private var voiceInput: TextView? = null
     lateinit var t: Thread
-    lateinit var translated:MutableList<String>
-
-    fun translate(toTranslate:List<String>):MutableList<String>{
+    private var canContinue: Boolean = false
+    var language = ""
+    fun translate(toTranslate: List<String>): MutableList<String> {
         /*This function takes a list and returns a list of translated text using Google's API
         * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
         * network on main thread exception
         * */
+        val translated: MutableList<String> = mutableListOf()
         val API_KEY = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finnished
-        for(i in toTranslate){
+        for (i in toTranslate) {
             val options = TranslateOptions.newBuilder().setApiKey(API_KEY).build()
             val translate = options.service
-            val translation = translate.translate("Hello World", Translate.TranslateOption.targetLanguage("de"))
+           // println("++"+i)
+            val translation = translate.translate(i, Translate.TranslateOption.targetLanguage("en"))
+           // println("+++ translated" +translation.translatedText)
             translated.add(translation.translatedText)
         }
         val a = translated
-        translated.clear()
+        println("result before sending + $a")
         return a
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         allArtPieces.clear()
 
         //Obtain language from SelectLanguageActivity
-        val language = intent.getStringExtra("language")
+        language = intent.getStringExtra("language")
         when (language) {
             "English" -> supportActionBar?.title = "Select Picture"
             "German" -> supportActionBar?.title = "Wähle ein Bild"
@@ -158,9 +162,9 @@ class PicturesActivity : AppCompatActivity() {
                     try {
                         val count = allArtPieces.count { it.selected }
                         if (count > 0) {
-                            runOnUiThread {ui.navigateButton.background = ColorDrawable(Color.parseColor("#24E8EA")) }
+                            runOnUiThread { ui.navigateButton.background = ColorDrawable(Color.parseColor("#24E8EA")) }
                         } else {
-                            runOnUiThread {ui.navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3")) }
+                            runOnUiThread { ui.navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3")) }
 
                         }
                         Thread.sleep(50)
@@ -281,6 +285,24 @@ class PicturesActivity : AppCompatActivity() {
                     REQ_CODE_SPEECH_INPUT -> {
                         if (resultCode == RESULT_OK) {
                             val result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+
+                            if (language == "English" || language == "Other") {
+                                canContinue = true
+                            } else {
+                                async {
+                                    val result2 = translate(result)
+                                    uiThread {
+                                        println("result + $result2")
+                                        canContinue = true
+                                    }
+                                }
+                            }
+
+                           // while (canContinue) {
+                                /*This is a spin lock to ensure we don't continue
+                                 until the translations have been done */
+                            //}
+                            canContinue = false /*Reset semaphore for next time*/
                             voiceInput?.text = result[0]
                             for (i in 0..result.size - 1) {
                                 val test = result[i]
