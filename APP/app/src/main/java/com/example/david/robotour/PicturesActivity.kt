@@ -12,6 +12,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
+import android.text.Editable
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import com.google.cloud.translate.Translate
@@ -35,20 +36,26 @@ class PicturesActivity : AppCompatActivity() {
     fun translate(toTranslate: List<String>): MutableList<String> {
         /*This function takes a list and returns a list of translated text using Google's API
         * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
-        * network on main thread exception
-        * */
+        * network on main thread exception */
         val translated: MutableList<String> = mutableListOf()
         val API_KEY = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finnished
         for (i in toTranslate) {
             val options = TranslateOptions.newBuilder().setApiKey(API_KEY).build()
             val translate = options.service
             val translation = translate.translate(i, Translate.TranslateOption.targetLanguage("en"))
-            // println("+++ translated" +translation.translatedText)
             translated.add(translation.translatedText)
         }
-        val a = translated
-        println("result before sending + $a")
-        return a
+        return translated
+    }
+    fun translateText(toTranslate: String): String? {
+        /*This function takes a list and returns a list of translated text using Google's API
+        * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
+        * network on main thread exception */
+        val API_KEY = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finnished
+            val options = TranslateOptions.newBuilder().setApiKey(API_KEY).build()
+            val translate = options.service
+            val translation = translate.translate(toTranslate, Translate.TranslateOption.targetLanguage("en"))
+        return translation.translatedText
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -202,13 +209,30 @@ class PicturesActivity : AppCompatActivity() {
                         positiveButton("Search") {
                             //Hide keyboard
                             imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
-                            searchedForPainting = true
-                            allArtPieces
-                                    .filter {
-                                        //if substring either way return true (ignoring case & special chars) i.e "Mona" & "MonaLisa" return true
-                                        regEx.replace(input.text, "").contains(regEx.replace(it.artist, ""), ignoreCase = true) || (regEx.replace(input.text, "").contains(regEx.replace(it.name, ""), ignoreCase = true)) || regEx.replace(it.artist, "").contains(regEx.replace(input.text, ""), ignoreCase = true) || (regEx.replace(it.name, "").contains(regEx.replace(input.text, ""), ignoreCase = true))
-                                    }
-                                    .forEach { queriedArtPieces.add(it) }
+                            //translateText
+                            if (language == "English" || language == "Other") {
+                                searchedForPainting = true
+                                allArtPieces
+                                        .filter {
+                                            //if substring either way return true (ignoring case & special chars) i.e "Mona" & "MonaLisa" return true
+                                            regEx.replace(input.text, "").contains(regEx.replace(it.artist, ""), ignoreCase = true) || (regEx.replace(input.text, "").contains(regEx.replace(it.name, ""), ignoreCase = true)) || regEx.replace(it.artist, "").contains(regEx.replace(input.text, ""), ignoreCase = true) || (regEx.replace(it.name, "").contains(regEx.replace(input.text, ""), ignoreCase = true))
+                                        }
+                                        .forEach { queriedArtPieces.add(it) }
+                            } else {
+                                var transTEXT = ""
+                                async {
+                                    transTEXT = translateText(input.text.toString())!!
+                                }
+                                Thread.sleep(900)
+                                searchedForPainting = true
+                                allArtPieces
+                                        .filter {
+                                            //if substring either way return true (ignoring case & special chars) i.e "Mona" & "MonaLisa" return true
+                                            regEx.replace(transTEXT, "").contains(regEx.replace(it.artist, ""), ignoreCase = true) || (regEx.replace(transTEXT, "").contains(regEx.replace(it.name, ""), ignoreCase = true)) || regEx.replace(it.artist, "").contains(regEx.replace(transTEXT, ""), ignoreCase = true) || (regEx.replace(it.name, "").contains(regEx.replace(transTEXT, ""), ignoreCase = true))
+                                        }
+                                        .forEach { queriedArtPieces.add(it) }
+                                shownArtPieces.clear()
+                            }
                             shownArtPieces.clear()
                             for (artPiece in queriedArtPieces) {
                                 shownArtPieces.add(artPiece)
@@ -295,9 +319,8 @@ class PicturesActivity : AppCompatActivity() {
                                             println("turned++ $canContinue")
                                     }
                                 }
+                                Thread.sleep(900)
                             }
-                            Thread.sleep(900)
-
                             voiceInput?.text = result[0]
                             for (i in 0..result.size - 1) {
                                 val test = result[i]
