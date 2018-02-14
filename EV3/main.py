@@ -10,7 +10,7 @@ from threading import Thread
 
 ####################### GLOBAL VARIABLE ####################
 obstacle_detection_distance = 100 # in mm
-side_distance = 80
+side_distance = 90
 link = "https://homepages.inf.ed.ac.uk/s1553593/receiver.php"
 command = ""
 previouscommandid = "1"
@@ -200,16 +200,32 @@ def goAroundObstacle():
         timeMod = 1
         k = 0
         sp = 0
+
+        ##For corner
+        if(currentDistance > 500):
+            print("Corner!")
+            #while(sonarLeft.value()>200):
+
+            turn(25,250,50)
+            print(sonarLeft.value())
+            #print("Out!")
+            #turn(100,100,100)
+            #exit()
+
+
+        ## When the gap is too larger/small
+        if(currentDistance>side_distance):
+            turn(100,200,50)
+            timeMod = 0.5
+            #turn(200,100,50)
+        elif(currentDistance<side_distance):
+            turn(400,100,50)
+            timeMod = 0.5
+            #turn(100,200,50)
+
+        ## For distance incresing/decresing
         if(currentDistance>preDistance):
             k=2
-            if(currentDistance > 500):
-                print("Corner!")
-                while(sonarLeft.value()>200):
-                    print(sonarLeft.value())
-                    turn(30,100,50)
-                print("Out!")
-                turn(100,100,100)
-                #exit()
         elif(currentDistance<preDistance):
             k=-2
 
@@ -218,9 +234,23 @@ def goAroundObstacle():
         preDistance = currentDistance
 
 
-
-
-
+        '''
+        if(currentDistance>side_distance & currentDistance>=preDistance):
+            turn(50,100,50)
+        elif(currentDistance>side_distance &currentDistance<preDistance):
+            turn(50,50,50)
+        elif(currentDistance<side_distance & currentDistance>preDistance):
+            turn(50,50,50)
+        elif(currentDistance<side_distance & currentDistance<=preDistance):
+            turn(100,50,50)
+        elif(currentDistance==side_distance & currentDistance>preDistance):
+            turn(50,100,50)
+        elif(currentDistance==side_distance & currentDistance<preDistance):
+            turn(100,50,50)
+        else:
+            turn(50,50,50)
+        preDistance = currentDistance
+        '''
 
 
         '''
