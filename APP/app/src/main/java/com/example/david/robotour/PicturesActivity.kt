@@ -31,7 +31,6 @@ class PicturesActivity : AppCompatActivity() {
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     private var voiceInput: TextView? = null
     lateinit var t: Thread
-    private var canContinue: Boolean = false
     var language = ""
     fun translate(toTranslate: List<String>): MutableList<String> {
         /*This function takes a list and returns a list of translated text using Google's API
@@ -43,9 +42,8 @@ class PicturesActivity : AppCompatActivity() {
         for (i in toTranslate) {
             val options = TranslateOptions.newBuilder().setApiKey(API_KEY).build()
             val translate = options.service
-           // println("++"+i)
             val translation = translate.translate(i, Translate.TranslateOption.targetLanguage("en"))
-           // println("+++ translated" +translation.translatedText)
+            // println("+++ translated" +translation.translatedText)
             translated.add(translation.translatedText)
         }
         val a = translated
@@ -283,9 +281,9 @@ class PicturesActivity : AppCompatActivity() {
             if (data != null) {
                 when (requestCode) {
                     REQ_CODE_SPEECH_INPUT -> {
+                        var canContinue = false
                         if (resultCode == RESULT_OK) {
                             val result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-
                             if (language == "English" || language == "Other") {
                                 canContinue = true
                             } else {
@@ -293,16 +291,13 @@ class PicturesActivity : AppCompatActivity() {
                                     val result2 = translate(result)
                                     uiThread {
                                         println("result + $result2")
-                                        canContinue = true
+                                            canContinue = true
+                                            println("turned++ $canContinue")
                                     }
                                 }
                             }
+                            Thread.sleep(900)
 
-                           // while (canContinue) {
-                                /*This is a spin lock to ensure we don't continue
-                                 until the translations have been done */
-                            //}
-                            canContinue = false /*Reset semaphore for next time*/
                             voiceInput?.text = result[0]
                             for (i in 0..result.size - 1) {
                                 val test = result[i]
