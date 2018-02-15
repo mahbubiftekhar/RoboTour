@@ -32,7 +32,7 @@ class PicturesActivity : AppCompatActivity() {
     private var voiceInput: TextView? = null
     lateinit var t: Thread
     var language = ""
-    fun translate(toTranslate: List<String>): MutableList<String> {
+    private fun translate(toTranslate: List<String>): MutableList<String> {
         /*This function takes a list and returns a list of translated text using Google's API
         * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
         * network on main thread exception */
@@ -46,7 +46,7 @@ class PicturesActivity : AppCompatActivity() {
         }
         return translated
     }
-    fun translateText(toTranslate: String): String? {
+    private fun translateText(toTranslate: String): String? {
         /*This function takes a list and returns a list of translated text using Google's API
         * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
         * network on main thread exception */
@@ -168,16 +168,16 @@ class PicturesActivity : AppCompatActivity() {
                         if (count > 0) {
                             runOnUiThread { ui.navigateButton.background = ColorDrawable(Color.parseColor("#24E8EA")) }
                         } else {
-                            runOnUiThread { ui.navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3")) }
+                            runOnUiThread { ui.navigateButton.background = ColorDrawable(Color.parseColor("#505050")) }
 
                         }
-                        Thread.sleep(50)
+                        Thread.sleep(100)
                     } catch (e: InterruptedException) {
                     }
                 }
             }
         }
-        t.start()
+        t.start() /*Start to run the thread*/
     }
 
     //Add mic & search icons in actionbar
@@ -185,7 +185,6 @@ class PicturesActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_pictures, menu)
         return true
     }
-
 
     //Define Functions upon actionbar button pressed
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -207,8 +206,7 @@ class PicturesActivity : AppCompatActivity() {
                         val regEx = Regex("[^A-Za-z0-9]")
                         positiveButton("Search") {
                             //Hide keyboard
-                            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
-                            //translateText
+                            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0) //translateText
                             if (language == "English" || language == "Other") {
                                 searchedForPainting = true
                                 allArtPieces
@@ -221,6 +219,7 @@ class PicturesActivity : AppCompatActivity() {
                                 var transTEXT = ""
                                 async {
                                     transTEXT = translateText(input.text.toString())!!
+                                    println("+++++" + transTEXT)
                                 }
                                 Thread.sleep(900)
                                 searchedForPainting = true
@@ -230,7 +229,6 @@ class PicturesActivity : AppCompatActivity() {
                                             regEx.replace(transTEXT, "").contains(regEx.replace(it.artist, ""), ignoreCase = true) || (regEx.replace(transTEXT, "").contains(regEx.replace(it.name, ""), ignoreCase = true)) || regEx.replace(it.artist, "").contains(regEx.replace(transTEXT, ""), ignoreCase = true) || (regEx.replace(it.name, "").contains(regEx.replace(transTEXT, ""), ignoreCase = true))
                                         }
                                         .forEach { queriedArtPieces.add(it) }
-                                shownArtPieces.clear()
                             }
                             shownArtPieces.clear()
                             for (artPiece in queriedArtPieces) {
@@ -267,19 +265,25 @@ class PicturesActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
             searchedForPainting = false
         } else {
-            alert("Are you sure you want to leave? Your selection will be lost") {
-                positiveButton {
-                    t.interrupt() //Stops the thread
-                    async {
-                        clearFindViewByIdCache()
-                        allArtPieces.clear()
+            val count = allArtPieces.count { it.selected }
+            if(count==0){
+                /*If the user has not made any selections, let them press back no questions asked*/
+                super.onBackPressed()
+            } else {
+                alert("Are you sure you want to leave? Your selection will be lost") {
+                    positiveButton {
+                        t.interrupt() //Stops the thread
+                        async {
+                            clearFindViewByIdCache()
+                            allArtPieces.clear()
+                        }
+                        super.onBackPressed() // Call super.onBackPressed
                     }
-                    super.onBackPressed() // Call super.onBackPressed
-                }
-                negativeButton {
-                    /*Do nothing*/
-                }
-            }.show()
+                    negativeButton {
+                        /*Do nothing*/
+                    }
+                }.show()
+            }
         }
     }
 
@@ -295,8 +299,7 @@ class PicturesActivity : AppCompatActivity() {
             }
         } catch (a: ActivityNotFoundException) {
         } catch (e: java.lang.RuntimeException) {
-        } catch(e: java.lang.IllegalArgumentException) {
-        }
+        } catch(e: java.lang.IllegalArgumentException) { }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -307,11 +310,14 @@ class PicturesActivity : AppCompatActivity() {
                         if (resultCode == RESULT_OK) {
                             var result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                             if (language == "English" || language == "Other") {
+                                //If the language is english, continue no problemo
                             } else {
+                                //If language is not english or other, we run the translator
                                 async {
                                     result = translate(result) as ArrayList<String>?
+                                    println("+++ translation"+result)
                                 }
-                                Thread.sleep(900)
+                                Thread.sleep(900) // This sleep is designed to allow time for the async
                             }
                             voiceInput?.text = result[0]
                             for (i in 0 until result.size) {

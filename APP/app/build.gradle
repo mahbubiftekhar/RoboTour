@@ -10,6 +10,7 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
+        multiDexEnabled true
         applicationId "com.example.david.robotour"
         minSdkVersion 16
         targetSdkVersion 26
@@ -30,8 +31,6 @@ android {
         exclude 'META-INF/io.netty.versions.properties'
         exclude 'META-INF/INDEXLIST'
         exclude 'META-INF/INDEX.LIST'
-
-
     }
 }
 
@@ -57,11 +56,11 @@ dependencies {
     compile ('com.google.apis:google-api-services-translate:v2-rev47-1.22.0') {
         exclude group: 'com.google.guava'
     }
-    annotationProcessor 'com.google.cloud:google-cloud-translate:0.5.0'
+    annotationProcessor 'com.google.cloud:google-cloud-translate:1.14.0'
     compile ('com.google.cloud:google-cloud-translate:0.5.0') {
-        //exclude group: 'io.grpc', module: 'grpc-all'
-        //exclude group: 'com.google.protobuf', module: 'protobuf-java'
-        //exclude group: 'com.google.api-client', module: 'google-api-client-appengine'
+        exclude group: 'io.grpc', module: 'grpc-all'
+        exclude group: 'com.google.protobuf', module: 'protobuf-java'
+        exclude group: 'com.google.api-client', module: 'google-api-client-appengine'
     }
     testCompile 'junit:junit:4.12'
 }
