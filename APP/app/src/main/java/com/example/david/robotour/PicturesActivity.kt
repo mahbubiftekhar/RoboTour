@@ -12,7 +12,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
-import android.text.Editable
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import com.google.cloud.translate.Translate
@@ -52,9 +51,9 @@ class PicturesActivity : AppCompatActivity() {
         * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
         * network on main thread exception */
         val API_KEY = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finnished
-            val options = TranslateOptions.newBuilder().setApiKey(API_KEY).build()
-            val translate = options.service
-            val translation = translate.translate(toTranslate, Translate.TranslateOption.targetLanguage("en"))
+        val options = TranslateOptions.newBuilder().setApiKey(API_KEY).build()
+        val translate = options.service
+        val translation = translate.translate(toTranslate, Translate.TranslateOption.targetLanguage("en"))
         return translation.translatedText
     }
 
@@ -284,7 +283,7 @@ class PicturesActivity : AppCompatActivity() {
         }
     }
 
-    fun askSpeechInput() {
+    private fun askSpeechInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
@@ -305,24 +304,17 @@ class PicturesActivity : AppCompatActivity() {
             if (data != null) {
                 when (requestCode) {
                     REQ_CODE_SPEECH_INPUT -> {
-                        var canContinue = false
                         if (resultCode == RESULT_OK) {
-                            val result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                            var result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                             if (language == "English" || language == "Other") {
-                                canContinue = true
                             } else {
                                 async {
-                                    val result2 = translate(result)
-                                    uiThread {
-                                        println("result + $result2")
-                                            canContinue = true
-                                            println("turned++ $canContinue")
-                                    }
+                                    result = translate(result) as ArrayList<String>?
                                 }
                                 Thread.sleep(900)
                             }
                             voiceInput?.text = result[0]
-                            for (i in 0..result.size - 1) {
+                            for (i in 0 until result.size) {
                                 val test = result[i]
                                 val regEx = Regex("[^A-Za-z0-9]")
                                 allArtPieces
