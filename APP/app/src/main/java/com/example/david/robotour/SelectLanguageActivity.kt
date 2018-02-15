@@ -1,11 +1,9 @@
 package com.example.david.robotour
 
-import android.content.Intent
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.ScrollView
 import org.jetbrains.anko.*
 
 class SelectLanguageActivity : AppCompatActivity() {

@@ -37,12 +37,13 @@ class MainActivity : AppCompatActivity() {
                         onLongClick { startActivity<TempActivity>(); true }
                     }
                     var on = true
-                    toggleButton {
+                    /*toggleButton {
+                    //Commented out for CD2
                         onClick { on = !on }
                         text = "Single User"
                         textOn = "Multi User"
                         textOff = "Single User"
-                    }
+                    }*/
                 }
             }
 

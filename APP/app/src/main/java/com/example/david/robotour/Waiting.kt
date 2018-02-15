@@ -18,7 +18,6 @@ class Waiting : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(R.layout.activity_waiting)
         supportActionBar?.hide() //hide actionbar
         language = intent.getStringExtra("language") //Getting the language from the previous activity
 
@@ -63,7 +62,7 @@ class Waiting : AppCompatActivity() {
         /*Overridden onBackPressed*/
     }
 
-    val t: Thread = object : Thread() {
+    private val t: Thread = object : Thread() {
         /*This thread will check if the other use has made their selection*/
         override fun run() {
             while (!isInterrupted) {
