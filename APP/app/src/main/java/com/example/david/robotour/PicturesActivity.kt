@@ -13,7 +13,6 @@ import android.graphics.drawable.ColorDrawable
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
 import com.google.cloud.translate.Translate
 import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
@@ -206,7 +205,8 @@ class PicturesActivity : AppCompatActivity() {
                         positiveButton("Search") {
                             //Hide keyboard
                             imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0) //translateText
-                            if (language == "English" || language == "Other") {
+                            if (language == "English") {
+                                //No translation needed hence we skip it
                                afterAsync(input.text.toString())
                             } else {
                                 async {
@@ -330,7 +330,7 @@ class PicturesActivity : AppCompatActivity() {
                     REQ_CODE_SPEECH_INPUT -> {
                         if (resultCode == RESULT_OK) {
                             var result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-                            if (language == "English" || language == "Other") {
+                            if (language == "English") {
                                 //If the language is english, continue no problemo
                             } else {
                                 //If language is not english or other, we run the translator
