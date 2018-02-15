@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                 imageView(R.drawable.robotour_small) {
                     backgroundColor = Color.TRANSPARENT //Removes gray border
                 }.lparams {
-                    bottomMargin = dip(10)
+                    bottomMargin = dip(40)
                     topMargin = dip(10)
                 }
                 button("START") {
