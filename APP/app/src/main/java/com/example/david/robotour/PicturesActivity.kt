@@ -14,8 +14,11 @@ import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import com.google.cloud.translate.Translate
+import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
@@ -27,8 +30,32 @@ class PicturesActivity : AppCompatActivity() {
     private var queriedArtPieces = ArrayList<ArtPiece>()
     private var searchedForPainting = false //true if we've searched for a painting
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
-    private var voiceInput: TextView? = null
     lateinit var t: Thread
+    private var language = ""
+    private fun translate(toTranslate: List<String>): MutableList<String> {
+        /*This function takes a list and returns a list of translated text using Google's API
+        * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
+        * network on main thread exception */
+        val translated: MutableList<String> = mutableListOf()
+        val API_KEY = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finnished
+        for (i in toTranslate) {
+            val options = TranslateOptions.newBuilder().setApiKey(API_KEY).build()
+            val translate = options.service
+            val translation = translate.translate(i, Translate.TranslateOption.targetLanguage("en"))
+            translated.add(translation.translatedText)
+        }
+        return translated
+    }
+    private fun translateText(toTranslate: String): String? {
+        /*This function takes a list and returns a list of translated text using Google's API
+        * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
+        * network on main thread exception */
+        val API_KEY = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finnished
+        val options = TranslateOptions.newBuilder().setApiKey(API_KEY).build()
+        val translate = options.service
+        val translation = translate.translate(toTranslate, Translate.TranslateOption.targetLanguage("en"))
+        return translation.translatedText
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +63,7 @@ class PicturesActivity : AppCompatActivity() {
         allArtPieces.clear()
 
         //Obtain language from SelectLanguageActivity
-        val language = intent.getStringExtra("language")
+        language = intent.getStringExtra("language")
         when (language) {
             "English" -> supportActionBar?.title = "Select Picture"
             "German" -> supportActionBar?.title = "Wähle ein Bild"
@@ -139,18 +166,18 @@ class PicturesActivity : AppCompatActivity() {
                     try {
                         val count = allArtPieces.count { it.selected }
                         if (count > 0) {
-                            runOnUiThread {ui.navigateButton.background = ColorDrawable(Color.parseColor("#24E8EA")) }
+                            runOnUiThread { ui.navigateButton.background = ColorDrawable(Color.parseColor("#24E8EA")) }
                         } else {
-                            runOnUiThread {ui.navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3")) }
+                            runOnUiThread { ui.navigateButton.background = ColorDrawable(Color.parseColor("#505050")) }
 
                         }
-                        Thread.sleep(50)
+                        Thread.sleep(100)
                     } catch (e: InterruptedException) {
                     }
                 }
             }
         }
-        t.start()
+        t.start() /*Start to run the thread*/
     }
 
     //Add mic & search icons in actionbar
@@ -158,7 +185,6 @@ class PicturesActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_pictures, menu)
         return true
     }
-
 
     //Define Functions upon actionbar button pressed
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -177,23 +203,20 @@ class PicturesActivity : AppCompatActivity() {
                         val input = editText {
                             inputType = TYPE_CLASS_TEXT
                         }
-                        val regEx = Regex("[^A-Za-z0-9]")
                         positiveButton("Search") {
                             //Hide keyboard
-                            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
-                            searchedForPainting = true
-                            allArtPieces
-                                    .filter {
-                                        //if substring either way return true (ignoring case & special chars) i.e "Mona" & "MonaLisa" return true
-                                        regEx.replace(input.text, "").contains(regEx.replace(it.artist, ""), ignoreCase = true) || (regEx.replace(input.text, "").contains(regEx.replace(it.name, ""), ignoreCase = true)) || regEx.replace(it.artist, "").contains(regEx.replace(input.text, ""), ignoreCase = true) || (regEx.replace(it.name, "").contains(regEx.replace(input.text, ""), ignoreCase = true))
+                            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0) //translateText
+                            if (language == "English" || language == "Other") {
+                               afterAsync(input.text.toString())
+                            } else {
+                                async {
+                                   val transTEXT = translateText(input.text.toString())!!
+                                    println("+++++" + transTEXT)
+                                    uiThread {
+                                        afterAsync(transTEXT)
                                     }
-                                    .forEach { queriedArtPieces.add(it) }
-                            shownArtPieces.clear()
-                            for (artPiece in queriedArtPieces) {
-                                shownArtPieces.add(artPiece)
+                                }
                             }
-                            queriedArtPieces.clear()
-                            adapter.notifyDataSetChanged()
                         }
                         negativeButton("Cancel") {
                             //Hide keyboard
@@ -213,6 +236,22 @@ class PicturesActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+    private fun afterAsync (transTEXT: String){
+        val regEx = Regex("[^A-Za-z0-9]")
+        searchedForPainting = true
+        allArtPieces
+                .filter {
+                    //if substring either way return true (ignoring case & special chars) i.e "Mona" & "MonaLisa" return true
+                    regEx.replace(transTEXT, "").contains(regEx.replace(it.artist, ""), ignoreCase = true) || (regEx.replace(transTEXT, "").contains(regEx.replace(it.name, ""), ignoreCase = true)) || regEx.replace(it.artist, "").contains(regEx.replace(transTEXT, ""), ignoreCase = true) || (regEx.replace(it.name, "").contains(regEx.replace(transTEXT, ""), ignoreCase = true))
+                }
+                .forEach { queriedArtPieces.add(it) }
+    shownArtPieces.clear()
+    for (artPiece in queriedArtPieces) {
+        shownArtPieces.add(artPiece)
+    }
+    queriedArtPieces.clear()
+    adapter.notifyDataSetChanged()
+    }
 
     override fun onBackPressed() {
         if (searchedForPainting) {
@@ -223,23 +262,29 @@ class PicturesActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
             searchedForPainting = false
         } else {
-            alert("Are you sure you want to leave? Your selection will be lost") {
-                positiveButton {
-                    t.interrupt() //Stops the thread
-                    async {
-                        clearFindViewByIdCache()
-                        allArtPieces.clear()
+            val count = allArtPieces.count { it.selected }
+            if(count==0){
+                /*If the user has not made any selections, let them press back no questions asked*/
+                super.onBackPressed()
+            } else {
+                alert("Are you sure you want to leave? Your selection will be lost") {
+                    positiveButton {
+                        t.interrupt() //Stops the thread
+                        async {
+                            clearFindViewByIdCache()
+                            allArtPieces.clear()
+                        }
+                        super.onBackPressed() // Call super.onBackPressed
                     }
-                    super.onBackPressed() // Call super.onBackPressed
-                }
-                negativeButton {
-                    /*Do nothing*/
-                }
-            }.show()
+                    negativeButton {
+                        /*Do nothing*/
+                    }
+                }.show()
+            }
         }
     }
 
-    fun askSpeechInput() {
+    private fun askSpeechInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
@@ -251,40 +296,52 @@ class PicturesActivity : AppCompatActivity() {
             }
         } catch (a: ActivityNotFoundException) {
         } catch (e: java.lang.RuntimeException) {
-        } catch(e: java.lang.IllegalArgumentException) {
-        }
+        } catch(e: java.lang.IllegalArgumentException) { }
     }
 
+    private fun afterAsync_speech (result: ArrayList<String>){
+        for (i in 0 until result.size) {
+            val test = result[i]
+            val regEx = Regex("[^A-Za-z0-9]")
+            allArtPieces
+                    .filter {
+                        //if substring either way return true (ignoring case & special chars) i.e "Mona" & "MonaLisa" return true
+                        (regEx.replace(test, "").contains(regEx.replace(it.artist, ""), ignoreCase = true) || (regEx.replace(test, "").contains(regEx.replace(it.name, ""), ignoreCase = true)) || regEx.replace(it.name, "").contains(regEx.replace(test, ""), ignoreCase = true) || (regEx.replace(it.name, "").contains(regEx.replace(test, ""), ignoreCase = true))) && !queriedArtPieces.contains(it)
+                    }
+                    .forEach {
+                        /*This only adds the art piece iff it has not already been added*/
+                        queriedArtPieces.add(it)
+                    }
+        }
+        shownArtPieces.clear()
+        for (artPiece in queriedArtPieces) {
+            shownArtPieces.add(artPiece)
+        }
+        if (queriedArtPieces.size == 0) {
+            //Do something if no results are found
+        }
+        queriedArtPieces.clear()
+        adapter.notifyDataSetChanged()
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != RESULT_CANCELED && requestCode != RESULT_CANCELED) {
             if (data != null) {
                 when (requestCode) {
                     REQ_CODE_SPEECH_INPUT -> {
                         if (resultCode == RESULT_OK) {
-                            val result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-                            voiceInput?.text = result[0]
-                            for (i in 0..result.size - 1) {
-                                val test = result[i]
-                                val regEx = Regex("[^A-Za-z0-9]")
-                                allArtPieces
-                                        .filter {
-                                            //if substring either way return true (ignoring case & special chars) i.e "Mona" & "MonaLisa" return true
-                                            (regEx.replace(test, "").contains(regEx.replace(it.artist, ""), ignoreCase = true) || (regEx.replace(test, "").contains(regEx.replace(it.name, ""), ignoreCase = true)) || regEx.replace(it.name, "").contains(regEx.replace(test, ""), ignoreCase = true) || (regEx.replace(it.name, "").contains(regEx.replace(test, ""), ignoreCase = true))) && !queriedArtPieces.contains(it)
-                                        }
-                                        .forEach {
-                                            /*This only adds the art piece iff it has not already been added*/
-                                            queriedArtPieces.add(it)
-                                        }
+                            var result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                            if (language == "English" || language == "Other") {
+                                //If the language is english, continue no problemo
+                            } else {
+                                //If language is not english or other, we run the translator
+                                async {
+                                    result = translate(result) as ArrayList<String>?
+                                    println("+++ translation"+result)
+                                    uiThread {
+                                        afterAsync_speech(result)
+                                    }
+                                }
                             }
-                            shownArtPieces.clear()
-                            for (artPiece in queriedArtPieces) {
-                                shownArtPieces.add(artPiece)
-                            }
-                            if (queriedArtPieces.size == 0) {
-                                //Do something if no results are found
-                            }
-                            queriedArtPieces.clear()
-                            adapter.notifyDataSetChanged()
                         }
                     }
                 }

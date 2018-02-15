@@ -45,7 +45,7 @@ class TempActivity : AppCompatActivity() {
     }
 
     @SuppressLint("ApplySharedPref")
-    fun SaveInt(key: String, value: Int) {
+    private fun SaveInt(key: String, value: Int) {
         /* Function to save an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val editor = sharedPreferences.edit()
@@ -53,7 +53,7 @@ class TempActivity : AppCompatActivity() {
         editor.commit()
     }
 
-    fun LoadInt(key: String): Int {
+    private fun LoadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val savedValue = sharedPreferences.getInt(key, 0)
