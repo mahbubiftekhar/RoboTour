@@ -45,6 +45,7 @@ class PicturesActivity : AppCompatActivity() {
         }
         return translated
     }
+
     private fun translateText(toTranslate: String): String? {
         /*This function takes a list and returns a list of translated text using Google's API
         * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
@@ -207,10 +208,10 @@ class PicturesActivity : AppCompatActivity() {
                             imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0) //translateText
                             if (language == "English") {
                                 //No translation needed hence we skip it
-                               afterAsync(input.text.toString())
+                                afterAsync(input.text.toString())
                             } else {
                                 async {
-                                   val transTEXT = translateText(input.text.toString())!!
+                                    val transTEXT = translateText(input.text.toString())!!
                                     println("+++++" + transTEXT)
                                     uiThread {
                                         afterAsync(transTEXT)
@@ -236,7 +237,8 @@ class PicturesActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-    private fun afterAsync (transTEXT: String){
+
+    private fun afterAsync(transTEXT: String) {
         val regEx = Regex("[^A-Za-z0-9]")
         searchedForPainting = true
         allArtPieces
@@ -245,12 +247,12 @@ class PicturesActivity : AppCompatActivity() {
                     regEx.replace(transTEXT, "").contains(regEx.replace(it.artist, ""), ignoreCase = true) || (regEx.replace(transTEXT, "").contains(regEx.replace(it.name, ""), ignoreCase = true)) || regEx.replace(it.artist, "").contains(regEx.replace(transTEXT, ""), ignoreCase = true) || (regEx.replace(it.name, "").contains(regEx.replace(transTEXT, ""), ignoreCase = true))
                 }
                 .forEach { queriedArtPieces.add(it) }
-    shownArtPieces.clear()
-    for (artPiece in queriedArtPieces) {
-        shownArtPieces.add(artPiece)
-    }
-    queriedArtPieces.clear()
-    adapter.notifyDataSetChanged()
+        shownArtPieces.clear()
+        for (artPiece in queriedArtPieces) {
+            shownArtPieces.add(artPiece)
+        }
+        queriedArtPieces.clear()
+        adapter.notifyDataSetChanged()
     }
 
     override fun onBackPressed() {
@@ -263,7 +265,7 @@ class PicturesActivity : AppCompatActivity() {
             searchedForPainting = false
         } else {
             val count = allArtPieces.count { it.selected }
-            if(count==0){
+            if (count == 0) {
                 /*If the user has not made any selections, let them press back no questions asked*/
                 super.onBackPressed()
             } else {
@@ -296,10 +298,11 @@ class PicturesActivity : AppCompatActivity() {
             }
         } catch (a: ActivityNotFoundException) {
         } catch (e: java.lang.RuntimeException) {
-        } catch(e: java.lang.IllegalArgumentException) { }
+        } catch (e: java.lang.IllegalArgumentException) {
+        }
     }
 
-    private fun afterAsync_speech (result: ArrayList<String>){
+    private fun afterAsync_speech(result: ArrayList<String>) {
         for (i in 0 until result.size) {
             val test = result[i]
             val regEx = Regex("[^A-Za-z0-9]")
@@ -323,6 +326,7 @@ class PicturesActivity : AppCompatActivity() {
         queriedArtPieces.clear()
         adapter.notifyDataSetChanged()
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != RESULT_CANCELED && requestCode != RESULT_CANCELED) {
             if (data != null) {
@@ -336,7 +340,7 @@ class PicturesActivity : AppCompatActivity() {
                                 //If language is not english or other, we run the translator
                                 async {
                                     result = translate(result) as ArrayList<String>?
-                                    println("+++ translation"+result)
+                                    println("+++ translation" + result)
                                     uiThread {
                                         afterAsync_speech(result)
                                     }

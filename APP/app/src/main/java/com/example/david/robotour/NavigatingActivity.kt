@@ -1,9 +1,11 @@
 package com.example.david.robotour
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.net.ConnectivityManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
@@ -11,6 +13,7 @@ import android.view.Gravity
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -22,41 +25,38 @@ import java.io.IOException
 import java.net.URL
 
 class NavigatingActivity : AppCompatActivity() {
-    val btnHgt = 77
-    var btnTextSize = 24f
-    var toggleStBtn = true
-    var alertStBtn = ""
-    var positive = ""
-    var negative = ""
-    var skip = ""
-    var skipDesc = ""
-    val userid = ""
-    var stop = ""
-    var stopDesc = ""
-    var start = ""
-    var startDesc = ""
-    var cancelTour = ""
-    var cancelDesc = ""
-    var exit = ""
-    var exitDesc = ""
-    var toilet = ""
-    var toiletDesc = ""
-    var changeSpeed = ""
-    var imageView: ImageView? = null
-    var titleView: TextView? = null
-    var descriptionView: TextView? = null
-    var stopButton: Button? = null
-    var Skippable = true
-    lateinit var t: Thread
+    private val btnHgt = 77
+    private var btnTextSize = 24f
+    private var toggleStBtn = true
+    private var alertStBtn = ""
+    private var positive = ""
+    private var negative = ""
+    private var skip = ""
+    private var skipDesc = ""
+    private val userid = ""
+    private var stop = ""
+    private var stopDesc = ""
+    private var start = ""
+    private var startDesc = ""
+    private var cancelTour = ""
+    private var cancelDesc = ""
+    private var exit = ""
+    private var exitDesc = ""
+    private var toilet = ""
+    private var toiletDesc = ""
+    private var changeSpeed = ""
+    private var imageView: ImageView? = null
+    private var titleView: TextView? = null
+    private var descriptionView: TextView? = null
+    private var stopButton: Button? = null
+    private var Skippable = true
+    private lateinit var t: Thread
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
         supportActionBar?.hide() //hide actionbar
-        async {
-           // sendPUT("2", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
-        }
         //Obtain language from PicturesUI
         val language = intent.getStringExtra("language")
         when (language) {
@@ -198,9 +198,14 @@ class NavigatingActivity : AppCompatActivity() {
                             onClick {
                                 alert(skipDesc) {
                                     positiveButton(positive) {
-                                        async {
-                                            skip()
+                                        if(isNetworkConnected()) {
+                                            async {
+                                                skip()
+                                            }
+                                        } else {
+                                            Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
                                         }
+
                                     }
                                     negativeButton(negative) {
                                         //Do nothing the user changed their minds
@@ -221,18 +226,22 @@ class NavigatingActivity : AppCompatActivity() {
                                 }
                                 alert(alertStBtn) {
                                     positiveButton(positive) {
-                                        if (!toggleStBtn) {
-                                            text = stop
-                                            async {
-                                                stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                        if (isNetworkConnected()) {
+                                            if (!toggleStBtn) {
+                                                text = stop
+                                                async {
+                                                    stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                                }
+                                            } else {
+                                                text = start
+                                                async {
+                                                    startRoboTour()
+                                                }
                                             }
+                                            toggleStBtn = !toggleStBtn
                                         } else {
-                                            text = start
-                                            async {
-                                                startRoboTour()
-                                            }
+                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                         }
-                                        toggleStBtn = !toggleStBtn
                                     }
                                     negativeButton(negative) { }
                                 }.show()
@@ -248,9 +257,14 @@ class NavigatingActivity : AppCompatActivity() {
                             onClick {
                                 alert(cancelDesc) {
                                     positiveButton(positive) {
-                                        async {
-                                            cancelGuideTotal()
+                                        if(isNetworkConnected()) {
+                                            async {
+                                                cancelGuideTotal()
+                                            }
+                                        } else {
+                                            Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
                                         }
+
                                     }
                                     negativeButton(negative) {
                                         onBackPressed() //Call on back pressed to take them back to the main activity
@@ -321,9 +335,14 @@ class NavigatingActivity : AppCompatActivity() {
                             onClick {
                                 alert(toiletDesc) {
                                     positiveButton(positive) {
-                                        async {
-                                            sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php")
+                                        if(isNetworkConnected()) {
+                                            async {
+                                                sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php")
+                                            }
+                                        } else {
+                                            Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
                                         }
+
                                     }
                                     negativeButton(negative) { }
                                 }.show()
@@ -337,9 +356,14 @@ class NavigatingActivity : AppCompatActivity() {
                             onClick {
                                 alert(exitDesc) {
                                     positiveButton(positive) {
-                                        async {
-                                            sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+                                        if(isNetworkConnected()) {
+                                            async {
+                                                sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+                                            }
+                                        } else {
+                                            Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
                                         }
+
                                     }
                                     negativeButton(negative) { }
                                 }.show()
@@ -350,13 +374,22 @@ class NavigatingActivity : AppCompatActivity() {
             }
 
         }
-        Thread.sleep(4000)
-        titleView?.text = "RoboTour Calculating Optimal Route..."
+        //Thread.sleep(4000)
+        when (language) {
+            "English" -> titleView?.text = "RoboTour calculating optimal route..."
+            "German" -> titleView?.text = "RoboTour berechnet optimale Route ..."
+            "Spanish" -> titleView?.text = "RoboTour calcula la ruta óptima ..."
+            "French" -> titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
+            "Chinese" -> titleView?.text = "RoboTour计算最佳路线..."
+            "other" -> titleView?.text = "RoboTour calculating optimal route..."
+            "else" -> titleView?.text = "RoboTour calculating optimal route..."
+        }
+
         t = object : Thread() {
             override fun run() {
                 while (!isInterrupted) {
                     try {
-                        Thread.sleep(1500) //1000ms = 1 sec
+                        Thread.sleep(1000) //1000ms = 1 sec
                         runOnUiThread(object : Runnable {
                             override fun run() {
                                 async {
@@ -392,11 +425,20 @@ class NavigatingActivity : AppCompatActivity() {
                                                 cancellable(false)
                                                 setFinishOnTouchOutside(false)
                                                 positiveButton(positive) {
-                                                    skipImmediately()
+                                                    if(isNetworkConnected()) {
+                                                        skipImmediately()
+                                                    } else {
+                                                        Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                    }
 
                                                 }
                                                 negativeButton(negative) {
-                                                    rejectSkip()
+                                                    if(isNetworkConnected()) {
+                                                        rejectSkip()
+                                                    } else {
+                                                        Skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                        Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                    }
                                                 }
                                             }.show()
                                         }
@@ -431,11 +473,23 @@ class NavigatingActivity : AppCompatActivity() {
         }
 
     }
-
+    private fun isNetworkConnected(): Boolean {
+        /*Function to check if a data connection is available, if a data connection is
+              * return true, otherwise false*/
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
+    }
     fun toiletAlert() {
         /*This alert should be pressed when the user wants to */
         alert{
-            positiveButton {  }
+            positiveButton {
+                if(isNetworkConnected()) {
+
+                } else {
+                    Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 

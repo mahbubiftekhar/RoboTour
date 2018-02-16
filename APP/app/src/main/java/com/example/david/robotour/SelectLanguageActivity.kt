@@ -5,11 +5,10 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import org.jetbrains.anko.*
+import java.util.*
 
 class SelectLanguageActivity : AppCompatActivity() {
-
     data class Language(val name: String, val imageID: Int)
-
     private val languages = ArrayList<Language>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +32,9 @@ class SelectLanguageActivity : AppCompatActivity() {
                     for (j in 0..1) {
                         imageButton(languages[i + j].imageID) {
                             backgroundColor = Color.TRANSPARENT
-                            onClick { startActivity<PicturesActivity>("language" to languages[i + j].name) }
+                            onClick {
+                                startActivity<PicturesActivity>("language" to languages[i + j].name)
+                            }
                         }.lparams { topMargin = dip(15); leftMargin = dip(20 + (j + 1) * 10) }
                     }
                 }

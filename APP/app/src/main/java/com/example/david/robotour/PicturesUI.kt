@@ -2,6 +2,7 @@ package com.example.david.robotour
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
@@ -25,7 +26,6 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
     fun notifyUser() {
         Toast.makeText(ctx,toastText,Toast.LENGTH_LONG).show()
     }
-
     override fun createView(ui: AnkoContext<PicturesActivity>): View = with(ui) {
         return relativeLayout {
             when (language) {

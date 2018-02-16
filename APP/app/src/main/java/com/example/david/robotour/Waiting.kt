@@ -11,7 +11,6 @@ import org.jetbrains.anko.*
 import java.net.URL
 
 class Waiting : AppCompatActivity() {
-
     val user = 1
     var language = ""
     var message = ""
@@ -81,8 +80,7 @@ class Waiting : AppCompatActivity() {
                             switchToNavigate()
                         }
                     }
-                } catch (e: InterruptedException) {
-                }
+                } catch (e: InterruptedException) { }
             }
         }
     }
