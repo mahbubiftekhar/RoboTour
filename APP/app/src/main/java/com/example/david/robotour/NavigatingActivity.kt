@@ -438,7 +438,6 @@ class NavigatingActivity : AppCompatActivity() {
                                                     } else {
                                                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                     }
-
                                                 }
                                                 negativeButton(negative) {
                                                     if (isNetworkConnected()) {
@@ -499,10 +498,15 @@ class NavigatingActivity : AppCompatActivity() {
     override fun onBackPressed() {
         /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
         Send the user back to MainActivity */
-        t.interrupt()
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        this.finish()
+       alert(exitDesc){
+           positiveButton(positive){
+               t.interrupt()
+               switchToMain()
+           }
+           negativeButton(negative) {
+               /*Do nothing*/
+           }
+       }.show()
     }
 
     fun cancelGuideTotal() {
