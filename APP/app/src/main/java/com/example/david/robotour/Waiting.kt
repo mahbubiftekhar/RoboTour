@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import kotlinx.android.synthetic.*
@@ -80,7 +81,8 @@ class Waiting : AppCompatActivity() {
                             switchToNavigate()
                         }
                     }
-                } catch (e: InterruptedException) { }
+                } catch (e: InterruptedException) {
+                }
             }
         }
     }

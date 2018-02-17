@@ -3,6 +3,7 @@ package com.example.david.robotour
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
+import android.preference.PreferenceManager
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
@@ -105,7 +106,14 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
             }
         }
     }
+    fun LoadInt(key: String): Int {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
+        val savedValue = sharedPreferences.getInt(key, 0)
+        return savedValue
+        //        val a = LoadInt("user")
 
+    }
 
     fun sendList() {
         /*This function will upload to the server the required items simply - positive uploads only*/
@@ -115,6 +123,8 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                 .filter { it.selected }
                 .map { it.eV3ID }
                 .forEach { sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/$it.php") }
+        val a = LoadInt("user")
+        sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/$a.php")
     }
 
     fun sendPUT(command: String, url: String) {

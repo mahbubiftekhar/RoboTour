@@ -8,6 +8,7 @@ import android.graphics.Typeface
 import android.net.ConnectivityManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.content.res.ResourcesCompat
 import android.view.Gravity
 import android.widget.Button
@@ -33,7 +34,7 @@ class NavigatingActivity : AppCompatActivity() {
     private var negative = ""
     private var skip = ""
     private var skipDesc = ""
-    private val userid = ""
+    private var userid = ""
     private var stop = ""
     private var stopDesc = ""
     private var start = ""
@@ -52,8 +53,17 @@ class NavigatingActivity : AppCompatActivity() {
     private var Skippable = true
     private lateinit var t: Thread
 
+    fun LoadInt(key: String): Int {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
+        val savedValue = sharedPreferences.getInt(key, 0)
+        return savedValue
+        //        val a = LoadInt("user")
+
+    }
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
+        userid = LoadInt("user").toString()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
         supportActionBar?.hide() //hide actionbar
