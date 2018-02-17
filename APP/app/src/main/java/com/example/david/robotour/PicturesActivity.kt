@@ -197,13 +197,49 @@ class PicturesActivity : AppCompatActivity() {
                 alert {
                     //Force Keyboard to open
                     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    title = "Please enter painting you wish to go to"
+                    var search = ""
+                    when (language) {
+                        "English" -> {
+                            title = "Please enter painting you wish to go to"
+                            search = "Search"
+                        }
+                        "German" -> {
+                            title = "Bitte geben Sie ein Gemälde ein, zu dem Sie gehen möchten\n"
+                            search ="Suche"
+
+                        }
+                        "Spanish" -> {
+                            title = "Por favor, ingrese la pintura a la que desea ir\n"
+                            search ="buscar"
+
+                        }
+                        "French" -> {
+                            title = "S'il vous plaît entrer la peinture que vous souhaitez aller à\n"
+                            search ="chercher"
+
+                        }
+                        "Chinese" -> {
+                            title = "请输入你想要去的绘画"
+                            search ="搜索"
+
+                        }
+                        "other" -> {
+                            title = "Please enter painting you wish to go to"
+                            search ="Search"
+
+                        }
+                        "else" -> {
+                            title = "Please enter painting you wish to go to"
+                            search ="Search"
+
+                        }
+                    }
                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
                     customView {
                         val input = editText {
                             inputType = TYPE_CLASS_TEXT
                         }
-                        positiveButton("Search") {
+                        positiveButton(search) {
                             //Hide keyboard
                             imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0) //translateText
                             if (language == "English") {
@@ -289,8 +325,36 @@ class PicturesActivity : AppCompatActivity() {
     private fun askSpeechInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
+        when (language) {
+            "English" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
+            }
+            "German" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.GERMAN)
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Nach welchen Kunstwerken suchst du?")
+            }
+            "Spanish" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "¿Qué piezas de arte estás buscando?")
+            }
+            "French" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.FRENCH)
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Quelles pièces d'art recherchez-vous?")
+            }
+            "Chinese" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.CHINESE)
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "你在找什么艺术品？")
+            }
+            "other" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
+            }
+            "else" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
+            }
+        }
         try {
             async {
                 searchedForPainting = true

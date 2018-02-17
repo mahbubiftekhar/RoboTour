@@ -7,14 +7,18 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
+import android.widget.ImageView
+import android.widget.TextView
 import kotlinx.android.synthetic.*
 import org.jetbrains.anko.*
 import java.net.URL
 
 class Waiting : AppCompatActivity() {
     val user = 1
-    var language = ""
-    var message = ""
+    private var language = ""
+    private var message = ""
+    private var imageView: ImageView? = null
+    private var descriptionView: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,26 +41,41 @@ class Waiting : AppCompatActivity() {
                 settings.useWideViewPort = true
             }
             textView {
-                textSize = 32f
+                textSize = 34f
                 typeface = Typeface.DEFAULT_BOLD
                 padding = dip(5)
                 topPadding = dip(20)
                 gravity = Gravity.CENTER
                 text = message
             }
+            imageView = imageView {
+                backgroundColor = Color.TRANSPARENT //Removes gray border
+                gravity = Gravity.CENTER_HORIZONTAL
+            }.lparams {
+                topMargin = dip(20)
+            }
+            descriptionView = textView {
+                text = ""
+                textSize = 20f
+                typeface = Typeface.DEFAULT
+                this.gravity = Gravity.CENTER
+                padding = dip(10)
+            }
             background = ColorDrawable(Color.parseColor("#EEEEEE"))
         }
         async {
             t.start()
+            pictureThread.start()
         }
     }
 
     fun switchToNavigate() {
-        Thread.sleep(3500)
+        Thread.sleep(6500)
         t.interrupt() // Stop the thread
         clearFindViewByIdCache()
         startActivity<NavigatingActivity>("language" to language) // now we can switch the activity
     }
+
 
     override fun onBackPressed() {
         /*Overridden onBackPressed*/
@@ -83,6 +102,29 @@ class Waiting : AppCompatActivity() {
                     }
                 } catch (e: InterruptedException) {
                 }
+            }
+        }
+    }
+
+    private val pictureThread: Thread = object : Thread() {
+        /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
+        var a = 0
+        override fun run() {
+            while (!isInterrupted) {
+                if(a>9){
+                    //Reset A to avoid null pointers
+                    a=0
+                }
+                try {
+                    //UI thread MUST be updates on the UI thread, other threads may not update the UI thread
+                    runOnUiThread{
+                       imageView?.setImageResource(allArtPieces[a].imageID)
+                       descriptionView?.text = allArtPieces[a].name
+                   }
+                }
+                catch (e: InterruptedException) { }
+                Thread.sleep(2000)
+                a++
             }
         }
     }
