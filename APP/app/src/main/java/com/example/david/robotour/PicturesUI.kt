@@ -51,7 +51,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                 }
                 else -> {
                     a = "Start tour"
-                    navigate = "navigate to selected artwork?"
+                    navigate = "Navigate to selected artwork?"
                     toastText = "Please select 1 or more artworks to visit"
                 }
             }

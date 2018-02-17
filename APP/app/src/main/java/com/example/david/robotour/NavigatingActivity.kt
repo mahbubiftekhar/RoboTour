@@ -173,13 +173,13 @@ class NavigatingActivity : AppCompatActivity() {
             }
             //get image the pictures.php file that is true
             imageView = imageView {
+                setImageResource(R.drawable.robotourfornavigating)
                 backgroundColor = Color.TRANSPARENT //Removes gray border
                 gravity = Gravity.CENTER_HORIZONTAL
             }.lparams {
                 bottomMargin = dip(10)
                 topMargin = dip(10)
             }
-            //view.setImageDrawable(resources.getDrawable(allArtPieces[1].imageID))
             descriptionView = textView {
                 text = ""
                 textSize = 16f
@@ -198,12 +198,12 @@ class NavigatingActivity : AppCompatActivity() {
                             onClick {
                                 alert(skipDesc) {
                                     positiveButton(positive) {
-                                        if(isNetworkConnected()) {
+                                        if (isNetworkConnected()) {
                                             async {
                                                 skip()
                                             }
                                         } else {
-                                            Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
+                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                         }
 
                                     }
@@ -257,12 +257,12 @@ class NavigatingActivity : AppCompatActivity() {
                             onClick {
                                 alert(cancelDesc) {
                                     positiveButton(positive) {
-                                        if(isNetworkConnected()) {
+                                        if (isNetworkConnected()) {
                                             async {
                                                 cancelGuideTotal()
                                             }
                                         } else {
-                                            Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
+                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                         }
 
                                     }
@@ -335,12 +335,12 @@ class NavigatingActivity : AppCompatActivity() {
                             onClick {
                                 alert(toiletDesc) {
                                     positiveButton(positive) {
-                                        if(isNetworkConnected()) {
+                                        if (isNetworkConnected()) {
                                             async {
                                                 sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php")
                                             }
                                         } else {
-                                            Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
+                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                         }
 
                                     }
@@ -356,12 +356,12 @@ class NavigatingActivity : AppCompatActivity() {
                             onClick {
                                 alert(exitDesc) {
                                     positiveButton(positive) {
-                                        if(isNetworkConnected()) {
+                                        if (isNetworkConnected()) {
                                             async {
                                                 sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
                                             }
                                         } else {
-                                            Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
+                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                         }
 
                                     }
@@ -374,7 +374,6 @@ class NavigatingActivity : AppCompatActivity() {
             }
 
         }
-        //Thread.sleep(4000)
         when (language) {
             "English" -> titleView?.text = "RoboTour calculating optimal route..."
             "German" -> titleView?.text = "RoboTour berechnet optimale Route ..."
@@ -419,25 +418,24 @@ class NavigatingActivity : AppCompatActivity() {
                                     val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
                                     if (a == "2" && Skippable) {
                                         Skippable = false
-                                        println("+++GOT HERE")
                                         runOnUiThread {
                                             alert(skip) {
                                                 cancellable(false)
                                                 setFinishOnTouchOutside(false)
                                                 positiveButton(positive) {
-                                                    if(isNetworkConnected()) {
+                                                    if (isNetworkConnected()) {
                                                         skipImmediately()
                                                     } else {
-                                                        Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                     }
 
                                                 }
                                                 negativeButton(negative) {
-                                                    if(isNetworkConnected()) {
+                                                    if (isNetworkConnected()) {
                                                         rejectSkip()
                                                     } else {
                                                         Skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
-                                                        Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                     }
                                                 }
                                             }.show()
@@ -473,6 +471,7 @@ class NavigatingActivity : AppCompatActivity() {
         }
 
     }
+
     private fun isNetworkConnected(): Boolean {
         /*Function to check if a data connection is available, if a data connection is
               * return true, otherwise false*/
@@ -480,16 +479,10 @@ class NavigatingActivity : AppCompatActivity() {
         val networkInfo = connectivityManager.activeNetworkInfo
         return networkInfo != null && networkInfo.isConnected
     }
-    fun toiletAlert() {
-        /*This alert should be pressed when the user wants to */
-        alert{
-            positiveButton {
-                if(isNetworkConnected()) {
 
-                } else {
-                    Toast.makeText(applicationContext,"Check network connection then try again", Toast.LENGTH_LONG).show()
-                }
-            }
+    fun toiletAlert() {
+        alert {
+            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
         }
     }
 
