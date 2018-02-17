@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
                             Toast.makeText(applicationContext,"Check network connection then try again",Toast.LENGTH_LONG).show()
                         }
                     }
-                   // onLongClick { startActivity<TempActivity>(); true }
                 }
                 var on = true
                 /*toggleButton {
