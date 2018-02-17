@@ -111,8 +111,6 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
         val savedValue = sharedPreferences.getInt(key, 0)
         return savedValue
-        //        val a = LoadInt("user")
-
     }
 
     fun sendList() {

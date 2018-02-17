@@ -14,11 +14,13 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.widget.Toast
+import kotlinx.android.synthetic.*
 
 
 class MainActivity : AppCompatActivity() {
     var count = 0
     override fun onBackPressed() {
+        clearFindViewByIdCache()
         val intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_HOME)
         startActivity(intent)
@@ -61,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         val networkInfo = connectivityManager.activeNetworkInfo
         return networkInfo != null && networkInfo.isConnected
     }
-    fun vibrate() {
+    private fun vibrate() {
         if (Build.VERSION.SDK_INT > 25) { /*Attempt to not use the deprecated version if possible, if the SDK version is >25, use the newer one*/
             (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(VibrationEffect.createOneShot(300, 10))
         } else {
