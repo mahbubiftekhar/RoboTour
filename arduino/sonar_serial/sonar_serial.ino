@@ -1,13 +1,16 @@
+#include <LiquidCrystal.h>
+
 #include <NewPing.h>
 
 #define SONAR_NUM 2
 #define MAX_DISTANCE 255
 
-#define PING_DELAY 250
+#define PING_DELAY 50
 
 #define BAUD 9600
 
 uint16_t sonar_val[SONAR_NUM];
+unsigned long last_millis;
 
 
 NewPing sonar[SONAR_NUM] = {
@@ -20,6 +23,8 @@ NewPing sonar[SONAR_NUM] = {
 String inputString = "";
 bool newCommand = false;
 
+uint8_t sonar_index = 0;
+
 void setup() {
   Serial.begin(BAUD);
 
@@ -28,10 +33,11 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  
-  for(uint8_t i = 0; i < SONAR_NUM; ++i) {
-    //delay(PING_DELAY);  
-    sonar_val[i] = i;// sonar[i].ping_cm();
+
+  if(millis() - last_millis >= PING_DELAY) {
+    sonar_val[sonar_index] = sonar[sonar_index].ping_cm();
+    if(sonar_index++ == SONAR_NUM) sonar_index = 0;
+    last_millis = millis();
   }
 
   if(newCommand == true) {
@@ -40,9 +46,6 @@ void loop() {
     newCommand = false;
     inputString = "";
   }
-  
-  
- 
 }
 
 void serialEvent() {
@@ -58,6 +61,7 @@ void serialEvent() {
 void sendSensorData() {
 
   for(uint8_t i = 0; i < SONAR_NUM; ++i) {
+    Serial.print('s');
     Serial.print(i);
     Serial.print(':');
     Serial.print(sonar_val[i]);

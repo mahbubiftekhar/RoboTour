@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 
 import serial
-
+import time
 #ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600)
 
 class SensorHub():
@@ -13,14 +13,28 @@ class SensorHub():
 		self.n_sonars = 4
 		self.sonar_maxrange = 255
 
-		self.poll_timeout = 100
+		self.tries_limit = 100
 
 		self.__DEBUG__ = False
 
 		self.sensor_values = {}
 
+		self.last_poll = 0
+
+		self.poll()
+
 	def poll(self):
-		self.send_request()
+		self.last_poll += 1
+
+		tries = 0
+		while self.serial_port.inWaiting() < 1:
+			self.send_request()
+			time.sleep(0.001)
+			if(tries >= self.tries_limit):
+				print("POLLING TIMEOUT")
+				return False
+			tries += 1
+
 		frame = self.get_frame()
 		self.extract_from_frame(frame)
 
@@ -34,6 +48,7 @@ class SensorHub():
 		while self.serial_port.inWaiting() > 0:
 			out += self.serial_port.read(1).decode('ascii')
 			if(out[-1] == '\n'):
+				# remove newline and last comma
 				out = out[:-2]
 				break
 
@@ -44,8 +59,11 @@ class SensorHub():
 			return
 		try:
 
+			# data comes in as 'id0:val0,id1:val1,[...]'
+			# split to get identifier-value pairs
 			readings = frame.split(',')
 			for r in readings:
+				#split each pair
 				data = r.split(':')
 				
 				self.sensor_values[data[0]] = data[1]
@@ -55,6 +73,23 @@ class SensorHub():
 			print("Error processing frame: {}".format(frame))
 		
 
+class HubSonar():
+
+	def __init__(self, hub, name):
+		self.hub = hub
+		self.hub_key = name
+		self.last_poll = -1
+
+		self.hub.sensor_values[name] = 0
+
+	def value(self):
+		# if a new value is requested
+		if self.last_poll == self.hub.last_poll:
+			self.hub.poll()
+
+		self.last_poll = self.hub.last_poll
+		self.val = self.hub.sensor_values[self.hub_key]
+		return self.val
 
 if __name__ == "__main__":
 	sh = SensorHub()
