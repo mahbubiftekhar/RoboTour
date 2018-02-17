@@ -173,13 +173,13 @@ class NavigatingActivity : AppCompatActivity() {
             }
             //get image the pictures.php file that is true
             imageView = imageView {
+                setImageResource(R.drawable.robotourfornavigating)
                 backgroundColor = Color.TRANSPARENT //Removes gray border
                 gravity = Gravity.CENTER_HORIZONTAL
             }.lparams {
                 bottomMargin = dip(10)
                 topMargin = dip(10)
             }
-            //view.setImageDrawable(resources.getDrawable(allArtPieces[1].imageID))
             descriptionView = textView {
                 text = ""
                 textSize = 16f

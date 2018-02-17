@@ -126,7 +126,4 @@ class Waiting : AppCompatActivity() {
             }
         }
     }
-
-
-
 }
