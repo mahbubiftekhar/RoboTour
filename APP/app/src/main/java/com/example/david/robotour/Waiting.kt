@@ -30,7 +30,7 @@ class Waiting : AppCompatActivity() {
             "German" -> message = "Bitte Warten Sie Auf den Anderen User..."
             "French" -> message = "Veuillez Attendre l'Autre Utilisateur..."
             "Spanish" -> message = "Por Favor Espere al Otro Usuario..."
-            "Chinese" -> message = "請等待其他用戶"
+            "Chinese" -> message = "请等待其他用户..."
             else -> message = "Please Wait For the Other User..."
         }
 

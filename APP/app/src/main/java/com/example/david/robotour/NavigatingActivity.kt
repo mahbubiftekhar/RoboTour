@@ -106,19 +106,19 @@ class NavigatingActivity : AppCompatActivity() {
             }
             "Chinese" -> {
                 positive = "是的"
-                negative = "没有"
-                skip = "跳到下一幅绘画"
-                skipDesc = "你确定要跳到下一张画吗？"
+                negative = "不是"
+                skip = "跳到下一幅作品"
+                skipDesc = "你确定要跳到下一幅作品吗？"
                 stop = "停止RoboTour"
                 stopDesc = "你确定要停止RoboTour？"
-                start = "開始 RoboTour"
-                startDesc = "你想開始 RoboTour?"
+                start = "開始RoboTour"
+                startDesc = "你想開始RoboTour？"
                 cancelTour = "取消游览"
                 cancelDesc = "你确定要取消游览吗？"
                 exit = "带我去出口"
-                exitDesc = "带我去出口"
+                exitDesc = "你确定要去出口吗？"
                 toilet = "带我去厕所"
-                toiletDesc = "你想上厕所吗？"
+                toiletDesc = "你确定要去厕所吗？"
                 changeSpeed = "改变速度"
             }
             "Spanish" -> {
