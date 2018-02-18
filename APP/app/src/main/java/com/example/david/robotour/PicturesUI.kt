@@ -2,7 +2,6 @@ package com.example.david.robotour
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
-import android.net.ConnectivityManager
 import android.preference.PreferenceManager
 import android.view.View
 import android.widget.Button
@@ -19,14 +18,16 @@ import java.io.IOException
 import java.util.ArrayList
 
 class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: String, val ctx: Context) : AnkoComponent<PicturesActivity> {
-    lateinit var a: String
-    var navigate = ""
+    private lateinit var a: String
+    private var navigate = ""
     lateinit var navigateButton: Button
-    var toastText = ""
-
+    private var toastText = ""
+    private var positive = ""
+    private var negative = ""
     fun notifyUser() {
         Toast.makeText(ctx,toastText,Toast.LENGTH_LONG).show()
     }
+
     override fun createView(ui: AnkoContext<PicturesActivity>): View = with(ui) {
         return relativeLayout {
             when (language) {
@@ -34,26 +35,36 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                     a = "Empezar recorrido"
                     navigate = "Navegar a obras de arte seleccionadas?"
                     toastText = "Seleccione 1 o más obras de arte para visitar"
+                    positive = "Sí"
+                    negative = "No"
                 }
                 "German" -> {
                     a = "Tour starten"
                     navigate = "zu ausgewählten Bildern navigieren?"
                     toastText = "Bitte wähle 1 oder mehr Kunstwerke aus, die du besuchen möchtest"
+                    positive = "Ja"
+                    negative = "Nein"
                 }
                 "French" -> {
                     a = "Tour initial"
                     navigate = "naviguer vers l'illustration sélectionnée?"
-                    toastText = ""
+                    toastText = "Veuillez sélectionner une ou plusieurs œuvres à visiter"
+                    positive = "Oui"
+                    negative = "Non"
                 }
                 "Chinese" -> {
                     a = "开始旅游"
                     navigate = "导航到选定的艺术品？"
                     toastText = "请选择一件或多件作品参观"
+                    positive = "是"
+                    negative = "没有"
                 }
                 else -> {
                     a = "Start tour"
                     navigate = "Navigate to selected artwork?"
                     toastText = "Please select 1 or more artworks to visit"
+                    positive = "Yes"
+                    negative = "No"
                 }
             }
             linearLayout {
@@ -84,7 +95,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                         } else {
                             //need to translate here
                             alert(navigate) {
-                                positiveButton("Yes") {
+                                positiveButton(positive) {
                                     async {
                                         sendList()
                                     }
@@ -94,7 +105,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                     }
                                     startActivity<Waiting>("language" to language)
                                 }
-                                negativeButton("No") {
+                                negativeButton(negative) {
                                     // navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))
                                 }
                             }.show()
