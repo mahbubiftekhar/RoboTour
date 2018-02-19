@@ -18,6 +18,8 @@ import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
 import java.util.*
 import kotlin.collections.ArrayList
+import android.speech.tts.TextToSpeech
+import android.speech.tts.TextToSpeech.OnInitListener
 
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
@@ -31,14 +33,14 @@ class PicturesActivity : AppCompatActivity() {
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     lateinit var t: Thread
     private var language = ""
-    private fun translate(toTranslate: List<String>): MutableList<String> {
+    private fun translate(textToTranslate: List<String>): MutableList<String> {
         /*This function takes a list and returns a list of translated text using Google's API
         * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
         * network on main thread exception */
         val translated: MutableList<String> = mutableListOf()
-        val API_KEY = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finnished
-        for (i in toTranslate) {
-            val options = TranslateOptions.newBuilder().setApiKey(API_KEY).build()
+        val apiKey = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finnished
+        for (i in textToTranslate) {
+            val options = TranslateOptions.newBuilder().setApiKey(apiKey).build()
             val translate = options.service
             val translation = translate.translate(i, Translate.TranslateOption.targetLanguage("en"))
             translated.add(translation.translatedText)
@@ -46,14 +48,14 @@ class PicturesActivity : AppCompatActivity() {
         return translated
     }
 
-    private fun translateText(toTranslate: String): String? {
+    private fun translateText(textToTranslate: String): String? {
         /*This function takes a list and returns a list of translated text using Google's API
         * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
         * network on main thread exception */
-        val API_KEY = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finnished
-        val options = TranslateOptions.newBuilder().setApiKey(API_KEY).build()
+        val apiKey = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finished
+        val options = TranslateOptions.newBuilder().setApiKey(apiKey).build()
         val translate = options.service
-        val translation = translate.translate(toTranslate, Translate.TranslateOption.targetLanguage("en"))
+        val translation = translate.translate(textToTranslate, Translate.TranslateOption.targetLanguage("en"))
         return translation.translatedText
     }
 
@@ -245,6 +247,7 @@ class PicturesActivity : AppCompatActivity() {
                                 //No translation needed hence we skip it
                                 afterAsync(input.text.toString())
                             } else {
+                                //Not english hence we need to translate
                                 async {
                                     val transTEXT = translateText(input.text.toString())!!
                                     println("+++++" + transTEXT)

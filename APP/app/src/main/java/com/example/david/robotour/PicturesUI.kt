@@ -24,7 +24,8 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
     private var toastText = ""
     private var positive = ""
     private var negative = ""
-    fun notifyUser() {
+
+    private fun notifyUser() {
         Toast.makeText(ctx,toastText,Toast.LENGTH_LONG).show()
     }
 
@@ -117,14 +118,13 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
             }
         }
     }
-    fun LoadInt(key: String): Int {
+    private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
-        val savedValue = sharedPreferences.getInt(key, 0)
-        return savedValue
+        return sharedPreferences.getInt(key, 0)
     }
 
-    fun sendList() {
+    private fun sendList() {
         /*This function will upload to the server the required items simply - positive uploads only*/
         navigateButton.background = ColorDrawable()
 
@@ -132,7 +132,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                 .filter { it.selected }
                 .map { it.eV3ID }
                 .forEach { sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/$it.php") }
-        val a = LoadInt("user")
+        val a = loadInt("user")
         sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/$a.php")
     }
 
@@ -150,5 +150,4 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
             }
         }
     }
-
 }

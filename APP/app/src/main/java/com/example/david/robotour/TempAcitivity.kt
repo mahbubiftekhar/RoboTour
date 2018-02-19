@@ -15,6 +15,15 @@ import org.jetbrains.anko.async
 import java.io.IOException
 
 class TempActivity : AppCompatActivity() {
+    /*THIS CLASS/ACTIVITY IS BEEN DEPRECATED
+    * AS NO LONGER NEEDED (USED FOR CD1)
+    *
+    * M IFTEKHAR
+    *
+    * 19/02/2018
+    *
+    * */
+
 
     /*THIS IS A QUICK TEMP ACTIVITY FOR THE PURPOSE OF CLIENT DEMO ONE, THIS CAN ONLY BE ACCESSED FROM A LONG PRESS ON THE START BUTTON*/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,11 +45,9 @@ class TempActivity : AppCompatActivity() {
         }
         RIGHT.setOnClickListener{
             uploadToServer("RIGHT") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
-            //sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/monalisa.php")
         }
         LEFT.setOnClickListener{
             uploadToServer("LEFT") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
-            //sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/monalisa.php")
         }
     }
 
@@ -60,7 +67,7 @@ class TempActivity : AppCompatActivity() {
         return savedValue
     }
 
-    fun uploadToServer(command: String) {
+    private fun uploadToServer(command: String) {
         async {
             val httpclient = DefaultHttpClient()
             val httpPost = HttpPost("http://homepages.inf.ed.ac.uk/s1553593/receiver.php")

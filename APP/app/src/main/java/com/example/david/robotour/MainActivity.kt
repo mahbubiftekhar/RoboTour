@@ -18,14 +18,14 @@ import kotlinx.android.synthetic.*
 
 
 class MainActivity : AppCompatActivity() {
-    var count = 0
+    private var count = 0
     override fun onBackPressed() {
         clearFindViewByIdCache()
         val intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_HOME)
         startActivity(intent)
     }
-    fun SaveInt(key: String, value: Int) {
+    private fun saveInt(key: String, value: Int) {
         /* Function to save an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val editor = sharedPreferences.edit()
@@ -33,27 +33,30 @@ class MainActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    fun LoadInt(key: String): Int {
+    private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val savedValue = sharedPreferences.getInt(key, 0)
-        return savedValue
+        return sharedPreferences.getInt(key, 0)
     }
 
-    fun alternateUser(){
-        val a = LoadInt("user")
-        if(a==0){
-            SaveInt("user", 1)
-            Toast.makeText(applicationContext,"User 1",Toast.LENGTH_LONG).show()
-            vibrate()
-        }else if(a==1){
-            SaveInt("user", 2)
-            Toast.makeText(applicationContext,"User 2",Toast.LENGTH_LONG).show()
-            vibrate()
-        }else{
-            SaveInt("user", 1)
-            Toast.makeText(applicationContext,"User 1",Toast.LENGTH_LONG).show()
-            vibrate()
+    private fun alternateUser(){
+        val a = loadInt("user")
+        when (a) {
+            0 -> {
+                saveInt("user", 1)
+                Toast.makeText(applicationContext,"User 1",Toast.LENGTH_LONG).show()
+                vibrate()
+            }
+            1 -> {
+                saveInt("user", 2)
+                Toast.makeText(applicationContext,"User 2",Toast.LENGTH_LONG).show()
+                vibrate()
+            }
+            else -> {
+                saveInt("user", 1)
+                Toast.makeText(applicationContext,"User 1",Toast.LENGTH_LONG).show()
+                vibrate()
+            }
         }
     }
     private fun isNetworkConnected(): Boolean {

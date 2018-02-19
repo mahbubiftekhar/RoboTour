@@ -70,7 +70,8 @@ class Waiting : AppCompatActivity() {
 
     fun switchToNavigate() {
         Thread.sleep(6500)
-        t.interrupt() // Stop the thread
+        pictureThread.interrupt() //Stop the thread advertising all the art pieces
+        t.interrupt() // Stop the thread looking for the other use
         clearFindViewByIdCache()
         startActivity<NavigatingActivity>("language" to language) // now we can switch the activity
     }

@@ -475,7 +475,7 @@ class NavigatingActivity : AppCompatActivity() {
             }
         }
         async {
-            //Starting the thread which is defined above
+            //Starting the thread which is defined above to keep polling the server
             t.run()
         }
 
