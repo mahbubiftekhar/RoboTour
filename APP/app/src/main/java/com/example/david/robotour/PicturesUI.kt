@@ -54,7 +54,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                     negative = "Non"
                 }
                 "Chinese" -> {
-                    a = "开始旅游"
+                    a = "开始导航"
                     navigate = "导航到选定的艺术品？"
                     toastText = "请选择一件或多件作品参观"
                     positive = "是"

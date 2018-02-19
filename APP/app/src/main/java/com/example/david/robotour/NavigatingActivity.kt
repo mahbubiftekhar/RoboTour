@@ -304,7 +304,7 @@ class NavigatingActivity : AppCompatActivity() {
                                                         SelectSpeed = "Sélectionnez la vitesse"
                                                     }
                                                     "Chinese" -> {
-                                                        options = listOf("慢", "正常", "快速")
+                                                        options = listOf("慢", "正常", "快")
                                                         SelectSpeed = "选择速度"
                                                     }
                                                     "Spanish" -> {
@@ -389,7 +389,7 @@ class NavigatingActivity : AppCompatActivity() {
             "German" -> titleView?.text = "RoboTour berechnet optimale Route ..."
             "Spanish" -> titleView?.text = "RoboTour calcula la ruta óptima ..."
             "French" -> titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
-            "Chinese" -> titleView?.text = "RoboTour计算最佳路线..."
+            "Chinese" -> titleView?.text = "RoboTour正在计算最佳路线..."
             "other" -> titleView?.text = "RoboTour calculating optimal route..."
             "else" -> titleView?.text = "RoboTour calculating optimal route..."
         }
