@@ -11,10 +11,8 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v4.content.res.ResourcesCompat
 import android.view.Gravity
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -49,6 +47,7 @@ class NavigatingActivity : AppCompatActivity() {
     private var imageView: ImageView? = null
     private var titleView: TextView? = null
     private var descriptionView: TextView? = null
+    private var progressView: ProgressBar? = null
     private var stopButton: Button? = null
     private var Skippable = true
     private lateinit var t: Thread
@@ -183,7 +182,7 @@ class NavigatingActivity : AppCompatActivity() {
             }
             //get image the pictures.php file that is true
             imageView = imageView {
-                setImageResource(R.drawable.robotourfornavigating)
+                //setImageResource(R.drawable.robotourfornavigating)
                 backgroundColor = Color.TRANSPARENT //Removes gray border
                 gravity = Gravity.CENTER_HORIZONTAL
             }.lparams {
@@ -196,6 +195,9 @@ class NavigatingActivity : AppCompatActivity() {
                 typeface = Typeface.DEFAULT
                 padding = dip(10)
             }
+            frameLayout {
+                progressView = progressBar {  }
+            }
             relativeLayout {
                 tableLayout {
                     isStretchAllColumns = true
@@ -206,6 +208,7 @@ class NavigatingActivity : AppCompatActivity() {
                             height = dip(btnHgt)
                             width = wrapContent
                             onClick {
+                                progressView?.visibility = View.GONE
                                 alert(skipDesc) {
                                     positiveButton(positive) {
                                         if (isNetworkConnected()) {
