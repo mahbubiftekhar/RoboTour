@@ -109,22 +109,23 @@ class Waiting : AppCompatActivity() {
     private val pictureThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
+
         override fun run() {
             while (!isInterrupted) {
-                if(a>9){
+                if (a > 9) {
                     //Reset A to avoid null pointers
-                    a=0
+                    a = 0
                 }
                 try {
                     //UI thread MUST be updates on the UI thread, other threads may not update the UI thread
-                    runOnUiThread{
-                       imageView?.setImageResource(allArtPieces[a].imageID)
-                       descriptionView?.text = allArtPieces[a].name
-                   }
+                    runOnUiThread {
+                        imageView?.setImageResource(allArtPieces[a].imageID)
+                        descriptionView?.text = allArtPieces[a].name
+                    }
+                    Thread.sleep(2000)
+                    a++
+                } catch (e: InterruptedException) {
                 }
-                catch (e: InterruptedException) { }
-                Thread.sleep(2000)
-                a++
             }
         }
     }

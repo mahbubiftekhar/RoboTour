@@ -19,11 +19,11 @@ import kotlinx.android.synthetic.*
 import java.util.*
 import kotlin.collections.ArrayList
 import android.speech.tts.TextToSpeech
-import android.speech.tts.TextToSpeech.OnInitListener
 
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
 class PicturesActivity : AppCompatActivity() {
+
     data class ArtPiece(val name: String, val artist: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int, var selected: Boolean)
 
     private var shownArtPieces = ArrayList<ArtPiece>()
@@ -33,6 +33,7 @@ class PicturesActivity : AppCompatActivity() {
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     lateinit var t: Thread
     private var language = ""
+
     private fun translate(textToTranslate: List<String>): MutableList<String> {
         /*This function takes a list and returns a list of translated text using Google's API
         * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
@@ -47,7 +48,7 @@ class PicturesActivity : AppCompatActivity() {
         }
         return translated
     }
-
+    
     private fun translateText(textToTranslate: String): String? {
         /*This function takes a list and returns a list of translated text using Google's API
         * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
@@ -64,6 +65,7 @@ class PicturesActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         allArtPieces.clear()
 
+
         //Obtain language from SelectLanguageActivity
         language = intent.getStringExtra("language")
         when (language) {
@@ -77,8 +79,7 @@ class PicturesActivity : AppCompatActivity() {
         }
         //Populate List
         allArtPieces.add(ArtPiece("The Birth of Venus",
-                "Sandro Botticelli",
-                "Depicts the goddess Venus arriving at the shore after her birth",
+                "Sandro Botticelli","Depicts the goddess Venus arriving at the shore after her birth",
                 "Stellt die Göttin Venus dar, die nach ihrer Geburt am Ufer ankommt",
                 "Représente la déesse Vénus arrivant au rivage après sa naissance",
                 "《维纳斯的诞生》是意大利文艺复兴时期画家桑德罗·波提切利最著名的作品之一，根据波利齐安诺的长诗吉奥斯特纳而作，描绘罗马神话中女神维纳斯从海中诞生的情景。",
@@ -206,32 +207,32 @@ class PicturesActivity : AppCompatActivity() {
                         }
                         "German" -> {
                             title = "Bitte geben Sie ein Gemälde ein, zu dem Sie gehen möchten\n"
-                            search ="Suche"
+                            search = "Suche"
 
                         }
                         "Spanish" -> {
                             title = "Por favor, ingrese la pintura a la que desea ir\n"
-                            search ="buscar"
+                            search = "buscar"
 
                         }
                         "French" -> {
                             title = "S'il vous plaît entrer la peinture que vous souhaitez aller à\n"
-                            search ="chercher"
+                            search = "chercher"
 
                         }
                         "Chinese" -> {
                             title = "请输入你想要去的绘画"
-                            search ="搜索"
+                            search = "搜索"
 
                         }
                         "other" -> {
                             title = "Please enter painting you wish to go to"
-                            search ="Search"
+                            search = "Search"
 
                         }
                         "else" -> {
                             title = "Please enter painting you wish to go to"
-                            search ="Search"
+                            search = "Search"
 
                         }
                     }
