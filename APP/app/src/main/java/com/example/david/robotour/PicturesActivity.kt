@@ -48,7 +48,7 @@ class PicturesActivity : AppCompatActivity() {
         }
         return translated
     }
-    
+
     private fun translateText(textToTranslate: String): String? {
         /*This function takes a list and returns a list of translated text using Google's API
         * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
@@ -221,7 +221,7 @@ class PicturesActivity : AppCompatActivity() {
 
                         }
                         "Chinese" -> {
-                            title = "请输入你想要去的绘画"
+                            title = "请输入你想要去看的作品"
                             search = "搜索"
 
                         }
@@ -402,6 +402,8 @@ class PicturesActivity : AppCompatActivity() {
                         if (resultCode == RESULT_OK) {
                             var result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                             if (language == "English") {
+                                println("+++ getting in here onActivityResult")
+                                afterAsync_speech(result)
                                 //If the language is english, continue no problemo
                             } else {
                                 //If language is not english or other, we run the translator
