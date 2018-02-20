@@ -135,6 +135,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         async {
+            //This thread essentially starts the pictures at the bottom of the screen
            pictureThread.start()
         }
     }
@@ -142,7 +143,6 @@ class MainActivity : AppCompatActivity() {
     private val pictureThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
-
         override fun run() {
             while (!isInterrupted) {
                 if (a > (advertisements.size - 1)) {

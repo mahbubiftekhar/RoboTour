@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.widget.ImageView
@@ -13,16 +14,23 @@ import org.jetbrains.anko.*
 import java.net.URL
 
 class Waiting : AppCompatActivity() {
-    val user = 1
+    private var user = 1
     private var language = ""
     private var message = ""
     private var imageView: ImageView? = null
     private var descriptionView: TextView? = null
 
+    private fun loadInt(key: String): Int {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
+        return sharedPreferences.getInt(key, 0)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
         language = intent.getStringExtra("language") //Getting the language from the previous activity
+        user = loadInt("user") //Set the user number
 
         when (language) {
             "English" -> message = "Waiting for other user..."

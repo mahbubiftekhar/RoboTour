@@ -2,12 +2,14 @@ package com.example.david.robotour
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.net.ConnectivityManager
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.support.v4.content.res.ResourcesCompat
 import android.view.Gravity
@@ -53,7 +55,7 @@ class NavigatingActivity : AppCompatActivity() {
     private var Skippable = true
     private lateinit var t: Thread
 
-    fun LoadInt(key: String): Int {
+    private fun LoadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
         val savedValue = sharedPreferences.getInt(key, 0)
@@ -68,6 +70,7 @@ class NavigatingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_navigating)
         supportActionBar?.hide() //hide actionbar
         //Obtain language from PicturesUI
+        vibrate()
         val language = intent.getStringExtra("language")
         when (language) {
             "English" -> {
@@ -370,6 +373,8 @@ class NavigatingActivity : AppCompatActivity() {
                                             async {
                                                 sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
                                             }
+                                            t.interrupt()
+                                            switchToMain()
                                         } else {
                                             Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                         }
@@ -522,6 +527,15 @@ class NavigatingActivity : AppCompatActivity() {
         async {
             //This function will reject the skip by adding the empty string
             sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+        }
+    }
+    private fun vibrate() {
+        if (Build.VERSION.SDK_INT > 25) { /*Attempt to not use the deprecated version if possible, if the SDK version is >25, use the newer one*/
+            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(VibrationEffect.createOneShot(300, 10))
+        } else {
+            /*for backward comparability*/
+            @Suppress("DEPRECATION")
+            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(300)
         }
     }
 

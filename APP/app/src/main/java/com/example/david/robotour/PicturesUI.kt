@@ -136,7 +136,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
         sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/$a.php")
     }
 
-    fun sendPUT(command: String, url: String) {
+    private fun sendPUT(command: String, url: String) {
         async {
             val httpclient = DefaultHttpClient()
             val httpPost = HttpPost(url)
