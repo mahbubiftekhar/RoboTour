@@ -5,12 +5,13 @@ import ev3dev.ev3 as ev3
 from urllib.request import urlopen
 import re
 from threading import Thread
+from sensor_hub import *
 
 
 
 ####################### GLOBAL VARIABLE ####################
-obstacle_detection_distance = 100 # in mm
-side_distance = 90
+obstacle_detection_distance = 150 # in mm
+side_distance = 12
 link = "https://homepages.inf.ed.ac.uk/s1553593/receiver.php"
 command = ""
 previouscommandid = "1"
@@ -19,63 +20,88 @@ preDifference = 0
 ############################################################
 
 ####################### SETUP SENSORS ######################
-sonar = ev3.UltrasonicSensor(ev3.INPUT_2)
-sonar.mode = 'US-DIST-CM' # Will return value in mm
-sonarLeft = ev3.UltrasonicSensor(ev3.INPUT_4)
-sonarLeft.mode = 'US-DIST-CM' # Will return value in mm
+hub = SensorHub()
+sonarFront = ev3.UltrasonicSensor(ev3.INPUT_2)
+sonarFront.mode = 'US-DIST-CM' # Will return value in mm
+sonarLeft = HubSonar(hub, 's0')
+sonarRight = HubSonar(hub,'s1')
+#sonarLeft = ev3.UltrasonicSensor(ev3.INPUT_4)
+#sonarLeft.mode = 'US-DIST-CM' # Will return value in mm
+#sonarRight = None
+#sonarRight.mode = 'US-DIST-CM' # Will return value in mm
 
 motorHand = ev3.LargeMotor('outC')
 motorLeft = ev3.LargeMotor('outB')
 motorRight= ev3.LargeMotor('outD')
-colourSensorRight = ev3.ColorSensor(ev3.INPUT_1)
-colourSensorLeft = ev3.ColorSensor(ev3.INPUT_3)
+#colourSensorRight = ev3.ColorSensor(ev3.INPUT_1)
+#colourSensorLeft = ev3.ColorSensor(ev3.INPUT_3)
 
 
-if(motorHand.connected & sonar.connected &
-       motorLeft.connected & motorRight.connected &
-       colourSensorLeft.connected & colourSensorRight.connected &
-       sonarLeft.connected):
+if(motorHand.connected & sonarFront.connected &
+       motorLeft.connected & motorRight.connected):
     print('All sensors and motors connected')
 else:
     if(not motorHand.connected):
         print("MotorHand not connected")
-    if(not sonar.connected):
+    if(not sonarFront.connected):
         print("Sonar not connected")
     if(not motorLeft.connected):
         print("MotorLeft not connected")
     if(not motorRight.connected):
         print("MotorRight not connected")
+    '''
     if(not colourSensorLeft.connected):
         print("ColorLeft not connected")
     if(not colourSensorRight.connected):
         print("ColorRight not connected")
     if(not sonarLeft.connected):
         print("SonarLeft not connected")
+    '''
     print('Please check all sensors and actuators are connected.')
     exit()
 
 ############################################################
 
-##################### FUNCTIONS ############################
-def getArtPiecesFromApp(): # returns an list of direction commands
-    #example
-    pieces = ["Monalisa"]
-    return pieces # returns list
+##################### SENSOR AND ACTUATOR FUNCTIONS ############################
+def getSonarReadingsFront():
+    total = 0
+    size = 5
+    for i in range(0, size):
+        total += sonarFront.value()
+    return total/size
 
-def getCommandFromServer():
-    global currentcommandid
-    global previouscommandid
+def getSonarReadingsLeft():
+    total = 0
+    size = 1
+    for i in range(0, size):
+        total += sonarLeft.value()
+    return total/size
 
-    f = urlopen(link) #open url
+def getSonarReadingsRight():
+    total = 0
+    size = 1
+    for i in range(0, size):
+        total += sonarRight.value()
+    return total/size
 
-    myfile = f.read() #read url contents
-    string = myfile.decode("utf-8") #convert bytearray to string
-    array = re.split('-', string)
-    command = array[0]
-    currentcommandid = array[1]
-    #print("currentcommandid fun:" + currentcommandid)
-    #print("previouscommandid fun:" + previouscommandid)
-    return command
+def isFrontObstacle():
+    if(getSonarReadingsFront() < obstacle_detection_distance):
+        return True
+    else:
+        return False
+
+def isLeftSideObstacle():
+    if(getSonarReadingsLeft() < side_distance):
+        return True
+    else:
+        return False
+
+def isRightSideObstacle():
+    if(getSonarReadingsRight() < side_distance):
+        #print("Find right obstale at: ",getSonarReadingsRight())
+        return True
+    else:
+        return False
 
 def moveForward(speed, time):
     motorLeft.run_timed(speed_sp=speed, time_sp=time)
@@ -102,14 +128,39 @@ def turn(left,right,time):
 
 def stopWheelMotor():
     #print(sonar.value())
-    motorLeft.stop()
-    motorRight.stop()
+    motorLeft.stop(stop_action="hold")
+    motorRight.stop(stop_action="hold")
+
+def waitForMotor():
+    motorLeft.wait_until_not_moving()
+    motorRight.wait_until_not_moving()
 
 def speak(string):
     ev3.Sound.speak(string)
 
-def lineFinished():
-    return False
+######################################################################
+
+####################### ROBOTOUR FUNCTIONS ###########################
+
+def getArtPiecesFromApp(): # returns an list of direction commands
+    #example
+    pieces = ["Monalisa"]
+    return pieces # returns list
+
+def getCommandFromServer():
+    global currentcommandid
+    global previouscommandid
+
+    f = urlopen(link) #open url
+
+    myfile = f.read() #read url contents
+    string = myfile.decode("utf-8") #convert bytearray to string
+    array = re.split('-', string)
+    command = array[0]
+    currentcommandid = array[1]
+    #print("currentcommandid fun:" + currentcommandid)
+    #print("previouscommandid fun:" + previouscommandid)
+    return command
 
 def onPauseCommand():
     pass
@@ -117,206 +168,67 @@ def onPauseCommand():
 def onResumeCommand():
     pass
 
-##################### Multithreading #######################
-def isThereObstacle():
-    #print(sonar.value())
-    if(sonar.value() < obstacle_detection_distance):
-        #print("Obstacle detected.")
-        #speak("There is an obstacle detected.")
-        return True
-    else:
-        #print("No obstacle detected.")
-        return False
-
-def isSideObstacle():
-    #print(sonar.value())
-    if(sonarLeft.value() < side_distance):
-        #print("Obstacle detected.")
-        #speak("There is an obstacle detected.")
-        return True
-    else:
-        #print("No obstacle detected.")
-        return False
-
-def noObstacle():
-    if(sonarLeft.value()>250):
-        return True
-    else:
-        return False
-"""
-def keepDistance():
-    if(abs(sonar.value() - obstacle_detection_distance) > 100):
-        moveBackward(100,100)
-
-
-class ObstacleAvoidanceThread(Thread):
-    def __init__(self):
-        ''' Constructor. '''
-        Thread.__init__(self)
-    def run(self):
-        while(True):
-            if(isThereObstacle()):
-                keepDistance()
-"""
-
-
-def obstacleAvoidance():
-    while(True):
-        if(command=="FORWARD"):
-            if(isThereObstacle()):
-                stopWheelMotor()
-
-                #if(command.next() == 'LEFT'):
-                step1()
-
-                print(sonarLeft.value())
-                goAroundObstacle()
-                #turnRight(90)
-                """elif(command.next() == 'RIGHT'):
-                    turnRight(90)
-                    while(not isLineDetected()):
-                        goAroundObstacle('LEFT')
-                    turnLeft(90)
-                    """
-def step1():        #90 degree
-    while(not isSideObstacle()):
-        turnRight(5)
-
-
-
-
-def goAroundObstacle():
-    preDistance = sonarLeft.value()
-    while(not isLineDetected()):
-
-
-        baseSpeedLeft = 100
-        baseSpeedRight = 100
-
-        currentDistance = sonarLeft.value()
-        print(currentDistance)
-        #if(currentDifference > 20):
-            #currentDifference = 20
-        timeMod = 1
-        k = 0
-        sp = 0
-
-        ##For corner
-        if(currentDistance > 500):
-            print("Corner!")
-            #while(sonarLeft.value()>200):
-
-            turn(25,250,50)
-            print(sonarLeft.value())
-            #print("Out!")
-            #turn(100,100,100)
-            #exit()
-
-
-        ## When the gap is too larger/small
-        if(currentDistance>side_distance):
-            turn(100,200,50)
-            timeMod = 0.5
-            #turn(200,100,50)
-        elif(currentDistance<side_distance):
-            turn(400,100,50)
-            timeMod = 0.5
-            #turn(100,200,50)
-
-        ## For distance incresing/decresing
-        if(currentDistance>preDistance):
-            k=2
-        elif(currentDistance<preDistance):
-            k=-2
-
-        turn(baseSpeedLeft - 100*(k-sp), baseSpeedRight + 100*(k+sp), 50* timeMod)
-
-        preDistance = currentDistance
-
-
-        '''
-        if(currentDistance>side_distance & currentDistance>=preDistance):
-            turn(50,100,50)
-        elif(currentDistance>side_distance &currentDistance<preDistance):
-            turn(50,50,50)
-        elif(currentDistance<side_distance & currentDistance>preDistance):
-            turn(50,50,50)
-        elif(currentDistance<side_distance & currentDistance<=preDistance):
-            turn(100,50,50)
-        elif(currentDistance==side_distance & currentDistance>preDistance):
-            turn(50,100,50)
-        elif(currentDistance==side_distance & currentDistance<preDistance):
-            turn(100,50,50)
-        else:
-            turn(50,50,50)
-        preDistance = currentDistance
-        '''
-
-
-        '''
-        while(sonarLeft.value()<95 and turnedRight < 2):
-            print("Turn Right: ",sonarLeft.value())
-            turnedRight+=1
-            turnRight(5)
-
-        moveForward(50,50)
-        turnedLeft = 0
-        while(sonarLeft.value()>=95 and turnedLeft < 2):
-            print("Turn Left: ",sonarLeft.value())
-            turnedLeft+=1
-            turnLeft(5)
-
-
-        '''
-        #moveForward(300,1000)
-
-        '''
-        if(noObstacle()):
-            turnLeft(30)
-            waitForMotor()
-            moveForward(300,1000)
-            waitForMotor()
-        else:
-        '''
-
-
-
-        '''
-        if(isSideObstacle()):
-            print("right")
-            turnRight(10)
-            moveForward(300,50)
-        else:
-            if(sonarLeft.value() > 200):
-                turnLeft(90)
-            else:
-                print("left")
-                turnLeft(10)
-            moveForward(200,50)
-        '''
-def waitForMotor():
-    motorLeft.wait_until_not_moving()
-    motorRight.wait_until_not_moving()
-
 def isLineDetected():
     return False
 
 def isLost():
     speak("I am lost, please help.")
 
+##################### OBSTACLE AVOIDANCE #######################
+def obstacleAvoidance():
+    while(True):
+        if(command=="FORWARD"):
+            if(isFrontObstacle()):
+                stopWheelMotor()
+                print("Stop at: (Front) ", sonarFront.value())
+                commandNext = 'LEFT' # Example
+                getReadyForObstacle(commandNext) # step 1
+                print("Stop at: (Right) ",sonarRight.value())
+                goAroundObstacle(commandNext)
+                getBackToLine(commandNext)
+
+def getReadyForObstacle(direction): #90 degree
+    if (direction == 'RIGHT'):
+        while(not isLeftSideObstacle()):
+            turnRight(10)
+    else:  # All default will go through the Left side. IE
+        print(sonarRight.value())
+        while (not isRightSideObstacle()):
+            turnLeft(10)
+
+
+def goAroundObstacle(direction):
+    set_distance = 15
+    if (direction == 'RIGHT'):
+        while(not isLineDetected()):
+            if (getSonarReadingsLeft() < set_distance):
+                turn(300, 100, 100)
+            else:
+                turn(100, 200, 100)
+    else: # All default will go through the Left side. IE
+        while(not isLineDetected()):
+            if (getSonarReadingsRight() < set_distance):
+                turn(100, 300, 100)
+            else:
+                turn(200, 100, 100)
+
+
+def getBackToLine(direction):
+    pass
+
+"""getSonarReadingsFront()
+def keepDistance():
+    if(abs(sonar.value() - obstacle_detection_distance) > 100):
+        moveBackward(100,100)
+"""
+
 
 ############################################################
 
-#speak("Carson, we love you. Group 18. ")
 
-"""
-obstacleAvoidanceThread = ObstacleAvoidanceThread()
-obstacleAvoidanceThread.setName("ObstacleAvoidanceThread")
+
+obstacleAvoidanceThread = Thread(target=obstacleAvoidance)
 obstacleAvoidanceThread.start()
-"""
-
-t = Thread(target=obstacleAvoidance)
-t.start()
 ##################### MAIN #################################
 dictionary = {
     "Monalisa" : ["Forward", "Left", "Right"]
@@ -324,9 +236,18 @@ dictionary = {
 
 #artPieces = getArtPiecesFromApp()
 #direction = dictionary[artPieces[0]]
+while(getSonarReadingsRight()==0):
+    time.sleep(5)
+print("SensorHub have set up.")
+#speak("Carson, we love you. Group 18. ")
 
 command = "FORWARD"
 moveForward(300,10000)
+'''
+while(True):
+    print(getSonarReadingsLeft())
+'''
+
 """
 while (True):
     #print("currentcommandid before:" + currentcommandid)
@@ -351,31 +272,4 @@ while (True):
         else:
             pass
 
-
-def waitForMotor(motor):
-    time.sleep(0.1)         # Make sure that motor has time to start
-    while motor.state==["running"]:
-        print('Motor is still running')
-        time.sleep(0.1)
-for command in commands:
-    if(command == "Forward"):
-        while(not lineFinished()):
-            if(not isThereObstacle()):
-                moveForward(300, 100)
-            else:
-                if(isKeepDistance()):
-                    moveBackward(100, 100)
-    elif(command == "Left"):
-        while(lineFinished()):
-            turnLeft(10)
-    elif(command == "Right"):
-        while(lineFinished()):
-            turnRight(10)
-    else:
-        pass
-while(1):
-    if(not isThereObstacle()):
-        moveForward(300, 100)
-    else:
-        keepDistance()
 """
