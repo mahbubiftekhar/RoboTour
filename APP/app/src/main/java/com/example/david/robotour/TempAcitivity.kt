@@ -52,7 +52,7 @@ class TempActivity : AppCompatActivity() {
     }
 
     @SuppressLint("ApplySharedPref")
-    private fun SaveInt(key: String, value: Int) {
+    private fun saveINT(key: String, value: Int) {
         /* Function to save an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val editor = sharedPreferences.edit()
@@ -60,11 +60,10 @@ class TempActivity : AppCompatActivity() {
         editor.commit()
     }
 
-    private fun LoadInt(key: String): Int {
+    private fun loadINT(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val savedValue = sharedPreferences.getInt(key, 0)
-        return savedValue
+        return sharedPreferences.getInt(key, 0)
     }
 
     private fun uploadToServer(command: String) {
@@ -72,10 +71,10 @@ class TempActivity : AppCompatActivity() {
             val httpclient = DefaultHttpClient()
             val httpPost = HttpPost("http://homepages.inf.ed.ac.uk/s1553593/receiver.php")
             try {
-                val a = LoadInt("NUMBER") //Get the unique number
+                val a = loadINT("NUMBER") //Get the unique number
                 val nameValuePairs = ArrayList<NameValuePair>(4)
                 nameValuePairs.add(BasicNameValuePair("command", "Command:$$command-$a"))
-                SaveInt("NUMBER",a+1 ) //Increment the unique number
+                saveINT("NUMBER",a+1 ) //Increment the unique number
                 httpPost.entity = UrlEncodedFormEntity(nameValuePairs)
                 httpclient.execute(httpPost)
             } catch (e: ClientProtocolException) {
