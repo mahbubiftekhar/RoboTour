@@ -369,11 +369,40 @@ class PicturesActivity : AppCompatActivity() {
         }
     }
 
-    private fun afterAsync_speech(result: ArrayList<String>) {
+    private fun afterAsyncSpeech(result: ArrayList<String>) {
         for (i in 0 until result.size) {
             val test = result[i]
-            val regEx = Regex("[^A-Za-z0-9]")
-            allArtPieces
+            val regEx = Regex("[^A-Za-z0-9 ]")
+            if (language == "English") {
+                allArtPieces
+                        .filter {
+                            //if substring either way return true (ignoring case & special chars) i.e "Mona" & "MonaLisa" return true
+                            (regEx.replace(test, "").contains(regEx.replace(it.artist, ""), ignoreCase = true) || (regEx.replace(test, "").contains(regEx.replace(it.name, ""), ignoreCase = true)) || regEx.replace(it.artist, "").contains(regEx.replace(test, ""), ignoreCase = true) || (regEx.replace(it.name, "").contains(regEx.replace(test, ""), ignoreCase = true))) && !queriedArtPieces.contains(it)
+                        }
+                        .forEach {
+                            /*This only adds the art piece iff it has not already been added*/
+                            queriedArtPieces.add(it)
+                        }
+            } else {
+                val insignificantWords = mutableListOf<String>("The", "the", "of", "a")
+                for (artPiece in allArtPieces) {
+                    //Get the significant words from the speech
+                    val cleanSentence1 = regEx.replace(test, "")
+                    val cleanWords1 = ArrayList(cleanSentence1.split(" "))
+                    cleanWords1.removeAll(insignificantWords) //removes the insignificant words
+
+                    //Get the significant words from the artpiece
+                    val cleanSentence2 = artPiece.name
+                    val cleanWords2 = ArrayList(cleanSentence2.split(" "))
+                    cleanWords2.removeAll(insignificantWords) //removes the insignificant words
+
+                    //Find all common significant words
+                    val commonWords = cleanWords1.intersect(cleanWords2)
+
+                    if (commonWords.isNotEmpty() && !queriedArtPieces.contains(artPiece)) queriedArtPieces.add(artPiece)
+                }
+            }
+            /*allArtPieces
                     .filter {
                         //if substring either way return true (ignoring case & special chars) i.e "Mona" & "MonaLisa" return true
                         (regEx.replace(test, "").contains(regEx.replace(it.artist, ""), ignoreCase = true) || (regEx.replace(test, "").contains(regEx.replace(it.name, ""), ignoreCase = true)) || regEx.replace(it.name, "").contains(regEx.replace(test, ""), ignoreCase = true) || (regEx.replace(it.name, "").contains(regEx.replace(test, ""), ignoreCase = true))) && !queriedArtPieces.contains(it)
@@ -381,7 +410,7 @@ class PicturesActivity : AppCompatActivity() {
                     .forEach {
                         /*This only adds the art piece iff it has not already been added*/
                         queriedArtPieces.add(it)
-                    }
+                    }*/
         }
         shownArtPieces.clear()
         for (artPiece in queriedArtPieces) {
@@ -403,7 +432,7 @@ class PicturesActivity : AppCompatActivity() {
                             var result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                             if (language == "English") {
                                 println("+++ getting in here onActivityResult")
-                                afterAsync_speech(result)
+                                afterAsyncSpeech(result)
                                 //If the language is english, continue no problemo
                             } else {
                                 //If language is not english or other, we run the translator
@@ -411,7 +440,7 @@ class PicturesActivity : AppCompatActivity() {
                                     result = translate(result) as ArrayList<String>?
                                     println("+++ translation" + result)
                                     uiThread {
-                                        afterAsync_speech(result)
+                                        afterAsyncSpeech(result)
                                     }
                                 }
                             }
