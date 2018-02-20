@@ -391,15 +391,21 @@ class PicturesActivity : AppCompatActivity() {
                     val cleanWords1 = ArrayList(cleanSentence1.split(" "))
                     cleanWords1.removeAll(insignificantWords) //removes the insignificant words
 
-                    //Get the significant words from the artpiece
+                    //Get the significant words from the artpiece name
                     val cleanSentence2 = artPiece.name
                     val cleanWords2 = ArrayList(cleanSentence2.split(" "))
                     cleanWords2.removeAll(insignificantWords) //removes the insignificant words
 
-                    //Find all common significant words
-                    val commonWords = cleanWords1.intersect(cleanWords2)
+                    //Get the significant words from the artpiece artist
+                    val cleanSentence3 = artPiece.artist
+                    val cleanWords3 = ArrayList(cleanSentence3.split(" "))
+                    cleanWords3.removeAll(insignificantWords) //removes the insignificant words
 
-                    if (commonWords.isNotEmpty() && !queriedArtPieces.contains(artPiece)) queriedArtPieces.add(artPiece)
+                    //Find all common significant words
+                    val commonWords1 = cleanWords1.intersect(cleanWords2)
+                    val commonWords2 = cleanWords1.intersect(cleanWords3)
+
+                    if ((commonWords1.isNotEmpty() || commonWords2.isNotEmpty()) && !queriedArtPieces.contains(artPiece)) queriedArtPieces.add(artPiece)
                 }
             }
             /*allArtPieces
