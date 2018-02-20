@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         async {
-            pictureThread.start()
+           pictureThread.start()
         }
     }
 
