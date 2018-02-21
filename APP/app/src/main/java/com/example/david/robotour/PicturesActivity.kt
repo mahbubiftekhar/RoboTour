@@ -384,21 +384,37 @@ class PicturesActivity : AppCompatActivity() {
                             queriedArtPieces.add(it)
                         }
             } else {
-                val insignificantWords = mutableListOf<String>("The", "the", "of", "a")
-                for (artPiece in allArtPieces) {
-                    //Get the significant words from the speech
-                    val cleanSentence1 = regEx.replace(test, "")
-                    val cleanWords1 = ArrayList(cleanSentence1.split(" "))
-                    cleanWords1.removeAll(insignificantWords) //removes the insignificant words
+                val insignificantWords = mutableListOf<String>("the", "of", "a")
 
+                //Get the significant words from the speech
+                val cleanSentence1 = regEx.replace(test, "")
+                val cleanWords1 = ArrayList(cleanSentence1.split(" "))
+
+                //Convert strings to lowercase for string matching
+                for (word in cleanWords1) {
+                    word.toLowerCase()
+                }
+
+                cleanWords1.removeAll(insignificantWords) //removes the insignificant words
+
+                for (artPiece in allArtPieces) {
                     //Get the significant words from the artpiece name
                     val cleanSentence2 = artPiece.name
                     val cleanWords2 = ArrayList(cleanSentence2.split(" "))
-                    cleanWords2.removeAll(insignificantWords) //removes the insignificant words
 
                     //Get the significant words from the artpiece artist
                     val cleanSentence3 = artPiece.artist
                     val cleanWords3 = ArrayList(cleanSentence3.split(" "))
+
+                    //Convert strings to lowercase for string matching
+                    for (word in cleanWords2) {
+                        word.toLowerCase()
+                    }
+                    cleanWords2.removeAll(insignificantWords) //removes the insignificant words
+                    
+                    for (word in cleanWords3) {
+                        word.toLowerCase()
+                    }
                     cleanWords3.removeAll(insignificantWords) //removes the insignificant words
 
                     //Find all common significant words
