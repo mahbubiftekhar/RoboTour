@@ -52,5 +52,4 @@ class SelectLanguageActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
 }

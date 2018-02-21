@@ -74,10 +74,11 @@ class Waiting : AppCompatActivity() {
             t.start()
             pictureThread.start()
         }
+        switchToNavigate() //This should be removed in the final implementation
     }
 
     fun switchToNavigate() {
-        Thread.sleep(6500)
+        Thread.sleep(6500) //This should be removed in the final implementation
         pictureThread.interrupt() //Stop the thread advertising all the art pieces
         t.interrupt() // Stop the thread looking for the other use
         clearFindViewByIdCache()
@@ -101,7 +102,7 @@ class Waiting : AppCompatActivity() {
                             switchToNavigate()
                         }
                     } else {
-                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/use1.php").readText()
+                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
                         println("USERS ID IS 2")
                         //If user 2 has made their selection and you are not user 2
                         if (a == "Y") {
