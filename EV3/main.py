@@ -16,6 +16,7 @@ link = "https://homepages.inf.ed.ac.uk/s1553593/receiver.php"
 command = ""
 previouscommandid = "1"
 currentcommandid = "0"
+pointerState = ""
 preDifference = 0
 ############################################################
 
@@ -30,19 +31,19 @@ sonarRight = HubSonar(hub,'s1')
 #sonarRight = None
 #sonarRight.mode = 'US-DIST-CM' # Will return value in mm
 
-motorHand = ev3.LargeMotor('outC')
+motorPointer = ev3.LargeMotor('outC')
 motorLeft = ev3.LargeMotor('outB')
 motorRight= ev3.LargeMotor('outD')
 #colourSensorRight = ev3.ColorSensor(ev3.INPUT_1)
 #colourSensorLeft = ev3.ColorSensor(ev3.INPUT_3)
 
 
-if(motorHand.connected & sonarFront.connected &
+if(motorPointer.connected & sonarFront.connected &
        motorLeft.connected & motorRight.connected):
     print('All sensors and motors connected')
 else:
-    if(not motorHand.connected):
-        print("MotorHand not connected")
+    if(not motorPointer.connected):
+        print("motorPointer not connected")
     if(not sonarFront.connected):
         print("Sonar not connected")
     if(not motorLeft.connected):
@@ -137,6 +138,35 @@ def waitForMotor():
 def speak(string):
     ev3.Sound.speak(string)
 
+def turnPointer(direction):
+    if (direction == "CW"):
+        motorPointer.run_timed(speed_sp=-414, time_sp=1000)
+        time.sleep(2)
+    if (direction == "ACW"):
+        motorPointer.run_timed(speed_sp=414, time_sp=1000)
+        time.sleep(2)
+
+def resetPointer():
+    global pointerState
+    print(pointerState)
+    if (pointerState == "CW"):
+        turnPointer("ACW")
+    if (pointerState == "ACW"):
+        turnPointer("CW")
+
+def turnAndResetPointer(direction):
+    global pointerState
+    if (direction == "CW"):
+        turnPointer("CW")
+        pointerState="CW"
+        print("2" + pointerState)
+        resetPointer()
+    elif (direction == "ACW"):
+        turnPointer("ACW")
+        pointerState="ACW"
+        print("2" + pointerState)
+        resetPointer()
+
 ######################################################################
 
 ####################### ROBOTOUR FUNCTIONS ###########################
@@ -186,6 +216,7 @@ def obstacleAvoidance():
                 goAroundObstacle(commandNext)
                 getBackToLine(commandNext)
 
+
 def getReadyForObstacle(direction): #90 degree
     if (direction == 'RIGHT'):
         while(not isLeftSideObstacle()):
@@ -231,6 +262,20 @@ while(getSonarReadingsRight()==0):
     time.sleep(5)
 print("SensorHub have set up.")
 #speak("Carson, we love you. Group 18. ")
+
+#Use to test the pointer. The following code turns and resets in both direction 3x
+#turnAndResetPointer("CW")
+#time.sleep(1)
+#turnAndResetPointer("CW")
+#time.sleep(1)
+#turnAndResetPointer("CW")
+#time.sleep(1)
+#turnAndResetPointer("ACW")
+#time.sleep(1)
+#turnAndResetPointer("ACW")
+#time.sleep(1)
+#turnAndResetPointer("ACW")
+
 
 command = "FORWARD"
 moveForward(300,10000)
