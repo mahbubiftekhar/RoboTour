@@ -7,3 +7,11 @@
 /build
 /captures
 .externalNativeBuild
+
+#for sensor
+*.o
+*.elf
+*.eep
+*.hex
+.*
+*~
