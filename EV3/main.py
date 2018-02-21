@@ -66,7 +66,7 @@ else:
 ##################### SENSOR AND ACTUATOR FUNCTIONS ############################
 def getSonarReadingsFront():
     total = 0
-    size = 5
+    size = 1
     for i in range(0, size):
         total += sonarFront.value()
     return total/size
@@ -210,7 +210,7 @@ def obstacleAvoidance():
             if(isFrontObstacle()):
                 stopWheelMotor()
                 print("Stop at: (Front) ", sonarFront.value())
-                commandNext = 'LEFT' # Example
+                commandNext = 'RIGHT' # Example
                 getReadyForObstacle(commandNext) # step 1
                 print("Stop at: (Right) ",sonarRight.value())
                 goAroundObstacle(commandNext)
@@ -232,15 +232,15 @@ def goAroundObstacle(direction):
     if (direction == 'RIGHT'):
         while(not isLineDetected()):
             if (getSonarReadingsLeft() < set_distance):
-                turn(300, 100, 100)
+                turn(200, 100, 100)
             else:
-                turn(100, 200, 100)
+                turn(100, 300, 100)
     else: # All default will go through the Left side. IE
         while(not isLineDetected()):
             if (getSonarReadingsRight() < set_distance):
-                turn(100, 300, 100)
+                turn(100, 200, 100)
             else:
-                turn(200, 100, 100)
+                turn(300, 100, 100)
 
 
 def getBackToLine(direction):
