@@ -29,7 +29,7 @@ class SensorHub():
 		tries = 0
 		while self.serial_port.inWaiting() < 1:
 			self.send_request()
-			time.sleep(0.001)
+			time.sleep(0.01)
 			if(tries >= self.tries_limit):
 				print("POLLING TIMEOUT")
 				return False
@@ -79,6 +79,7 @@ class HubSonar():
 		self.hub = hub
 		self.hub_key = name
 		self.last_poll = -1
+		self.maxrange = self.hub.sonar_maxrange
 
 		self.hub.sensor_values[name] = 0
 
@@ -89,7 +90,69 @@ class HubSonar():
 
 		self.last_poll = self.hub.last_poll
 		self.val = self.hub.sensor_values[self.hub_key]
+		self.val = 0 if self.val == 0 else self.maxrange
 		return self.val
+
+class HubLineSensor():
+	def __init__(self, hub):
+		self.num_sensors = 6
+		self.sensor_names = ["l{}".format(i) for i in range(self.num_sensors)]
+
+		self.hub = hub
+
+		self.last_poll = -1
+
+		self.raw_val = {}
+		self.prev_val = {}
+		# intialise the sensor readings
+		for n in self.sensor_names:
+			self.hub.sensor_values[n] = 0
+
+
+	def raw_values(self):
+
+		# if a new value is requiested
+		if self.last_poll == self.hub.last_poll:
+			self.hub.poll()
+
+		self.last_poll = self.hub.last_poll
+		for n in self.sensor_names:
+			self.raw_val[n] = self.hub.sensor_values[n]
+
+		return self.raw_val 
+
+	def value_simple(self):
+
+		self.raw_values()
+		order = ['l1', 'l0', 'l2', 'l3', 'l4', 'l5']
+
+		weight = 10
+		floor = 160
+		line = 220
+		threshold = (floor+line)/2
+
+		err = 0
+		activated_sens = 0
+
+		for s in order:
+			try:
+				val = int(self.raw_val[s])
+			except:
+				val = floor
+				print("GLITTCHEZZZ BITCHEZZ: {}".format(self.raw_val[s])) 
+
+			#check if sensor on line
+			if val > threshold:
+				err += weight
+				activated_sens += 1
+
+			weight += 10
+
+		if activated_sens > 0:
+			return err/activated_sens
+		else:
+			return 0 
+
 
 if __name__ == "__main__":
 	sh = SensorHub()

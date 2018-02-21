@@ -42,7 +42,9 @@ void loop() {
   while(Wire.available()) {
     byte c = Wire.read();
     for(uint8_t i = 0; i < LINE_NUM; ++i) {
-      line_val[i] = Wire.read();
+      if(Wire.available()) {
+        line_val[i] = Wire.read();
+      }
     }
     
   }
