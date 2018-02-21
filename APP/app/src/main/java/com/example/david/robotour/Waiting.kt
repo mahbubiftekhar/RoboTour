@@ -73,8 +73,8 @@ class Waiting : AppCompatActivity() {
         async {
             t.start()
             pictureThread.start()
+            switchToNavigate() //This should be removed in the final implementation
         }
-        switchToNavigate() //This should be removed in the final implementation
     }
 
     fun switchToNavigate() {
