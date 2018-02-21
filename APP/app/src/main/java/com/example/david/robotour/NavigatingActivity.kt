@@ -215,7 +215,17 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                 //Text-to-speech
                 onClick {
-
+                    speakOut("Hi Carson, we love you!") // use below code once currentArtPiece is implemented
+                    /*var speakText = ""
+                    when (language) {
+                        "English" -> speakText = currentArtPiece.English_Desc
+                        "German" -> speakText = currentArtPiece.German_Desc
+                        "French" -> speakText = currentArtPiece.French_Desc
+                        "Chinese" -> speakText = currentArtPiece.Chinese_Desc
+                        "Spanish" -> speakText = currentArtPiece.Spanish_Desc
+                        else -> speakText = currentArtPiece.English_Desc
+                    }
+                    speakOut(speakText)*/
                 }
             }
             verticalLayout {
@@ -529,7 +539,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     fun speakOut(text: String) {
-        val text = "Hello David, I am RoboTour"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
             println("++++ getting in speak")
