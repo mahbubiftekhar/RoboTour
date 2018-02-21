@@ -22,6 +22,8 @@ void adc_start_conversion(void);
 void setup_i2c(uint8_t);
 void setup_led_pwm(void);
 
+ISR(ADC_vect);
+
 // index of the current sensor sent
 volatile uint8_t current_sensor_s;
 // index of the current sensor read

@@ -23,7 +23,7 @@ ISR(TWI_vect){
 	
 	// own address has been acknowledged
 	if( (TWSR & 0xF8) == TW_SR_SLA_ACK ){  
-		buffer_address = 6;
+		buffer_address = 0;
 		// clear TWI interrupt flag, prepare to receive next byte and acknowledge
 		TWCR |= (1<<TWIE) | (1<<TWINT) | (1<<TWEA) | (1<<TWEN); 
 	}
@@ -35,7 +35,8 @@ ISR(TWI_vect){
 		// check wether an address has already been transmitted or not
 		if(buffer_address == 6){
 			
-			buffer_address = data; 
+			// buffer_address = data;
+			buffer_address = 0; 
 			
 			// clear TWI interrupt flag, prepare to receive next byte and acknowledge
 			TWCR |= (1<<TWIE) | (1<<TWINT) | (1<<TWEA) | (1<<TWEN); 
@@ -46,7 +47,7 @@ ISR(TWI_vect){
 			rxbuffer[buffer_address] = data;
 			
 			// increment the buffer address
-			buffer_address++;
+			//buffer_address++;
 			
 			// if there is still enough space inside the buffer
 			if(buffer_address < 6){
@@ -68,7 +69,7 @@ ISR(TWI_vect){
 		
 		// if no buffer read address has been sent yet
 		if( buffer_address == 6 ){
-			buffer_address = data;
+			buffer_address = 0;
 		}
 		
 		// copy the specified buffer address into the TWDR register for transmission
