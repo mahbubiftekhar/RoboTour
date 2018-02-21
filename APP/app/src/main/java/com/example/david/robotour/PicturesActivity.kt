@@ -331,31 +331,27 @@ class PicturesActivity : AppCompatActivity() {
         when (language) {
             "English" -> {
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What Art Pieces Are You Looking For?")
             }
             "German" -> {
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.GERMAN)
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Nach welchen Kunstwerken suchst du?")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "de-DE")
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Nach Welchen Kunstwerken Suchst Du?")
             }
             "Spanish" -> {
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "¿Qué piezas de arte estás buscando?")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES")
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "¿Qué Piezas de Arte Estás Buscando?")
             }
             "French" -> {
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.FRENCH)
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Quelles pièces d'art recherchez-vous?")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "fr-FR")
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Quelles Pièces d'Art Recherchez-vous?")
             }
             "Chinese" -> {
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.CHINESE)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "cmn-Hans-CN")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "你在找什么艺术品？")
-            }
-            "other" -> {
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
             }
             "else" -> {
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What Art Pieces Are You Looking For?")
             }
         }
         try {
@@ -391,8 +387,8 @@ class PicturesActivity : AppCompatActivity() {
                 val cleanWords1 = ArrayList(cleanSentence1.split(" "))
 
                 //Convert strings to lowercase for string matching
-                for (word in cleanWords1) {
-                    word.toLowerCase()
+                for (j in 0..cleanWords1.size-1) {
+                    cleanWords1[j] = cleanWords1[j].toLowerCase()
                 }
 
                 cleanWords1.removeAll(insignificantWords) //removes the insignificant words
@@ -407,13 +403,13 @@ class PicturesActivity : AppCompatActivity() {
                     val cleanWords3 = ArrayList(cleanSentence3.split(" "))
 
                     //Convert strings to lowercase for string matching
-                    for (word in cleanWords2) {
-                        word.toLowerCase()
+                    for (j in 0..cleanWords2.size-1) {
+                        cleanWords2[j] = cleanWords2[j].toLowerCase()
                     }
                     cleanWords2.removeAll(insignificantWords) //removes the insignificant words
-                    
-                    for (word in cleanWords3) {
-                        word.toLowerCase()
+
+                    for (j in 0..cleanWords3.size-1) {
+                        cleanWords3[j] = cleanWords3[j].toLowerCase()
                     }
                     cleanWords3.removeAll(insignificantWords) //removes the insignificant words
 
@@ -424,15 +420,6 @@ class PicturesActivity : AppCompatActivity() {
                     if ((commonWords1.isNotEmpty() || commonWords2.isNotEmpty()) && !queriedArtPieces.contains(artPiece)) queriedArtPieces.add(artPiece)
                 }
             }
-            /*allArtPieces
-                    .filter {
-                        //if substring either way return true (ignoring case & special chars) i.e "Mona" & "MonaLisa" return true
-                        (regEx.replace(test, "").contains(regEx.replace(it.artist, ""), ignoreCase = true) || (regEx.replace(test, "").contains(regEx.replace(it.name, ""), ignoreCase = true)) || regEx.replace(it.name, "").contains(regEx.replace(test, ""), ignoreCase = true) || (regEx.replace(it.name, "").contains(regEx.replace(test, ""), ignoreCase = true))) && !queriedArtPieces.contains(it)
-                    }
-                    .forEach {
-                        /*This only adds the art piece iff it has not already been added*/
-                        queriedArtPieces.add(it)
-                    }*/
         }
         shownArtPieces.clear()
         for (artPiece in queriedArtPieces) {
