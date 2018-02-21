@@ -34,8 +34,8 @@ sonarRight = HubSonar(hub,'s1')
 motorPointer = ev3.LargeMotor('outC')
 motorLeft = ev3.LargeMotor('outB')
 motorRight= ev3.LargeMotor('outD')
-#colourSensorRight = ev3.ColorSensor(ev3.INPUT_1)
-#colourSensorLeft = ev3.ColorSensor(ev3.INPUT_3)
+colourSensorRight = ev3.ColorSensor(ev3.INPUT_1)
+colourSensorLeft = ev3.ColorSensor(ev3.INPUT_3)
 
 
 if(motorPointer.connected & sonarFront.connected &
@@ -50,40 +50,47 @@ else:
         print("MotorLeft not connected")
     if(not motorRight.connected):
         print("MotorRight not connected")
-    '''
     if(not colourSensorLeft.connected):
         print("ColorLeft not connected")
     if(not colourSensorRight.connected):
         print("ColorRight not connected")
     if(not sonarLeft.connected):
         print("SonarLeft not connected")
-    '''
     print('Please check all sensors and actuators are connected.')
     exit()
 
 ############################################################
 
 ##################### SENSOR AND ACTUATOR FUNCTIONS ############################
+def getColourReadingRight():
+    return colourSensorRight.value()
+
+def getColourReadingLeft():
+    return colourSensorRight.value()
+
+def isRightLineDetected(): # Right Lego sensor
+    if (getColourReadingRight() > 30 and getColourReadingRight() < 35):
+        return True
+    else:
+        return False
+
+def isLeftLineDetected():
+    if (getColourReadingLeft() > 30 and getColourReadingLeft() < 35):
+        return True
+    else:
+        return False
+
+def isLineDetected():
+    return isLeftLineDetected() or isRightLineDetected()
+
 def getSonarReadingsFront():
-    total = 0
-    size = 1
-    for i in range(0, size):
-        total += sonarFront.value()
-    return total/size
+    return sonarFront.value()
 
 def getSonarReadingsLeft():
-    total = 0
-    size = 1
-    for i in range(0, size):
-        total += sonarLeft.value()
-    return total/size
+    return sonarLeft.value()
 
 def getSonarReadingsRight():
-    total = 0
-    size = 1
-    for i in range(0, size):
-        total += sonarRight.value()
-    return total/size
+    return sonarRight.value()
 
 def isFrontObstacle():
     if(getSonarReadingsFront() < obstacle_detection_distance):
@@ -197,20 +204,23 @@ def onPauseCommand():
 def onResumeCommand():
     pass
 
-def isLineDetected():
-    return False
-
 def isLost():
     speak("I am lost, please help.")
 
 ##################### OBSTACLE AVOIDANCE #######################
 def obstacleAvoidance():
     while(True):
+        #Tests
+        #while (True):
+        #    print("Left:", getColourReadingLeft(), "    Right:", getColourReadingRight())
+        #    print(isLineDetected())
+        #    time.sleep(0.2)
+
         if(command=="FORWARD"):
             if(isFrontObstacle()):
                 stopWheelMotor()
                 print("Stop at: (Front) ", sonarFront.value())
-                commandNext = 'RIGHT' # Example
+                commandNext = 'LEFT' # Example
                 getReadyForObstacle(commandNext) # step 1
                 print("Stop at: (Right) ",sonarRight.value())
                 goAroundObstacle(commandNext)
@@ -244,9 +254,23 @@ def goAroundObstacle(direction):
 
 
 def getBackToLine(direction):
-    pass
+    if (direction == 'RIGHT'):
+        while(isLeftLineDetected()):
+            turn(100,150,100)
+            #moveForward(100, 100)
+        while(not isLeftLineDetected()):
+                turnRight(10)
 
-"""getSonarReadingsFront()
+    else:
+        while(isRightLineDetected()):
+            turn(150,100,100)
+            #moveForward(100, 100)
+        while(not isRightLineDetected()):
+                turnLeft(10)
+
+
+
+"""
 def keepDistance():
     if(abs(sonar.value() - obstacle_detection_distance) > 100):
         moveBackward(100,100)
