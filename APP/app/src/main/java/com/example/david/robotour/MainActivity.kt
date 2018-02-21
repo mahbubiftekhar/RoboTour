@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private var count = 0
     private var advertisements = ArrayList<Int>()
     private var imageView: ImageView? = null
+    private var continueThread = true
 
 
     override fun onBackPressed() {
@@ -106,6 +107,8 @@ class MainActivity : AppCompatActivity() {
                 background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                 onClick {
                     if (isNetworkConnected()) {
+                        continueThread = false
+                        interuptPicturesThread()
                         startActivity<SelectLanguageActivity>()
                     } else {
                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
@@ -140,11 +143,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     private val pictureThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
         override fun run() {
-            while (!isInterrupted) {
+            while (!isInterrupted && continueThread) {
+                println("+++ running here")
                 if (a > (advertisements.size - 1)) {
                     //Reset A to avoid null pointers
                     a = 0
@@ -157,10 +162,14 @@ class MainActivity : AppCompatActivity() {
                     Thread.sleep(3000)
                     a++
                 } catch (e: InterruptedException) {
+                  Thread.currentThread().interrupt()
                 }
             }
         }
+
     }
 
-
+    private fun interuptPicturesThread(){
+        pictureThread.interrupt()
+    }
 }

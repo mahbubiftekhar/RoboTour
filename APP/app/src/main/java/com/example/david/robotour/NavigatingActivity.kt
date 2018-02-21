@@ -20,6 +20,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import kotlinx.android.synthetic.*
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -426,6 +427,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                     sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
                                                 }
                                                 t.interrupt()
+                                                clearFindViewByIdCache()
                                                 switchToMain()
                                             } else {
                                                 Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
@@ -528,6 +530,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         }
                         )
                     } catch (e: InterruptedException) {
+                        Thread.currentThread().interrupt()
                     }
                 }
             }
@@ -567,6 +570,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         alert(exitDesc) {
             positiveButton(positive) {
                 t.interrupt()
+                clearFindViewByIdCache()
                 switchToMain()
             }
             negativeButton(negative) {
@@ -581,6 +585,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     fun switchToMain() {
+        clearFindViewByIdCache()
         startActivity<MainActivity>()
     }
 
