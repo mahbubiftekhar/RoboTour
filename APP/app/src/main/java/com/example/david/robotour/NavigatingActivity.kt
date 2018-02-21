@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.preference.PreferenceManager
+import android.speech.tts.TextToSpeech
 import android.support.v4.content.res.ResourcesCompat
 import android.view.Gravity
 import android.widget.Button
@@ -29,8 +30,9 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.design.floatingActionButton
 import java.io.IOException
 import java.net.URL
+import java.util.*
 
-class NavigatingActivity : AppCompatActivity() {
+class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private val btnHgt = 77
     private var btnTextSize = 24f
     private var toggleStBtn = true
@@ -57,6 +59,7 @@ class NavigatingActivity : AppCompatActivity() {
     private var stopButton: Button? = null
     private var Skippable = true
     private lateinit var t: Thread
+    private var tts: TextToSpeech? = null
 
     private fun LoadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -66,11 +69,33 @@ class NavigatingActivity : AppCompatActivity() {
         //        val a = LoadInt("user")
 
     }
+
+    public override fun onDestroy() {
+        // Shutdown TTS
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
+        }
+        super.onDestroy()
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val result = tts!!.setLanguage(Locale.US)
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         userid = LoadInt("user").toString()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
+        tts = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
         //Obtain language from PicturesUI
         vibrate()
@@ -501,7 +526,16 @@ class NavigatingActivity : AppCompatActivity() {
             //Starting the thread which is defined above to keep polling the server
             t.run()
         }
+    }
 
+    fun speakOut(text: String) {
+        val text = "Hello David, I am RoboTour"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
+            println("++++ getting in speak")
+        } else {
+            toast("Your android version does not support this feature")
+        }
     }
 
     private fun isNetworkConnected(): Boolean {
@@ -521,15 +555,15 @@ class NavigatingActivity : AppCompatActivity() {
     override fun onBackPressed() {
         /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
         Send the user back to MainActivity */
-       alert(exitDesc){
-           positiveButton(positive){
-               t.interrupt()
-               switchToMain()
-           }
-           negativeButton(negative) {
-               /*Do nothing*/
-           }
-       }.show()
+        alert(exitDesc) {
+            positiveButton(positive) {
+                t.interrupt()
+                switchToMain()
+            }
+            negativeButton(negative) {
+                /*Do nothing*/
+            }
+        }.show()
     }
 
     fun cancelGuideTotal() {
@@ -547,6 +581,7 @@ class NavigatingActivity : AppCompatActivity() {
             sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
         }
     }
+
     private fun vibrate() {
         if (Build.VERSION.SDK_INT > 25) { /*Attempt to not use the deprecated version if possible, if the SDK version is >25, use the newer one*/
             (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(VibrationEffect.createOneShot(300, 10))

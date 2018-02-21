@@ -85,7 +85,6 @@ class Waiting : AppCompatActivity() {
         startActivity<NavigatingActivity>("language" to language) // now we can switch the activity
     }
 
-
     override fun onBackPressed() {
         /*Overridden onBackPressed*/
     }
