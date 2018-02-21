@@ -62,20 +62,20 @@ else:
 ############################################################
 
 ##################### SENSOR AND ACTUATOR FUNCTIONS ############################
-def getColourReadingRight():
-    return colourSensorRight.value()
+def getColourRight():
+    return colourSensorRight.color
 
-def getColourReadingLeft():
-    return colourSensorRight.value()
+def getColourLeft():
+    return colourSensorLeft.color
 
 def isRightLineDetected(): # Right Lego sensor
-    if (getColourReadingRight() > 30 and getColourReadingRight() < 35):
+    if (getColourRight() == '6'):
         return True
     else:
         return False
 
 def isLeftLineDetected():
-    if (getColourReadingLeft() > 30 and getColourReadingLeft() < 35):
+    if (getColourLeft() == '6'):
         return True
     else:
         return False
@@ -212,8 +212,7 @@ def obstacleAvoidance():
     while(True):
         #Tests
         #while (True):
-        #    print("Left:", getColourReadingLeft(), "    Right:", getColourReadingRight())
-        #    print(isLineDetected())
+        #    print("Left:", getColourLeft(), "    Right:", getColourRight())
         #    time.sleep(0.2)
 
         if(command=="FORWARD"):
@@ -231,11 +230,18 @@ def getReadyForObstacle(direction): #90 degree
     if (direction == 'RIGHT'):
         while(not isLeftSideObstacle()):
             turnRight(10)
+
+        while(isLineDetected()):
+            turnRight(10)
     else:  # All default will go through the Left side. IE
-        print(sonarRight.value())
+        #print(sonarRight.value())
         while (not isRightSideObstacle()):
             turnLeft(10)
+        while(isLineDetected()):
+            turnLeft(10)
 
+    while(isLineDetected()):
+        turnLeft(10)
 
 def goAroundObstacle(direction):
     set_distance = 15
@@ -252,23 +258,20 @@ def goAroundObstacle(direction):
             else:
                 turn(300, 100, 100)
 
-
 def getBackToLine(direction):
+    print("Find line!")
     if (direction == 'RIGHT'):
         while(isLeftLineDetected()):
-            turn(100,150,100)
-            #moveForward(100, 100)
+            turn(100,-100,100)
         while(not isLeftLineDetected()):
-                turnRight(10)
-
+            turn(250,0,100)
+        print("Find line again!")
     else:
         while(isRightLineDetected()):
-            turn(150,100,100)
-            #moveForward(100, 100)
+            turn(-100,100,100)
         while(not isRightLineDetected()):
-                turnLeft(10)
-
-
+            turn(0,250,100)
+        print("Find line again!")
 
 """
 def keepDistance():
