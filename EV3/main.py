@@ -108,7 +108,6 @@ def moveForward(speed, time):
     motorRight.run_timed(speed_sp=speed, time_sp=time)
     #waitForMotor(motorLeft)                         # Can use something like this to prevent the program from progressing
     #waitForMotor(motorRight)                         # Can use something like this to prevent the program from progressing
-    pass
 
 def moveBackward(speed, time):
     motorLeft.run_timed(speed_sp=-speed, time_sp=time)
@@ -224,18 +223,10 @@ def keepDistance():
 
 
 ############################################################
-
-
-
 obstacleAvoidanceThread = Thread(target=obstacleAvoidance)
 obstacleAvoidanceThread.start()
-##################### MAIN #################################
-dictionary = {
-    "Monalisa" : ["Forward", "Left", "Right"]
-}
 
-#artPieces = getArtPiecesFromApp()
-#direction = dictionary[artPieces[0]]
+##################### MAIN #################################
 while(getSonarReadingsRight()==0):
     time.sleep(5)
 print("SensorHub have set up.")
@@ -243,10 +234,6 @@ print("SensorHub have set up.")
 
 command = "FORWARD"
 moveForward(300,10000)
-'''
-while(True):
-    print(getSonarReadingsLeft())
-'''
 
 """
 while (True):
