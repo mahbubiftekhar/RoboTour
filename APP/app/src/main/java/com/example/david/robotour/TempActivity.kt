@@ -15,7 +15,7 @@ import org.jetbrains.anko.async
 import java.io.IOException
 
 class TempActivity : AppCompatActivity() {
-    /*THIS CLASS/ACTIVITY IS BEEN DEPRECATED
+    /*THIS CLASS/ACTIVITY HAS BEEN DEPRECATED
     * AS NO LONGER NEEDED (USED FOR CD1)
     *
     * M IFTEKHAR

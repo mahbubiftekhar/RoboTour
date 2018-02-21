@@ -2,8 +2,10 @@ package com.example.david.robotour
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -24,6 +26,7 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
+import org.jetbrains.anko.design.floatingActionButton
 import java.io.IOException
 import java.net.URL
 
@@ -177,217 +180,232 @@ class NavigatingActivity : AppCompatActivity() {
                 changeSpeed = "Change speed"
             }
         }
-        verticalLayout {
-            titleView = textView {
-                textSize = 32f
-                typeface = Typeface.DEFAULT_BOLD
-                padding = dip(5)
-                gravity = Gravity.CENTER_HORIZONTAL
-            }
-            //get image the pictures.php file that is true
-            imageView = imageView {
-                setImageResource(R.drawable.robotourfornavigating)
-                backgroundColor = Color.TRANSPARENT //Removes gray border
-                gravity = Gravity.CENTER_HORIZONTAL
-            }.lparams {
-                bottomMargin = dip(10)
-                topMargin = dip(10)
-            }
-            descriptionView = textView {
-                text = ""
-                textSize = 16f
-                typeface = Typeface.DEFAULT
-                padding = dip(10)
-            }
-            relativeLayout {
-                tableLayout {
-                    isStretchAllColumns = true
-                    tableRow {
-                        button(skip) {
-                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                            textSize = btnTextSize
-                            height = dip(btnHgt)
-                            width = wrapContent
-                            onClick {
-                                alert(skipDesc) {
-                                    positiveButton(positive) {
-                                        if (isNetworkConnected()) {
-                                            async {
-                                                skip()
-                                            }
-                                        } else {
-                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                        }
+        relativeLayout {
+            floatingActionButton {
+                //UI
+                imageResource = R.drawable.ic_volume_up_black_24dp
+                //ColorStateList usually requires a list of states but this works for a single color
+                backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
+                lparams { alignParentRight() ; topMargin = dip(100) ; rightMargin = dip(5) }
 
-                                    }
-                                    negativeButton(negative) {
-                                        //Do nothing the user changed their minds
-                                    }
-                                }.show()
-                            }
-                        }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                        stopButton = button(stop) {
-                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                            textSize = btnTextSize
-                            height = dip(btnHgt)
-                            width = wrapContent
-                            onClick {
-                                if (toggleStBtn) {
-                                    alertStBtn = stopDesc
-                                } else {
-                                    alertStBtn = startDesc
-                                }
-                                alert(alertStBtn) {
-                                    positiveButton(positive) {
-                                        if (isNetworkConnected()) {
-                                            if (!toggleStBtn) {
-                                                text = stop
+                //Text-to-speech
+                onClick {
+
+                }
+            }
+            verticalLayout {
+                lparams { width = matchParent }
+                titleView = textView {
+                    textSize = 32f
+                    typeface = Typeface.DEFAULT_BOLD
+                    padding = dip(5)
+                    gravity = Gravity.CENTER_HORIZONTAL
+                }
+                //get image the pictures.php file that is true
+                imageView = imageView {
+                    setImageResource(R.drawable.robotourfornavigating)
+                    backgroundColor = Color.TRANSPARENT //Removes gray border
+                    gravity = Gravity.CENTER_HORIZONTAL
+                }.lparams {
+                    bottomMargin = dip(10)
+                    topMargin = dip(10)
+                }
+                descriptionView = textView {
+                    text = ""
+                    textSize = 16f
+                    typeface = Typeface.DEFAULT
+                    padding = dip(10)
+                }
+                relativeLayout {
+                    tableLayout {
+                        isStretchAllColumns = true
+                        tableRow {
+                            button(skip) {
+                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                textSize = btnTextSize
+                                height = dip(btnHgt)
+                                width = wrapContent
+                                onClick {
+                                    alert(skipDesc) {
+                                        positiveButton(positive) {
+                                            if (isNetworkConnected()) {
                                                 async {
-                                                    stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                                    skip()
                                                 }
                                             } else {
-                                                text = start
-                                                async {
-                                                    startRoboTour()
-                                                }
+                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                             }
-                                            toggleStBtn = !toggleStBtn
-                                        } else {
-                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                        }
-                                    }
-                                    negativeButton(negative) { }
-                                }.show()
-                            }
-                        }.lparams { rightMargin = 2 }
-                    }.lparams { bottomMargin = dip(8) }
-                    tableRow {
-                        button(cancelTour) {
-                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                            textSize = btnTextSize
-                            height = dip(btnHgt)
-                            width = matchParent
-                            onClick {
-                                alert(cancelDesc) {
-                                    positiveButton(positive) {
-                                        if (isNetworkConnected()) {
-                                            async {
-                                                cancelGuideTotal()
-                                            }
-                                        } else {
-                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                        }
 
+                                        }
+                                        negativeButton(negative) {
+                                            //Do nothing the user changed their minds
+                                        }
+                                    }.show()
+                                }
+                            }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
+                            stopButton = button(stop) {
+                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                textSize = btnTextSize
+                                height = dip(btnHgt)
+                                width = wrapContent
+                                onClick {
+                                    if (toggleStBtn) {
+                                        alertStBtn = stopDesc
+                                    } else {
+                                        alertStBtn = startDesc
                                     }
-                                    negativeButton(negative) {
-                                        onBackPressed() //Call on back pressed to take them back to the main activity
-                                    }
-                                }.show()
-                            }
-                        }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                        button(changeSpeed) {
-                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                            textSize = btnTextSize
-                            height = dip(btnHgt)
-                            width = matchParent
-                            onClick {
-                                alert {
-                                    customView {
-                                        verticalLayout {
-                                            listView {
-                                                val options: List<String>
-                                                val SelectSpeed: String
-                                                when (language) {
-                                                    "English" -> {
-                                                        options = listOf("Slow", "Normal", "Fast")
-                                                        SelectSpeed = "Select speed"
+                                    alert(alertStBtn) {
+                                        positiveButton(positive) {
+                                            if (isNetworkConnected()) {
+                                                if (!toggleStBtn) {
+                                                    text = stop
+                                                    async {
+                                                        stopRoboTour() /*This function will call for RoboTour to be stopped*/
                                                     }
-                                                    "French" -> {
-                                                        options = listOf("lent", "Ordinaire", "vite")
-                                                        SelectSpeed = "Sélectionnez la vitesse"
-                                                    }
-                                                    "Chinese" -> {
-                                                        options = listOf("慢", "正常", "快速")
-                                                        SelectSpeed = "选择速度"
-                                                    }
-                                                    "Spanish" -> {
-                                                        options = listOf("lento", "Normal", "rápido")
-                                                        SelectSpeed = "Seleccionar velocidad"
-                                                    }
-                                                    "German" -> {
-                                                        options = listOf("Langsam", "Normal", "Schnell")
-                                                        SelectSpeed = "Wählen Sie Geschwindigkeit"
-                                                    }
-                                                    else -> {
-                                                        options = listOf("Slow", "Normal", "Fast")
-                                                        SelectSpeed = "Select speed"
+                                                } else {
+                                                    text = start
+                                                    async {
+                                                        startRoboTour()
                                                     }
                                                 }
-                                                selector(SelectSpeed, options) { j ->
-                                                    if (j == 0) {
-                                                        toast(options[0])
-                                                    } else if (j == 1) {
-                                                        toast(options[1])
-                                                    } else {
-                                                        toast(options[2])
+                                                toggleStBtn = !toggleStBtn
+                                            } else {
+                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                            }
+                                        }
+                                        negativeButton(negative) { }
+                                    }.show()
+                                }
+                            }.lparams { rightMargin = 2 }
+                        }.lparams { bottomMargin = dip(8) }
+                        tableRow {
+                            button(cancelTour) {
+                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                textSize = btnTextSize
+                                height = dip(btnHgt)
+                                width = matchParent
+                                onClick {
+                                    alert(cancelDesc) {
+                                        positiveButton(positive) {
+                                            if (isNetworkConnected()) {
+                                                async {
+                                                    cancelGuideTotal()
+                                                }
+                                            } else {
+                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                            }
+
+                                        }
+                                        negativeButton(negative) {
+                                            onBackPressed() //Call on back pressed to take them back to the main activity
+                                        }
+                                    }.show()
+                                }
+                            }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
+                            button(changeSpeed) {
+                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                textSize = btnTextSize
+                                height = dip(btnHgt)
+                                width = matchParent
+                                onClick {
+                                    alert {
+                                        customView {
+                                            verticalLayout {
+                                                listView {
+                                                    val options: List<String>
+                                                    val SelectSpeed: String
+                                                    when (language) {
+                                                        "English" -> {
+                                                            options = listOf("Slow", "Normal", "Fast")
+                                                            SelectSpeed = "Select speed"
+                                                        }
+                                                        "French" -> {
+                                                            options = listOf("lent", "Ordinaire", "vite")
+                                                            SelectSpeed = "Sélectionnez la vitesse"
+                                                        }
+                                                        "Chinese" -> {
+                                                            options = listOf("慢", "正常", "快速")
+                                                            SelectSpeed = "选择速度"
+                                                        }
+                                                        "Spanish" -> {
+                                                            options = listOf("lento", "Normal", "rápido")
+                                                            SelectSpeed = "Seleccionar velocidad"
+                                                        }
+                                                        "German" -> {
+                                                            options = listOf("Langsam", "Normal", "Schnell")
+                                                            SelectSpeed = "Wählen Sie Geschwindigkeit"
+                                                        }
+                                                        else -> {
+                                                            options = listOf("Slow", "Normal", "Fast")
+                                                            SelectSpeed = "Select speed"
+                                                        }
+                                                    }
+                                                    selector(SelectSpeed, options) { j ->
+                                                        if (j == 0) {
+                                                            toast(options[0])
+                                                        } else if (j == 1) {
+                                                            toast(options[1])
+                                                        } else {
+                                                            toast(options[2])
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            }
-                        }.lparams { rightMargin = 2 }
-                    }.lparams { bottomMargin = dip(8) }
-                    tableRow {
-                        button(toilet) {
-                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                            textSize = btnTextSize
-                            height = dip(btnHgt)
-                            width = matchParent
-                            onClick {
-                                alert(toiletDesc) {
-                                    positiveButton(positive) {
-                                        if (isNetworkConnected()) {
-                                            async {
-                                                sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php")
+                            }.lparams { rightMargin = 2 }
+                        }.lparams { bottomMargin = dip(8) }
+                        tableRow {
+                            button(toilet) {
+                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                textSize = btnTextSize
+                                height = dip(btnHgt)
+                                width = matchParent
+                                onClick {
+                                    alert(toiletDesc) {
+                                        positiveButton(positive) {
+                                            if (isNetworkConnected()) {
+                                                async {
+                                                    sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php")
+                                                }
+                                            } else {
+                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                             }
-                                        } else {
-                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                        }
 
-                                    }
-                                    negativeButton(negative) { }
-                                }.show()
-                            }
-                        }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                        button(exit) {
-                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                            textSize = btnTextSize
-                            height = dip(btnHgt)
-                            width = matchParent
-                            onClick {
-                                alert(exitDesc) {
-                                    positiveButton(positive) {
-                                        if (isNetworkConnected()) {
-                                            async {
-                                                sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+                                        }
+                                        negativeButton(negative) { }
+                                    }.show()
+                                }
+                            }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
+                            button(exit) {
+                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                textSize = btnTextSize
+                                height = dip(btnHgt)
+                                width = matchParent
+                                onClick {
+                                    alert(exitDesc) {
+                                        positiveButton(positive) {
+                                            if (isNetworkConnected()) {
+                                                async {
+                                                    sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+                                                }
+                                                t.interrupt()
+                                                switchToMain()
+                                            } else {
+                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                             }
-                                            t.interrupt()
-                                            switchToMain()
-                                        } else {
-                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                        }
 
-                                    }
-                                    negativeButton(negative) { }
-                                }.show()
-                            }
-                        }.lparams { rightMargin = 2 }
-                    }.lparams { bottomMargin = dip(15) }
-                }.lparams { alignParentBottom() }
+                                        }
+                                        negativeButton(negative) { }
+                                    }.show()
+                                }
+                            }.lparams { rightMargin = 2 }
+                        }.lparams { bottomMargin = dip(15) }
+                    }.lparams { alignParentBottom() }
+                }
+
             }
-
         }
         when (language) {
             "English" -> titleView?.text = "RoboTour calculating optimal route..."
