@@ -166,7 +166,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
     }
 
     private fun interuptPicturesThread(){

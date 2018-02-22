@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -99,6 +98,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
         //Obtain language from PicturesUI
+        async {
+        sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+        }
+
         vibrate()
         val language = intent.getStringExtra("language")
         when (language) {
@@ -212,7 +215,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 imageResource = R.drawable.ic_volume_up_black_24dp
                 //ColorStateList usually requires a list of states but this works for a single color
                 backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
-                lparams { alignParentRight() ; topMargin = dip(100) ; rightMargin = dip(5) }
+                lparams { alignParentRight(); topMargin = dip(100); rightMargin = dip(5) }
 
                 //Text-to-speech
                 onClick {
@@ -426,9 +429,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 async {
                                                     sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
                                                 }
-                                                t.interrupt()
-                                                clearFindViewByIdCache()
-                                                switchToMain()
                                             } else {
                                                 Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                             }
@@ -541,7 +541,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    fun speakOut(text: String) {
+    private fun speakOut(text: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
             println("++++ getting in speak")
@@ -558,10 +558,24 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         return networkInfo != null && networkInfo.isConnected
     }
 
-    fun toiletAlert() {
-        alert {
-            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+    private fun exitDoor() {
+        //This function will tell the robot to take the user to the exit
+        if (isNetworkConnected()) {
+            sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+        } else {
+            toast("Check your network connection, command not sent")
         }
+    }
+
+    private fun toiletAlert() {
+        if (isNetworkConnected()) {
+
+        } else {
+            alert {
+                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+            }
+        }
+
     }
 
     override fun onBackPressed() {
@@ -573,26 +587,32 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 clearFindViewByIdCache()
                 switchToMain()
             }
-            negativeButton(negative) {
-                /*Do nothing*/
-            }
+            negativeButton(negative) { /*Do nothing*/ }
         }.show()
     }
 
-    fun cancelGuideTotal() {
-        sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/$userid.php")
-        switchToMain()
+    private fun cancelGuideTotal() {
+        if (isNetworkConnected()) {
+            sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/$userid.php")
+            switchToMain()
+        } else {
+            toast("Check your network connection, command not sent")
+        }
     }
 
-    fun switchToMain() {
+    private fun switchToMain() {
         clearFindViewByIdCache()
         startActivity<MainActivity>()
     }
 
-    fun rejectSkip() {
-        async {
-            //This function will reject the skip by adding the empty string
-            sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+    private fun rejectSkip() {
+        if (isNetworkConnected()) {
+            async {
+                //This function will reject the skip by adding the empty string
+                sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+            }
+        } else {
+            toast("Check your network connection, command not sent")
         }
     }
 
@@ -606,35 +626,50 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    fun skipImmediately() {
-        /*This function is only when both users have agreed to skip the next item*/
-        async {
-            sendPUT("Y", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
-            Thread.sleep(400)
-            Skippable = true
-        }
-
-    }
-
-    fun skip() {
-        async {
-            sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+    private fun skipImmediately() {
+        if (isNetworkConnected()) {
+            /*This function is only when both users have agreed to skip the next item*/
+            async {
+                sendPUT("Y", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+                Thread.sleep(400)
+                Skippable = true }
+        } else {
+            toast("Check your network connection, command not sent")
         }
     }
 
-    fun stopRoboTour() {
-        async {
-            sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
+    private fun skip() {
+        if (isNetworkConnected()) {
+            async {
+                sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+            }
+        } else {
+            toast("Check your network connection, command not sent")
         }
     }
 
-    fun startRoboTour() {
+    private fun stopRoboTour() {
+        if (isNetworkConnected()) {
+            async {
+                sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
+            }
+        } else {
+            toast("Check your network connection, command not sent")
+        }
+    }
+
+    private fun startRoboTour() {
+        if (isNetworkConnected()) {
+
+        } else {
+            toast("Check your network connection, command not sent")
+        }
         async {
             sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
         }
     }
 
-    fun sendPUT(command: String, url: String) {
+    private fun sendPUT(command: String, url: String) {
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
