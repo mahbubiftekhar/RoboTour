@@ -3,6 +3,7 @@ package com.example.david.robotour
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Typeface
 import android.net.ConnectivityManager
@@ -61,7 +62,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var t: Thread
     private var tts: TextToSpeech? = null
     private var currentPic = -1
-    private var lang = "English_desc"
 
     private fun LoadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -82,7 +82,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
             val language = intent.getStringExtra("language")
-            var result = tts!!.setLanguage(Locale.US)
+            var result = tts!!.setLanguage(Locale.UK)
             when (language) {
                 "French" -> {
                     result = tts!!.setLanguage(Locale.FRENCH)
@@ -91,6 +91,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     result = tts!!.setLanguage(Locale.CHINESE)
                 }
                 "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts!!.setLanguage(spanish)
                 }
                 "German" -> {
                     result = tts!!.setLanguage(Locale.GERMAN)
@@ -441,7 +443,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         positiveButton(positive) {
                                             if (isNetworkConnected()) {
                                                 async {
-                                                    sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+                                                    exitDoor()
                                                 }
                                             } else {
                                                 Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
@@ -485,8 +487,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 imageView?.setImageResource(allArtPieces[i].imageID)
                                                 titleView?.text = allArtPieces[i].name
                                                 currentPic = i /*This is to allow for the pics description to be read out to the user*/
-                                                val language = intent.getStringExtra("language")
-                                                when (language) {
+                                                when (intent.getStringExtra("language")) {
                                                     "French" -> descriptionView?.text = allArtPieces[i].French_Desc
                                                     "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
                                                     "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
@@ -560,7 +561,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             if (input != -1) {
-                var text = ""
+                val text: String
                 val language = intent.getStringExtra("language")
                 when (language) {
                     "French" -> {
@@ -572,7 +573,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     "Spanish" -> {
                         text = allArtPieces[input].Spanish_Desc
                     }
-
                     "German" -> {
                         text = allArtPieces[input].German_Desc
                     }
@@ -581,8 +581,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     }
                 }
                 tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
-            } else {
-
             }
         }
     }
@@ -698,13 +696,13 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         private fun startRoboTour() {
             if (isNetworkConnected()) {
-
+                async {
+                    sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
+                }
             } else {
                 toast("Check your network connection, command not sent")
             }
-            async {
-                sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
-            }
+
         }
 
         private fun sendPUT(command: String, url: String) {
