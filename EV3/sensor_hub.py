@@ -13,7 +13,7 @@ class SensorHub():
 		self.n_sonars = 4
 		self.sonar_maxrange = 255
 
-		self.tries_limit = 100
+		self.tries_limit = 1000
 
 		self.__DEBUG__ = False
 
@@ -27,9 +27,10 @@ class SensorHub():
 		self.last_poll += 1
 
 		tries = 0
+		self.serial_port.flushInput()
 		while self.serial_port.inWaiting() < 1:
 			self.send_request()
-			time.sleep(0.01)
+			time.sleep(0.001)
 			if(tries >= self.tries_limit):
 				print("POLLING TIMEOUT")
 				return False
@@ -127,8 +128,8 @@ class HubLineSensor():
 		order = ['l1', 'l0', 'l2', 'l3', 'l4', 'l5']
 
 		weight = 10
-		floor = 160
-		line = 220
+		floor = 235
+		line = 185
 		threshold = (floor+line)/2
 
 		err = 0
@@ -142,7 +143,7 @@ class HubLineSensor():
 				print("GLITTCHEZZZ BITCHEZZ: {}".format(self.raw_val[s])) 
 
 			#check if sensor on line
-			if val > threshold:
+			if val < threshold:
 				err += weight
 				activated_sens += 1
 
