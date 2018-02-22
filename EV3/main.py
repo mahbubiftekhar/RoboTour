@@ -10,7 +10,7 @@ from sensor_hub import *
 
 
 ####################### GLOBAL VARIABLE ####################
-obstacle_detection_distance = 150 # in mm
+obstacle_detection_distance = 150 # in mm THE LEGO SENSOR
 side_distance = 12
 link = "https://homepages.inf.ed.ac.uk/s1553593/receiver.php"
 command = ""
@@ -245,15 +245,21 @@ def getReadyForObstacle(direction): #90 degree
 
 def goAroundObstacle(direction):
     set_distance = 15
+    stopping_distance = 8 # for stopping of the other 2 sensors
+    # PLEASE NOTE THAT THE FRONT SENSOR IS LEGO AND MEASURES IN MM WHILE THE CUSTOM ONE MEASURES IN CM
     if (direction == 'RIGHT'):
         while(not isLineDetected()):
-            if (getSonarReadingsLeft() < set_distance):
+            if (getSonarReadingsRight() < stopping_distance or getSonarReadingsFront() < stopping_distance*10):
+                time.sleep(1)
+            elif (getSonarReadingsLeft() < set_distance):
                 turn(200, 100, 100)
             else:
                 turn(100, 300, 100)
     else: # All default will go through the Left side. IE
         while(not isLineDetected()):
-            if (getSonarReadingsRight() < set_distance):
+            if (getSonarReadingsLeft() < stopping_distance or getSonarReadingsFront() < stopping_distance*10):
+                time.sleep(1)
+            elif (getSonarReadingsRight() < set_distance):
                 turn(100, 200, 100)
             else:
                 turn(300, 100, 100)
@@ -285,11 +291,8 @@ obstacleAvoidanceThread = Thread(target=obstacleAvoidance)
 obstacleAvoidanceThread.start()
 
 ##################### MAIN #################################
-while(getSonarReadingsRight()==0):
-    time.sleep(5)
 print("SensorHub have set up.")
 #speak("Carson, we love you. Group 18. ")
-
 #Use to test the pointer. The following code turns and resets in both direction 3x
 #turnAndResetPointer("CW")
 #time.sleep(1)
