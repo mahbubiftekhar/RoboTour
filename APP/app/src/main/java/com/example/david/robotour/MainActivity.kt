@@ -89,18 +89,10 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //Populate Advertisements
-        advertisements.add(R.drawable.your_ad_here)
-        advertisements.add(R.drawable.new_exhibit)
-        advertisements.add(R.drawable.gift_shop)
         supportActionBar?.hide() //hide actionbar
-        //Added in scroll view to work with horizontal orientation
         verticalLayout {
             imageView(R.drawable.robotour_small) {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
-            }.lparams {
-                //  bottomMargin = dip(40)
-                // topMargin = dip(10)
             }
             button("START") {
                 textSize = 32f
@@ -124,20 +116,16 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
             }
-            //var on = true
-            /*toggleButton {
-            //Commented out for CD2
-                onClick { on = !on }
-                text = "Single User"
-                textOn = "Multi User"
-                textOff = "Single User"
-            }*/
             imageView = imageView {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
                 gravity = Gravity.CENTER_HORIZONTAL
             }
         }
         async {
+            //Populate Advertisements
+            advertisements.add(R.drawable.your_ad_here)
+            advertisements.add(R.drawable.new_exhibit)
+            advertisements.add(R.drawable.gift_shop)
             //This thread essentially starts the pictures at the bottom of the screen
            pictureThread.start()
         }
