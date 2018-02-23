@@ -35,7 +35,7 @@ motorPointer = ev3.LargeMotor('outC')
 motorLeft = ev3.LargeMotor('outB')
 motorRight= ev3.LargeMotor('outD')
 colourSensorRight = ev3.ColorSensor(ev3.INPUT_1)
-colourSensorLeft = ev3.ColorSensor(ev3.INPUT_3)
+colourSensorLeft = ev3.ColorSensor(ev3.INPUT_4)
 
 
 if(motorPointer.connected & sonarFront.connected &
@@ -206,7 +206,7 @@ def onResumeCommand():
 
 def isLost():
     speak("I am lost, please help.")
-
+ 
 ##################### OBSTACLE AVOIDANCE #######################
 def obstacleAvoidance():
     while(True):
@@ -308,7 +308,42 @@ print("SensorHub have set up.")
 
 
 command = "FORWARD"
-moveForward(300,10000)
+colourSensorLeft.mode = 'COL-REFLECT'
+colourSensorRight.mode = 'COL-REFLECT'
+
+target = 50
+baseSpeed = 60
+errorSumR = 0
+oldR = colourSensorRight.value()
+oldL = colourSensorLeft.value()
+try:
+    while(True):
+        colourSensorLeft.mode = 'COL-REFLECT'
+        colourSensorRight.mode = 'COL-REFLECT'
+        currR = colourSensorRight.value()
+        currL = colourSensorLeft.value()
+        differenceL = currL - target
+        differenceR = currR - target
+        errorSumR +=differenceR
+        if(abs(errorSumR) > 400):
+            errorSumR = 400*errorSumR/abs(errorSumR)
+        D = currR - oldR
+        motorRight.run_forever(speed_sp = baseSpeed- differenceR -errorSumR*0.01 - D)
+        motorLeft.run_forever(speed_sp = baseSpeed+ differenceR + errorSumR*0.01 + D)
+        oldR = currR
+        oldL = currL
+        print(differenceR)
+except:
+    motorLeft.stop()
+    motorRight.stop()
+
+
+
+
+
+
+
+#moveForward(300,10000)
 
 """
 while (True):
@@ -321,7 +356,7 @@ while (True):
         #print("previouscommandid after" + previouscommandid)
         if(command == "STOP"):95
             stopWheelMotor()
-        elif(command == "FORWARD"):
+        elif(command == "FORWARD"):colourSensorLeft
             moveForward(300, 10000)
         elif(command == "BACKWARDS"):
             moveBackward(300, 10000)
