@@ -10,7 +10,7 @@ from sensor_hub import *
 
 
 ####################### GLOBAL VARIABLE ####################
-obstacle_detection_distance = 150 # in mm
+obstacle_detection_distance = 150 # in mm THE LEGO SENSOR
 side_distance = 12
 link = "https://homepages.inf.ed.ac.uk/s1553593/receiver.php"
 command = ""
@@ -34,8 +34,8 @@ sonarRight = HubSonar(hub,'s1')
 motorPointer = ev3.LargeMotor('outC')
 motorLeft = ev3.LargeMotor('outB')
 motorRight= ev3.LargeMotor('outD')
-#colourSensorRight = ev3.ColorSensor(ev3.INPUT_1)
-#colourSensorLeft = ev3.ColorSensor(ev3.INPUT_3)
+colourSensorRight = ev3.ColorSensor(ev3.INPUT_1)
+colourSensorLeft = ev3.ColorSensor(ev3.INPUT_3)
 
 
 if(motorPointer.connected & sonarFront.connected &
@@ -50,40 +50,47 @@ else:
         print("MotorLeft not connected")
     if(not motorRight.connected):
         print("MotorRight not connected")
-    '''
     if(not colourSensorLeft.connected):
         print("ColorLeft not connected")
     if(not colourSensorRight.connected):
         print("ColorRight not connected")
     if(not sonarLeft.connected):
         print("SonarLeft not connected")
-    '''
     print('Please check all sensors and actuators are connected.')
     exit()
 
 ############################################################
 
 ##################### SENSOR AND ACTUATOR FUNCTIONS ############################
+def getColourRight():
+    return colourSensorRight.color
+
+def getColourLeft():
+    return colourSensorLeft.color
+
+def isRightLineDetected(): # Right Lego sensor
+    if (getColourRight() == '6'):
+        return True
+    else:
+        return False
+
+def isLeftLineDetected():
+    if (getColourLeft() == '6'):
+        return True
+    else:
+        return False
+
+def isLineDetected():
+    return isLeftLineDetected() or isRightLineDetected()
+
 def getSonarReadingsFront():
-    total = 0
-    size = 5
-    for i in range(0, size):
-        total += sonarFront.value()
-    return total/size
+    return sonarFront.value()
 
 def getSonarReadingsLeft():
-    total = 0
-    size = 1
-    for i in range(0, size):
-        total += sonarLeft.value()
-    return total/size
+    return sonarLeft.value()
 
 def getSonarReadingsRight():
-    total = 0
-    size = 1
-    for i in range(0, size):
-        total += sonarRight.value()
-    return total/size
+    return sonarRight.value()
 
 def isFrontObstacle():
     if(getSonarReadingsFront() < obstacle_detection_distance):
@@ -197,15 +204,17 @@ def onPauseCommand():
 def onResumeCommand():
     pass
 
-def isLineDetected():
-    return False
-
 def isLost():
     speak("I am lost, please help.")
 
 ##################### OBSTACLE AVOIDANCE #######################
 def obstacleAvoidance():
     while(True):
+        #Tests
+        #while (True):
+        #    print("Left:", getColourLeft(), "    Right:", getColourRight())
+        #    time.sleep(0.2)
+
         if(command=="FORWARD"):
             if(isFrontObstacle()):
                 stopWheelMotor()
@@ -221,32 +230,56 @@ def getReadyForObstacle(direction): #90 degree
     if (direction == 'RIGHT'):
         while(not isLeftSideObstacle()):
             turnRight(10)
+
+        while(isLineDetected()):
+            turnRight(10)
     else:  # All default will go through the Left side. IE
-        print(sonarRight.value())
+        #print(sonarRight.value())
         while (not isRightSideObstacle()):
             turnLeft(10)
+        while(isLineDetected()):
+            turnLeft(10)
 
+    while(isLineDetected()):
+        turnLeft(10)
 
 def goAroundObstacle(direction):
     set_distance = 15
+    stopping_distance = 8 # for stopping of the other 2 sensors
+    # PLEASE NOTE THAT THE FRONT SENSOR IS LEGO AND MEASURES IN MM WHILE THE CUSTOM ONE MEASURES IN CM
     if (direction == 'RIGHT'):
         while(not isLineDetected()):
-            if (getSonarReadingsLeft() < set_distance):
-                turn(300, 100, 100)
+            if (getSonarReadingsRight() < stopping_distance or getSonarReadingsFront() < stopping_distance*10):
+                time.sleep(1)
+            elif (getSonarReadingsLeft() < set_distance):
+                turn(200, 100, 100)
             else:
-                turn(100, 200, 100)
+                turn(100, 300, 100)
     else: # All default will go through the Left side. IE
         while(not isLineDetected()):
-            if (getSonarReadingsRight() < set_distance):
-                turn(100, 300, 100)
+            if (getSonarReadingsLeft() < stopping_distance or getSonarReadingsFront() < stopping_distance*10):
+                time.sleep(1)
+            elif (getSonarReadingsRight() < set_distance):
+                turn(100, 200, 100)
             else:
-                turn(200, 100, 100)
-
+                turn(300, 100, 100)
 
 def getBackToLine(direction):
-    pass
+    print("Find line!")
+    if (direction == 'RIGHT'):
+        while(isLeftLineDetected()):
+            turn(100,-100,100)
+        while(not isLeftLineDetected()):
+            turn(250,0,100)
+        print("Find line again!")
+    else:
+        while(isRightLineDetected()):
+            turn(-100,100,100)
+        while(not isRightLineDetected()):
+            turn(0,250,100)
+        print("Find line again!")
 
-"""getSonarReadingsFront()
+"""
 def keepDistance():
     if(abs(sonar.value() - obstacle_detection_distance) > 100):
         moveBackward(100,100)
@@ -258,10 +291,21 @@ obstacleAvoidanceThread = Thread(target=obstacleAvoidance)
 obstacleAvoidanceThread.start()
 
 ##################### MAIN #################################
-while(getSonarReadingsRight()==0):
-    time.sleep(5)
 print("SensorHub have set up.")
 #speak("Carson, we love you. Group 18. ")
+#Use to test the pointer. The following code turns and resets in both direction 3x
+#turnAndResetPointer("CW")
+#time.sleep(1)
+#turnAndResetPointer("CW")
+#time.sleep(1)
+#turnAndResetPointer("CW")
+#time.sleep(1)
+#turnAndResetPointer("ACW")
+#time.sleep(1)
+#turnAndResetPointer("ACW")
+#time.sleep(1)
+#turnAndResetPointer("ACW")
+
 
 #Use to test the pointer. The following code turns and resets in both direction 3x
 #turnAndResetPointer("CW")

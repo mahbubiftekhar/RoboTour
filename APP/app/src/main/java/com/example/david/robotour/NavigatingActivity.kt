@@ -3,9 +3,9 @@ package com.example.david.robotour
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -20,6 +20,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import kotlinx.android.synthetic.*
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -60,14 +61,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var Skippable = true
     private lateinit var t: Thread
     private var tts: TextToSpeech? = null
+    private var currentPic = -1
 
     private fun LoadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
-        val savedValue = sharedPreferences.getInt(key, 0)
-        return savedValue
-        //        val a = LoadInt("user")
-
+        return sharedPreferences.getInt(key, 0)
     }
 
     public override fun onDestroy() {
@@ -82,7 +81,26 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
-            val result = tts!!.setLanguage(Locale.US)
+            val language = intent.getStringExtra("language")
+            var result = tts!!.setLanguage(Locale.UK)
+            when (language) {
+                "French" -> {
+                    result = tts!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts!!.setLanguage(Locale.UK)
+                }
+            }
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
             } else {
             }
@@ -98,6 +116,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
         //Obtain language from PicturesUI
+        async { sendPUT("N", "http://homepages.inf.ed.ac.uk/s1553593/1.php") }
+
         vibrate()
         val language = intent.getStringExtra("language")
         when (language) {
@@ -211,11 +231,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 imageResource = R.drawable.ic_volume_up_black_24dp
                 //ColorStateList usually requires a list of states but this works for a single color
                 backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
-                lparams { alignParentRight() ; topMargin = dip(100) ; rightMargin = dip(5) }
+                lparams { alignParentRight(); topMargin = dip(100); rightMargin = dip(5) }
 
                 //Text-to-speech
                 onClick {
-                    speakOut("Hi Carson, we love you!") // use below code once currentArtPiece is implemented
+                    speakOut(currentPic) // use below code once currentArtPiece is implemented
                     /*var speakText = ""
                     when (language) {
                         "English" -> speakText = currentArtPiece.English_Desc
@@ -423,10 +443,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         positiveButton(positive) {
                                             if (isNetworkConnected()) {
                                                 async {
-                                                    sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+                                                    exitDoor()
                                                 }
-                                                t.interrupt()
-                                                switchToMain()
                                             } else {
                                                 Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                             }
@@ -468,8 +486,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 //Change the image, text and descrioption
                                                 imageView?.setImageResource(allArtPieces[i].imageID)
                                                 titleView?.text = allArtPieces[i].name
-                                                val language = intent.getStringExtra("language")
-                                                when (language) {
+                                                currentPic = i /*This is to allow for the pics description to be read out to the user*/
+                                                when (intent.getStringExtra("language")) {
                                                     "French" -> descriptionView?.text = allArtPieces[i].French_Desc
                                                     "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
                                                     "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
@@ -528,6 +546,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         }
                         )
                     } catch (e: InterruptedException) {
+                        Thread.currentThread().interrupt()
                     }
                 }
             }
@@ -538,109 +557,166 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    fun speakOut(text: String) {
+    private fun speakOut(input: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
-            println("++++ getting in speak")
-        } else {
-            toast("Your android version does not support this feature")
+
+            if (input != -1) {
+                val text: String
+                val language = intent.getStringExtra("language")
+                when (language) {
+                    "French" -> {
+                        text = allArtPieces[input].French_Desc
+                    }
+                    "Chinese" -> {
+                        text = allArtPieces[input].Chinese_Desc
+                    }
+                    "Spanish" -> {
+                        text = allArtPieces[input].Spanish_Desc
+                    }
+                    "German" -> {
+                        text = allArtPieces[input].German_Desc
+                    }
+                    else -> {
+                        text = allArtPieces[input].English_Desc
+                    }
+                }
+                tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
+            }
         }
     }
 
-    private fun isNetworkConnected(): Boolean {
-        /*Function to check if a data connection is available, if a data connection is
-              * return true, otherwise false*/
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = connectivityManager.activeNetworkInfo
-        return networkInfo != null && networkInfo.isConnected
-    }
-
-    fun toiletAlert() {
-        alert {
-            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+        private fun isNetworkConnected(): Boolean {
+            /*Function to check if a data connection is available, if a data connection is
+                  * return true, otherwise false*/
+            val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val networkInfo = connectivityManager.activeNetworkInfo
+            return networkInfo != null && networkInfo.isConnected
         }
-    }
 
-    override fun onBackPressed() {
-        /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
-        Send the user back to MainActivity */
-        alert(exitDesc) {
-            positiveButton(positive) {
-                t.interrupt()
+        private fun exitDoor() {
+            //This function will tell the robot to take the user to the exit
+            if (isNetworkConnected()) {
+                sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+            } else {
+                toast("Check your network connection, command not sent")
+            }
+        }
+
+        private fun toiletAlert() {
+            if (isNetworkConnected()) {
+
+            } else {
+                alert {
+                    Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                }
+            }
+
+        }
+
+        override fun onBackPressed() {
+            /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
+            Send the user back to MainActivity */
+            alert(exitDesc) {
+                positiveButton(positive) {
+                    t.interrupt()
+                    clearFindViewByIdCache()
+                    switchToMain()
+                }
+                negativeButton(negative) { /*Do nothing*/ }
+            }.show()
+        }
+
+        private fun cancelGuideTotal() {
+            if (isNetworkConnected()) {
+                sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/$userid.php")
                 switchToMain()
+            } else {
+                toast("Check your network connection, command not sent")
             }
-            negativeButton(negative) {
-                /*Do nothing*/
+        }
+
+        private fun switchToMain() {
+            clearFindViewByIdCache()
+            startActivity<MainActivity>()
+        }
+
+        private fun rejectSkip() {
+            if (isNetworkConnected()) {
+                async {
+                    //This function will reject the skip by adding the empty string
+                    sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+                }
+            } else {
+                toast("Check your network connection, command not sent")
             }
-        }.show()
-    }
-
-    fun cancelGuideTotal() {
-        sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/$userid.php")
-        switchToMain()
-    }
-
-    fun switchToMain() {
-        startActivity<MainActivity>()
-    }
-
-    fun rejectSkip() {
-        async {
-            //This function will reject the skip by adding the empty string
-            sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
-        }
-    }
-
-    private fun vibrate() {
-        if (Build.VERSION.SDK_INT > 25) { /*Attempt to not use the deprecated version if possible, if the SDK version is >25, use the newer one*/
-            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(VibrationEffect.createOneShot(300, 10))
-        } else {
-            /*for backward comparability*/
-            @Suppress("DEPRECATION")
-            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(300)
-        }
-    }
-
-    fun skipImmediately() {
-        /*This function is only when both users have agreed to skip the next item*/
-        async {
-            sendPUT("Y", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
-            Thread.sleep(400)
-            Skippable = true
         }
 
-    }
+        private fun vibrate() {
+            if (Build.VERSION.SDK_INT > 25) { /*Attempt to not use the deprecated version if possible, if the SDK version is >25, use the newer one*/
+                (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(VibrationEffect.createOneShot(300, 10))
+            } else {
+                /*for backward comparability*/
+                @Suppress("DEPRECATION")
+                (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(300)
+            }
+        }
 
-    fun skip() {
-        async {
-            sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+        private fun skipImmediately() {
+            if (isNetworkConnected()) {
+                /*This function is only when both users have agreed to skip the next item*/
+                async {
+                    sendPUT("Y", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+                    Thread.sleep(400)
+                    Skippable = true
+                }
+            } else {
+                toast("Check your network connection, command not sent")
+            }
+        }
+
+        private fun skip() {
+            if (isNetworkConnected()) {
+                async {
+                    sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+                }
+            } else {
+                toast("Check your network connection, command not sent")
+            }
+        }
+
+        private fun stopRoboTour() {
+            if (isNetworkConnected()) {
+                async {
+                    sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
+                }
+            } else {
+                toast("Check your network connection, command not sent")
+            }
+        }
+
+        private fun startRoboTour() {
+            if (isNetworkConnected()) {
+                async {
+                    sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
+                }
+            } else {
+                toast("Check your network connection, command not sent")
+            }
+
+        }
+
+        private fun sendPUT(command: String, url: String) {
+            /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
+            * as security exception - just a heads up */
+            val httpclient = DefaultHttpClient()
+            val httPpost = HttpPost(url)
+            try {
+                val nameValuePairs = ArrayList<NameValuePair>(4)
+                nameValuePairs.add(BasicNameValuePair("command", command))
+                httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+                httpclient.execute(httPpost)
+            } catch (e: ClientProtocolException) {
+            } catch (e: IOException) {
+            }
         }
     }
-
-    fun stopRoboTour() {
-        async {
-            sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
-        }
-    }
-
-    fun startRoboTour() {
-        async {
-            sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
-        }
-    }
-
-    fun sendPUT(command: String, url: String) {
-        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
-        * as security exception - just a heads up */
-        val httpclient = DefaultHttpClient()
-        val httPpost = HttpPost(url)
-        try {
-            val nameValuePairs = ArrayList<NameValuePair>(4)
-            nameValuePairs.add(BasicNameValuePair("command", command))
-            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
-            httpclient.execute(httPpost)
-        } catch (e: ClientProtocolException) {
-        } catch (e: IOException) {
-        }
-    }
-}

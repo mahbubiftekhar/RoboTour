@@ -314,8 +314,9 @@ class PicturesActivity : AppCompatActivity() {
                         async {
                             clearFindViewByIdCache()
                             allArtPieces.clear()
+                            switchToMain()
                         }
-                        super.onBackPressed() // Call super.onBackPressed
+                        //super.onBackPressed() // Call super.onBackPressed
                     }
                     negativeButton {
                         /*Do nothing*/
@@ -323,6 +324,10 @@ class PicturesActivity : AppCompatActivity() {
                 }.show()
             }
         }
+    }
+
+    fun switchToMain() {
+        startActivity<MainActivity>()
     }
 
     private fun askSpeechInput() {
