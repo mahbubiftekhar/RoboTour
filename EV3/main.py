@@ -305,17 +305,19 @@ print("SensorHub have set up.")
 #turnAndResetPointer("ACW")
 #time.sleep(1)
 #turnAndResetPointer("ACW")
-
+from line_sensor import LineDetector
 
 command = "FORWARD"
 colourSensorLeft.mode = 'COL-REFLECT'
 colourSensorRight.mode = 'COL-REFLECT'
 
 target = 50
-baseSpeed = 60
+baseSpeed = 80
 errorSumR = 0
 oldR = colourSensorRight.value()
 oldL = colourSensorLeft.value()
+
+ld = LineDetector(colourSensorRight.value)
 try:
     while(True):
         colourSensorLeft.mode = 'COL-REFLECT'
@@ -328,14 +330,15 @@ try:
         if(abs(errorSumR) > 400):
             errorSumR = 400*errorSumR/abs(errorSumR)
         D = currR - oldR
-        motorRight.run_forever(speed_sp = baseSpeed- differenceR -errorSumR*0.01 - D)
-        motorLeft.run_forever(speed_sp = baseSpeed+ differenceR + errorSumR*0.01 + D)
+        motorRight.run_forever(speed_sp = baseSpeed- differenceR -errorSumR*0.01 - D*1.7)
+        motorLeft.run_forever(speed_sp = baseSpeed+ differenceR + errorSumR*0.01 + D*1.7)
         oldR = currR
         oldL = currL
-        print(differenceR)
+        print(ld.value())
 except:
     motorLeft.stop()
     motorRight.stop()
+    raise
 
 
 
