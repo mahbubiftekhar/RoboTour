@@ -317,6 +317,8 @@ errorSumR = 0
 oldR = colourSensorRight.value()
 oldL = colourSensorLeft.value()
 turning = False
+timesTurned = 0
+nextDirection = 'RIGHT'
 #ld = LineDetector(colourSensorRight.value)
 try:
     while(True):
@@ -338,11 +340,26 @@ try:
         oldR = currR
         oldL = currL
         print(str(currL) + "  "  + str(currR))
-        if(currL > 50 and currR > 50):
+        if(currL > 60 and currR > 60):
             print("BRANCH")
-            motorRight.run_timed(speed_sp= -400,time_sp = 2000)
-            motorLeft.run_timed(speed_sp= 400,time_sp = 2000)
-        #print(differenceR)
+            if(nextDirection == 'RIGHT'):
+                motorRight.run_timed(speed_sp= -150,time_sp = 600)
+                motorLeft.run_timed(speed_sp= 250,time_sp = 800)
+                motorLeft.wait_until_not_moving()
+                motorRight.wait_until_not_moving()
+                nextDirection = 'LEFT'
+            elif(nextDirection == 'FORWARD'):
+                motorRight.run_timed(speed_sp= 100,time_sp = 600)
+                motorLeft.run_timed(speed_sp= 100,time_sp = 600)
+                motorLeft.wait_until_not_moving()
+                motorRight.wait_until_not_moving()
+                nextDirection = 'LEFT'
+            elif(nextDirection == 'LEFT'):
+                motorLeft.run_timed(speed_sp= -200,time_sp = 500)
+                motorRight.run_timed(speed_sp= 200,time_sp = 1000)
+                motorLeft.wait_until_not_moving()
+                motorRight.wait_until_not_moving()
+                nextDirection = 'RIGHT'
 except:
     motorLeft.stop()
     motorRight.stop()
