@@ -288,7 +288,7 @@ def keepDistance():
 
 ############################################################
 obstacleAvoidanceThread = Thread(target=obstacleAvoidance)
-obstacleAvoidanceThread.start()
+#obstacleAvoidanceThread.start()
 
 ##################### MAIN #################################
 print("SensorHub have set up.")
@@ -308,20 +308,22 @@ print("SensorHub have set up.")
 from line_sensor import LineDetector
 
 command = "FORWARD"
-colourSensorLeft.mode = 'COL-REFLECT'
+colourSensorLeft.mode = 'COL-COLOR'
 colourSensorRight.mode = 'COL-REFLECT'
 
-target = 50
-baseSpeed = 80
+target = 40
+
 errorSumR = 0
 oldR = colourSensorRight.value()
 oldL = colourSensorLeft.value()
-
-ld = LineDetector(colourSensorRight.value)
+turning = False
+#ld = LineDetector(colourSensorRight.value)
 try:
     while(True):
+#        colourSensorLeft.mode = 'COL-COLOR'
+        #colourSensorRight.mode = 'COL-REFLECT'
         colourSensorLeft.mode = 'COL-REFLECT'
-        colourSensorRight.mode = 'COL-REFLECT'
+        baseSpeed = 90
         currR = colourSensorRight.value()
         currL = colourSensorLeft.value()
         differenceL = currL - target
@@ -330,11 +332,17 @@ try:
         if(abs(errorSumR) > 400):
             errorSumR = 400*errorSumR/abs(errorSumR)
         D = currR - oldR
-        motorRight.run_forever(speed_sp = baseSpeed- differenceR -errorSumR*0.01 - D*1.7)
-        motorLeft.run_forever(speed_sp = baseSpeed+ differenceR + errorSumR*0.01 + D*1.7)
+        baseSpeed -= abs(errorSumR)*0.16
+        motorRight.run_forever(speed_sp = baseSpeed- differenceR*3 -errorSumR*0.05 - D*2)
+        motorLeft.run_forever(speed_sp = baseSpeed+ differenceR*3 + errorSumR*0.05 + D*2)
         oldR = currR
         oldL = currL
-        print(ld.value())
+        print(str(currL) + "  "  + str(currR))
+        if(currL > 50 and currR > 50):
+            print("BRANCH")
+            motorRight.run_timed(speed_sp= -400,time_sp = 2000)
+            motorLeft.run_timed(speed_sp= 400,time_sp = 2000)
+        #print(differenceR)
 except:
     motorLeft.stop()
     motorRight.stop()
