@@ -659,21 +659,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    private fun toiletAlert() {
-        toiletPopUp = alert(startRoboTour) {
-            //cancellable(false)
-            setFinishOnTouchOutside(false)
-            positiveButton(positive) {
-                if (isNetworkConnected()) {
-                    sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php") /*Set stop as false*/
-                } else {
-                    Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                }
-            }
-        }.show()
-        toiletThread.run()
-    }
-
     override fun onBackPressed() {
         /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
         Send the user back to MainActivity */
