@@ -139,10 +139,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toilet = "Toilet"
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "Change speed"
-                startRoboTour = "Press start when you are ready for RoboTour to resume"
+                startRoboTour = "Press START when you are ready for RoboTour to resume"
             }
             "French" -> {
-                startRoboTour = "Appuyez sur Start lorsque vous êtes prêt à reprendre RoboTour\n"
+                startRoboTour = "Appuyez sur Start lorsque vous êtes prêt à reprendre RoboTour"
                 positive = "Oui"
                 negative = "Non"
                 skip = "Sauter Peinture"
@@ -196,7 +196,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 changeSpeed = "Cambiar Velocidad"
             }
             "German" -> {
-                startRoboTour = "Drücken Sie Start, wenn Sie bereit sind für die Fortsetzung von RoboTour\n"
+                startRoboTour = "Drücken Sie Start, wenn Sie bereit sind für die Fortsetzung von RoboTour"
                 positive = "Ja"
                 negative = "Nein"
                 skip = "Bild Überspringen"
@@ -510,28 +510,55 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 async {
                                     Thread.sleep(200)
                                     val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
-                                    if (a == "2" && Skippable) {
-                                        Skippable = false
-                                        runOnUiThread {
-                                            alert(skip) {
-                                                cancellable(false)
-                                                setFinishOnTouchOutside(false)
-                                                positiveButton(positive) {
-                                                    if (isNetworkConnected()) {
-                                                        skipImmediately()
-                                                    } else {
-                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                    if (userid == 1.toString()) {
+                                        if (a == "2" && Skippable) {
+                                            Skippable = false
+                                            runOnUiThread {
+                                                alert(skip) {
+                                                    cancellable(false)
+                                                    setFinishOnTouchOutside(false)
+                                                    positiveButton(positive) {
+                                                        if (isNetworkConnected()) {
+                                                            skipImmediately()
+                                                        } else {
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
                                                     }
-                                                }
-                                                negativeButton(negative) {
-                                                    if (isNetworkConnected()) {
-                                                        rejectSkip()
-                                                    } else {
-                                                        Skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
-                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                    negativeButton(negative) {
+                                                        if (isNetworkConnected()) {
+                                                            rejectSkip()
+                                                        } else {
+                                                            Skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
                                                     }
-                                                }
-                                            }.show()
+                                                }.show()
+                                            }
+                                        }
+                                    } else if (userid == 2.toString()) {
+                                        if (a == "1" && Skippable) {
+                                            Skippable = false
+                                            runOnUiThread {
+                                                alert(skip) {
+                                                    cancellable(false)
+                                                    setFinishOnTouchOutside(false)
+                                                    positiveButton(positive) {
+                                                        if (isNetworkConnected()) {
+                                                            skipImmediately()
+                                                        } else {
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
+                                                    }
+                                                    negativeButton(negative) {
+                                                        if (isNetworkConnected()) {
+                                                            rejectSkip()
+                                                        } else {
+                                                            Skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
+                                                    }
+                                                }.show()
+                                            }
                                         }
                                     }
                                 }
@@ -545,7 +572,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 setFinishOnTouchOutside(false)
                                                 positiveButton(positive) {
                                                     if (isNetworkConnected()) {
-                                                        async{
+                                                        async {
                                                             sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php") /*Set stop as false*/
                                                         }
                                                     } else {
@@ -553,9 +580,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                     }
                                                 }
                                             }.show()
-                                           async{
-                                              // toiletThread.run()
-                                           }
                                         }
                                     }
 
@@ -589,28 +613,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             //Starting the thread which is defined above to keep polling the server
             t.run()
         }
-
-        toiletThread = object : Thread() {
-            override fun run() {
-                while (!isInterrupted) {
-                    try {
-                        async {
-                            val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
-                            if (a == "F") {
-                               runOnUiThread{
-                                   toiletPopUp.dismiss() /*Dismiss the pop up message*/
-                                   toiletThread.interrupt() /*Interrupt this thread - which will kill it*/
-                                   toiletPopUpBool = true
-                               }
-                            }
-                        }
-                    } catch (e: InterruptedException) {
-                        Thread.currentThread().interrupt()
-                    }
-                }
-            }
-        }
-
     }
 
     private fun speakOut(input: Int) {
