@@ -35,7 +35,9 @@ motorPointer = ev3.LargeMotor('outC')
 motorLeft = ev3.LargeMotor('outB')
 motorRight= ev3.LargeMotor('outD')
 colourSensorRight = ev3.ColorSensor(ev3.INPUT_1)
-colourSensorLeft = ev3.ColorSensor(ev3.INPUT_3)
+colourSensorLeft = ev3.ColorSensor(ev3.INPUT_4)
+colourSensorLeft.mode = 'COL-REFLECT'
+colourSensorRight.mode = 'COL-REFLECT'
 
 
 if(motorPointer.connected & sonarFront.connected &
@@ -79,6 +81,9 @@ def isLeftLineDetected():
         return True
     else:
         return False
+
+def isWallDetected():
+    return getColourLeft == '1' or getColourRight == "1"
 
 def isLineDetected():
     return isLeftLineDetected() or isRightLineDetected()
@@ -132,6 +137,10 @@ def turnLeft(degree):
 def turn(left,right,time):
     motorLeft.run_timed(speed_sp=left,time_sp=time)
     motorRight.run_timed(speed_sp=right, time_sp=time)
+
+def turnBack(): # 180
+    motorLeft.run_timed(speed_sp=400,time_sp=1000)
+    motorRight.run_timed(speed_sp=-400, time_sp=1000)
 
 def stopWheelMotor():
     #print(sonar.value())
@@ -251,6 +260,10 @@ def goAroundObstacle(direction):
         while(not isLineDetected()):
             if (getSonarReadingsRight() < stopping_distance or getSonarReadingsFront() < stopping_distance*10):
                 time.sleep(1)
+            elif (isWallDetected()):
+                turnBack()
+                goAroundObstacle('LEFT')
+                break;
             elif (getSonarReadingsLeft() < set_distance):
                 turn(200, 100, 100)
             else:
@@ -259,10 +272,17 @@ def goAroundObstacle(direction):
         while(not isLineDetected()):
             if (getSonarReadingsLeft() < stopping_distance or getSonarReadingsFront() < stopping_distance*10):
                 time.sleep(1)
+            elif (isWallDetected()):
+                turnBack()
+                goAroundObstacle('RIGHT')
+                break;
             elif (getSonarReadingsRight() < set_distance):
                 turn(100, 200, 100)
             else:
                 turn(300, 100, 100)
+
+
+
 
 def getBackToLine(direction):
     print("Find line!")
@@ -320,7 +340,7 @@ print("SensorHub have set up.")
 #time.sleep(1)
 #turnAndResetPointer("ACW")
 
-
+print()
 command = "FORWARD"
 moveForward(300,10000)
 
