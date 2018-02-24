@@ -64,6 +64,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var tts: TextToSpeech? = null
     private var currentPic = -1
     private var startRoboTour = ""
+    private var toiletPopUpBool = true
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -118,7 +119,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
         //Obtain language from PicturesUI
-        async { sendPUT("N", "http://homepages.inf.ed.ac.uk/s1553593/1.php") }
+        async { sendPUT("A", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php") }
         vibrate()
         val language = intent.getStringExtra("language")
         when (language) {
@@ -535,6 +536,32 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                                 async {
+                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/toilet.php").readText()
+                                    if (a == "A" && toiletPopUpBool) {
+                                        toiletPopUpBool = false
+                                        runOnUiThread {
+                                            toiletPopUp = alert(startRoboTour) {
+                                                cancellable(false)
+                                                setFinishOnTouchOutside(false)
+                                                positiveButton(positive) {
+                                                    if (isNetworkConnected()) {
+                                                        async{
+                                                            sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php") /*Set stop as false*/
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                    }
+                                                }
+                                            }.show()
+                                           async{
+                                              // toiletThread.run()
+                                           }
+                                        }
+                                    }
+
+
+                                }
+                                async {
                                     //This part checks if the other user has pressed the stop buttons and updates accordingly
                                     val a = URL("http://homepages.inf.ed.ac.uk/s1553593/stop.php").readText()
                                     if (a == "T") {
@@ -569,8 +596,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     try {
                         async {
                             val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
-                            if(a=="F"){
-                                toiletPopUp.dismiss()
+                            if (a == "F") {
+                               runOnUiThread{
+                                   toiletPopUp.dismiss() /*Dismiss the pop up message*/
+                                   toiletThread.interrupt() /*Interrupt this thread - which will kill it*/
+                                   toiletPopUpBool = true
+                               }
                             }
                         }
                     } catch (e: InterruptedException) {
@@ -650,7 +681,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 clearFindViewByIdCache()
                 switchToMain()
             }
-            negativeButton(negative) {/*Do nothing*/}
+            negativeButton(negative) { /*Do nothing*/ }
         }.show()
     }
 
