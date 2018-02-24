@@ -8,7 +8,8 @@
 #define LINE_NUM 6
 
 
-#define BAUD 9600
+#define BAUD 57600
+#define TWI_CLK 400000
 
 uint16_t sonar_val[SONAR_NUM];
 unsigned long last_millis;
@@ -31,6 +32,7 @@ uint8_t sonar_index = 0;
 void setup() {
   Serial.begin(BAUD);
   Wire.begin();
+  Wire.setClock(TWI_CLK);
   
   inputString.reserve(16);
   pinMode(LED_BUILTIN, OUTPUT);

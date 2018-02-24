@@ -7,7 +7,7 @@ import time
 class SensorHub():
 
 	def __init__(self):
-		self.baud = 9600
+		self.baud = 57600
 		self.serial_port = serial.Serial(port='/dev/ttyACM0',\
 										 baudrate=self.baud)
 		self.n_sonars = 4
