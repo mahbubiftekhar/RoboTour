@@ -119,7 +119,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
         //Obtain language from PicturesUI
-        async { sendPUT("A", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php") }
+        //async { sendPUT("A", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php") }
         vibrate()
         val language = intent.getStringExtra("language")
         when (language) {
