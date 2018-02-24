@@ -13,9 +13,10 @@ class SensorHub():
 		self.n_sonars = 4
 		self.sonar_maxrange = 255
 
-		self.tries_limit = 1000
+		self.tries_limit = 100
+		self.response_timeout = 10 #ms
 
-		self.__DEBUG__ = False
+		self.__DEBUG__ = True
 
 		self.sensor_values = {}
 
@@ -23,35 +24,82 @@ class SensorHub():
 
 		self.poll()
 
+
+	def debug_print(self, message):
+		if self.__DEBUG__:
+			print(message)
+
+
 	def poll(self):
 		self.last_poll += 1
 
 		tries = 0
+
+		# discard any outstanding data
 		self.serial_port.flushInput()
-		while self.serial_port.inWaiting() < 1:
-			self.send_request()
-			time.sleep(0.001)
+
+		while True:
+			
+			w = self.send_request()
+			# if response received
+			if(not w < 0):
+				break
+			
 			if(tries >= self.tries_limit):
 				print("POLLING TIMEOUT")
+				self.connected = False
 				return False
+			
 			tries += 1
 
 		frame = self.get_frame()
 		self.extract_from_frame(frame)
 
+		self.connected = True
+		return True
+
 	def send_request(self):
+		
+		waiting = 0
+
+		self.debug_print("Sending request")
 		self.serial_port.write(b'r\n')
-		if self.__DEBUG__:
-			print("sending request")
+
+		# while no response receieved
+		while self.serial_port.inWaiting() < 1:
+			# see if we have been waiting for long enough
+			if(waiting == self.response_timeout):
+				self.debug_print("!!!Request timeout!!!")
+				return -1
+			waiting += 1
+			time.sleep(0.001)
+		
+		self.debug_print("Response received after {} cycles".format(waiting))
+		return waiting
+
+
+
+
 
 	def get_frame(self):
 		out = ''
-		while self.serial_port.inWaiting() > 0:
-			out += self.serial_port.read(1).decode('ascii')
-			if(out[-1] == '\n'):
-				# remove newline and last comma
-				out = out[:-2]
-				break
+		waiting = 0
+		dt = 0.00001 # 10us
+		while True:
+			if self.serial_port.inWaiting() > 0:
+				out += self.serial_port.read(1).decode('ascii')
+				if(out[-1] == '\n'):
+					# remove newline and last comma
+					self.debug_print("Frame received in {} cycles ({:.2f})ms".format(waiting, waiting*dt*1000))
+					out = out[:-2]
+					break
+			else:
+				if(waiting > 1000):
+					self.debug_print("!!!Response timeout!!!")
+					break
+				# wait 10us
+				time.sleep(dt)
+				waiting += 1
 
 		return out if out != '' else None
 
