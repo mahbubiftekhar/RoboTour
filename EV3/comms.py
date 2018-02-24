@@ -50,11 +50,11 @@ def toiletAndExitCheck():
 #Updates the user once they have arrived at the exit
 #Once the user arrives, pass Toilet or Exit as a parameter 
 def toiletAndExitArrived(location):
-	if(location == "exit" || location == "Exit" || location == "EXIT"):
+	if(location == "exit" or location == "Exit" or location == "EXIT"):
 		httpPost("http://homepages.inf.ed.ac.uk/s1553593/toilet.php", "A")
 		link = "http://homepages.inf.ed.ac.uk/s1553593/stop.php"
 		httpPost(link, "T")
-	if(location == "toilet" || location == "Toilet" || location == "TOILET"):
+	if(location == "toilet" or location == "Toilet" or location == "TOILET"):
 		httpPost("http://homepages.inf.ed.ac.uk/s1553593/toilet.php", "B")
 		link = "http://homepages.inf.ed.ac.uk/s1553593/stop.php"
 		httpPost(link, "T")
