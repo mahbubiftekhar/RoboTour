@@ -30,71 +30,74 @@ volatile uint8_t current_sensor_s;
 volatile uint8_t current_sensor_r;
 // define a map corresponding to physical layout of the sensor (left to right)
 // current_sensor_r is the index of the sensor, sensor
-const uint8_t sensor_channel[NUM_SENSOR] = {7, 6, 0, 1, 2, 3};
+const uint8_t sensor_channel[NUM_SENSOR] = {6, 7, 0, 1, 2, 3};
 
 volatile uint8_t sensor_value[NUM_SENSOR];
 
 volatile uint8_t del = 50;
 
+
 int main(void)
 {
+    // Set up pin for LED
     DDRD = 0x00 | (1<<5);
-                           // initialize port C
-    uint8_t val;
+                           
+    uint8_t val = 1;
+    uint8_t dir = 0;
 
     setup_adc();
     setup_led_pwm();
-    setup_i2c(I2C_ADDR);
+    // setup_i2c(I2C_ADDR);
 
-    
-    txbuffer[0] = 1;
-    txbuffer[1] = 1;
-    txbuffer[2] = 1;
-    txbuffer[3] = 1;
-    txbuffer[4] = 1;
-    txbuffer[5] = 1;
-    txbuffer[6] = 1;
 
-    I2C_init(0x32);
+    I2C_init(I2C_ADDR);
     
     sei();
     adc_start_conversion();
-    OCR0B = 255;
+    OCR0B = 0;
+
+    TWI_STATUS = 5;
 
 
     while(1)
     {
-        OCR0B=255-OCR0B;
-
-        //if(TWCR & (1<<TWINT)) del = 255;
-        //else del = 50;
-
-
-        val = 0;
-        for(uint8_t i = 0; i < NUM_SENSOR; ++i)
+        // check if no data has been sent in a while
+        if(TWI_STATUS > 3)
         {
-            txbuffer[i]=sensor_value[i];
-            if(sensor_value[i] < 85)
-            {
-                val += 42;
-            }
-        }
-        // OCR0B = 255-val;
-        for(uint8_t i = 0; i < del; ++i)
-        {
-            //_delay_ms(10);
-        }
-
-        /*
-        if(PINC & (1<<PC4))
-        {
-            OCR0B = 255;
+            val = 255;
+            del = 100;
         }
         else
         {
-            OCR0B = 0;
+            val = 1;
+            del = 3;
         }
-        */
+
+        if(dir)
+        {
+            OCR0B-=val;
+            if(OCR0B == 0)
+            {
+                dir = 1 - dir;
+                TWI_STATUS++;
+            }
+        }
+        else
+        {
+            OCR0B+=val;
+            if(OCR0B == 255)
+            {
+                dir = 1 - dir;
+                TWI_STATUS++;
+            }
+        }
+
+
+
+        for(uint8_t i = 0; i < del; ++i)
+        {
+            _delay_ms(1);
+        }
 
     }
 }
@@ -103,6 +106,7 @@ int main(void)
 ISR(ADC_vect)
 {
     sensor_value[current_sensor_r] = ADCH;
+    txbuffer[current_sensor_r] = sensor_value[current_sensor_r];
     current_sensor_r = (current_sensor_r+1)%NUM_SENSOR;
 
     select_adc_channel(sensor_channel[current_sensor_r]);

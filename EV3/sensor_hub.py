@@ -125,7 +125,7 @@ class HubLineSensor():
 	def value_simple(self):
 
 		self.raw_values()
-		order = ['l1', 'l0', 'l2', 'l3', 'l4', 'l5']
+		order = ['l0', 'l1', 'l2', 'l3', 'l4', 'l5']
 
 		weight = 10
 		floor = 235

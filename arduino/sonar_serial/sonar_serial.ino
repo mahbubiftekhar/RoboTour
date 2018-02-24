@@ -7,6 +7,7 @@
 
 #define LINE_NUM 6
 
+
 #define BAUD 9600
 
 uint16_t sonar_val[SONAR_NUM];
@@ -30,15 +31,19 @@ uint8_t sonar_index = 0;
 void setup() {
   Serial.begin(BAUD);
   Wire.begin();
-
+  
   inputString.reserve(16);
+  pinMode(LED_BUILTIN, OUTPUT);
+
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
 
+  digitalWrite(LED_BUILTIN, HIGH);
   Wire.requestFrom(0x32, LINE_NUM+1, true);
 
+  
   while(Wire.available()) {
     byte c = Wire.read();
     for(uint8_t i = 0; i < LINE_NUM; ++i) {
@@ -46,8 +51,8 @@ void loop() {
         line_val[i] = Wire.read();
       }
     }
-    
   }
+  digitalWrite(LED_BUILTIN, LOW);
 
   if(millis() - last_millis >= PING_DELAY) {
     sonar_val[sonar_index] = sonar[sonar_index].ping_cm();

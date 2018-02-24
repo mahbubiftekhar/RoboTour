@@ -76,6 +76,8 @@ ISR(TWI_vect){
 		TWDR = txbuffer[buffer_address];
 		// increment buffer read address
 		buffer_address++;
+
+		TWI_STATUS = 0;
 		
 		// if there is another buffer address that can be sent
 		if(buffer_address < 6){
