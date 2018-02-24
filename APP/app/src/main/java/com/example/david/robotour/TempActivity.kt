@@ -23,8 +23,6 @@ class TempActivity : AppCompatActivity() {
     * 19/02/2018
     *
     * */
-
-
     /*THIS IS A QUICK TEMP ACTIVITY FOR THE PURPOSE OF CLIENT DEMO ONE, THIS CAN ONLY BE ACCESSED FROM A LONG PRESS ON THE START BUTTON*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

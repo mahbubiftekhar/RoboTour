@@ -3,7 +3,6 @@ package com.example.david.robotour
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Typeface
 import android.net.ConnectivityManager
@@ -58,12 +57,16 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var titleView: TextView? = null
     private var descriptionView: TextView? = null
     private var stopButton: Button? = null
+    private lateinit var toiletPopUp: AlertDialogBuilder
     private var Skippable = true
     private lateinit var t: Thread
+    private lateinit var toiletThread: Thread
     private var tts: TextToSpeech? = null
     private var currentPic = -1
+    private var startRoboTour = ""
+    private var toiletPopUpBool = true
 
-    private fun LoadInt(key: String): Int {
+    private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
         return sharedPreferences.getInt(key, 0)
@@ -82,7 +85,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
             val language = intent.getStringExtra("language")
-            var result = tts!!.setLanguage(Locale.UK)
+            val result: Int
             when (language) {
                 "French" -> {
                     result = tts!!.setLanguage(Locale.FRENCH)
@@ -110,14 +113,13 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
-        userid = LoadInt("user").toString()
+        userid = loadInt("user").toString()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
         tts = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
         //Obtain language from PicturesUI
-        async { sendPUT("N", "http://homepages.inf.ed.ac.uk/s1553593/1.php") }
-
+        //async { sendPUT("A", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php") }
         vibrate()
         val language = intent.getStringExtra("language")
         when (language) {
@@ -137,8 +139,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toilet = "Toilet"
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "Change speed"
+                startRoboTour = "Press START when you are ready for RoboTour to resume"
             }
             "French" -> {
+                startRoboTour = "Appuyez sur Start lorsque vous êtes prêt à reprendre RoboTour"
                 positive = "Oui"
                 negative = "Non"
                 skip = "Sauter Peinture"
@@ -156,6 +160,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 changeSpeed = "Changer Vitesse"
             }
             "Chinese" -> {
+                startRoboTour = "当您准备好RoboTour继续时，按开始"
                 positive = "是的"
                 negative = "不是"
                 skip = "跳到下一幅作品"
@@ -178,6 +183,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 skip = "Saltar Pintura"
                 skipDesc = "¿Estás seguro de que quieres saltar a la próxima pintura?"
                 stop = "Detener RoboTour"
+                startRoboTour = ""
                 stopDesc = "¿Estás seguro de que quieres detener RoboTour?"
                 start = "Iniciar RoboTour"
                 startDesc = "¿Quieres iniciar RoboTour?"
@@ -190,6 +196,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 changeSpeed = "Cambiar Velocidad"
             }
             "German" -> {
+                startRoboTour = "Drücken Sie Start, wenn Sie bereit sind für die Fortsetzung von RoboTour"
                 positive = "Ja"
                 negative = "Nein"
                 skip = "Bild Überspringen"
@@ -208,6 +215,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 btnTextSize = 20f
             }
             else -> {
+                startRoboTour = "Press start when you are ready for RoboTour to resume"
                 positive = "Yes"
                 negative = "No"
                 skip = "Skip Painting"
@@ -305,9 +313,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 width = wrapContent
                                 onClick {
                                     if (toggleStBtn) {
-                                        alertStBtn = stopDesc
-                                    } else {
                                         alertStBtn = startDesc
+                                    } else {
+                                        alertStBtn = stopDesc
                                     }
                                     alert(alertStBtn) {
                                         positiveButton(positive) {
@@ -502,30 +510,80 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 async {
                                     Thread.sleep(200)
                                     val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
-                                    if (a == "2" && Skippable) {
-                                        Skippable = false
+                                    if (userid == 1.toString()) {
+                                        if (a == "2" && Skippable) {
+                                            Skippable = false
+                                            runOnUiThread {
+                                                alert(skip) {
+                                                    cancellable(false)
+                                                    setFinishOnTouchOutside(false)
+                                                    positiveButton(positive) {
+                                                        if (isNetworkConnected()) {
+                                                            skipImmediately()
+                                                        } else {
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
+                                                    }
+                                                    negativeButton(negative) {
+                                                        if (isNetworkConnected()) {
+                                                            rejectSkip()
+                                                        } else {
+                                                            Skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
+                                                    }
+                                                }.show()
+                                            }
+                                        }
+                                    } else if (userid == 2.toString()) {
+                                        if (a == "1" && Skippable) {
+                                            Skippable = false
+                                            runOnUiThread {
+                                                alert(skip) {
+                                                    cancellable(false)
+                                                    setFinishOnTouchOutside(false)
+                                                    positiveButton(positive) {
+                                                        if (isNetworkConnected()) {
+                                                            skipImmediately()
+                                                        } else {
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
+                                                    }
+                                                    negativeButton(negative) {
+                                                        if (isNetworkConnected()) {
+                                                            rejectSkip()
+                                                        } else {
+                                                            Skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
+                                                    }
+                                                }.show()
+                                            }
+                                        }
+                                    }
+                                }
+                                async {
+                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/toilet.php").readText()
+                                    if (a == "A" && toiletPopUpBool) {
+                                        toiletPopUpBool = false
                                         runOnUiThread {
-                                            alert(skip) {
+                                            toiletPopUp = alert(startRoboTour) {
                                                 cancellable(false)
                                                 setFinishOnTouchOutside(false)
                                                 positiveButton(positive) {
                                                     if (isNetworkConnected()) {
-                                                        skipImmediately()
+                                                        async {
+                                                            sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php") /*Set stop as false*/
+                                                        }
                                                     } else {
-                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                                    }
-                                                }
-                                                negativeButton(negative) {
-                                                    if (isNetworkConnected()) {
-                                                        rejectSkip()
-                                                    } else {
-                                                        Skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
                                                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                     }
                                                 }
                                             }.show()
                                         }
                                     }
+
+
                                 }
                                 async {
                                     //This part checks if the other user has pressed the stop buttons and updates accordingly
@@ -559,7 +617,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun speakOut(input: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
             if (input != -1) {
                 val text: String
                 val language = intent.getStringExtra("language")
@@ -585,138 +642,127 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-        private fun isNetworkConnected(): Boolean {
-            /*Function to check if a data connection is available, if a data connection is
-                  * return true, otherwise false*/
-            val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val networkInfo = connectivityManager.activeNetworkInfo
-            return networkInfo != null && networkInfo.isConnected
-        }
+    private fun isNetworkConnected(): Boolean {
+        /*Function to check if a data connection is available, if a data connection is
+              * return true, otherwise false*/
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
+    }
 
-        private fun exitDoor() {
-            //This function will tell the robot to take the user to the exit
-            if (isNetworkConnected()) {
-                sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
-            } else {
-                toast("Check your network connection, command not sent")
-            }
-        }
-
-        private fun toiletAlert() {
-            if (isNetworkConnected()) {
-
-            } else {
-                alert {
-                    Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                }
-            }
-
-        }
-
-        override fun onBackPressed() {
-            /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
-            Send the user back to MainActivity */
-            alert(exitDesc) {
-                positiveButton(positive) {
-                    t.interrupt()
-                    clearFindViewByIdCache()
-                    switchToMain()
-                }
-                negativeButton(negative) { /*Do nothing*/ }
-            }.show()
-        }
-
-        private fun cancelGuideTotal() {
-            if (isNetworkConnected()) {
-                sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/$userid.php")
-                switchToMain()
-            } else {
-                toast("Check your network connection, command not sent")
-            }
-        }
-
-        private fun switchToMain() {
-            clearFindViewByIdCache()
-            startActivity<MainActivity>()
-        }
-
-        private fun rejectSkip() {
-            if (isNetworkConnected()) {
-                async {
-                    //This function will reject the skip by adding the empty string
-                    sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
-                }
-            } else {
-                toast("Check your network connection, command not sent")
-            }
-        }
-
-        private fun vibrate() {
-            if (Build.VERSION.SDK_INT > 25) { /*Attempt to not use the deprecated version if possible, if the SDK version is >25, use the newer one*/
-                (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(VibrationEffect.createOneShot(300, 10))
-            } else {
-                /*for backward comparability*/
-                @Suppress("DEPRECATION")
-                (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(300)
-            }
-        }
-
-        private fun skipImmediately() {
-            if (isNetworkConnected()) {
-                /*This function is only when both users have agreed to skip the next item*/
-                async {
-                    sendPUT("Y", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
-                    Thread.sleep(400)
-                    Skippable = true
-                }
-            } else {
-                toast("Check your network connection, command not sent")
-            }
-        }
-
-        private fun skip() {
-            if (isNetworkConnected()) {
-                async {
-                    sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
-                }
-            } else {
-                toast("Check your network connection, command not sent")
-            }
-        }
-
-        private fun stopRoboTour() {
-            if (isNetworkConnected()) {
-                async {
-                    sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
-                }
-            } else {
-                toast("Check your network connection, command not sent")
-            }
-        }
-
-        private fun startRoboTour() {
-            if (isNetworkConnected()) {
-                async {
-                    sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
-                }
-            } else {
-                toast("Check your network connection, command not sent")
-            }
-
-        }
-
-        private fun sendPUT(command: String, url: String) {
-            /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
-            * as security exception - just a heads up */
-            val httpclient = DefaultHttpClient()
-            val httPpost = HttpPost(url)
-            try {
-                val nameValuePairs = ArrayList<NameValuePair>(4)
-                nameValuePairs.add(BasicNameValuePair("command", command))
-                httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
-                httpclient.execute(httPpost)
-            } catch (e: ClientProtocolException) {
-            } catch (e: IOException) {
-            }
+    private fun exitDoor() {
+        //This function will tell the robot to take the user to the exit
+        if (isNetworkConnected()) {
+            sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+        } else {
+            toast("Check your network connection, command not sent")
         }
     }
+
+    override fun onBackPressed() {
+        /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
+        Send the user back to MainActivity */
+        alert(exitDesc) {
+            positiveButton(positive) {
+                t.interrupt()
+                clearFindViewByIdCache()
+                switchToMain()
+            }
+            negativeButton(negative) { /*Do nothing*/ }
+        }.show()
+    }
+
+    private fun cancelGuideTotal() {
+        if (isNetworkConnected()) {
+            sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/$userid.php")
+            switchToMain()
+        } else {
+            toast("Check your network connection, command not sent")
+        }
+    }
+
+    private fun switchToMain() {
+        clearFindViewByIdCache()
+        startActivity<MainActivity>()
+    }
+
+    private fun rejectSkip() {
+        if (isNetworkConnected()) {
+            async {
+                //This function will reject the skip by adding the empty string
+                sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+            }
+        } else {
+            toast("Check your network connection, command not sent")
+        }
+    }
+
+    private fun vibrate() {
+        if (Build.VERSION.SDK_INT > 25) { /*Attempt to not use the deprecated version if possible, if the SDK version is >25, use the newer one*/
+            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(VibrationEffect.createOneShot(300, 10))
+        } else {
+            /*for backward comparability*/
+            @Suppress("DEPRECATION")
+            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(300)
+        }
+    }
+
+    private fun skipImmediately() {
+        if (isNetworkConnected()) {
+            /*This function is only when both users have agreed to skip the next item*/
+            async {
+                sendPUT("Y", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+                Thread.sleep(400)
+                Skippable = true
+            }
+        } else {
+            toast("Check your network connection, command not sent")
+        }
+    }
+
+    private fun skip() {
+        if (isNetworkConnected()) {
+            async {
+                sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+            }
+        } else {
+            toast("Check your network connection, command not sent")
+        }
+    }
+
+    private fun stopRoboTour() {
+        if (isNetworkConnected()) {
+            async {
+                sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
+            }
+        } else {
+            toast("Check your network connection, command not sent")
+        }
+    }
+
+    private fun startRoboTour() {
+        if (isNetworkConnected()) {
+            async {
+                sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
+            }
+        } else {
+            toast("Check your network connection, command not sent")
+        }
+
+    }
+
+    private fun sendPUT(command: String, url: String) {
+        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
+        * as security exception - just a heads up */
+        val httpclient = DefaultHttpClient()
+        val httPpost = HttpPost(url)
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
+            nameValuePairs.add(BasicNameValuePair("command", command))
+            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+            httpclient.execute(httPpost)
+        } catch (e: ClientProtocolException) {
+        } catch (e: IOException) {
+        }
+    }
+}
