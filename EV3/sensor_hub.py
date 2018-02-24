@@ -35,8 +35,10 @@ class SensorHub():
 
 		tries = 0
 
+		start = time.perf_counter()
 		# discard any outstanding data
 		self.serial_port.flushInput()
+
 
 		while True:
 			
@@ -54,27 +56,35 @@ class SensorHub():
 
 		frame = self.get_frame()
 		self.extract_from_frame(frame)
-
+		end = time.perf_counter()
+		self.debug_print("Response received in {:.2f}ms".format((start-end)/100))
 		self.connected = True
 		return True
 
 	def send_request(self):
 		
 		waiting = 0
+		dt = 0.001
+
+		start = time.perf_counter()
 
 		self.debug_print("Sending request")
 		self.serial_port.write(b'r\n')
+
+
 
 		# while no response receieved
 		while self.serial_port.inWaiting() < 1:
 			# see if we have been waiting for long enough
 			if(waiting == self.response_timeout):
-				self.debug_print("!!!Request timeout!!!")
+				# self.debug_print(".")
 				return -1
 			waiting += 1
-			time.sleep(0.001)
+			time.sleep(dt)
+
 		
-		self.debug_print("Response received after {} cycles".format(waiting))
+		end = time.perf_counter()
+		self.debug_print("Response received after {} cycles ({:.2f}ms)".format(waiting, (start-end)/1000))
 		return waiting
 
 
@@ -90,12 +100,12 @@ class SensorHub():
 				out += self.serial_port.read(1).decode('ascii')
 				if(out[-1] == '\n'):
 					# remove newline and last comma
-					self.debug_print("Frame received in {} cycles ({:.2f})ms".format(waiting, waiting*dt*1000))
+					self.debug_print("Frame received in {} cycles ({:.2f}ms)".format(waiting, waiting*dt*1000))
 					out = out[:-2]
 					break
 			else:
-				if(waiting > 1000):
-					self.debug_print("!!!Response timeout!!!")
+				if(waiting > self.response_timeout):
+					# self.debug_print("!!!Response timeout!!!")
 					break
 				# wait 10us
 				time.sleep(dt)
