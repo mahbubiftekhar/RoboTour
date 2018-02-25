@@ -121,6 +121,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         //Obtain language from PicturesUI
         //async { sendPUT("A", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php") }
         vibrate()
+        for(i in 0..15){
+            println("+++ getting in here")
+            async{
+                sendPUTNEW(i.toString(), "F")
+            }
+        }
         val language = intent.getStringExtra("language")
         when (language) {
             "English" -> {
@@ -748,9 +754,22 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         } else {
             toast("Check your network connection, command not sent")
         }
-
     }
-
+    private fun sendPUTNEW(identifier: String, command: String) {
+        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
+        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
+        * as security exception - just a heads up */
+        val httpclient = DefaultHttpClient()
+        val httPpost = HttpPost(url)
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
+            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
+            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+            httpclient.execute(httPpost)
+        } catch (e: ClientProtocolException) {
+        } catch (e: IOException) {
+        }
+    }
     private fun sendPUT(command: String, url: String) {
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
