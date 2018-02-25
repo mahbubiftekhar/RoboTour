@@ -155,9 +155,11 @@ def speak(string):
 def turnPointer(direction):
     if (direction == "CW"):
         motorPointer.run_timed(speed_sp=-414, time_sp=1000)
+        pointerState = "CW"
         time.sleep(2)
     if (direction == "ACW"):
         motorPointer.run_timed(speed_sp=414, time_sp=1000)
+        pointerState = "ACW"
         time.sleep(2)
 
 def resetPointer():
@@ -276,46 +278,7 @@ def keepDistance():
 """
 
 ############################################################
-def followLine():
-    baseSpeed = 90
-    currR = colourSensorRight.value()
-    currL = colourSensorLeft.value()
-    differenceL = currL - target
-    differenceR = currR - target
-    errorSumR +=differenceR
-    if(abs(errorSumR) > 400):
-        errorSumR = 400*errorSumR/abs(errorSumR)
-    D = currR - oldR
-    baseSpeed -= abs(errorSumR)*0.16
-    motorRight.run_forever(speed_sp = baseSpeed- differenceR*3 -errorSumR*0.05 - D*2)
-    motorLeft.run_forever(speed_sp = baseSpeed+ differenceR*3 + errorSumR*0.05 + D*2)
-    oldR = currR
-    oldL = currL
-    print(str(currL) + "  "  + str(currR))
-    if(currL > 60 and currR > 60):
-        print("BRANCH")
-        if(commands[command_index] == 'RIGHT'):
-            motorRight.run_timed(speed_sp= -150,time_sp = 600)
-            motorLeft.run_timed(speed_sp= 250,time_sp = 800)
-            motorLeft.wait_until_not_moving()
-            motorRight.wait_until_not_moving()
-            #nextDirection = 'LEFT'
-            command_index+=1
 
-        elif(commands[command_index] == 'FORWARD'):
-            motorRight.run_timed(speed_sp= 100,time_sp = 600)
-            motorLeft.run_timed(speed_sp= 100,time_sp = 600)
-            motorLeft.wait_until_not_moving()
-            motorRight.wait_until_not_moving()
-            #nextDirection = 'LEFT'
-            command_index+=1
-        elif(commands[command_index] == 'LEFT'):
-            motorLeft.run_timed(speed_sp= -200,time_sp = 500)
-            motorRight.run_timed(speed_sp= 200,time_sp = 1000)
-            motorLeft.wait_until_not_moving()
-            motorRight.wait_until_not_moving()
-            command_index+=1
-            #nextDirection = 'RIGHT'
 ##################### MAIN #################################
 
 print("SensorHub have set up.")
@@ -338,18 +301,19 @@ print("SensorHub have set up.")
 server = Server()
 print("Waiting for User 1 to complete")
 server.startUp()
+print("User 1 completed")
 
 target = 40
 errorSumR = 0
 oldR = colourSensorRight.value()
 oldL = colourSensorLeft.value()
 static_dictionary = {
-    'Monalisa': ['FORWARD', 'LEFT'],
-    'The Last Supper': ['RIGHT', 'FORWARD']
+    'Monalisa': ['FORWARD', 'LEFT', 'CW'],
+    'The Last Supper': ['RIGHT', 'FORWARD', 'CW']
 }
 
 command_index = 0
-pictures = server.getCommands
+pictures = server.getCommands()
 if (pictures[4] == "T"):
     commands = static_dictionary['Monalisa']
 elif (pictures[7] == "T"):
@@ -357,9 +321,14 @@ elif (pictures[7] == "T"):
 else:
     print ("No pictures selected")
 
+print(commands)
 try:
     while(True):
-        if(isFrontObstacle()):
+        if(command_index == len(commands)):
+            print("All commands finished")
+            stopWheelMotor()
+            exit()
+        elif(isFrontObstacle()):
             stopWheelMotor()
             print("Stop at: (Front) ", sonarFront.value())
             commandNext = 'RIGHT' # Example
@@ -367,11 +336,58 @@ try:
             print("Stop at: (Right) ",sonarRight.value())
             goAroundObstacle(commands[command_index])
             getBackToLine(commands[command_index])
-        elif(command_index == len(commands)):
-            print("All commands finished")
-            time.sleep(5)
         else:
-            followLine()
+            baseSpeed = 90
+            currR = colourSensorRight.value()
+            currL = colourSensorLeft.value()
+
+            if(currL > 50 and currR > 50):
+                print("BRANCH")
+                if(commands[command_index] == 'RIGHT'):
+                    command_index+=1
+                    motorRight.run_timed(speed_sp= -150,time_sp = 600)
+                    motorLeft.run_timed(speed_sp= 250,time_sp = 800)
+                    motorLeft.wait_until_not_moving()
+                    motorRight.wait_until_not_moving()
+                    #nextDirection = 'LEFT'
+
+                elif(commands[command_index] == 'FORWARD'):
+                    command_index+=1
+                    motorRight.run_timed(speed_sp= 100,time_sp = 600)
+                    motorLeft.run_timed(speed_sp= 100,time_sp = 600)
+                    motorLeft.wait_until_not_moving()
+                    motorRight.wait_until_not_moving()
+                    #nextDirection = 'LEFT'
+
+                elif(commands[command_index] == 'LEFT'):
+                    command_index+=1
+                    motorLeft.run_timed(speed_sp= -200,time_sp = 500)
+                    motorRight.run_timed(speed_sp= 200,time_sp = 1000)
+                    motorLeft.wait_until_not_moving()
+                    motorRight.wait_until_not_moving()
+
+                    #nextDirection = 'RIGHT'
+                elif(commands[command_index] == 'CW'):
+                    command_index+=1
+                    stopWheelMotor()
+                    turnPointer('CW')
+                    resetPointer()
+
+                print(command_index)
+
+            differenceL = currL - target
+            differenceR = currR - target
+            errorSumR +=differenceR
+            if(abs(errorSumR) > 400):
+                errorSumR = 400*errorSumR/abs(errorSumR)
+            D = currR - oldR
+            baseSpeed -= abs(errorSumR)*0.16
+            motorRight.run_forever(speed_sp = baseSpeed- differenceR*3 -errorSumR*0.05 - D*2)
+            motorLeft.run_forever(speed_sp = baseSpeed+ differenceR*3 + errorSumR*0.05 + D*2)
+            oldR = currR
+            oldL = currL
+            #print(str(currL) + "  "  + str(currR))
+            # was 60 before
 
 except:
     motorLeft.stop()
