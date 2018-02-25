@@ -34,8 +34,6 @@ motorLeft = ev3.LargeMotor('outB')
 motorRight= ev3.LargeMotor('outD')
 colourSensorRight = ev3.ColorSensor(ev3.INPUT_1)
 colourSensorLeft = ev3.ColorSensor(ev3.INPUT_4)
-#colourSensorLeft.mode = 'COL-COLOR'
-#colourSensorRight.mode = 'COL-COLOR'
 
 
 if(motorPointer.connected & sonarFront.connected &
@@ -202,7 +200,7 @@ def onResumeCommand():
 
 def isLost():
     speak("I am lost, please help.")
-
+ 
 ##################### OBSTACLE AVOIDANCE #######################
 def obstacleAvoidance():
     while(True):
@@ -285,7 +283,7 @@ def keepDistance():
 
 ############################################################
 obstacleAvoidanceThread = Thread(target=obstacleAvoidance)
-obstacleAvoidanceThread.start()
+#obstacleAvoidanceThread.start()
 
 ##################### MAIN #################################
 while(getSonarReadingsRight()==0):
@@ -305,10 +303,73 @@ print("SensorHub have set up.")
 #turnAndResetPointer("ACW")
 #time.sleep(1)
 #turnAndResetPointer("ACW")
-
+from line_sensor import LineDetector
 
 command = "FORWARD"
-moveForward(300,10000)
+colourSensorLeft.mode = 'COL-COLOR'
+colourSensorRight.mode = 'COL-REFLECT'
+
+target = 40
+
+errorSumR = 0
+oldR = colourSensorRight.value()
+oldL = colourSensorLeft.value()
+turning = False
+timesTurned = 0
+nextDirection = 'RIGHT'
+#ld = LineDetector(colourSensorRight.value)
+try:
+    while(True):
+#        colourSensorLeft.mode = 'COL-COLOR'
+        #colourSensorRight.mode = 'COL-REFLECT'
+        colourSensorLeft.mode = 'COL-REFLECT'
+        baseSpeed = 90
+        currR = colourSensorRight.value()
+        currL = colourSensorLeft.value()
+        differenceL = currL - target
+        differenceR = currR - target
+        errorSumR +=differenceR
+        if(abs(errorSumR) > 400):
+            errorSumR = 400*errorSumR/abs(errorSumR)
+        D = currR - oldR
+        baseSpeed -= abs(errorSumR)*0.16
+        motorRight.run_forever(speed_sp = baseSpeed- differenceR*3 -errorSumR*0.05 - D*2)
+        motorLeft.run_forever(speed_sp = baseSpeed+ differenceR*3 + errorSumR*0.05 + D*2)
+        oldR = currR
+        oldL = currL
+        print(str(currL) + "  "  + str(currR))
+        if(currL > 60 and currR > 60):
+            print("BRANCH")
+            if(nextDirection == 'RIGHT'):
+                motorRight.run_timed(speed_sp= -150,time_sp = 600)
+                motorLeft.run_timed(speed_sp= 250,time_sp = 800)
+                motorLeft.wait_until_not_moving()
+                motorRight.wait_until_not_moving()
+                nextDirection = 'LEFT'
+            elif(nextDirection == 'FORWARD'):
+                motorRight.run_timed(speed_sp= 100,time_sp = 600)
+                motorLeft.run_timed(speed_sp= 100,time_sp = 600)
+                motorLeft.wait_until_not_moving()
+                motorRight.wait_until_not_moving()
+                nextDirection = 'LEFT'
+            elif(nextDirection == 'LEFT'):
+                motorLeft.run_timed(speed_sp= -200,time_sp = 500)
+                motorRight.run_timed(speed_sp= 200,time_sp = 1000)
+                motorLeft.wait_until_not_moving()
+                motorRight.wait_until_not_moving()
+                nextDirection = 'RIGHT'
+except:
+    motorLeft.stop()
+    motorRight.stop()
+    raise
+
+
+
+
+
+
+
+#moveForward(300,10000)
 
 """
 while (True):
@@ -321,7 +382,7 @@ while (True):
         #print("previouscommandid after" + previouscommandid)
         if(command == "STOP"):95
             stopWheelMotor()
-        elif(command == "FORWARD"):
+        elif(command == "FORWARD"):colourSensorLeft
             moveForward(300, 10000)
         elif(command == "BACKWARDS"):
             moveBackward(300, 10000)
