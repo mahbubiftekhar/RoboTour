@@ -97,7 +97,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                             //need to translate here
                             alert(navigate) {
                                 positiveButton(positive) {
-                                    async {
+                                    async{
                                         sendList()
                                     }
                                     async {
@@ -126,28 +126,24 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
 
     private fun sendList() {
         /*This function will upload to the server the required items simply - positive uploads only*/
-        navigateButton.background = ColorDrawable()
-
         allArtPieces
                 .filter { it.selected }
-                .map { it.eV3ID }
-                .forEach { sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/$it.php") }
-        val a = loadInt("user")
-        sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/$a.php")
+                .forEach { sendPUTNEW(it.eV3ID, "T") }
+           sendPUTNEW(loadInt("user"), "T")
     }
 
-    private fun sendPUT(command: String, url: String) {
-        async {
-            val httpclient = DefaultHttpClient()
-            val httpPost = HttpPost(url)
-            try {
-                val nameValuePairs = ArrayList<NameValuePair>(4)
-                nameValuePairs.add(BasicNameValuePair("command", command))
-                httpPost.entity = UrlEncodedFormEntity(nameValuePairs)
-                httpclient.execute(httpPost)
-            } catch (e: ClientProtocolException) {
-            } catch (e: IOException) {
-            }
+    private fun sendPUTNEW(identifier: Int, command: String) {
+        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
+        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
+        * as security exception - just a heads up */
+        val httpclient = DefaultHttpClient()
+        val httPpost = HttpPost(url)
+        try { val nameValuePairs = ArrayList<NameValuePair>(4)
+            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
+            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+            httpclient.execute(httPpost)
+        } catch (e: ClientProtocolException) {
+        } catch (e: IOException) {
         }
     }
 }
