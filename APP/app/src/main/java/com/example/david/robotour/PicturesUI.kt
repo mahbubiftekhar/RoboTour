@@ -98,7 +98,6 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                             alert(navigate) {
                                 positiveButton(positive) {
                                     async{
-                                        println("++++ in the positiveButton of navigate")
                                         sendList()
                                     }
                                     async {
