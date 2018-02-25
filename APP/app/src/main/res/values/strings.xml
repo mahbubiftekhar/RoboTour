@@ -97,4 +97,5 @@
     </string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_waiting">Waiting</string>
+    <string name="title_activity_admin">AdminActivity</string>
 </resources>

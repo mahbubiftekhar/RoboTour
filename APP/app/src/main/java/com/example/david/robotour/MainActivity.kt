@@ -33,39 +33,8 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun saveInt(key: String, value: Int) {
-        /* Function to save an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val editor = sharedPreferences.edit()
-        editor.putInt(key, value)
-        editor.apply()
-    }
-
-    private fun loadInt(key: String): Int {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        return sharedPreferences.getInt(key, 0)
-    }
-
-    private fun alternateUser() {
-        val a = loadInt("user")
-        when (a) {
-            0 -> {
-                saveInt("user", 1)
-                Toast.makeText(applicationContext, "User 1", Toast.LENGTH_LONG).show()
-                vibrate()
-            }
-            1 -> {
-                saveInt("user", 2)
-                Toast.makeText(applicationContext, "User 2", Toast.LENGTH_LONG).show()
-                vibrate()
-            }
-            else -> {
-                saveInt("user", 1)
-                Toast.makeText(applicationContext, "User 1", Toast.LENGTH_LONG).show()
-                vibrate()
-            }
-        }
+    private fun switchToAdmin() {
+        startActivity<AdminActivity>()
     }
 
     private fun isNetworkConnected(): Boolean {
@@ -111,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                         count++
                         vibrate()
                     } else {
-                        alternateUser()
+                        switchToAdmin()
                     }
                     true
                 }

@@ -99,6 +99,8 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                 positiveButton(positive) {
                                     async{
                                         sendList()
+                                        sendPUTNEW(16, "T")
+
                                     }
                                     async {
                                         val a = PicturesActivity()
@@ -129,7 +131,6 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
         allArtPieces
                 .filter { it.selected }
                 .forEach { sendPUTNEW(it.eV3ID, "T") }
-           sendPUTNEW(loadInt("user"), "T")
     }
 
     private fun sendPUTNEW(identifier: Int, command: String) {

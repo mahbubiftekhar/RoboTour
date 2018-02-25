@@ -77,6 +77,15 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts!!.stop()
             tts!!.shutdown()
         }
+        if (userid == "1") {
+            async {
+                sendPUTNEW(16, "F")
+            }
+        } else if (userid == "2") {
+            async {
+                sendPUTNEW(17, "F")
+            }
+        }
         super.onDestroy()
     }
 
@@ -489,7 +498,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         Thread.sleep(1000) //1000ms = 1 sec
                         runOnUiThread(object : Runnable {
                             override fun run() {
-                                async{
+                                async {
                                     val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
 
                                     /*This updates the picture and text for the user*/
@@ -659,6 +668,15 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         alert(exitDesc) {
             positiveButton(positive) {
                 t.interrupt()
+                if (userid == "1") {
+                    async {
+                        sendPUTNEW(16, "F")
+                    }
+                } else if (userid == "2") {
+                    async {
+                        sendPUTNEW(17, "F")
+                    }
+                }
                 clearFindViewByIdCache()
                 switchToMain()
             }
@@ -684,7 +702,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (isNetworkConnected()) {
             async {
                 //This function will reject the skip by adding the empty string
-                sendPUTNEW(10," ")
+                sendPUTNEW(10, " ")
             }
         } else {
             toast("Check your network connection, command not sent")
@@ -705,7 +723,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (isNetworkConnected()) {
             /*This function is only when both users have agreed to skip the next item*/
             async {
-                sendPUTNEW(10,"Y")
+                sendPUTNEW(10, "Y")
                 Thread.sleep(400)
                 Skippable = true
             }
@@ -727,7 +745,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun stopRoboTour() {
         if (isNetworkConnected()) {
             async {
-                sendPUTNEW(11,"T")
+                sendPUTNEW(11, "T")
             }
         } else {
             toast("Check your network connection, command not sent")
@@ -737,19 +755,21 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun startRoboTour() {
         if (isNetworkConnected()) {
             async {
-                sendPUTNEW(11,"F")
+                sendPUTNEW(11, "F")
             }
         } else {
             toast("Check your network connection, command not sent")
         }
     }
+
     private fun sendPUTNEW(identifier: Int, command: String) {
         val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
         val httPpost = HttpPost(url)
-        try { val nameValuePairs = ArrayList<NameValuePair>(4)
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
             nameValuePairs.add(BasicNameValuePair("command$identifier", command))
             httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
             httpclient.execute(httPpost)
