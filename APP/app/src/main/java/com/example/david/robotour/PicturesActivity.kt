@@ -451,8 +451,9 @@ class PicturesActivity : AppCompatActivity() {
                             } else {
                                 //If language is not english or other, we run the translator
                                 async {
+                                    println("+++ Original Text: " + result)
                                     result = translate(result) as ArrayList<String>?
-                                    println("+++ translation" + result)
+                                    println("+++ Translation: " + result)
                                     uiThread {
                                         afterAsyncSpeech(result)
                                     }

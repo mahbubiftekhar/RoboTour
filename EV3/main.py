@@ -7,10 +7,8 @@ import re
 from threading import Thread
 from sensor_hub import *
 
-
-
 ####################### GLOBAL VARIABLE ####################
-obstacle_detection_distance = 150 # in mm THE LEGO SENSOR
+obstacle_detection_distance = 150 # in mm
 side_distance = 12
 link = "https://homepages.inf.ed.ac.uk/s1553593/receiver.php"
 command = ""
@@ -69,19 +67,20 @@ def getColourLeft():
     return colourSensorLeft.color
 
 def isRightLineDetected(): # Right Lego sensor
-    if (getColourRight() == '6'):
-        return True
-    else:
-        return False
+    print(getColourRight())
+    return getColourRight() == 6
 
 def isLeftLineDetected():
-    if (getColourLeft() == '6'):
-        return True
-    else:
-        return False
+    print(getColourLeft())
+    return getColourLeft() == 6
 
 def isLineDetected():
-    return isLeftLineDetected() or isRightLineDetected()
+    answer = (isLeftLineDetected() or isRightLineDetected())
+    print(answer)
+    return answer
+
+def isWallDetected():
+    return (getColourLeft == 1 or getColourRight == 1)
 
 def getSonarReadingsFront():
     return sonarFront.value()
@@ -93,23 +92,14 @@ def getSonarReadingsRight():
     return sonarRight.value()
 
 def isFrontObstacle():
-    if(getSonarReadingsFront() < obstacle_detection_distance):
-        return True
-    else:
-        return False
+    return (getSonarReadingsFront() < obstacle_detection_distance)
 
 def isLeftSideObstacle():
-    if(getSonarReadingsLeft() < side_distance):
-        return True
-    else:
-        return False
+    return (getSonarReadingsLeft() < side_distance)
 
 def isRightSideObstacle():
-    if(getSonarReadingsRight() < side_distance):
-        #print("Find right obstale at: ",getSonarReadingsRight())
-        return True
-    else:
-        return False
+    return (getSonarReadingsRight() < side_distance)
+
 
 def moveForward(speed, time):
     motorLeft.run_timed(speed_sp=speed, time_sp=time)
@@ -132,6 +122,10 @@ def turnLeft(degree):
 def turn(left,right,time):
     motorLeft.run_timed(speed_sp=left,time_sp=time)
     motorRight.run_timed(speed_sp=right, time_sp=time)
+
+def turnBack(): # 180
+    motorLeft.run_timed(speed_sp=400,time_sp=1000)
+    motorRight.run_timed(speed_sp=-400, time_sp=1000)
 
 def stopWheelMotor():
     #print(sonar.value())
@@ -219,7 +213,7 @@ def obstacleAvoidance():
             if(isFrontObstacle()):
                 stopWheelMotor()
                 print("Stop at: (Front) ", sonarFront.value())
-                commandNext = 'LEFT' # Example
+                commandNext = 'RIGHT' # Example
                 getReadyForObstacle(commandNext) # step 1
                 print("Stop at: (Right) ",sonarRight.value())
                 goAroundObstacle(commandNext)
@@ -246,20 +240,21 @@ def getReadyForObstacle(direction): #90 degree
 def goAroundObstacle(direction):
     set_distance = 15
     stopping_distance = 8 # for stopping of the other 2 sensors
-    # PLEASE NOTE THAT THE FRONT SENSOR IS LEGO AND MEASURES IN MM WHILE THE CUSTOM ONE MEASURES IN CM
     if (direction == 'RIGHT'):
         while(not isLineDetected()):
-            if (getSonarReadingsRight() < stopping_distance or getSonarReadingsFront() < stopping_distance*10):
-                time.sleep(1)
-            elif (getSonarReadingsLeft() < set_distance):
+            if (getSonarReadingsLeft() < set_distance):
                 turn(200, 100, 100)
+            #if (isWallDetected()):
+                #turnBack()
+                #goAroundObstacle('LEFT')
+                #break;
+            #if (getSonarReadingsRight() < stopping_distance or getSonarReadingsFront() < stopping_distance*10):
+                #time.sleep(1)
             else:
                 turn(100, 300, 100)
     else: # All default will go through the Left side. IE
         while(not isLineDetected()):
-            if (getSonarReadingsLeft() < stopping_distance or getSonarReadingsFront() < stopping_distance*10):
-                time.sleep(1)
-            elif (getSonarReadingsRight() < set_distance):
+            if (getSonarReadingsRight() < set_distance):
                 turn(100, 200, 100)
             else:
                 turn(300, 100, 100)
@@ -291,8 +286,11 @@ obstacleAvoidanceThread = Thread(target=obstacleAvoidance)
 #obstacleAvoidanceThread.start()
 
 ##################### MAIN #################################
+while(getSonarReadingsRight()==0):
+    time.sleep(5)
 print("SensorHub have set up.")
 #speak("Carson, we love you. Group 18. ")
+
 #Use to test the pointer. The following code turns and resets in both direction 3x
 #turnAndResetPointer("CW")
 #time.sleep(1)

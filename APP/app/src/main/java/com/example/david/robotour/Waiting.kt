@@ -80,6 +80,7 @@ class Waiting : AppCompatActivity() {
     fun switchToNavigate() {
         Thread.sleep(6500) //This should be removed in the final implementation
         pictureThread.interrupt() //Stop the thread advertising all the art pieces
+        pictureThread.interrupt()
         t.interrupt() // Stop the thread looking for the other use
         clearFindViewByIdCache()
         startActivity<NavigatingActivity>("language" to language) // now we can switch the activity
@@ -93,6 +94,7 @@ class Waiting : AppCompatActivity() {
         /*This thread will check if the other use has made their selection*/
         override fun run() {
             while (!isInterrupted) {
+                println("in the thread Waiting 1")
                 try {
                     if (user == 1) {
                         val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user2.php").readText()
@@ -123,6 +125,7 @@ class Waiting : AppCompatActivity() {
 
         override fun run() {
             while (!isInterrupted) {
+                println("in the thread Waiting 2")
                 if (a > 9) {
                     //Reset A to avoid null pointers
                     a = 0
@@ -131,12 +134,15 @@ class Waiting : AppCompatActivity() {
                     //UI thread MUST be updates on the UI thread, other threads may not update the UI thread
                     runOnUiThread {
                         imageView?.setImageResource(allArtPieces[a].imageID)
+
                         descriptionView?.text = allArtPieces[a].name
+
                     }
                     Thread.sleep(2000)
                     a++
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
+                } catch (e: IndexOutOfBoundsException) {
                 }
             }
         }

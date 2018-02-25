@@ -65,8 +65,10 @@ class SensorHub():
 			for r in readings:
 				#split each pair
 				data = r.split(':')
-
-				self.sensor_values[data[0]] = data[1]
+				try:
+					self.sensor_values[data[0]] = int(data[1])
+				except:
+					print("Error with data pair: {} : {}".format(data[0], data[1]))
 				if self.__DEBUG__:
 					print("Sensor {}: {}cm".format(data[0], data[1]))
 		except:
@@ -88,7 +90,7 @@ class HubSonar():
 			self.hub.poll()
 
 		self.last_poll = self.hub.last_poll
-		self.val = int(self.hub.sensor_values[self.hub_key])
+		self.val = self.hub.sensor_values[self.hub_key]
 		self.val = 255 if self.val == 0 else self.val
 		return self.val
 
