@@ -371,7 +371,7 @@ try:
                     command_index+=1
                     stopWheelMotor()
                     turnPointer('CW')
-                    resetPointer()
+                    turnPointer('ACW')
 
                 print(command_index)
 
