@@ -9,7 +9,7 @@ from sensor_hub import *
 
 ####################### GLOBAL VARIABLE ####################
 obstacle_detection_distance = 150 # in mm
-side_distance = 12
+side_distance = 17
 link = "https://homepages.inf.ed.ac.uk/s1553593/receiver.php"
 command = ""
 previouscommandid = "1"
@@ -34,6 +34,11 @@ motorLeft = ev3.LargeMotor('outB')
 motorRight= ev3.LargeMotor('outD')
 colourSensorRight = ev3.ColorSensor(ev3.INPUT_1)
 colourSensorLeft = ev3.ColorSensor(ev3.INPUT_4)
+colourSensorLeft.mode = 'COL-REFLECT'
+colourSensorRight.mode = 'COL-REFLECT'
+
+lineThreshold = 57
+wallThreshold = 15
 
 
 if(motorPointer.connected & sonarFront.connected &
@@ -61,26 +66,26 @@ else:
 
 ##################### SENSOR AND ACTUATOR FUNCTIONS ############################
 def getColourRight():
-    return colourSensorRight.color
+    return colourSensorRight.value()
 
 def getColourLeft():
-    return colourSensorLeft.color
+    return colourSensorLeft.value()
 
 def isRightLineDetected(): # Right Lego sensor
-    print(getColourRight())
-    return getColourRight() == 6
+    # print(getColourRight())
+    return getColourRight() > lineThreshold
 
 def isLeftLineDetected():
-    print(getColourLeft())
-    return getColourLeft() == 6
+    # print(getColourLeft())
+    return getColourLeft() > lineThreshold
 
 def isLineDetected():
     answer = (isLeftLineDetected() or isRightLineDetected())
-    print(answer)
+    # print(answer)
     return answer
 
 def isWallDetected():
-    return (getColourLeft == 1 or getColourRight == 1)
+    return (getColourLeft < wallThreshold or getColourRight < wallThreshold)
 
 def getSonarReadingsFront():
     return sonarFront.value()
@@ -99,7 +104,6 @@ def isLeftSideObstacle():
 
 def isRightSideObstacle():
     return (getSonarReadingsRight() < side_distance)
-
 
 def moveForward(speed, time):
     motorLeft.run_timed(speed_sp=speed, time_sp=time)
@@ -200,31 +204,14 @@ def onResumeCommand():
 
 def isLost():
     speak("I am lost, please help.")
- 
+
 ##################### OBSTACLE AVOIDANCE #######################
-def obstacleAvoidance():
-    while(True):
-        #Tests
-        #while (True):
-        #    print("Left:", getColourLeft(), "    Right:", getColourRight())
-        #    time.sleep(0.2)
-
-        if(command=="FORWARD"):
-            if(isFrontObstacle()):
-                stopWheelMotor()
-                print("Stop at: (Front) ", sonarFront.value())
-                commandNext = 'RIGHT' # Example
-                getReadyForObstacle(commandNext) # step 1
-                print("Stop at: (Right) ",sonarRight.value())
-                goAroundObstacle(commandNext)
-                getBackToLine(commandNext)
-
 
 def getReadyForObstacle(direction): #90 degree
+    print("GET READY FOR OBSTACLE")
     if (direction == 'RIGHT'):
         while(not isLeftSideObstacle()):
             turnRight(10)
-
         while(isLineDetected()):
             turnRight(10)
     else:  # All default will go through the Left side. IE
@@ -234,14 +221,13 @@ def getReadyForObstacle(direction): #90 degree
         while(isLineDetected()):
             turnLeft(10)
 
-    while(isLineDetected()):
-        turnLeft(10)
-
 def goAroundObstacle(direction):
+    print("GO AROUND OBSTACLE")
     set_distance = 15
     stopping_distance = 8 # for stopping of the other 2 sensors
+
     if (direction == 'RIGHT'):
-        while(not isLineDetected()):
+        while(not isRightLineDetected()):
             if (getSonarReadingsLeft() < set_distance):
                 turn(200, 100, 100)
             #if (isWallDetected()):
@@ -253,14 +239,14 @@ def goAroundObstacle(direction):
             else:
                 turn(100, 300, 100)
     else: # All default will go through the Left side. IE
-        while(not isLineDetected()):
+        while(not isRightLineDetected()):
             if (getSonarReadingsRight() < set_distance):
                 turn(100, 200, 100)
             else:
                 turn(300, 100, 100)
 
 def getBackToLine(direction):
-    print("Find line!")
+    print("GET BACK TO LINE")
     if (direction == 'RIGHT'):
         while(isLeftLineDetected()):
             turn(100,-100,100)
@@ -280,10 +266,7 @@ def keepDistance():
         moveBackward(100,100)
 """
 
-
 ############################################################
-obstacleAvoidanceThread = Thread(target=obstacleAvoidance)
-#obstacleAvoidanceThread.start()
 
 ##################### MAIN #################################
 while(getSonarReadingsRight()==0):
@@ -303,61 +286,63 @@ print("SensorHub have set up.")
 #turnAndResetPointer("ACW")
 #time.sleep(1)
 #turnAndResetPointer("ACW")
-from line_sensor import LineDetector
 
 command = "FORWARD"
-colourSensorLeft.mode = 'COL-COLOR'
-colourSensorRight.mode = 'COL-REFLECT'
 
 target = 40
-
 errorSumR = 0
 oldR = colourSensorRight.value()
 oldL = colourSensorLeft.value()
 turning = False
 timesTurned = 0
 nextDirection = 'RIGHT'
-#ld = LineDetector(colourSensorRight.value)
+
 try:
     while(True):
-#        colourSensorLeft.mode = 'COL-COLOR'
-        #colourSensorRight.mode = 'COL-REFLECT'
-        colourSensorLeft.mode = 'COL-REFLECT'
-        baseSpeed = 90
-        currR = colourSensorRight.value()
-        currL = colourSensorLeft.value()
-        differenceL = currL - target
-        differenceR = currR - target
-        errorSumR +=differenceR
-        if(abs(errorSumR) > 400):
-            errorSumR = 400*errorSumR/abs(errorSumR)
-        D = currR - oldR
-        baseSpeed -= abs(errorSumR)*0.16
-        motorRight.run_forever(speed_sp = baseSpeed- differenceR*3 -errorSumR*0.05 - D*2)
-        motorLeft.run_forever(speed_sp = baseSpeed+ differenceR*3 + errorSumR*0.05 + D*2)
-        oldR = currR
-        oldL = currL
-        print(str(currL) + "  "  + str(currR))
-        if(currL > 60 and currR > 60):
-            print("BRANCH")
-            if(nextDirection == 'RIGHT'):
-                motorRight.run_timed(speed_sp= -150,time_sp = 600)
-                motorLeft.run_timed(speed_sp= 250,time_sp = 800)
-                motorLeft.wait_until_not_moving()
-                motorRight.wait_until_not_moving()
-                nextDirection = 'LEFT'
-            elif(nextDirection == 'FORWARD'):
-                motorRight.run_timed(speed_sp= 100,time_sp = 600)
-                motorLeft.run_timed(speed_sp= 100,time_sp = 600)
-                motorLeft.wait_until_not_moving()
-                motorRight.wait_until_not_moving()
-                nextDirection = 'LEFT'
-            elif(nextDirection == 'LEFT'):
-                motorLeft.run_timed(speed_sp= -200,time_sp = 500)
-                motorRight.run_timed(speed_sp= 200,time_sp = 1000)
-                motorLeft.wait_until_not_moving()
-                motorRight.wait_until_not_moving()
-                nextDirection = 'RIGHT'
+        if(isFrontObstacle()):
+            stopWheelMotor()
+            print("Stop at: (Front) ", sonarFront.value())
+            commandNext = 'RIGHT' # Example
+            getReadyForObstacle(commandNext) # step 1
+            print("Stop at: (Right) ",sonarRight.value())
+            goAroundObstacle(commandNext)
+            getBackToLine(commandNext)
+        else:
+            baseSpeed = 90
+            currR = colourSensorRight.value()
+            currL = colourSensorLeft.value()
+            differenceL = currL - target
+            differenceR = currR - target
+            errorSumR +=differenceR
+            if(abs(errorSumR) > 400):
+                errorSumR = 400*errorSumR/abs(errorSumR)
+            D = currR - oldR
+            baseSpeed -= abs(errorSumR)*0.16
+            motorRight.run_forever(speed_sp = baseSpeed- differenceR*3 -errorSumR*0.05 - D*2)
+            motorLeft.run_forever(speed_sp = baseSpeed+ differenceR*3 + errorSumR*0.05 + D*2)
+            oldR = currR
+            oldL = currL
+            print(str(currL) + "  "  + str(currR))
+            if(currL > 60 and currR > 60):
+                print("BRANCH")
+                if(nextDirection == 'RIGHT'):
+                    motorRight.run_timed(speed_sp= -150,time_sp = 600)
+                    motorLeft.run_timed(speed_sp= 250,time_sp = 800)
+                    motorLeft.wait_until_not_moving()
+                    motorRight.wait_until_not_moving()
+                    nextDirection = 'LEFT'
+                elif(nextDirection == 'FORWARD'):
+                    motorRight.run_timed(speed_sp= 100,time_sp = 600)
+                    motorLeft.run_timed(speed_sp= 100,time_sp = 600)
+                    motorLeft.wait_until_not_moving()
+                    motorRight.wait_until_not_moving()
+                    nextDirection = 'LEFT'
+                elif(nextDirection == 'LEFT'):
+                    motorLeft.run_timed(speed_sp= -200,time_sp = 500)
+                    motorRight.run_timed(speed_sp= 200,time_sp = 1000)
+                    motorLeft.wait_until_not_moving()
+                    motorRight.wait_until_not_moving()
+                    nextDirection = 'RIGHT'
 except:
     motorLeft.stop()
     motorRight.stop()
