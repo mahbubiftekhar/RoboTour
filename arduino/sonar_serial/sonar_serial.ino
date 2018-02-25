@@ -8,7 +8,7 @@
 #define LINE_NUM 6
 
 
-#define BAUD 57600
+#define BAUD 115200
 #define TWI_CLK 400000
 
 uint16_t sonar_val[SONAR_NUM];

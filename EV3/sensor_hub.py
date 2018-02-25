@@ -7,14 +7,18 @@ import time
 class SensorHub():
 
 	def __init__(self):
-		self.baud = 57600
-		self.serial_port = serial.Serial(port='/dev/ttyACM0',\
+		self.baud = 115200
+		self.serial_port = serial.Serial(port='/dev/ttyACM2',\
 										 baudrate=self.baud)
 		self.n_sonars = 4
 		self.sonar_maxrange = 255
 
 		self.tries_limit = 100
+
+		# time to receive response from the hub
 		self.response_timeout = 10 #ms
+		# time to have the entire frame transmitted
+		self.frame_timeout = 20
 
 		self.__DEBUG__ = True
 
@@ -34,8 +38,8 @@ class SensorHub():
 		self.last_poll += 1
 
 		tries = 0
-
 		start = time.perf_counter()
+
 		# discard any outstanding data
 		self.serial_port.flushInput()
 
@@ -43,48 +47,53 @@ class SensorHub():
 		while True:
 			
 			w = self.send_request()
-			# if response received
+			# see if response received
 			if(not w < 0):
 				break
 			
 			if(tries >= self.tries_limit):
-				print("POLLING TIMEOUT")
+				print("Hub not responsive")
 				self.connected = False
 				return False
 			
 			tries += 1
 
 		frame = self.get_frame()
-		self.extract_from_frame(frame)
 		end = time.perf_counter()
-		self.debug_print("Response received in {:.2f}ms".format((start-end)/100))
+
+		self.extract_from_frame(frame)
+		
+		poll_time = (end-start)*1000
+		self.debug_print("Response received in {:.2f}ms".format(poll_time))
+		self.last_poll_time = poll_time
 		self.connected = True
 		return True
 
 	def send_request(self):
 		
+		cycles = 0
 		waiting = 0
+
 		dt = 0.001
 
 		start = time.perf_counter()
 
 		self.debug_print("Sending request")
+
 		self.serial_port.write(b'r\n')
-
-
 
 		# while no response receieved
 		while self.serial_port.inWaiting() < 1:
 			# see if we have been waiting for long enough
-			if(waiting == self.response_timeout):
+
+			if(waiting >= self.response_timeout):
 				# self.debug_print(".")
 				return -1
-			waiting += 1
+			cycles += 1
 			time.sleep(dt)
-
+			waiting = (time.perf_counter() - start) * 1000
 		
-		end = time.perf_counter()
-		self.debug_print("Response received after {} cycles ({:.2f}ms)".format(waiting, (start-end)/1000))
+		self.debug_print("Response received after {} cycles ({:.2f}ms)".format(cycles, waiting))
 		return waiting
 
 
@@ -95,12 +104,16 @@ class SensorHub():
 		out = ''
 		waiting = 0
 		dt = 0.00001 # 10us
+		cycles = 0
+
+		start = time.perf_counter()
 		while True:
+			waiting = time.perf_counter() - start
 			if self.serial_port.inWaiting() > 0:
 				out += self.serial_port.read(1).decode('ascii')
 				if(out[-1] == '\n'):
 					# remove newline and last comma
-					self.debug_print("Frame received in {} cycles ({:.2f}ms)".format(waiting, waiting*dt*1000))
+					self.debug_print("Frame received in {} cycles ({:.2f}ms)".format(cycles, waiting*1000))
 					out = out[:-2]
 					break
 			else:
@@ -109,7 +122,7 @@ class SensorHub():
 					break
 				# wait 10us
 				time.sleep(dt)
-				waiting += 1
+				cycles += 1
 
 		return out if out != '' else None
 
@@ -126,8 +139,7 @@ class SensorHub():
 				data = r.split(':')
 				
 				self.sensor_values[data[0]] = data[1]
-				if self.__DEBUG__:
-					print("Sensor {}: {}cm".format(data[0], data[1]))
+				self.debug_print("Sensor {}: {}".format(data[0], data[1]))
 		except:
 			print("Error processing frame: {}".format(frame))
 		
@@ -149,7 +161,7 @@ class HubSonar():
 
 		self.last_poll = self.hub.last_poll
 		self.val = self.hub.sensor_values[self.hub_key]
-		self.val = 0 if self.val == 0 else self.maxrange
+		self.val = self.maxrange if self.val == 0 else self.val
 		return self.val
 
 class HubLineSensor():
