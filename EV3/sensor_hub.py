@@ -137,8 +137,11 @@ class SensorHub():
 			for r in readings:
 				#split each pair
 				data = r.split(':')
+				try:
+					self.sensor_values[data[0]] = int(data[1])
+				except:
+					print("Error with pair: {} : {}".format(data[0], data[1]))
 				
-				self.sensor_values[data[0]] = data[1]
 				self.debug_print("Sensor {}: {}".format(data[0], data[1]))
 		except:
 			print("Error processing frame: {}".format(frame))
@@ -206,11 +209,9 @@ class HubLineSensor():
 		activated_sens = 0
 
 		for s in order:
-			try:
-				val = int(self.raw_val[s])
-			except:
-				val = floor
-				print("GLITTCHEZZZ BITCHEZZ: {}".format(self.raw_val[s])) 
+
+			val = self.raw_val[s]
+
 
 			#check if sensor on line
 			if val < threshold:
