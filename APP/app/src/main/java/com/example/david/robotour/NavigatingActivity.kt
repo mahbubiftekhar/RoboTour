@@ -60,7 +60,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var toiletPopUp: AlertDialogBuilder
     private var Skippable = true
     private lateinit var t: Thread
-    private lateinit var toiletThread: Thread
     private var tts: TextToSpeech? = null
     private var currentPic = -1
     private var startRoboTour = ""
@@ -119,12 +118,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
         //Obtain language from PicturesUI
-        //async { sendPUT("A", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php") }
         vibrate()
         for(i in 0..15){
             println("+++ getting in here")
             async{
-                sendPUTNEW(i.toString(), "F")
+                sendPUTNEW(i, "F")
             }
         }
         val language = intent.getStringExtra("language")
@@ -436,7 +434,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         positiveButton(positive) {
                                             if (isNetworkConnected()) {
                                                 async {
-                                                    sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php")
+                                                    sendPUTNEW(14, "T")
                                                 }
                                             } else {
                                                 Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
@@ -491,11 +489,13 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         Thread.sleep(1000) //1000ms = 1 sec
                         runOnUiThread(object : Runnable {
                             override fun run() {
-                                async {
+                                async{
+                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+
+                                    /*This updates the picture and text for the user*/
                                     for (i in 0..9) {
                                         //This part checks for updates of the next location we are going to
-                                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/$i.php").readText()
-                                        if (a == "N") {
+                                        if (a[i] == 'N') {
                                             runOnUiThread {
                                                 //Change the image, text and descrioption
                                                 imageView?.setImageResource(allArtPieces[i].imageID)
@@ -512,12 +512,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             break
                                         }
                                     }
-                                }
-                                async {
-                                    Thread.sleep(200)
-                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
                                     if (userid == 1.toString()) {
-                                        if (a == "2" && Skippable) {
+                                        if (a[10].toInt() == 2 && Skippable) {
                                             Skippable = false
                                             runOnUiThread {
                                                 alert(skip) {
@@ -542,7 +538,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             }
                                         }
                                     } else if (userid == 2.toString()) {
-                                        if (a == "1" && Skippable) {
+                                        if (a[10].toInt() == 1 && Skippable) {
                                             Skippable = false
                                             runOnUiThread {
                                                 alert(skip) {
@@ -567,10 +563,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             }
                                         }
                                     }
-                                }
-                                async {
-                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/toilet.php").readText()
-                                    if (a == "A" && toiletPopUpBool) {
+                                    if (a[14] == 'A' && toiletPopUpBool) {
                                         toiletPopUpBool = false
                                         runOnUiThread {
                                             toiletPopUp = alert(startRoboTour) {
@@ -579,7 +572,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 positiveButton(positive) {
                                                     if (isNetworkConnected()) {
                                                         async {
-                                                            sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php") /*Set stop as false*/
+                                                            sendPUTNEW(11, "F")
                                                         }
                                                     } else {
                                                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
@@ -588,13 +581,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             }.show()
                                         }
                                     }
-
-
-                                }
-                                async {
-                                    //This part checks if the other user has pressed the stop buttons and updates accordingly
-                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/stop.php").readText()
-                                    if (a == "T") {
+                                    if (a[11] == 'T') {
                                         runOnUiThread {
                                             toggleStBtn = true
                                             stopButton!!.text = start
@@ -606,6 +593,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         }
                                     }
                                 }
+                                Thread.sleep(300)
                             }
                         }
                         )
@@ -659,7 +647,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun exitDoor() {
         //This function will tell the robot to take the user to the exit
         if (isNetworkConnected()) {
-            sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+            sendPUTNEW(15, "T")
         } else {
             toast("Check your network connection, command not sent")
         }
@@ -680,7 +668,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun cancelGuideTotal() {
         if (isNetworkConnected()) {
-            sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/$userid.php")
+            sendPUTNEW(12, userid.toString())
             switchToMain()
         } else {
             toast("Check your network connection, command not sent")
@@ -696,7 +684,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (isNetworkConnected()) {
             async {
                 //This function will reject the skip by adding the empty string
-                sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+                sendPUTNEW(10," ")
             }
         } else {
             toast("Check your network connection, command not sent")
@@ -717,7 +705,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (isNetworkConnected()) {
             /*This function is only when both users have agreed to skip the next item*/
             async {
-                sendPUT("Y", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+                sendPUTNEW(10,"Y")
                 Thread.sleep(400)
                 Skippable = true
             }
@@ -729,7 +717,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun skip() {
         if (isNetworkConnected()) {
             async {
-                sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+                sendPUTNEW(10, userid.toString())
             }
         } else {
             toast("Check your network connection, command not sent")
@@ -739,7 +727,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun stopRoboTour() {
         if (isNetworkConnected()) {
             async {
-                sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
+                sendPUTNEW(11,"T")
             }
         } else {
             toast("Check your network connection, command not sent")
@@ -749,35 +737,20 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun startRoboTour() {
         if (isNetworkConnected()) {
             async {
-                sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
+                sendPUTNEW(11,"F")
             }
         } else {
             toast("Check your network connection, command not sent")
         }
     }
-    private fun sendPUTNEW(identifier: String, command: String) {
+    private fun sendPUTNEW(identifier: Int, command: String) {
         val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
         val httPpost = HttpPost(url)
-        try {
-            val nameValuePairs = ArrayList<NameValuePair>(4)
+        try { val nameValuePairs = ArrayList<NameValuePair>(4)
             nameValuePairs.add(BasicNameValuePair("command$identifier", command))
-            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
-            httpclient.execute(httPpost)
-        } catch (e: ClientProtocolException) {
-        } catch (e: IOException) {
-        }
-    }
-    private fun sendPUT(command: String, url: String) {
-        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
-        * as security exception - just a heads up */
-        val httpclient = DefaultHttpClient()
-        val httPpost = HttpPost(url)
-        try {
-            val nameValuePairs = ArrayList<NameValuePair>(4)
-            nameValuePairs.add(BasicNameValuePair("command", command))
             httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
             httpclient.execute(httPpost)
         } catch (e: ClientProtocolException) {
