@@ -119,12 +119,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         supportActionBar?.hide() //hide actionbar
         //Obtain language from PicturesUI
         vibrate()
-        for(i in 0..15){
+        /*for(i in 0..15){
             println("+++ getting in here")
             async{
                 sendPUTNEW(i, "F")
             }
-        }
+        }*/
         val language = intent.getStringExtra("language")
         when (language) {
             "English" -> {

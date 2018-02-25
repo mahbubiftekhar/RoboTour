@@ -97,7 +97,8 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                             //need to translate here
                             alert(navigate) {
                                 positiveButton(positive) {
-                                    async {
+                                    async{
+                                        println("++++ in the positiveButton of navigate")
                                         sendList()
                                     }
                                     async {
@@ -126,12 +127,10 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
 
     private fun sendList() {
         /*This function will upload to the server the required items simply - positive uploads only*/
-        navigateButton.background = ColorDrawable()
         allArtPieces
                 .filter { it.selected }
-                .map { it.eV3ID }
-                .forEach {sendPUTNEW(it, "T")}
-        sendPUTNEW(loadInt("user"), "T")
+                .forEach { sendPUTNEW(it.eV3ID, "T") }
+           sendPUTNEW(loadInt("user"), "T")
     }
 
     private fun sendPUTNEW(identifier: Int, command: String) {
