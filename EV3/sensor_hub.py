@@ -2,13 +2,14 @@
 
 import serial
 import time
-#ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600)
+import subprocess
 
 class SensorHub():
 
 	def __init__(self):
 		self.baud = 115200
-		self.serial_port = serial.Serial(port='/dev/ttyACM2',\
+		self.port = self.get_available_port()
+		self.serial_port = serial.Serial(port=self.port,\
 										 baudrate=self.baud)
 		self.n_sonars = 4
 		self.sonar_maxrange = 255
@@ -32,6 +33,12 @@ class SensorHub():
 	def debug_print(self, message):
 		if self.__DEBUG__:
 			print(message)
+
+	def get_available_port(self):
+		out = subprocess.check_output("ls /dev/ttyACM*", shell=True)
+		port = out.split(b'\n')[0].decode('utf-8')
+		return port
+
 
 
 	def poll(self):
