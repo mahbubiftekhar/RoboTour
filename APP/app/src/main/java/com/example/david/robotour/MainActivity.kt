@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 onLongClick {
-                    if (count < 2) {
+                    if (count < 1) {
                         count++
                         vibrate()
                     } else {
