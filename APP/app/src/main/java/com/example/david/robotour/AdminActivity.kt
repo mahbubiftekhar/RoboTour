@@ -17,78 +17,134 @@ import org.apache.http.message.BasicNameValuePair
 import java.io.IOException
 import java.util.ArrayList
 import org.jetbrains.anko.*
+import java.net.URL
+
 
 class AdminActivity : AppCompatActivity() {
+    private fun sendPUTNEW(identifier: Int, command: String) {
+        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
+        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
+        * as security exception - just a heads up */
+        val httpclient = DefaultHttpClient()
+        val httPpost = HttpPost(url)
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
+            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
+            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+            httpclient.execute(httPpost)
+        } catch (e: ClientProtocolException) {
+        } catch (e: IOException) {
+        }
+    }
+
+    private val updateTextThread: Thread = object : Thread() {
+        override fun run() {
+            while (!isInterrupted) {
+                try {
+                    async {
+                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                        runOnUiThread{
+                            setActionBar(a)
+                        }
+                    }
+                    Thread.sleep(100)
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                }
+            }
+        }
+    }
+
+    private fun setActionBar(heading: String) {
+        val actionBar = supportActionBar
+        actionBar!!.setHomeButtonEnabled(true)
+        actionBar.setDisplayHomeAsUpEnabled(false)
+        actionBar.setDisplayShowHomeEnabled(false)
+        actionBar.title = heading
+        actionBar.show()
+    }
+
+    override fun onBackPressed() {
+        updateTextThread.interrupt()
+        super.onBackPressed()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
-        supportActionBar?.hide() //hide actionbar
-
         STOP_ROBOTOUR.setOnClickListener {
-            async{
-                sendPUTNEW(11,"T")
+            async {
+                sendPUTNEW(11, "T")
             }
+            vibrate()
         }
         AUX_RESET.setOnClickListener {
-            for(i in 10..17){
-                async{
-                    sendPUTNEW(i,"F")
+            for (i in 10..17) {
+                async {
+                    sendPUTNEW(i, "F")
                 }
             }
+            vibrate()
         }
 
         RESET_EVERYTHING.setOnClickListener {
-            for(i in 0..17){
-                async{
-                    sendPUTNEW(i,"F")
+            for (i in 0..17) {
+                async {
+                    sendPUTNEW(i, "F")
                 }
             }
+            vibrate()
         }
-
         USER1_ONLINE.setOnClickListener {
-            async{
-                sendPUTNEW(16,"T")
+            async {
+                sendPUTNEW(16, "T")
             }
+            vibrate()
         }
 
         USER2_ONLINE.setOnClickListener {
-          async{
-              sendPUTNEW(17,"T")
-          }
+            async {
+                sendPUTNEW(17, "T")
+            }
+            vibrate()
         }
 
         USER_1_OFF.setOnClickListener {
-            async{
-                sendPUTNEW(16,"F")
+            async {
+                sendPUTNEW(16, "F")
             }
+            vibrate()
         }
 
         USER_2_OFF.setOnClickListener {
-            async{
-                sendPUTNEW(17,"F")
+            async {
+                sendPUTNEW(17, "F")
             }
+            vibrate()
         }
 
-        SWITCH_USER.setOnClickListener{
+        SWITCH_USER.setOnClickListener {
             val a = loadInt("user")
             when (a) {
                 0 -> {
                     saveInt("user", 1)
-                    Toast.makeText(applicationContext, "User 1", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
                     vibrate()
                 }
                 1 -> {
                     saveInt("user", 2)
-                    Toast.makeText(applicationContext, "User 2", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, "User 2 mode", Toast.LENGTH_LONG).show()
                     vibrate()
                 }
                 else -> {
                     saveInt("user", 1)
-                    Toast.makeText(applicationContext, "User 1", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
                     vibrate()
                 }
             }
+        }
+        async{
+            updateTextThread.run()
         }
     }
 
@@ -114,21 +170,5 @@ class AdminActivity : AppCompatActivity() {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         return sharedPreferences.getInt(key, 0)
-    }
-
-    private fun sendPUTNEW(identifier: Int, command: String) {
-        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
-        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
-        * as security exception - just a heads up */
-        val httpclient = DefaultHttpClient()
-        val httPpost = HttpPost(url)
-        try {
-            val nameValuePairs = ArrayList<NameValuePair>(4)
-            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
-            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
-            httpclient.execute(httPpost)
-        } catch (e: ClientProtocolException) {
-        } catch (e: IOException) {
-        }
     }
 }
