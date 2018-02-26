@@ -17,6 +17,8 @@ import org.apache.http.message.BasicNameValuePair
 import java.io.IOException
 import java.util.ArrayList
 import org.jetbrains.anko.*
+import java.net.URL
+
 
 class AdminActivity : AppCompatActivity() {
     private fun sendPUTNEW(identifier: Int, command: String) {
@@ -35,10 +37,51 @@ class AdminActivity : AppCompatActivity() {
         }
     }
 
+    private val updateTextThread: Thread = object : Thread() {
+        override fun run() {
+            while (!isInterrupted) {
+                try {
+                    async {
+                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                        runOnUiThread{
+                            setActionBar(a)
+                        }
+                    }
+                    Thread.sleep(100)
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                }
+            }
+        }
+    }
+
+    private fun setActionBar(heading: String) {
+        val actionBar = supportActionBar
+        actionBar!!.setHomeButtonEnabled(true)
+        actionBar.setDisplayHomeAsUpEnabled(false)
+        actionBar.setDisplayShowHomeEnabled(false)
+        actionBar.title = heading
+        actionBar.show()
+    }
+
+    override fun onBackPressed() {
+        updateTextThread.interrupt()
+        super.onBackPressed()
+    }
+
+    override fun onDestroy() {
+        updateTextThread.interrupt()
+        super.onDestroy()
+    }
+
+    override fun onStop() {
+        updateTextThread.interrupt()
+        super.onStop()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
-        supportActionBar?.hide() //hide actionbar
         STOP_ROBOTOUR.setOnClickListener {
             async {
                 sendPUTNEW(11, "T")
@@ -95,20 +138,23 @@ class AdminActivity : AppCompatActivity() {
             when (a) {
                 0 -> {
                     saveInt("user", 1)
-                    Toast.makeText(applicationContext, "User 1", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
                     vibrate()
                 }
                 1 -> {
                     saveInt("user", 2)
-                    Toast.makeText(applicationContext, "User 2", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, "User 2 mode", Toast.LENGTH_LONG).show()
                     vibrate()
                 }
                 else -> {
                     saveInt("user", 1)
-                    Toast.makeText(applicationContext, "User 1", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
                     vibrate()
                 }
             }
+        }
+        async{
+            updateTextThread.run()
         }
     }
 
