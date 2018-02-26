@@ -57,7 +57,6 @@ class AdminActivity : AppCompatActivity() {
     }
 
     private fun setActionBar(heading: String) {
-        //Sets the title
         val actionBar = supportActionBar
         actionBar!!.setHomeButtonEnabled(true)
         actionBar.setDisplayHomeAsUpEnabled(false)
