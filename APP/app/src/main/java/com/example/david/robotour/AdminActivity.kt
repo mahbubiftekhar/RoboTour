@@ -38,6 +38,7 @@ class AdminActivity : AppCompatActivity() {
 
     private val updateTextThread: Thread = object : Thread() {
         /*This thread is used to update the header*/
+        /*Will update the header automatically*/
         override fun run() {
             while (!isInterrupted) {
                 try {
