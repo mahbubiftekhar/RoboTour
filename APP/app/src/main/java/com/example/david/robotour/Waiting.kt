@@ -109,16 +109,18 @@ class Waiting : AppCompatActivity() {
             while (!isInterrupted) {
                 println("in the thread Waiting 1")
                 try {
-                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
-                    if (user == 1) {
-                        if (a[17] == 'Y') {
-                            //If user 1 has made their selection and you are not user 1
-                            switchToNavigate()
-                        }
-                    } else {
-                        //If user 2 has made their selection and you are not user 2
-                        if (a[16] == 'Y') {
-                            switchToNavigate()
+                    async {
+                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                        if (user == 1) {
+                            if (a[17] == 'Y') {
+                                //If user 1 has made their selection and you are not user 1
+                                switchToNavigate()
+                            }
+                        } else {
+                            //If user 2 has made their selection and you are not user 2
+                            if (a[16] == 'Y') {
+                                switchToNavigate()
+                            }
                         }
                     }
                 } catch (e: InterruptedException) {
