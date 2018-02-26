@@ -74,13 +74,16 @@ class AdminActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
         STOP_ROBOTOUR.setOnClickListener {
+            /*Sets Robot stop to true*/
             async {
                 sendPUTNEW(11, "T")
             }
             vibrate()
         }
         AUX_RESET.setOnClickListener {
-            for (i in 10..17) {
+            /*Resets all the AUX, This means that the stuff from stuff such as skip etc will be reset, this
+            excludes the user data */
+            for (i in 10..15) {
                 async {
                     sendPUTNEW(i, "F")
                 }
@@ -89,6 +92,7 @@ class AdminActivity : AppCompatActivity() {
         }
 
         RESET_EVERYTHING.setOnClickListener {
+            //Resets all from 0 .. 17
             for (i in 0..17) {
                 async {
                     sendPUTNEW(i, "F")
@@ -97,6 +101,7 @@ class AdminActivity : AppCompatActivity() {
             vibrate()
         }
         USER1_ONLINE.setOnClickListener {
+            //Set user one as online
             async {
                 sendPUTNEW(16, "T")
             }
@@ -104,6 +109,7 @@ class AdminActivity : AppCompatActivity() {
         }
 
         USER2_ONLINE.setOnClickListener {
+            //Set user two as online
             async {
                 sendPUTNEW(17, "T")
             }
@@ -111,6 +117,7 @@ class AdminActivity : AppCompatActivity() {
         }
 
         USER_1_OFF.setOnClickListener {
+            //Set user one as offline
             async {
                 sendPUTNEW(16, "F")
             }
@@ -118,6 +125,7 @@ class AdminActivity : AppCompatActivity() {
         }
 
         USER_2_OFF.setOnClickListener {
+            //Set user two as offline
             async {
                 sendPUTNEW(17, "F")
             }
@@ -125,6 +133,7 @@ class AdminActivity : AppCompatActivity() {
         }
 
         SWITCH_USER.setOnClickListener {
+            /*This will change the user, This is defaulted as 1, user two must be selected itself*/
             val a = loadInt("user")
             when (a) {
                 0 -> {
@@ -145,6 +154,7 @@ class AdminActivity : AppCompatActivity() {
             }
         }
         async{
+            //This languages the user thread to check for updates
             updateTextThread.run()
         }
     }

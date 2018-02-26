@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
                         count++
                         vibrate()
                     } else {
+                        interuptPicturesThread()
                         switchToAdmin()
                     }
                     true
