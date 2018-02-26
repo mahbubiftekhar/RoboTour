@@ -662,12 +662,20 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
+    private fun resetServer() {
+        for (i in 0..17) {
+                sendPUTNEW(i, "F")
+        }
+    }
     override fun onBackPressed() {
         /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
         Send the user back to MainActivity */
         alert(exitDesc) {
             positiveButton(positive) {
                 t.interrupt()
+                async{
+                    resetServer()
+                }
                 if (userid == "1") {
                     async {
                         sendPUTNEW(16, "F")
@@ -688,6 +696,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (isNetworkConnected()) {
             sendPUTNEW(12, userid)
             switchToMain()
+            async{
+                resetServer()
+            }
             if (userid == "1") {
                 async {
                     sendPUTNEW(16, "F")
