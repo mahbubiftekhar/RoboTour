@@ -37,12 +37,6 @@ class MainActivity : AppCompatActivity() {
         startActivity<AdminActivity>()
     }
 
-    public override fun onDestroy() {
-        pictureThread.interrupt() //Stop the thread advertising all the art pieces
-        clearFindViewByIdCache()
-        super.onDestroy()
-    }
-
     public override fun onStop() {
         pictureThread.interrupt() //Stop the thread advertising all the art pieces
         clearFindViewByIdCache()

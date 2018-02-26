@@ -77,30 +77,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts!!.stop()
             tts!!.shutdown()
         }
-        if (userid == "1") {
-            async {
-                sendPUTNEW(16, "F")
-            }
-        } else if (userid == "2") {
-            async {
-                sendPUTNEW(17, "F")
-            }
-        }
         super.onDestroy()
     }
 
-    public override fun onStop() {
-        if (userid == "1") {
-            async {
-                sendPUTNEW(16, "F")
-            }
-        } else {
-            async {
-                sendPUTNEW(17, "F")
-            }
-        }
-        super.onStop()
-    }
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
@@ -698,7 +677,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun cancelGuideTotal() {
         if (isNetworkConnected()) {
-            sendPUTNEW(12, userid.toString())
+            sendPUTNEW(12, userid)
             switchToMain()
         } else {
             toast("Check your network connection, command not sent")

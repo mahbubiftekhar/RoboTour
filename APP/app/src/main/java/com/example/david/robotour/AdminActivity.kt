@@ -69,16 +69,6 @@ class AdminActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
-    override fun onDestroy() {
-        updateTextThread.interrupt()
-        super.onDestroy()
-    }
-
-    override fun onStop() {
-        updateTextThread.interrupt()
-        super.onStop()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)

@@ -77,20 +77,6 @@ class Waiting : AppCompatActivity() {
         }
     }
 
-    public override fun onDestroy() {
-        pictureThread.interrupt() //Stop the thread advertising all the art pieces
-        t.interrupt() // Stop the thread looking for the other use
-        clearFindViewByIdCache()
-        super.onDestroy()
-    }
-
-    public override fun onStop() {
-        pictureThread.interrupt() //Stop the thread advertising all the art pieces
-        t.interrupt() // Stop the thread looking for the other use
-        clearFindViewByIdCache()
-        super.onStop()
-    }
-
     fun switchToNavigate() {
         Thread.sleep(6500) //This should be removed in the final implementation
         pictureThread.interrupt() //Stop the thread advertising all the art pieces
