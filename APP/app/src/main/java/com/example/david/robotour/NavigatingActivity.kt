@@ -77,6 +77,15 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts!!.stop()
             tts!!.shutdown()
         }
+        if (userid == "1") {
+            async {
+                sendPUTNEW(16, "F")
+            }
+        } else if (userid == "2") {
+            async {
+                sendPUTNEW(17, "F")
+            }
+        }
         super.onDestroy()
     }
 
@@ -677,7 +686,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun cancelGuideTotal() {
         if (isNetworkConnected()) {
-            sendPUTNEW(12, userid)
+            sendPUTNEW(12, userid.toString())
             switchToMain()
         } else {
             toast("Check your network connection, command not sent")

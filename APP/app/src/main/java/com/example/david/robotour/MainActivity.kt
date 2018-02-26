@@ -12,6 +12,7 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.preference.PreferenceManager
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.Toast
@@ -33,14 +34,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun switchToAdmin() {
-        pictureThread.interrupt()
         startActivity<AdminActivity>()
-    }
-
-    public override fun onStop() {
-        pictureThread.interrupt() //Stop the thread advertising all the art pieces
-        clearFindViewByIdCache()
-        super.onStop()
     }
 
     private fun isNetworkConnected(): Boolean {
@@ -82,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 onLongClick {
-                    if (count < 2) {
+                    if (count < 5) {
                         count++
                         vibrate()
                     } else {
