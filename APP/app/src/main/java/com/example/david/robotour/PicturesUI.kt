@@ -100,7 +100,6 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                     async{
                                         sendList()
                                         sendPUTNEW(16, "T")
-
                                     }
                                     async {
                                         val a = PicturesActivity()
@@ -120,12 +119,6 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
             }
         }
     }
-    private fun loadInt(key: String): Int {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
-        return sharedPreferences.getInt(key, 0)
-    }
-
     private fun sendList() {
         /*This function will upload to the server the required items simply - positive uploads only*/
         allArtPieces

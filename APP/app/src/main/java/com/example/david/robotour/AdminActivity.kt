@@ -19,58 +19,78 @@ import java.util.ArrayList
 import org.jetbrains.anko.*
 
 class AdminActivity : AppCompatActivity() {
+    private fun sendPUTNEW(identifier: Int, command: String) {
+        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
+        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
+        * as security exception - just a heads up */
+        val httpclient = DefaultHttpClient()
+        val httPpost = HttpPost(url)
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
+            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
+            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+            httpclient.execute(httPpost)
+        } catch (e: ClientProtocolException) {
+        } catch (e: IOException) {
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
         supportActionBar?.hide() //hide actionbar
-
         STOP_ROBOTOUR.setOnClickListener {
-            async{
-                sendPUTNEW(11,"T")
+            async {
+                sendPUTNEW(11, "T")
             }
+            vibrate()
         }
         AUX_RESET.setOnClickListener {
-            for(i in 10..17){
-                async{
-                    sendPUTNEW(i,"F")
+            for (i in 10..17) {
+                async {
+                    sendPUTNEW(i, "F")
                 }
             }
+            vibrate()
         }
 
         RESET_EVERYTHING.setOnClickListener {
-            for(i in 0..17){
-                async{
-                    sendPUTNEW(i,"F")
+            for (i in 0..17) {
+                async {
+                    sendPUTNEW(i, "F")
                 }
             }
+            vibrate()
         }
-
         USER1_ONLINE.setOnClickListener {
-            async{
-                sendPUTNEW(16,"T")
+            async {
+                sendPUTNEW(16, "T")
             }
+            vibrate()
         }
 
         USER2_ONLINE.setOnClickListener {
-          async{
-              sendPUTNEW(17,"T")
-          }
+            async {
+                sendPUTNEW(17, "T")
+            }
+            vibrate()
         }
 
         USER_1_OFF.setOnClickListener {
-            async{
-                sendPUTNEW(16,"F")
+            async {
+                sendPUTNEW(16, "F")
             }
+            vibrate()
         }
 
         USER_2_OFF.setOnClickListener {
-            async{
-                sendPUTNEW(17,"F")
+            async {
+                sendPUTNEW(17, "F")
             }
+            vibrate()
         }
 
-        SWITCH_USER.setOnClickListener{
+        SWITCH_USER.setOnClickListener {
             val a = loadInt("user")
             when (a) {
                 0 -> {
@@ -114,21 +134,5 @@ class AdminActivity : AppCompatActivity() {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         return sharedPreferences.getInt(key, 0)
-    }
-
-    private fun sendPUTNEW(identifier: Int, command: String) {
-        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
-        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
-        * as security exception - just a heads up */
-        val httpclient = DefaultHttpClient()
-        val httPpost = HttpPost(url)
-        try {
-            val nameValuePairs = ArrayList<NameValuePair>(4)
-            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
-            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
-            httpclient.execute(httPpost)
-        } catch (e: ClientProtocolException) {
-        } catch (e: IOException) {
-        }
     }
 }

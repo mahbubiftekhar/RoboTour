@@ -101,9 +101,9 @@ class Server():
     # the rest is sorted
     def updateArtPiece(self, nextArtWork):
         if self.previousArtPiece != "-1":
-            self.httpPost(previousArtPiece, "F")
-        self.httpPost(nextArtWork, "N")
-        self.previousArtPiece = nextArtWork
+        #self.httpPost(previousArtPiece, "F")
+            self.httpPost(nextArtWork, "N")
+            self.previousArtPiece = nextArtWork
 
 
     ###########
@@ -144,3 +144,5 @@ class Server():
         return self.commands
     def getPicturesToGo(self):
         return self.picturesToGoTO
+    while True:
+        print(user1Check())

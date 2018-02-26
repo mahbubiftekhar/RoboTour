@@ -77,10 +77,23 @@ class Waiting : AppCompatActivity() {
         }
     }
 
+    public override fun onDestroy() {
+        pictureThread.interrupt() //Stop the thread advertising all the art pieces
+        t.interrupt() // Stop the thread looking for the other use
+        clearFindViewByIdCache()
+        super.onDestroy()
+    }
+
+    public override fun onStop() {
+        pictureThread.interrupt() //Stop the thread advertising all the art pieces
+        t.interrupt() // Stop the thread looking for the other use
+        clearFindViewByIdCache()
+        super.onStop()
+    }
+
     fun switchToNavigate() {
         Thread.sleep(6500) //This should be removed in the final implementation
         pictureThread.interrupt() //Stop the thread advertising all the art pieces
-        pictureThread.interrupt()
         t.interrupt() // Stop the thread looking for the other use
         clearFindViewByIdCache()
         startActivity<NavigatingActivity>("language" to language) // now we can switch the activity
@@ -96,19 +109,15 @@ class Waiting : AppCompatActivity() {
             while (!isInterrupted) {
                 println("in the thread Waiting 1")
                 try {
+                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
                     if (user == 1) {
-                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user2.php").readText()
-                        if (a == "Y") {
+                        if (a[17] == 'Y') {
                             //If user 1 has made their selection and you are not user 1
-                            println("++++ AHA")
                             switchToNavigate()
                         }
                     } else {
-                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-                        println("USERS ID IS 2")
                         //If user 2 has made their selection and you are not user 2
-                        if (a == "Y") {
-                            println("++++ AHA")
+                        if (a[16] == 'Y') {
                             switchToNavigate()
                         }
                     }

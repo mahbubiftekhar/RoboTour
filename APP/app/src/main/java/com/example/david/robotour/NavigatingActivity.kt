@@ -89,6 +89,18 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         super.onDestroy()
     }
 
+    public override fun onStop() {
+        if (userid == "1") {
+            async {
+                sendPUTNEW(16, "F")
+            }
+        } else {
+            async {
+                sendPUTNEW(17, "F")
+            }
+        }
+        super.onStop()
+    }
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts

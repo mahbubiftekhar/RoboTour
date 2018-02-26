@@ -34,6 +34,18 @@ class PicturesActivity : AppCompatActivity() {
     lateinit var t: Thread
     private var language = ""
 
+    public override fun onDestroy() {
+        t.interrupt() // Stop the thread looking for the other use
+        clearFindViewByIdCache()
+        super.onDestroy()
+    }
+
+    public override fun onStop() {
+        t.interrupt() // Stop the thread looking for the other use
+        clearFindViewByIdCache()
+        super.onStop()
+    }
+
     private fun translate(textToTranslate: List<String>): MutableList<String> {
         /*This function takes a list and returns a list of translated text using Google's API
         * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
