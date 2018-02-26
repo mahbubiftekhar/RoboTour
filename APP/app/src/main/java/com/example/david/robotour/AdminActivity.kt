@@ -19,7 +19,6 @@ import java.util.ArrayList
 import org.jetbrains.anko.*
 import java.net.URL
 
-
 class AdminActivity : AppCompatActivity() {
     private fun sendPUTNEW(identifier: Int, command: String) {
         val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
@@ -56,6 +55,7 @@ class AdminActivity : AppCompatActivity() {
     }
 
     private fun setActionBar(heading: String) {
+        //Sets the title
         val actionBar = supportActionBar
         actionBar!!.setHomeButtonEnabled(true)
         actionBar.setDisplayHomeAsUpEnabled(false)
