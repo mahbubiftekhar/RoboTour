@@ -5,7 +5,7 @@ import random
 
 class DataLogger():
 
-	def __init__(self, name):
+	def __init__(self, name, folder='./'):
 
 		self.name = name
 
@@ -16,8 +16,8 @@ class DataLogger():
 
 		self.lines_per_write = 1
 		self.lines_in_buffer = 0
-		self.buffer = ""
-		self.filename = self.name+time.strftime("_%d_%m_%H-%M.csv")
+		self.buffer = []
+		self.filename = folder+'/'+self.name+time.strftime("_%d_%m_%H-%M.csv")
 		
 	def init(self):
 		# TODO: consider using binary mode
@@ -35,7 +35,7 @@ class DataLogger():
 	
 	def write_buffer(self):
 		with open(self.filename, mode='a') as f:
-			f.write(self.buffer)
+			f.write(''.join(self.buffer))
 
 	def create_header(self):
 		entry = ""
@@ -63,23 +63,23 @@ class DataLogger():
 			print("Please initiate the logger before making an entry")
 			return
 
-		entry = ""
-		entry += self.timestamp.get_record()
+		entry = []
+		entry.append(self.timestamp.get_record())
 		for c in self.channels:
-			entry += ','
-			entry += c.get_record()
-		entry+= '\n'
-		return entry
+			entry.append(",{}".format(c.get_record()))
+
+		entry.append('\n')
+		return ''.join(entry)
 
 	def log(self):
 		if not self.initiated:
 			print("Please initiate the logger before making a log")
 			return
-		self.buffer += self.make_entry()
+		self.buffer.append(self.make_entry())
 		self.lines_in_buffer += 1
 		if self.lines_in_buffer == self.lines_per_write:
 			self.write_buffer()
-			self.buffer = ""
+			self.buffer = []
 			self.lines_in_buffer = 0
 	
 
