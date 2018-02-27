@@ -21,7 +21,7 @@ class SensorHub():
 		# time to have the entire frame transmitted
 		self.frame_timeout = 20
 
-		self.__DEBUG__ = True
+		self.__DEBUG__ = False
 
 		self.sensor_values = {}
 
