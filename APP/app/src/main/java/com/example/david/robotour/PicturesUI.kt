@@ -106,7 +106,8 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                         val a = PicturesActivity()
                                         a.t.interrupt() //Stops the thread
                                     }
-                                    startActivity<Waiting>("language" to language)
+                                    startActivity<NavigatingActivity>("language" to language)
+                                    //startActivity<Waiting>("language" to language)
                                 }
                                 negativeButton(negative) {
                                     // navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))

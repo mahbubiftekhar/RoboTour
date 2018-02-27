@@ -247,7 +247,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         relativeLayout {
-            floatingActionButton {
+            /* floatingActionButton {
                 //UI
                 imageResource = R.drawable.ic_volume_up_black_24dp
                 //ColorStateList usually requires a list of states but this works for a single color
@@ -268,7 +268,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     }
                     speakOut(speakText)*/
                 }
-            }
+            } */
             verticalLayout {
                 lparams { width = matchParent }
                 titleView = textView {
@@ -279,7 +279,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
                 //get image the pictures.php file that is true
                 imageView = imageView {
-                    setImageResource(R.drawable.robotourfornavigating)
+                   // setImageResource(R.drawable.robotourfornavigating)
                     backgroundColor = Color.TRANSPARENT //Removes gray border
                     gravity = Gravity.CENTER_HORIZONTAL
                 }.lparams {

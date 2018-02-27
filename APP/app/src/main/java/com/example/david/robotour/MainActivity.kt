@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
             advertisements.add(R.drawable.new_exhibit)
             advertisements.add(R.drawable.gift_shop)
             //This thread essentially starts the pictures at the bottom of the screen
-           pictureThread.start()
+          // pictureThread.start()
         }
     }
 

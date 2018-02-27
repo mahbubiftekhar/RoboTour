@@ -38,7 +38,14 @@ class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val langua
                 tableLayout {
                     textView {
                         id = 0
-                        text = list[i].name
+                        text = when (language) {
+                            "German" -> list[i].nameGerman
+                            "French" -> list[i].nameFrench
+                            "Spanish" -> list[i].nameSpanish
+                            "Chinese" -> list[i].nameChinese
+                            else -> list[i].name
+
+                        }
                         textSize = 16f
                         typeface = Typeface.DEFAULT_BOLD
                         padding = dip(5)
