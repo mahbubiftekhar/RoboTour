@@ -13,6 +13,7 @@ import android.view.Gravity
 import android.widget.ImageView
 import android.widget.Toast
 import kotlinx.android.synthetic.*
+import java.io.InterruptedIOException
 
 
 class MainActivity : AppCompatActivity() {
@@ -102,6 +103,8 @@ class MainActivity : AppCompatActivity() {
                     Thread.sleep(3000)
                     a++
                 } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
                 }
             }

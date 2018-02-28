@@ -29,6 +29,7 @@ import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.floatingActionButton
 import java.io.IOException
+import java.io.InterruptedIOException
 import java.net.URL
 import java.util.*
 
@@ -643,9 +644,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         )
                     } catch (e: InterruptedException) {
                         Thread.currentThread().interrupt()
-                        if (Thread.currentThread() == null) {
-                            Thread.currentThread().interrupt()
-                        }
+                    } catch (e: InterruptedIOException) {
+                        Thread.currentThread().interrupt()
                     }
                 }
             }
@@ -752,6 +752,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (isNetworkConnected()) {
             sendPUTNEW(12, userid)
             switchToMain()
+            interruptThread()
             if (userid == "1") {
                 async {
                     sendPUTNEW(16, "F")

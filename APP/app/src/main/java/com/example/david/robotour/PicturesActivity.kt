@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager
 import com.google.cloud.translate.Translate
 import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
+import java.io.InterruptedIOException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -179,6 +180,9 @@ class PicturesActivity : AppCompatActivity() {
                         }
                         Thread.sleep(100)
                     } catch (e: InterruptedException) {
+                        Thread.currentThread().interrupt()
+                    } catch (e: InterruptedIOException) {
+                        Thread.currentThread().interrupt()
                     }
                 }
             }

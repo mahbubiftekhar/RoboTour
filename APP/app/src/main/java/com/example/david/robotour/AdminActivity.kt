@@ -17,6 +17,7 @@ import org.apache.http.message.BasicNameValuePair
 import java.io.IOException
 import java.util.ArrayList
 import org.jetbrains.anko.*
+import java.io.InterruptedIOException
 import java.net.URL
 
 
@@ -61,6 +62,8 @@ class AdminActivity : AppCompatActivity() {
                     }
                     Thread.sleep(100)
                 } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
                 }
             }
