@@ -527,6 +527,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             break
                                         } else if (a[i] == 'A') {
                                             /*This will mean that when the robot has arrived at the */
+                                            println("+++speaking"+speaking)
+                                            println("++++$i")
                                             if (speaking != i) {
                                                 speaking = i
                                                 speakOut(i)
@@ -550,9 +552,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                         else -> descriptionView?.text = allArtPieces[i].English_Desc
                                                     }
                                                 }
-                                            } else {
-                                                /*Do nothing, it is either being played or already has been */
-                                            }
+                                            } else {/*Do nothing, it is either being played or already has been */ }
                                         }
                                     }
                                     if (userid == 1.toString()) {
