@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
+import android.view.Gravity.CENTER
 import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.*
@@ -33,13 +34,13 @@ class Waiting : AppCompatActivity() {
         language = intent.getStringExtra("language") //Getting the language from the previous activity
         user = loadInt("user") //Set the user number
 
-        when (language) {
-            "English" -> message = "Waiting for other user..."
-            "German" -> message = "Bitte Warten Sie Auf den Anderen User..."
-            "French" -> message = "Veuillez Attendre l'Autre Utilisateur..."
-            "Spanish" -> message = "Por Favor Espere al Otro Usuario..."
-            "Chinese" -> message = "请等待其他用户..."
-            else -> message = "Please Wait For the Other User..."
+        message = when (language) {
+            "English" -> "Waiting for other user..."
+            "German" -> "Bitte Warten Sie Auf den Anderen User..."
+            "French" -> "Veuillez Attendre l'Autre Utilisateur..."
+            "Spanish" -> "Por Favor Espere al Otro Usuario..."
+            "Chinese" -> "请等待其他用户..."
+            else -> "Please Wait For the Other User..."
         }
 
         verticalLayout {
@@ -53,7 +54,7 @@ class Waiting : AppCompatActivity() {
                 typeface = Typeface.DEFAULT_BOLD
                 padding = dip(5)
                 topPadding = dip(20)
-                gravity = Gravity.CENTER
+                gravity = CENTER
                 text = message
             }
             imageView = imageView {
@@ -66,7 +67,7 @@ class Waiting : AppCompatActivity() {
                 text = ""
                 textSize = 20f
                 typeface = Typeface.DEFAULT
-                this.gravity = Gravity.CENTER
+                this.gravity = CENTER
                 padding = dip(10)
             }
             background = ColorDrawable(Color.parseColor("#EEEEEE"))

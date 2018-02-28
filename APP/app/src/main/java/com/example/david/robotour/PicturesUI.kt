@@ -2,7 +2,6 @@ package com.example.david.robotour
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
-import android.preference.PreferenceManager
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
@@ -17,7 +16,8 @@ import org.jetbrains.anko.*
 import java.io.IOException
 import java.util.ArrayList
 
-class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: String, val ctx: Context) : AnkoComponent<PicturesActivity> {
+@Suppress("DEPRECATION")
+class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val language: String, private val ctx: Context) : AnkoComponent<PicturesActivity> {
     private lateinit var a: String
     private var navigate = ""
     lateinit var navigateButton: Button

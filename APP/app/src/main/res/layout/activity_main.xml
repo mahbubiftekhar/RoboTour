@@ -8,10 +8,11 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        app:srcCompat="@drawable/robotour_small" />
+        app:srcCompat="@drawable/robotour_small"
+        android:contentDescription="TODO" />
 
     <Button
         android:id="@+id/startButton"

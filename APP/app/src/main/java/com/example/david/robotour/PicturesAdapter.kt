@@ -10,7 +10,8 @@ import android.widget.LinearLayout
 import org.jetbrains.anko.*
 import java.util.ArrayList
 
-class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val language:String) : BaseAdapter() {
+@Suppress("DEPRECATION")
+class PicturesAdapter(private val list: ArrayList<PicturesActivity.ArtPiece>, private val language:String) : BaseAdapter() {
 
     //Describe ListView Layout using Anko
     override fun getView(i: Int, v: View?, parent: ViewGroup?): View {

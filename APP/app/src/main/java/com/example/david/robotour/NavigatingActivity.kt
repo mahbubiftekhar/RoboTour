@@ -32,6 +32,7 @@ import java.io.IOException
 import java.net.URL
 import java.util.*
 
+@Suppress("DEPRECATION")
 class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private val btnHgt = 77
     private var btnTextSize = 24f
@@ -58,7 +59,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var descriptionView: TextView? = null
     private var stopButton: Button? = null
     private lateinit var toiletPopUp: AlertDialogBuilder
-    private var Skippable = true
+    private var skippable = true
     private lateinit var t: Thread
     private var tts: TextToSpeech? = null
     private var currentPic = -1
@@ -313,10 +314,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 height = dip(btnHgt)
                                 width = wrapContent
                                 onClick {
-                                    if (toggleStBtn) {
-                                        alertStBtn = startDesc
+                                    alertStBtn = if (toggleStBtn) {
+                                        startDesc
                                     } else {
-                                        alertStBtn = stopDesc
+                                        stopDesc
                                     }
                                     alert(alertStBtn) {
                                         positiveButton(positive) {
@@ -378,40 +379,38 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             verticalLayout {
                                                 listView {
                                                     val options: List<String>
-                                                    val SelectSpeed: String
+                                                    val selectSpeed: String
                                                     when (language) {
                                                         "English" -> {
                                                             options = listOf("Slow", "Normal", "Fast")
-                                                            SelectSpeed = "Select speed"
+                                                            selectSpeed = "Select speed"
                                                         }
                                                         "French" -> {
                                                             options = listOf("lent", "Ordinaire", "vite")
-                                                            SelectSpeed = "Sélectionnez la vitesse"
+                                                            selectSpeed = "Sélectionnez la vitesse"
                                                         }
                                                         "Chinese" -> {
                                                             options = listOf("慢", "正常", "快速")
-                                                            SelectSpeed = "选择速度"
+                                                            selectSpeed = "选择速度"
                                                         }
                                                         "Spanish" -> {
                                                             options = listOf("lento", "Normal", "rápido")
-                                                            SelectSpeed = "Seleccionar velocidad"
+                                                            selectSpeed = "Seleccionar velocidad"
                                                         }
                                                         "German" -> {
                                                             options = listOf("Langsam", "Normal", "Schnell")
-                                                            SelectSpeed = "Wählen Sie Geschwindigkeit"
+                                                            selectSpeed = "Wählen Sie Geschwindigkeit"
                                                         }
                                                         else -> {
                                                             options = listOf("Slow", "Normal", "Fast")
-                                                            SelectSpeed = "Select speed"
+                                                            selectSpeed = "Select speed"
                                                         }
                                                     }
-                                                    selector(SelectSpeed, options) { j ->
-                                                        if (j == 0) {
-                                                            toast(options[0])
-                                                        } else if (j == 1) {
-                                                            toast(options[1])
-                                                        } else {
-                                                            toast(options[2])
+                                                    selector(selectSpeed, options) { j ->
+                                                        when (j) {
+                                                            0 -> toast(options[0])
+                                                            1 -> toast(options[1])
+                                                            else -> toast(options[2])
                                                         }
                                                     }
                                                 }
@@ -497,8 +496,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             runOnUiThread {
                                                 //Change the image, text and descrioption
                                                 imageView?.setImageResource(allArtPieces[i].imageID)
-                                                val text: String
-                                                text = when (language) {
+                                                val text: String = when (language) {
                                                     "German" -> allArtPieces[i].nameGerman
                                                     "French" -> allArtPieces[i].nameFrench
                                                     "Spanish" -> allArtPieces[i].nameSpanish
@@ -524,8 +522,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         }
                                     }
                                     if (userid == 1.toString()) {
-                                        if (a[10].toInt() == 2 && Skippable) {
-                                            Skippable = false
+                                        if (a[10].toInt() == 2 && skippable) {
+                                            skippable = false
                                             runOnUiThread {
                                                 alert(skip) {
                                                     cancellable(false)
@@ -541,7 +539,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                         if (isNetworkConnected()) {
                                                             rejectSkip()
                                                         } else {
-                                                            Skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                            skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
                                                             Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                         }
                                                     }
@@ -549,8 +547,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             }
                                         }
                                     } else if (userid == 2.toString()) {
-                                        if (a[10].toInt() == 1 && Skippable) {
-                                            Skippable = false
+                                        if (a[10].toInt() == 1 && skippable) {
+                                            skippable = false
                                             runOnUiThread {
                                                 alert(skip) {
                                                     cancellable(false)
@@ -566,7 +564,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                         if (isNetworkConnected()) {
                                                             rejectSkip()
                                                         } else {
-                                                            Skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                            skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
                                                             Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                         }
                                                     }
@@ -742,7 +740,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             async {
                 sendPUTNEW(10, "Y")
                 Thread.sleep(400)
-                Skippable = true
+                skippable = true
             }
         } else {
             toast("Check your network connection, command not sent")
