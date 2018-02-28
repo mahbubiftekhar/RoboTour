@@ -103,7 +103,7 @@ class AdminActivity : AppCompatActivity() {
                 vibrate()
                 async {
                     sendPUTNEW(destination.toInt(), message)
-                    runOnUiThread{
+                    runOnUiThread {
                         toast("Sent $message to $destination successfully")
                     }
                 }

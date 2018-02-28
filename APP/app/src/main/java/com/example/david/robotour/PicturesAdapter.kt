@@ -11,17 +11,17 @@ import org.jetbrains.anko.*
 import java.util.ArrayList
 
 @Suppress("DEPRECATION")
-class PicturesAdapter(private val list: ArrayList<PicturesActivity.ArtPiece>, private val language:String) : BaseAdapter() {
+class PicturesAdapter(private val list: ArrayList<PicturesActivity.ArtPiece>, private val language: String) : BaseAdapter() {
 
     //Describe ListView Layout
     override fun getView(i: Int, v: View?, parent: ViewGroup?): View {
         //Change text depending on language selected
         val languageText = when (language) {
-            "English" ->  list[i].English_Desc
-            "French" ->  list[i].French_Desc
-            "Chinese" ->  list[i].Chinese_Desc
-            "Spanish" ->  list[i].Spanish_Desc
-            "German" ->  list[i].German_Desc
+            "English" -> list[i].English_Desc
+            "French" -> list[i].French_Desc
+            "Chinese" -> list[i].Chinese_Desc
+            "Spanish" -> list[i].Spanish_Desc
+            "German" -> list[i].German_Desc
             else -> ""
         }
         val element = with(parent!!.context) {
@@ -69,14 +69,17 @@ class PicturesAdapter(private val list: ArrayList<PicturesActivity.ArtPiece>, pr
 
         return element
     }
-     //Returns the String stored at position x of the list
+
+    //Returns the String stored at position x of the list
     override fun getItem(i: Int): Int {
         return list[i].eV3ID
     }
+
     //Returns the length of the list
     override fun getCount(): Int {
         return list.size
     }
+
     override fun getItemId(position: Int): Long {
         //can be used to return the item's ID column of table
         return 0L

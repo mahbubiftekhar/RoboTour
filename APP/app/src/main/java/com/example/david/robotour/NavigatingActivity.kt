@@ -132,6 +132,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
 
     }
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         userid = loadInt("user").toString()
@@ -526,30 +527,30 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         } else if (a[i] == 'A') {
                                             /*This will mean that when the robot has arrived at the */
 
-                                        if(speaking!=i){
+                                            if (speaking != i) {
                                                 speakOut(i)
                                                 speaking = i
-                                            runOnUiThread {
-                                                //Change the image, text and descrioption
-                                                imageView?.setImageResource(allArtPieces[i].imageID)
-                                                val text: String = when (language) {
-                                                    "German" -> allArtPieces[i].nameGerman
-                                                    "French" -> allArtPieces[i].nameFrench
-                                                    "Spanish" -> allArtPieces[i].nameSpanish
-                                                    "Chinese" -> allArtPieces[i].nameChinese
-                                                    else -> allArtPieces[i].name
+                                                runOnUiThread {
+                                                    //Change the image, text and descrioption
+                                                    imageView?.setImageResource(allArtPieces[i].imageID)
+                                                    val text: String = when (language) {
+                                                        "German" -> allArtPieces[i].nameGerman
+                                                        "French" -> allArtPieces[i].nameFrench
+                                                        "Spanish" -> allArtPieces[i].nameSpanish
+                                                        "Chinese" -> allArtPieces[i].nameChinese
+                                                        else -> allArtPieces[i].name
 
+                                                    }
+                                                    titleView?.text = text
+                                                    currentPic = i /*This is to allow for the pics description to be read out to the user*/
+                                                    when (intent.getStringExtra("language")) {
+                                                        "French" -> descriptionView?.text = allArtPieces[i].French_Desc
+                                                        "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
+                                                        "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
+                                                        "German" -> descriptionView?.text = allArtPieces[i].German_Desc
+                                                        else -> descriptionView?.text = allArtPieces[i].English_Desc
+                                                    }
                                                 }
-                                                titleView?.text = text
-                                                currentPic = i /*This is to allow for the pics description to be read out to the user*/
-                                                when (intent.getStringExtra("language")) {
-                                                    "French" -> descriptionView?.text = allArtPieces[i].French_Desc
-                                                    "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
-                                                    "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
-                                                    "German" -> descriptionView?.text = allArtPieces[i].German_Desc
-                                                    else -> descriptionView?.text = allArtPieces[i].English_Desc
-                                                }
-                                            }
                                             } else {
                                                 /*Do nothing, it is either being played or already has been */
                                             }
@@ -657,9 +658,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun speakOut(input: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
             if (input != -1) {
-                val text: String
-                val language = intent.getStringExtra("language")
+
                 when (language) {
                     "French" -> {
                         text = allArtPieces[input].French_Desc
@@ -678,9 +680,29 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     }
                 }
                 tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
+            } else {
+                when (language) {
+                    "French" -> {
+                        text = "RoboTour calcule l'itinéraire optimal"
+                    }
+                    "Chinese" -> {
+                        text = "RoboTour正在计算最佳路线"
+                    }
+                    "Spanish" -> {
+                        text = "RoboTour está calculando la ruta óptima"
+                    }
+                    "German" -> {
+                        text = "RoboTour berechnet die optimale Route"
+                    }
+                    else -> {
+                        text = "RoboTour is calculating the optimal route"
+                    }
+                }
+                tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
             }
         }
     }
+
 
     private fun isNetworkConnected(): Boolean {
         /*Function to check if a data connection is available, if a data connection is

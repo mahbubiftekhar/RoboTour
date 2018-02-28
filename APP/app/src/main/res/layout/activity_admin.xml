@@ -118,16 +118,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:inputType="text"
-            android:hint="@string/message" />
+            android:hint="@string/message"
+            android:inputType="text" />
 
         <EditText
             android:id="@+id/destination"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:inputType="text"
-            android:hint="@string/destination" />
+            android:hint="@string/destination"
+            android:inputType="text" />
 
         <Button
             android:id="@+id/sendy"

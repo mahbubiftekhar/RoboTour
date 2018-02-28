@@ -9,6 +9,7 @@ import java.util.*
 
 class SelectLanguageActivity : AppCompatActivity() {
     data class Language(val name: String, val imageID: Int)
+
     private val languages = ArrayList<Language>()
 
     override fun onCreate(savedInstanceState: Bundle?) {

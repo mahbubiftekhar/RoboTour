@@ -112,14 +112,14 @@ class Waiting : AppCompatActivity() {
                     }
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
-                }
-                catch (e: InterruptedIOException){
+                } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
                 }
             }
         }
     }
-    private fun interruptAllThreads(){
+
+    private fun interruptAllThreads() {
         //This function interrupts all the threads
         pictureThread.interrupt()
         t.interrupt()

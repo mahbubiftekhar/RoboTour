@@ -26,7 +26,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
     private var negative = ""
 
     private fun notifyUser() {
-        Toast.makeText(ctx,toastText,Toast.LENGTH_LONG).show()
+        Toast.makeText(ctx, toastText, Toast.LENGTH_LONG).show()
     }
 
     override fun createView(ui: AnkoContext<PicturesActivity>): View = with(ui) {
@@ -97,7 +97,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                             //need to translate here
                             alert(navigate) {
                                 positiveButton(positive) {
-                                    async{
+                                    async {
                                         sendList()
                                         sendPUTNEW(16, "T")
 
@@ -133,7 +133,8 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
         val httPpost = HttpPost(url)
-        try { val nameValuePairs = ArrayList<NameValuePair>(4)
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
             nameValuePairs.add(BasicNameValuePair("command$identifier", command))
             httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
             httpclient.execute(httPpost)
