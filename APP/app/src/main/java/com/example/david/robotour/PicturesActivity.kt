@@ -18,7 +18,6 @@ import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
 import java.util.*
 import kotlin.collections.ArrayList
-import android.speech.tts.TextToSpeech
 
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
@@ -329,7 +328,7 @@ class PicturesActivity : AppCompatActivity() {
         }
     }
 
-    fun switchToMain() {
+    private fun switchToMain() {
         startActivity<MainActivity>()
     }
 
@@ -395,7 +394,7 @@ class PicturesActivity : AppCompatActivity() {
                 val cleanWords1 = ArrayList(cleanSentence1.split(" "))
 
                 //Convert strings to lowercase for string matching
-                for (j in 0..cleanWords1.size-1) {
+                for (j in 0 until cleanWords1.size) {
                     cleanWords1[j] = cleanWords1[j].toLowerCase()
                 }
 
@@ -411,12 +410,12 @@ class PicturesActivity : AppCompatActivity() {
                     val cleanWords3 = ArrayList(cleanSentence3.split(" "))
 
                     //Convert strings to lowercase for string matching
-                    for (j in 0..cleanWords2.size-1) {
+                    for (j in 0 until cleanWords2.size) {
                         cleanWords2[j] = cleanWords2[j].toLowerCase()
                     }
                     cleanWords2.removeAll(insignificantWords) //removes the insignificant words
 
-                    for (j in 0..cleanWords3.size-1) {
+                    for (j in 0 until cleanWords3.size) {
                         cleanWords3[j] = cleanWords3[j].toLowerCase()
                     }
                     cleanWords3.removeAll(insignificantWords) //removes the insignificant words
@@ -448,7 +447,6 @@ class PicturesActivity : AppCompatActivity() {
                         if (resultCode == RESULT_OK) {
                             var result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                             if (language == "English") {
-                                println("+++ getting in here onActivityResult")
                                 afterAsyncSpeech(result)
                                 //If the language is english, continue no problemo
                             } else {

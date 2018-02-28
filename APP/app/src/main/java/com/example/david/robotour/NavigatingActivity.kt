@@ -128,12 +128,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         supportActionBar?.hide() //hide actionbar
         //Obtain language from PicturesUI
         vibrate()
-        /*for(i in 0..15){
-            println("+++ getting in here")
-            async{
-                sendPUTNEW(i, "F")
-            }
-        }*/
         val language = intent.getStringExtra("language")
         when (language) {
             "English" -> {
@@ -247,7 +241,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         relativeLayout {
-            /* floatingActionButton {
+             floatingActionButton {
                 //UI
                 imageResource = R.drawable.ic_volume_up_black_24dp
                 //ColorStateList usually requires a list of states but this works for a single color
@@ -257,18 +251,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 //Text-to-speech
                 onClick {
                     speakOut(currentPic) // use below code once currentArtPiece is implemented
-                    /*var speakText = ""
-                    when (language) {
-                        "English" -> speakText = currentArtPiece.English_Desc
-                        "German" -> speakText = currentArtPiece.German_Desc
-                        "French" -> speakText = currentArtPiece.French_Desc
-                        "Chinese" -> speakText = currentArtPiece.Chinese_Desc
-                        "Spanish" -> speakText = currentArtPiece.Spanish_Desc
-                        else -> speakText = currentArtPiece.English_Desc
-                    }
-                    speakOut(speakText)*/
                 }
-            } */
+            }
             verticalLayout {
                 lparams { width = matchParent }
                 titleView = textView {
@@ -279,7 +263,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
                 //get image the pictures.php file that is true
                 imageView = imageView {
-                   // setImageResource(R.drawable.robotourfornavigating)
                     backgroundColor = Color.TRANSPARENT //Removes gray border
                     gravity = Gravity.CENTER_HORIZONTAL
                 }.lparams {
@@ -373,7 +356,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                                         }
                                         negativeButton(negative) {
-                                            onBackPressed() //Call on back pressed to take them back to the main activity
+                                            onBackPressed()
+                                            //Call on back pressed to take them back to the main activity
                                         }
                                     }.show()
                                 }
@@ -508,7 +492,16 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             runOnUiThread {
                                                 //Change the image, text and descrioption
                                                 imageView?.setImageResource(allArtPieces[i].imageID)
-                                                titleView?.text = allArtPieces[i].name
+                                                var text = ""
+                                                text = when (language) {
+                                                    "German" -> allArtPieces[i].nameGerman
+                                                    "French" -> allArtPieces[i].nameFrench
+                                                    "Spanish" -> allArtPieces[i].nameSpanish
+                                                    "Chinese" -> allArtPieces[i].nameChinese
+                                                    else -> allArtPieces[i].name
+
+                                                }
+                                                titleView?.text = text
                                                 currentPic = i /*This is to allow for the pics description to be read out to the user*/
                                                 when (intent.getStringExtra("language")) {
                                                     "French" -> descriptionView?.text = allArtPieces[i].French_Desc
@@ -519,6 +512,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 }
                                             }
                                             break
+                                        } else if (a[i] == 'A'){
+                                            /*This will mean that when the robot has arrived at the */
+                                            speakOut(i)
+
                                         }
                                     }
                                     if (userid == 1.toString()) {

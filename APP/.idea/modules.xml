@@ -3,8 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/APP.iml" filepath="$PROJECT_DIR$/APP.iml" />
+      <module fileurl="file://C:\Users\MAHBUBIFTEKHAR\Desktop\ROBOTOUR\RoboTour\APP\APP.iml" filepath="C:\Users\MAHBUBIFTEKHAR\Desktop\ROBOTOUR\RoboTour\APP\APP.iml" />
       <module fileurl="file://C:\Users\MAHBUBIFTEKHAR\Documents\UNIVERSITY\YEAR3\SEM2\SYSTEMS DESIGN PROJECT\COURSEWORK\RoboTour\APP\APP.iml" filepath="C:\Users\MAHBUBIFTEKHAR\Documents\UNIVERSITY\YEAR3\SEM2\SYSTEMS DESIGN PROJECT\COURSEWORK\RoboTour\APP\APP.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\MAHBUBIFTEKHAR\Desktop\ROBOTOUR\RoboTour\APP\app\app.iml" filepath="C:\Users\MAHBUBIFTEKHAR\Desktop\ROBOTOUR\RoboTour\APP\app\app.iml" />
       <module fileurl="file://C:\Users\MAHBUBIFTEKHAR\Documents\UNIVERSITY\YEAR3\SEM2\SYSTEMS DESIGN PROJECT\COURSEWORK\RoboTour\APP\app\app.iml" filepath="C:\Users\MAHBUBIFTEKHAR\Documents\UNIVERSITY\YEAR3\SEM2\SYSTEMS DESIGN PROJECT\COURSEWORK\RoboTour\APP\app\app.iml" />
     </modules>
   </component>

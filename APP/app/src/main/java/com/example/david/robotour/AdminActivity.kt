@@ -20,6 +20,15 @@ import org.jetbrains.anko.*
 import java.net.URL
 
 class AdminActivity : AppCompatActivity() {
+    /*
+    THE PURPOSE OF THIS ACTIVITY IS FOR DEBUGGING AND TESTING PURPOSES
+
+    NOT FOR THE CLIENT TO BE SEEN
+
+    M IFTEKHAR
+
+    28/02/2018
+     */
     private fun sendPUTNEW(identifier: Int, command: String) {
         val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get

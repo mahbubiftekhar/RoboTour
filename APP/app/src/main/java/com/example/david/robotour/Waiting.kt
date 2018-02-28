@@ -100,7 +100,6 @@ class Waiting : AppCompatActivity() {
                         val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user2.php").readText()
                         if (a == "Y") {
                             //If user 1 has made their selection and you are not user 1
-                            println("++++ AHA")
                             switchToNavigate()
                         }
                     } else {
@@ -108,7 +107,6 @@ class Waiting : AppCompatActivity() {
                         println("USERS ID IS 2")
                         //If user 2 has made their selection and you are not user 2
                         if (a == "Y") {
-                            println("++++ AHA")
                             switchToNavigate()
                         }
                     }

@@ -106,8 +106,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                         val a = PicturesActivity()
                                         a.t.interrupt() //Stops the thread
                                     }
-                                    startActivity<NavigatingActivity>("language" to language)
-                                    //startActivity<Waiting>("language" to language)
+                                    startActivity<Waiting>("language" to language)
                                 }
                                 negativeButton(negative) {
                                     // navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))
@@ -120,11 +119,6 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                 lparams { width = matchParent; height = matchParent; orientation = LinearLayout.VERTICAL }
             }
         }
-    }
-    private fun loadInt(key: String): Int {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
-        return sharedPreferences.getInt(key, 0)
     }
 
     private fun sendList() {
