@@ -527,10 +527,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             break
                                         } else if (a[i] == 'A') {
                                             /*This will mean that when the robot has arrived at the */
-
                                             if (speaking != i) {
-                                                speakOut(i)
                                                 speaking = i
+                                                speakOut(i)
                                                 runOnUiThread {
                                                     //Change the image, text and descrioption
                                                     imageView?.setImageResource(allArtPieces[i].imageID)
@@ -540,7 +539,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                         "Spanish" -> allArtPieces[i].nameSpanish
                                                         "Chinese" -> allArtPieces[i].nameChinese
                                                         else -> allArtPieces[i].name
-
                                                     }
                                                     titleView?.text = text
                                                     currentPic = i /*This is to allow for the pics description to be read out to the user*/

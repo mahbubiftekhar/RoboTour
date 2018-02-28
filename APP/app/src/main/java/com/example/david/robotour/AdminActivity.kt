@@ -102,7 +102,7 @@ class AdminActivity : AppCompatActivity() {
         sendy.setOnClickListener {
             val destination = destination.text.toString()
             val message = messageToSend.text.toString().toUpperCase()
-            if (destination.toInt() in 1..17 && messageValid(message)) {
+            if (destination.toInt() in 0..17 && messageValid(message)) {
                 vibrate()
                 async {
                     sendPUTNEW(destination.toInt(), message)
