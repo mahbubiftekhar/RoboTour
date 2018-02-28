@@ -263,6 +263,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                 //Text-to-speech
                 onClick {
+                    println("&&& clicked")
                     speakOut(currentPic) // use below code once currentArtPiece is implemented
                 }
             }
