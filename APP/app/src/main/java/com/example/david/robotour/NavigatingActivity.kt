@@ -14,6 +14,7 @@ import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.speech.tts.TextToSpeech
 import android.support.v4.content.res.ResourcesCompat
+import android.view.ActionMode
 import android.view.Gravity
 import android.widget.Button
 import android.widget.ImageView
@@ -65,6 +66,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var currentPic = -1
     private var startRoboTour = ""
     private var toiletPopUpBool = true
+    private var speaking = -1
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -93,8 +95,14 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     public override fun onStop() {
         interruptThread()
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
+        }
+
         super.onStop()
     }
+
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
@@ -123,8 +131,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         } else {
         }
-    }
 
+    }
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         userid = loadInt("user").toString()
@@ -247,7 +255,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         relativeLayout {
-             floatingActionButton {
+            floatingActionButton {
                 //UI
                 imageResource = R.drawable.ic_volume_up_black_24dp
                 //ColorStateList usually requires a list of states but this works for a single color
@@ -488,7 +496,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             override fun run() {
                                 async {
                                     val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
-                                    println("++++++++" +a)
+                                    println("++++++++" + a)
                                     /*This updates the picture and text for the user*/
                                     for (i in 0..9) {
                                         //This part checks for updates of the next location we are going to
@@ -515,10 +523,15 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 }
                                             }
                                             break
-                                        } else if (a[i] == 'A'){
+                                        } else if (a[i] == 'A') {
                                             /*This will mean that when the robot has arrived at the */
-                                            speakOut(i)
 
+                                        if(speaking!=i){
+                                                speakOut(i)
+                                                speaking = i
+                                            } else {
+                                                /*Do nothing, it is either being played or already has been */
+                                            }
                                         }
                                     }
                                     if (userid == 1.toString()) {
@@ -686,10 +699,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             negativeButton(negative) { /*Do nothing*/ }
         }.show()
     }
-    private fun interruptThread(){
+
+    private fun interruptThread() {
         t.interrupt()
 
     }
+
     private fun cancelGuideTotal() {
         if (isNetworkConnected()) {
             sendPUTNEW(12, userid)

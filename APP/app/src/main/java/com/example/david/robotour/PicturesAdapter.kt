@@ -13,7 +13,7 @@ import java.util.ArrayList
 @Suppress("DEPRECATION")
 class PicturesAdapter(private val list: ArrayList<PicturesActivity.ArtPiece>, private val language:String) : BaseAdapter() {
 
-    //Describe ListView Layout using Anko
+    //Describe ListView Layout
     override fun getView(i: Int, v: View?, parent: ViewGroup?): View {
         //Change text depending on language selected
         val languageText = when (language) {

@@ -181,7 +181,7 @@ class PicturesActivity : AppCompatActivity() {
                 }
             }
         }
-        //t.start() /*Start to run the thread*/
+        t.start() /*Start to run the thread*/
     }
 
     //Add mic & search icons in actionbar

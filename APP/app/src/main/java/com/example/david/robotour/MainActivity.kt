@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.*
 
 
 class MainActivity : AppCompatActivity() {
-    private var count = 0
     private var advertisements = ArrayList<Int>()
     private var imageView: ImageView? = null
     private var continueThread = true
@@ -44,16 +43,6 @@ class MainActivity : AppCompatActivity() {
         return networkInfo != null && networkInfo.isConnected
     }
 
-    private fun vibrate() {
-        if (Build.VERSION.SDK_INT > 25) { /*Attempt to not use the deprecated version if possible, if the SDK version is >25, use the newer one*/
-            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(VibrationEffect.createOneShot(300, 10))
-        } else {
-            /*for backward comparability*/
-            @Suppress("DEPRECATION")
-            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(300)
-        }
-    }
-
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,13 +64,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 onLongClick {
-                    if (count < 1) {
-                        count++
-                        vibrate()
-                    } else {
-                        interuptPicturesThread()
-                        switchToAdmin()
-                    }
+
+                    interuptPicturesThread()
+                    switchToAdmin()
+
                     true
                 }
             }
@@ -96,7 +82,7 @@ class MainActivity : AppCompatActivity() {
             advertisements.add(R.drawable.new_exhibit)
             advertisements.add(R.drawable.gift_shop)
             //This thread essentially starts the pictures at the bottom of the screen
-          pictureThread.start()
+            pictureThread.start()
         }
     }
 
@@ -104,6 +90,7 @@ class MainActivity : AppCompatActivity() {
     private val pictureThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
+
         override fun run() {
             while (!isInterrupted && continueThread) {
                 println("+++ running here")
@@ -119,13 +106,13 @@ class MainActivity : AppCompatActivity() {
                     Thread.sleep(3000)
                     a++
                 } catch (e: InterruptedException) {
-                  Thread.currentThread().interrupt()
+                    Thread.currentThread().interrupt()
                 }
             }
         }
     }
 
-    private fun interuptPicturesThread(){
+    private fun interuptPicturesThread() {
         pictureThread.interrupt()
     }
 }

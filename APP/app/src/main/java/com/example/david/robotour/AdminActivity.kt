@@ -100,6 +100,7 @@ class AdminActivity : AppCompatActivity() {
             val destination = destination.text.toString()
             val message = messageToSend.text.toString().toUpperCase()
             if (destination.toInt() in 1..17 && messageValid(message)) {
+                vibrate()
                 async {
                     sendPUTNEW(destination.toInt(), message)
                     runOnUiThread{
