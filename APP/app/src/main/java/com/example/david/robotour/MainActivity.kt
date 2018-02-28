@@ -83,14 +83,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
+    override fun onResume() {
+        async{
+            pictureThread.start()
+        }
+        super.onResume()
+    }
     private val pictureThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
-
         override fun run() {
-            while (!isInterrupted && continueThread) {
-                println("+++ running here")
+            while (!isInterrupted) {
+                println("+++ running here main activity")
                 if (a > (advertisements.size - 1)) {
                     //Reset A to avoid null pointers
                     a = 0
