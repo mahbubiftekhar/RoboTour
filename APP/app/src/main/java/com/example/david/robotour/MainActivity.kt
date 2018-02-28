@@ -86,6 +86,10 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         async{
             pictureThread.start()
+            advertisements.clear()
+            advertisements.add(R.drawable.your_ad_here)
+            advertisements.add(R.drawable.new_exhibit)
+            advertisements.add(R.drawable.gift_shop)
         }
         super.onResume()
     }
