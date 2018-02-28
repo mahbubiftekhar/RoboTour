@@ -14,7 +14,6 @@ import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.speech.tts.TextToSpeech
 import android.support.v4.content.res.ResourcesCompat
-import android.view.ActionMode
 import android.view.Gravity
 import android.widget.Button
 import android.widget.ImageView
@@ -529,6 +528,27 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         if(speaking!=i){
                                                 speakOut(i)
                                                 speaking = i
+                                            runOnUiThread {
+                                                //Change the image, text and descrioption
+                                                imageView?.setImageResource(allArtPieces[i].imageID)
+                                                val text: String = when (language) {
+                                                    "German" -> allArtPieces[i].nameGerman
+                                                    "French" -> allArtPieces[i].nameFrench
+                                                    "Spanish" -> allArtPieces[i].nameSpanish
+                                                    "Chinese" -> allArtPieces[i].nameChinese
+                                                    else -> allArtPieces[i].name
+
+                                                }
+                                                titleView?.text = text
+                                                currentPic = i /*This is to allow for the pics description to be read out to the user*/
+                                                when (intent.getStringExtra("language")) {
+                                                    "French" -> descriptionView?.text = allArtPieces[i].French_Desc
+                                                    "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
+                                                    "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
+                                                    "German" -> descriptionView?.text = allArtPieces[i].German_Desc
+                                                    else -> descriptionView?.text = allArtPieces[i].English_Desc
+                                                }
+                                            }
                                             } else {
                                                 /*Do nothing, it is either being played or already has been */
                                             }

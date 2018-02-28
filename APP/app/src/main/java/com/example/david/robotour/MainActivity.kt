@@ -9,9 +9,6 @@ import android.support.v4.content.res.ResourcesCompat
 import org.jetbrains.anko.*
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.os.Build
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.Toast
@@ -22,7 +19,6 @@ class MainActivity : AppCompatActivity() {
     private var advertisements = ArrayList<Int>()
     private var imageView: ImageView? = null
     private var continueThread = true
-
 
     override fun onBackPressed() {
         clearFindViewByIdCache()
