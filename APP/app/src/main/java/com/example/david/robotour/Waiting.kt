@@ -80,9 +80,7 @@ class Waiting : AppCompatActivity() {
 
     fun switchToNavigate() {
         Thread.sleep(6500) //This should be removed in the final implementation
-        pictureThread.interrupt() //Stop the thread advertising all the art pieces
-        pictureThread.interrupt()
-        t.interrupt() // Stop the thread looking for the other use
+        interruptAllThreads() //Interrupt all the threads
         clearFindViewByIdCache()
         startActivity<NavigatingActivity>("language" to language) // now we can switch the activity
     }
@@ -119,6 +117,11 @@ class Waiting : AppCompatActivity() {
                 }
             }
         }
+    }
+    private fun interruptAllThreads(){
+        //This function interrupts all the threads
+        pictureThread.interrupt()
+        t.interrupt()
     }
 
     private val pictureThread: Thread = object : Thread() {

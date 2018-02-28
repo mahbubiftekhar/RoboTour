@@ -77,6 +77,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts!!.stop()
             tts!!.shutdown()
         }
+        interruptThread()
         if (userid == "1") {
             async {
                 sendPUTNEW(16, "F")
@@ -89,6 +90,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         super.onDestroy()
     }
 
+    public override fun onStop() {
+        interruptThread()
+        super.onStop()
+    }
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
@@ -667,7 +672,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         Send the user back to MainActivity */
         alert(exitDesc) {
             positiveButton(positive) {
-                t.interrupt()
+                interruptThread()
                 if (userid == "1") {
                     async {
                         sendPUTNEW(16, "F")
@@ -683,7 +688,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             negativeButton(negative) { /*Do nothing*/ }
         }.show()
     }
+    private fun interruptThread(){
+        t.interrupt()
 
+    }
     private fun cancelGuideTotal() {
         if (isNetworkConnected()) {
             sendPUTNEW(12, userid)

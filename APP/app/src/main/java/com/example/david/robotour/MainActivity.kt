@@ -12,7 +12,6 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.preference.PreferenceManager
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.Toast
