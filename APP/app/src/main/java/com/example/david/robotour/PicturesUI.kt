@@ -113,7 +113,6 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                 }
                             }.show()
                         }
-
                     }
                 }.lparams { width = matchParent; height = wrapContent; weight = 0.0f }
                 lparams { width = matchParent; height = matchParent; orientation = LinearLayout.VERTICAL }

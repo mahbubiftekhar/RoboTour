@@ -484,7 +484,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             override fun run() {
                                 async {
                                     val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
-
+                                    println("++++++++" +a)
                                     /*This updates the picture and text for the user*/
                                     for (i in 0..9) {
                                         //This part checks for updates of the next location we are going to
@@ -492,7 +492,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             runOnUiThread {
                                                 //Change the image, text and descrioption
                                                 imageView?.setImageResource(allArtPieces[i].imageID)
-                                                var text = ""
+                                                val text: String
                                                 text = when (language) {
                                                     "German" -> allArtPieces[i].nameGerman
                                                     "French" -> allArtPieces[i].nameFrench
@@ -605,6 +605,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         )
                     } catch (e: InterruptedException) {
                         Thread.currentThread().interrupt()
+                        if (Thread.currentThread() == null) {
+                            Thread.currentThread().interrupt()
+                        }
                     }
                 }
             }
@@ -659,20 +662,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    private fun resetServer() {
-        for (i in 0..17) {
-                sendPUTNEW(i, "F")
-        }
-    }
     override fun onBackPressed() {
         /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
         Send the user back to MainActivity */
         alert(exitDesc) {
             positiveButton(positive) {
                 t.interrupt()
-                async{
-                    resetServer()
-                }
                 if (userid == "1") {
                     async {
                         sendPUTNEW(16, "F")
@@ -693,9 +688,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (isNetworkConnected()) {
             sendPUTNEW(12, userid)
             switchToMain()
-            async{
-                resetServer()
-            }
             if (userid == "1") {
                 async {
                     sendPUTNEW(16, "F")

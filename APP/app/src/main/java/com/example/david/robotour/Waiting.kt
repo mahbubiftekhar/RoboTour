@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.*
 import org.jetbrains.anko.*
+import java.io.InterruptedIOException
 import java.net.URL
 
 class Waiting : AppCompatActivity() {
@@ -111,6 +112,9 @@ class Waiting : AppCompatActivity() {
                         }
                     }
                 } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                }
+                catch (e: InterruptedIOException){
                     Thread.currentThread().interrupt()
                 }
             }
