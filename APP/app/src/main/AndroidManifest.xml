@@ -26,8 +26,8 @@
             tools:ignore="ExtraText" />
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             tools:ignore="ExtraText">
             android:screenOrientation="portrait"
             <intent-filter>
@@ -63,6 +63,10 @@
             android:label="@string/title_activity_finnish"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Recommendations" />
+        <activity
+            android:name=".PicturesActivity2"
+            android:label="@string/title_activity_pictures2"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
