@@ -45,14 +45,13 @@ def dijkstra(graph, src, dest, visited=[], distances={}, predecessors={}):
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
     # unittest.main()
+
     graph = {
         'A': {'B': 10, 'C': 50, 'D': 40},
         'B': {'A': 10, 'D': 20},
         'C': {'A': 50},
         'D': {'B': 20, 'A': 40}
     }
-
-
 
     (path, distance) = dijkstra(graph, 'A', 'D')
     print(str(path))
