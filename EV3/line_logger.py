@@ -6,7 +6,7 @@ import time
 
 sh = SensorHub()
 ls = HubLineSensor(sh)
-logger = DataLogger("line_sensor_test", folder='./logs/')
+logger = DataLogger("line_sensor_test", folder='../tests/logs/')
 values = {}
 
 def update_values():
@@ -56,5 +56,5 @@ elapsed_time = time.perf_counter()-time_start
 print("Done in {:.2f}s!".format(elapsed_time))
 print("{:.2f}s total poll time ({:.2f}ms average)!"\
     .format(total_poll_time / 1000, total_poll_time/total_samples))
-print("{:.2f}ms other acitiviteis excluding sleep (approx)"\
-    .format((elapsed_time-seconds-total_poll_time)/1000))
+print("{:.2f}ms other activities including sleep (approx)"\
+    .format((elapsed_time - total_poll_time/1000)*1000))
