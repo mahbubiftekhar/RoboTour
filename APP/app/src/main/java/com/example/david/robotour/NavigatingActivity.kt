@@ -63,6 +63,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var skippable = true
     private lateinit var t: Thread
     private var tts: TextToSpeech? = null
+    private var tts2: TextToSpeech? = null
     private var currentPic = -1
     private var startRoboTour = ""
     private var toiletPopUpBool = true
@@ -132,6 +133,34 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         } else {
 
         }
+        if (status == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts2!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts2!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts2!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts2!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts2!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+
+        }
 
     }
 
@@ -146,9 +175,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
         tts = TextToSpeech(this, this)
+        tts2 = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
-        //Obtain language from PicturesUI
         vibrate()
+        //Obtain language from PicturesUI
         val language = intent.getStringExtra("language")
         when (language) {
             "English" -> {
@@ -273,7 +303,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 onClick {
                     println("&&& clicked")
                     resetSpeech()
-                    speakOut(currentPic) // use below code once currentArtPiece is implemented
+                    speakOutButton(currentPic) // use below code once currentArtPiece is implemented
                 }
             }
             verticalLayout {
@@ -714,6 +744,54 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
                 println("speak 2")
                 tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            }
+        }
+    }
+
+    private fun speakOutButton(input: Int) {
+        println("getting here in speakout input:  $input")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            if (input != -1) {
+                when (language) {
+                    "French" -> {
+                        text = allArtPieces[input].French_Desc
+                    }
+                    "Chinese" -> {
+                        text = allArtPieces[input].Chinese_Desc
+                    }
+                    "Spanish" -> {
+                        text = allArtPieces[input].Spanish_Desc
+                    }
+                    "German" -> {
+                        text = allArtPieces[input].German_Desc
+                    }
+                    else -> {
+                        text = allArtPieces[input].English_Desc
+                    }
+                }
+                tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            } else {
+                when (language) {
+                    "French" -> {
+                        text = "RoboTour calcule l'itinéraire optimal"
+                    }
+                    "Chinese" -> {
+                        text = "RoboTour正在计算最佳路线"
+                    }
+                    "Spanish" -> {
+                        text = "RoboTour está calculando la ruta óptima"
+                    }
+                    "German" -> {
+                        text = "RoboTour berechnet die optimale Route"
+                    }
+                    else -> {
+                        text = "RoboTour is calculating the optimal route"
+                    }
+                }
+                println("speak 2")
+                tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
             }
         }
     }
