@@ -8,6 +8,8 @@
 /captures
 .externalNativeBuild
 
+# pycache
+*/__pycache__/*
 #for sensor
 *.o
 *.elf
@@ -15,3 +17,7 @@
 *.hex
 .*
 *~
+
+# for logging
+/tests/logs/*
+/tests/graphs/*

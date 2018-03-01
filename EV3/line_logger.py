@@ -27,10 +27,10 @@ for i in ls.sensor_names:
 logger.init()
 
 # in seconds (ish - excludes polling delay)
-seconds = 12
+seconds = 10
 
 # ish
-samples_per_second = 50
+samples_per_second = 25
 
 total_samples = seconds * samples_per_second
 delay = 1/samples_per_second
@@ -57,4 +57,4 @@ print("Done in {:.2f}s!".format(elapsed_time))
 print("{:.2f}s total poll time ({:.2f}ms average)!"\
     .format(total_poll_time / 1000, total_poll_time/total_samples))
 print("{:.2f}ms other acitiviteis excluding sleep (approx)"\
-    .format((elapsed_time-seconds-total_poll_time)/1000)
+    .format((elapsed_time-seconds-total_poll_time)/1000))
