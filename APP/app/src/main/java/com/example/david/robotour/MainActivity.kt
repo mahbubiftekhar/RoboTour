@@ -78,12 +78,6 @@ class MainActivity : AppCompatActivity() {
                 gravity = Gravity.CENTER_HORIZONTAL
             }
         }
-            //Populate Advertisements
-            advertisements.add(R.drawable.your_ad_here)
-            advertisements.add(R.drawable.new_exhibit)
-            advertisements.add(R.drawable.gift_shop)
-            //This thread essentially starts the pictures at the bottom of the screen
-            pictureThread.start()
     }
 
     override fun onResume() {
@@ -126,6 +120,7 @@ class MainActivity : AppCompatActivity() {
                     Thread.currentThread().interrupt()
                 }
             }
+            Thread.currentThread().interrupt()
         }
     }
 

@@ -135,7 +135,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     }
 
-    fun resetSpeech(){
+    fun resetSpeech() {
         tts = null
         tts = TextToSpeech(this, this)
     }
@@ -272,6 +272,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 //Text-to-speech
                 onClick {
                     println("&&& clicked")
+                    resetSpeech()
                     speakOut(currentPic) // use below code once currentArtPiece is implemented
                 }
             }
@@ -659,12 +660,14 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         Thread.currentThread().interrupt()
                     }
                 }
+                Thread.currentThread().interrupt()
             }
         }
+        //Starting the thread which is defined above to keep polling the server
         async {
-            //Starting the thread which is defined above to keep polling the server
             t.run()
         }
+
     }
 
     private fun speakOut(input: Int) {

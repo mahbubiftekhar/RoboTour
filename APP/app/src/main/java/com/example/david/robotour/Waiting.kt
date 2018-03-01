@@ -77,6 +77,7 @@ class Waiting : AppCompatActivity() {
             pictureThread.start()
             switchToNavigate() //This should be removed in the final implementation
         }
+
     }
 
     fun switchToNavigate() {
@@ -116,6 +117,7 @@ class Waiting : AppCompatActivity() {
                     Thread.currentThread().interrupt()
                 }
             }
+            Thread.currentThread().interrupt()
         }
     }
 
@@ -158,6 +160,7 @@ class Waiting : AppCompatActivity() {
                 } catch (e: IndexOutOfBoundsException) {
                 }
             }
+            Thread.currentThread().interrupt()
         }
     }
 }
