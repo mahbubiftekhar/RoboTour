@@ -78,6 +78,7 @@ void serialEvent() {
     inputString += inChar;
     if(inChar == '\n') {
       newCommand = true;
+      while(Serial.available()) Serial.read();
     }
   }
 }
