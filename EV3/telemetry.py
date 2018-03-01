@@ -5,13 +5,19 @@ import random
 
 class DataLogger():
 
-	def __init__(self, name, folder='./'):
+	def __init__(self, name, folder='./logs', timer=None):
 
 		self.name = name
 
 		self.channel_names = []
 		self.channels = []
-		self.timestamp = DataChannel("timestamp", time.perf_counter)
+
+		# attach timer channel - either generic or passed on (e.g. global)
+		if timer is None:
+			self.timestamp = DataChannel("timestamp", time.perf_counter)
+		else:
+			self.timestamp = DataChannel("timestamp", timer)
+
 		self.initiated = False
 
 		self.lines_per_write = 1
