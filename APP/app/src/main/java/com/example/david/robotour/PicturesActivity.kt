@@ -17,15 +17,22 @@ import com.google.cloud.translate.Translate
 import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
 import java.io.InterruptedIOException
+import java.net.URL
 import java.util.*
 import kotlin.collections.ArrayList
+import java.util.Random
+
+
 
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
+@Suppress("DEPRECATION")
 class PicturesActivity : AppCompatActivity() {
 
     data class ArtPiece(val name: String, val artist: String, val nameChinese: String, val nameGerman: String, val nameSpanish: String, val nameFrench: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int, var selected: Boolean)
 
+    private var frequencyList = ArrayList<Int>()
+    private var frequencyListReady = false
     private var shownArtPieces = ArrayList<ArtPiece>()
     private val reqSpeechCode = 100
     private var queriedArtPieces = ArrayList<ArtPiece>()
@@ -33,6 +40,7 @@ class PicturesActivity : AppCompatActivity() {
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     lateinit var t: Thread
     private var language = ""
+    val random = Random()
 
     private fun translate(textToTranslate: List<String>): MutableList<String> {
         /*This function takes a list and returns a list of translated text using Google's API
@@ -64,7 +72,9 @@ class PicturesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         allArtPieces.clear()
-
+        async{
+            storeFrequencies()
+        }
         //Obtain language from SelectLanguageActivity
         language = intent.getStringExtra("language")
         when (language) {
@@ -190,6 +200,64 @@ class PicturesActivity : AppCompatActivity() {
         t.start() /*Start to run the thread*/
     }
 
+    private fun getNewest(): Int {
+        var id = 1000
+        (0..9)
+                .asSequence()
+                .filter { allArtPieces[it].eV3ID <= id }
+                .forEach { id = allArtPieces[it].eV3ID }
+        return id
+    }
+
+    private fun getOldest(): Int {
+        var id = -1
+        (0..9)
+                .asSequence()
+                .filter { allArtPieces[it].eV3ID > id }
+                .forEach { id = allArtPieces[it].eV3ID }
+        return id
+    }
+    private fun rand(from: Int, to: Int) : Int {
+        return random.nextInt(to - from) + from
+    }
+    private fun surpriseMe():Int {
+        //This should return a number between 0 and 9, Yay!
+        return rand(0,9)
+    }
+
+    private fun storeFrequencies() {
+        //This function is to be called in oncCreate, the reason is to reduce the users wait time
+            for (i in 0..9) {
+                //Sets the frequencyList
+                try{
+                    frequencyList[i] = (URL("http://homepages.inf.ed.ac.uk/s1553593/$i.php").readText()).toInt()
+                } catch (e: Exception){
+                //Catching all the exceptions that can be thrown
+                }
+            }
+            runOnUiThread{
+                frequencyListReady = true //Updates the variable to true
+            }
+    }
+
+    private fun popularArtPieces(): Int {
+        var max = -1000
+        if (frequencyListReady) {
+
+        } else {
+            Thread.sleep(200)
+        }
+        try {
+            (0..9)
+                    .asSequence()
+                    .filter { frequencyList[it] > max }
+                    .forEach { max = frequencyList[it] }
+        } catch (e: Exception){
+            //Catching all the exceptions that can be thrown
+        }
+        return 1
+    }
+
     override fun onStop() {
         t.interrupt()
         super.onStop()
@@ -219,17 +287,17 @@ class PicturesActivity : AppCompatActivity() {
                             search = "Search"
                         }
                         "German" -> {
-                            title = "Bitte geben Sie ein Gemälde ein, zu dem Sie gehen möchten\n"
+                            title = "Bitte geben Sie ein Gemälde ein, zu dem Sie gehen möchten"
                             search = "Suche"
 
                         }
                         "Spanish" -> {
-                            title = "Por favor, ingrese la pintura a la que desea ir\n"
+                            title = "Por favor, ingrese la pintura a la que desea ir"
                             search = "buscar"
 
                         }
                         "French" -> {
-                            title = "S'il vous plaît entrer la peinture que vous souhaitez aller à\n"
+                            title = "S'il vous plaît entrer la peinture que vous souhaitez aller à"
                             search = "chercher"
 
                         }

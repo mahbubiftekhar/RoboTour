@@ -36,6 +36,7 @@ android {
 
 
 dependencies {
+    implementation 'com.google.firebase:firebase-database:11.0.4'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:design:26.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
@@ -63,4 +64,6 @@ dependencies {
         exclude group: 'com.google.api-client', module: 'google-api-client-appengine'
     }
     testCompile 'junit:junit:4.12'
+    compile 'com.google.firebase:firebase-database:11.8.0'
+
 }
