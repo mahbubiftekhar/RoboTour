@@ -310,8 +310,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 //Text-to-speech
                 onClick {
                     println("&&& clicked")
-                    resetSpeech()
-                    speakOutButton(currentPic) // use below code once currentArtPiece is implemented
+                    speakOutButton(currentPic)
                 }
             }
             verticalLayout {
