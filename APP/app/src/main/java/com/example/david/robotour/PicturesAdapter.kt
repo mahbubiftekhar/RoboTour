@@ -10,17 +10,18 @@ import android.widget.LinearLayout
 import org.jetbrains.anko.*
 import java.util.ArrayList
 
-class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val language:String) : BaseAdapter() {
+@Suppress("DEPRECATION")
+class PicturesAdapter(private val list: ArrayList<PicturesActivity.ArtPiece>, private val language: String) : BaseAdapter() {
 
-    //Describe ListView Layout using Anko
+    //Describe ListView Layout
     override fun getView(i: Int, v: View?, parent: ViewGroup?): View {
         //Change text depending on language selected
         val languageText = when (language) {
-            "English" ->  list[i].English_Desc
-            "French" ->  list[i].French_Desc
-            "Chinese" ->  list[i].Chinese_Desc
-            "Spanish" ->  list[i].Spanish_Desc
-            "German" ->  list[i].German_Desc
+            "English" -> list[i].English_Desc
+            "French" -> list[i].French_Desc
+            "Chinese" -> list[i].Chinese_Desc
+            "Spanish" -> list[i].Spanish_Desc
+            "German" -> list[i].German_Desc
             else -> ""
         }
         val element = with(parent!!.context) {
@@ -38,7 +39,14 @@ class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val langua
                 tableLayout {
                     textView {
                         id = 0
-                        text = list[i].name
+                        text = when (language) {
+                            "German" -> list[i].nameGerman
+                            "French" -> list[i].nameFrench
+                            "Spanish" -> list[i].nameSpanish
+                            "Chinese" -> list[i].nameChinese
+                            else -> list[i].name
+
+                        }
                         textSize = 16f
                         typeface = Typeface.DEFAULT_BOLD
                         padding = dip(5)
@@ -61,14 +69,17 @@ class PicturesAdapter(val list: ArrayList<PicturesActivity.ArtPiece>, val langua
 
         return element
     }
-     //Returns the String stored at position x of the list
+
+    //Returns the String stored at position x of the list
     override fun getItem(i: Int): Int {
         return list[i].eV3ID
     }
+
     //Returns the length of the list
     override fun getCount(): Int {
         return list.size
     }
+
     override fun getItemId(position: Int): Long {
         //can be used to return the item's ID column of table
         return 0L

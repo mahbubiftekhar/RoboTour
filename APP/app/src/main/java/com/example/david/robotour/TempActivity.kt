@@ -41,10 +41,10 @@ class TempActivity : AppCompatActivity() {
         STOP.setOnClickListener {
             uploadToServer("STOP") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
         }
-        RIGHT.setOnClickListener{
+        RIGHT.setOnClickListener {
             uploadToServer("RIGHT") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
         }
-        LEFT.setOnClickListener{
+        LEFT.setOnClickListener {
             uploadToServer("LEFT") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
         }
     }
@@ -72,7 +72,7 @@ class TempActivity : AppCompatActivity() {
                 val a = loadINT("NUMBER") //Get the unique number
                 val nameValuePairs = ArrayList<NameValuePair>(4)
                 nameValuePairs.add(BasicNameValuePair("command", "Command:$$command-$a"))
-                saveINT("NUMBER",a+1 ) //Increment the unique number
+                saveINT("NUMBER", a + 1) //Increment the unique number
                 httpPost.entity = UrlEncodedFormEntity(nameValuePairs)
                 httpclient.execute(httpPost)
             } catch (e: ClientProtocolException) {

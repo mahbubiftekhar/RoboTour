@@ -7,10 +7,12 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
+import android.view.Gravity.CENTER
 import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.*
 import org.jetbrains.anko.*
+import java.io.InterruptedIOException
 import java.net.URL
 
 class Waiting : AppCompatActivity() {
@@ -32,13 +34,13 @@ class Waiting : AppCompatActivity() {
         language = intent.getStringExtra("language") //Getting the language from the previous activity
         user = loadInt("user") //Set the user number
 
-        when (language) {
-            "English" -> message = "Waiting for other user..."
-            "German" -> message = "Bitte Warten Sie Auf den Anderen User..."
-            "French" -> message = "Veuillez Attendre l'Autre Utilisateur..."
-            "Spanish" -> message = "Por Favor Espere al Otro Usuario..."
-            "Chinese" -> message = "请等待其他用户..."
-            else -> message = "Please Wait For the Other User..."
+        message = when (language) {
+            "English" -> "Waiting for other user..."
+            "German" -> "Bitte Warten Sie Auf den Anderen User..."
+            "French" -> "Veuillez Attendre l'Autre Utilisateur..."
+            "Spanish" -> "Por Favor Espere al Otro Usuario..."
+            "Chinese" -> "请等待其他用户..."
+            else -> "Please Wait For the Other User..."
         }
 
         verticalLayout {
@@ -52,7 +54,7 @@ class Waiting : AppCompatActivity() {
                 typeface = Typeface.DEFAULT_BOLD
                 padding = dip(5)
                 topPadding = dip(20)
-                gravity = Gravity.CENTER
+                gravity = CENTER
                 text = message
             }
             imageView = imageView {
@@ -65,7 +67,7 @@ class Waiting : AppCompatActivity() {
                 text = ""
                 textSize = 20f
                 typeface = Typeface.DEFAULT
-                this.gravity = Gravity.CENTER
+                this.gravity = CENTER
                 padding = dip(10)
             }
             background = ColorDrawable(Color.parseColor("#EEEEEE"))
@@ -75,13 +77,12 @@ class Waiting : AppCompatActivity() {
             pictureThread.start()
             switchToNavigate() //This should be removed in the final implementation
         }
+
     }
 
     fun switchToNavigate() {
         Thread.sleep(6500) //This should be removed in the final implementation
-        pictureThread.interrupt() //Stop the thread advertising all the art pieces
-        pictureThread.interrupt()
-        t.interrupt() // Stop the thread looking for the other use
+        interruptAllThreads() //Interrupt all the threads
         clearFindViewByIdCache()
         startActivity<NavigatingActivity>("language" to language) // now we can switch the activity
     }
@@ -100,7 +101,6 @@ class Waiting : AppCompatActivity() {
                         val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user2.php").readText()
                         if (a == "Y") {
                             //If user 1 has made their selection and you are not user 1
-                            println("++++ AHA")
                             switchToNavigate()
                         }
                     } else {
@@ -108,15 +108,30 @@ class Waiting : AppCompatActivity() {
                         println("USERS ID IS 2")
                         //If user 2 has made their selection and you are not user 2
                         if (a == "Y") {
-                            println("++++ AHA")
                             switchToNavigate()
                         }
                     }
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
+                } catch (e: InterruptedIOException) {
+                    Thread.currentThread().interrupt()
                 }
             }
+            Thread.currentThread().interrupt()
         }
+    }
+
+    private fun interruptAllThreads() {
+        //This function interrupts all the threads
+        pictureThread.interrupt()
+        t.interrupt()
+    }
+
+    override fun onStop() {
+        pictureThread.interrupt()
+        t.interrupt()
+
+        super.onStop()
     }
 
     private val pictureThread: Thread = object : Thread() {
@@ -145,6 +160,7 @@ class Waiting : AppCompatActivity() {
                 } catch (e: IndexOutOfBoundsException) {
                 }
             }
+            Thread.currentThread().interrupt()
         }
     }
 }

@@ -17,9 +17,21 @@ import org.apache.http.message.BasicNameValuePair
 import java.io.IOException
 import java.util.ArrayList
 import org.jetbrains.anko.*
+import java.io.InterruptedIOException
 import java.net.URL
 
+
 class AdminActivity : AppCompatActivity() {
+
+    /*
+    THE PURPOSE OF THIS ACTIVITY IS FOR DEBUGGING AND TESTING PURPOSES
+
+    NOT FOR THE CLIENT TO BE SEEN
+
+    M IFTEKHAR
+
+    28/02/2018
+     */
     private fun sendPUTNEW(identifier: Int, command: String) {
         val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
@@ -44,12 +56,14 @@ class AdminActivity : AppCompatActivity() {
                 try {
                     async {
                         val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
-                        runOnUiThread{
+                        runOnUiThread {
                             setActionBar(a)
                         }
                     }
                     Thread.sleep(100)
                 } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
                 }
             }
@@ -70,9 +84,38 @@ class AdminActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
+    private fun messageValid(message: String): Boolean {
+        /*This is a validity check to ensure no malarkey is put on the server*/
+        return when (message) {
+            "A" -> true
+            "F" -> true
+            "T" -> true
+            "N" -> true
+            "" -> true
+            " " -> true
+            else -> false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
+
+        sendy.setOnClickListener {
+            val destination = destination.text.toString()
+            val message = messageToSend.text.toString().toUpperCase()
+            if (destination.toInt() in 0..17 && messageValid(message)) {
+                vibrate()
+                async {
+                    sendPUTNEW(destination.toInt(), message)
+                    runOnUiThread {
+                        toast("Sent $message to $destination successfully")
+                    }
+                }
+            } else {
+                toast("Invalid input, try again, any issues consulate Mahbub")
+            }
+        }
         STOP_ROBOTOUR.setOnClickListener {
             /*Sets Robot stop to true*/
             async {
@@ -153,7 +196,7 @@ class AdminActivity : AppCompatActivity() {
                 }
             }
         }
-        async{
+        async {
             //This languages the user thread to check for updates
             updateTextThread.run()
         }
