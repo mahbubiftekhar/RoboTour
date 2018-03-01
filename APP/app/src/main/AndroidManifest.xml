@@ -54,6 +54,10 @@
             android:name=".AdminActivity"
             android:label="@string/title_activity_admin"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".FinnishActivity"
+            android:label="@string/title_activity_finnish"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

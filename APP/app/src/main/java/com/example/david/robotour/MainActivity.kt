@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
                     if (isNetworkConnected()) {
                         continueThread = false
                         interuptPicturesThread()
+                        pictureThread.interrupt()
                         startActivity<SelectLanguageActivity>()
                     } else {
                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
