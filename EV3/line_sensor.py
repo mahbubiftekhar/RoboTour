@@ -130,27 +130,31 @@ class LineDetector():
 
 
 class SimpleLineDetector():
-	self.max_val = 255
-	self.min_val = 0
 
-	self.hi_max = self.min_val
-	self.lo_min = self.max_val
+	def __init__(self, line_low = True):
+		self.max_val = 255
+		self.min_val = 0
 
-	self.threshold = (self.hi_max + self.lo_min) / 2
+		self.hi_max = self.min_val
+		self.lo_min = self.max_val
 
-	self.line_low = True
+		self.threshold = (self.hi_max + self.lo_min) / 2
+
+		self.line_low = line_low
+
+		self.line_detected = False
 
 	def update(self, new_value):
 		self.raw_value = new_value
 
 		if self.line_low:
-			return self.raw_value < self.threshold
+			self.line_detected = self.raw_value < self.threshold
 		else:
-			return self.raw_value > self.threshold
+			self.line_detected = self.raw_value > self.threshold
 
+		return self.line_detected
 
-	def calibrate(self, new_value):
-		self.update(new_value)
+	def calibrate(self):
 		
 		if self.raw_value > self.max_val:
 			self.max_val = self.raw_value
@@ -159,6 +163,74 @@ class SimpleLineDetector():
 		if self.raw_value < self.min_val:
 			self.min_val = self.raw_value
 			self.threshold = (self.hi_max + self.lo_min) / 2
+
+class LineSensor():
+
+	def __init__(self, hub):
+
+		self.num_detectors = 6
+		self.detector_names = ["l{}".format(i)\
+		                       for i in range(self.num_detectors)]
+
+		self.line_low = True
+
+		self.hub = hub
+
+		self.last_poll = -1
+
+
+		self.raw_val = {}
+		self.prev_val = {}
+		# intialise the sensor readings in the hub if necessary
+		for n in self.detector_names:
+			if(n not in self.hub.sensor_values.keys()):
+				self.hub.sensor_values[n] = 0
+
+		self.detector = {}
+		for n in self.detector_names:
+			self.detector[n] = SimpleLineDetector(line_low = self.line_low)
+			self.detector[n].update(0)
+
+	def calibrate(self):
+		for d in self.detector:
+			d.calibrate()
+
+
+	def raw_values(self):
+
+		# if a new value is requiested
+		if self.last_poll == self.hub.last_poll:
+			self.hub.poll()
+
+		self.last_poll = self.hub.last_poll
+		for n in self.detector_names:
+			self.raw_val[n] = self.hub.sensor_values[n]
+			self.detector[n].update(self.raw_val[n])
+
+		return self.raw_val 
+
+	def value_simple(self):
+
+		self.raw_values()
+		order = self.detector_names
+		weight = 10
+		
+		err = 0
+		activated_sens = 0
+
+		for s in order:
+
+			#check if sensor on line
+			if self.detetector[s].line_detected:
+				err += weight
+				activated_sens += 1
+
+			weight += 10
+
+		if activated_sens > 0:
+			return err/activated_sens
+		else:
+			return 0
 
 
 
