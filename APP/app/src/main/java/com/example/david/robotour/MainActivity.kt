@@ -9,13 +9,17 @@ import android.support.v4.content.res.ResourcesCompat
 import org.jetbrains.anko.*
 import android.content.Intent
 import android.net.ConnectivityManager
+import android.os.Build
+import android.support.annotation.RequiresApi
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.Toast
 import kotlinx.android.synthetic.*
 import java.io.InterruptedIOException
+import java.nio.channels.InterruptedByTimeoutException
 
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
     private var advertisements = ArrayList<Int>()
     private var imageView: ImageView? = null
@@ -74,29 +78,32 @@ class MainActivity : AppCompatActivity() {
                 gravity = Gravity.CENTER_HORIZONTAL
             }
         }
-        async {
             //Populate Advertisements
             advertisements.add(R.drawable.your_ad_here)
             advertisements.add(R.drawable.new_exhibit)
             advertisements.add(R.drawable.gift_shop)
             //This thread essentially starts the pictures at the bottom of the screen
             pictureThread.start()
-        }
     }
 
     override fun onResume() {
-        async{
-            pictureThread.start()
             advertisements.clear()
             advertisements.add(R.drawable.your_ad_here)
             advertisements.add(R.drawable.new_exhibit)
             advertisements.add(R.drawable.gift_shop)
-        }
+            pictureThread.start()
+
         super.onResume()
+    }
+
+    override fun onStop() {
+        pictureThread.interrupt()
+        super.onStop()
     }
     private val pictureThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!isInterrupted) {
                 println("+++ running here main activity")
@@ -114,6 +121,8 @@ class MainActivity : AppCompatActivity() {
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedIOException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedByTimeoutException){
                     Thread.currentThread().interrupt()
                 }
             }

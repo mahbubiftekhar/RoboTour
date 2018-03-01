@@ -99,7 +99,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts!!.stop()
             tts!!.shutdown()
         }
-
+        t.interrupt()
         super.onStop()
     }
 
@@ -666,7 +666,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             t.run()
         }
     }
-    
+
     private fun speakOut(input: Int) {
         println("getting here in speakout input:  $input")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

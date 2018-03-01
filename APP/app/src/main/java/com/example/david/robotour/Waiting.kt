@@ -125,6 +125,13 @@ class Waiting : AppCompatActivity() {
         t.interrupt()
     }
 
+    override fun onStop() {
+        pictureThread.interrupt()
+        t.interrupt()
+
+        super.onStop()
+    }
+
     private val pictureThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0

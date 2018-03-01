@@ -189,6 +189,10 @@ class PicturesActivity : AppCompatActivity() {
         }
         t.start() /*Start to run the thread*/
     }
+    override fun onStop() {
+        t.interrupt()
+        super.onStop()
+    }
 
     //Add mic & search icons in actionbar
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
