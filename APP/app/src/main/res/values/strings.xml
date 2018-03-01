@@ -97,4 +97,18 @@
     </string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_waiting">Waiting</string>
+    <string name="title_activity_admin">AdminActivity</string>
+    <string name="mesage">Mesage</string>
+    <string name="user2_off">USER2 OFF</string>
+    <string name="destination">Destination</string>
+    <string name="send">SEND</string>
+    <string name="user1_off">USER1 OFF</string>
+    <string name="stop_robotour">STOP ROBOTOUR</string>
+    <string name="aux_reset">AUX RESET</string>
+    <string name="reset_everything">RESET EVERYTHING</string>
+    <string name="switch_user">SWITCH_USER</string>
+    <string name="user1_online">USER1 ONLINE</string>
+    <string name="user2_online">USER2 ONLINE</string>
+    <string name="message">message</string>
+    <string name="title_activity_finnish">FinnishActivity</string>
 </resources>

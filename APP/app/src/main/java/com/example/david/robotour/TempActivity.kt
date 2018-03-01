@@ -15,7 +15,7 @@ import org.jetbrains.anko.async
 import java.io.IOException
 
 class TempActivity : AppCompatActivity() {
-    /*THIS CLASS/ACTIVITY IS BEEN DEPRECATED
+    /*THIS CLASS/ACTIVITY HAS BEEN DEPRECATED
     * AS NO LONGER NEEDED (USED FOR CD1)
     *
     * M IFTEKHAR
@@ -23,8 +23,6 @@ class TempActivity : AppCompatActivity() {
     * 19/02/2018
     *
     * */
-
-
     /*THIS IS A QUICK TEMP ACTIVITY FOR THE PURPOSE OF CLIENT DEMO ONE, THIS CAN ONLY BE ACCESSED FROM A LONG PRESS ON THE START BUTTON*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,16 +41,16 @@ class TempActivity : AppCompatActivity() {
         STOP.setOnClickListener {
             uploadToServer("STOP") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
         }
-        RIGHT.setOnClickListener{
+        RIGHT.setOnClickListener {
             uploadToServer("RIGHT") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
         }
-        LEFT.setOnClickListener{
+        LEFT.setOnClickListener {
             uploadToServer("LEFT") /*Adds the message to the server, JUST CHANGE THE PARAMETER HERE, DO NOT CHANGE THE METHOD*/
         }
     }
 
     @SuppressLint("ApplySharedPref")
-    private fun SaveInt(key: String, value: Int) {
+    private fun saveINT(key: String, value: Int) {
         /* Function to save an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val editor = sharedPreferences.edit()
@@ -60,11 +58,10 @@ class TempActivity : AppCompatActivity() {
         editor.commit()
     }
 
-    private fun LoadInt(key: String): Int {
+    private fun loadINT(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val savedValue = sharedPreferences.getInt(key, 0)
-        return savedValue
+        return sharedPreferences.getInt(key, 0)
     }
 
     private fun uploadToServer(command: String) {
@@ -72,10 +69,10 @@ class TempActivity : AppCompatActivity() {
             val httpclient = DefaultHttpClient()
             val httpPost = HttpPost("http://homepages.inf.ed.ac.uk/s1553593/receiver.php")
             try {
-                val a = LoadInt("NUMBER") //Get the unique number
+                val a = loadINT("NUMBER") //Get the unique number
                 val nameValuePairs = ArrayList<NameValuePair>(4)
                 nameValuePairs.add(BasicNameValuePair("command", "Command:$$command-$a"))
-                SaveInt("NUMBER",a+1 ) //Increment the unique number
+                saveINT("NUMBER", a + 1) //Increment the unique number
                 httpPost.entity = UrlEncodedFormEntity(nameValuePairs)
                 httpclient.execute(httpPost)
             } catch (e: ClientProtocolException) {

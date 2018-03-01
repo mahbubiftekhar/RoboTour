@@ -9,13 +9,13 @@ import java.util.*
 
 class SelectLanguageActivity : AppCompatActivity() {
     data class Language(val name: String, val imageID: Int)
+
     private val languages = ArrayList<Language>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // add back button to actionbar
         supportActionBar?.title = "Select your language"
-
         //Populate List
         languages.add(Language("Chinese", R.drawable.chineseflag_fixed))
         languages.add(Language("French", R.drawable.frenchflag))
@@ -52,5 +52,4 @@ class SelectLanguageActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
 }

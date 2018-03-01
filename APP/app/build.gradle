@@ -24,7 +24,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    packagingOptions{
+    packagingOptions {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/io.netty.properties'
@@ -53,11 +53,11 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile ('com.google.apis:google-api-services-translate:v2-rev47-1.22.0') {
+    compile('com.google.apis:google-api-services-translate:v2-rev47-1.22.0') {
         exclude group: 'com.google.guava'
     }
     annotationProcessor 'com.google.cloud:google-cloud-translate:1.14.0'
-    compile ('com.google.cloud:google-cloud-translate:0.5.0') {
+    compile('com.google.cloud:google-cloud-translate:0.5.0') {
         exclude group: 'io.grpc', module: 'grpc-all'
         exclude group: 'com.google.protobuf', module: 'protobuf-java'
         exclude group: 'com.google.api-client', module: 'google-api-client-appengine'

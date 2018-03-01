@@ -8,16 +8,17 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:contentDescription="TODO"
         app:srcCompat="@drawable/robotour_small" />
 
     <Button
         android:id="@+id/startButton"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:text = "Start"
-        android:background = "@drawable/roundbuttons"
+        android:layout_height="match_parent"
+        android:background="@drawable/roundbuttons"
+        android:text="Start"
         tools:ignore="HardcodedText" />
 </LinearLayout>

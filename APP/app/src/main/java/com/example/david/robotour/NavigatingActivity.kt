@@ -2,19 +2,24 @@ package com.example.david.robotour
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.net.ConnectivityManager
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.preference.PreferenceManager
+import android.speech.tts.TextToSpeech
 import android.support.v4.content.res.ResourcesCompat
 import android.view.Gravity
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import kotlinx.android.synthetic.*
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -22,10 +27,14 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
+import org.jetbrains.anko.design.floatingActionButton
 import java.io.IOException
+import java.io.InterruptedIOException
 import java.net.URL
+import java.util.*
 
-class NavigatingActivity : AppCompatActivity() {
+@Suppress("DEPRECATION")
+class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private val btnHgt = 77
     private var btnTextSize = 24f
     private var toggleStBtn = true
@@ -50,23 +59,125 @@ class NavigatingActivity : AppCompatActivity() {
     private var titleView: TextView? = null
     private var descriptionView: TextView? = null
     private var stopButton: Button? = null
-    private var Skippable = true
+    private lateinit var toiletPopUp: AlertDialogBuilder
+    private var skippable = true
     private lateinit var t: Thread
+    private var tts: TextToSpeech? = null
+    private var tts2: TextToSpeech? = null
+    private var currentPic = -1
+    private var startRoboTour = ""
+    private var toiletPopUpBool = true
+    private var speaking = -1
 
-    fun LoadInt(key: String): Int {
+    private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
-        val savedValue = sharedPreferences.getInt(key, 0)
-        return savedValue
-        //        val a = LoadInt("user")
+        return sharedPreferences.getInt(key, 0)
+    }
+
+    public override fun onDestroy() {
+        // Shutdown TTS
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
+        }
+        interruptThread()
+        if (userid == "1") {
+            async {
+                sendPUTNEW(16, "F")
+            }
+        } else if (userid == "2") {
+            async {
+                sendPUTNEW(17, "F")
+            }
+        }
+        super.onDestroy()
+    }
+
+    public override fun onStop() {
+        interruptThread()
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
+        }
+        t.interrupt()
+        super.onStop()
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+
+        }
+        if (status == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts2!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts2!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts2!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts2!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts2!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+
+        }
 
     }
+
+    fun resetSpeech() {
+        tts = null
+        tts = TextToSpeech(this, this)
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
-        userid = LoadInt("user").toString()
+        userid = loadInt("user").toString()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
+        tts = TextToSpeech(this, this)
+        tts2 = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
+        vibrate()
         //Obtain language from PicturesUI
         val language = intent.getStringExtra("language")
         when (language) {
@@ -86,8 +197,10 @@ class NavigatingActivity : AppCompatActivity() {
                 toilet = "Toilet"
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "Change speed"
+                startRoboTour = "Press START when you are ready for RoboTour to resume"
             }
             "French" -> {
+                startRoboTour = "Appuyez sur Start lorsque vous êtes prêt à reprendre RoboTour"
                 positive = "Oui"
                 negative = "Non"
                 skip = "Sauter Peinture"
@@ -105,6 +218,7 @@ class NavigatingActivity : AppCompatActivity() {
                 changeSpeed = "Changer Vitesse"
             }
             "Chinese" -> {
+                startRoboTour = "当您准备好RoboTour继续时，按开始"
                 positive = "是的"
                 negative = "不是"
                 skip = "跳到下一幅作品"
@@ -127,6 +241,7 @@ class NavigatingActivity : AppCompatActivity() {
                 skip = "Saltar Pintura"
                 skipDesc = "¿Estás seguro de que quieres saltar a la próxima pintura?"
                 stop = "Detener RoboTour"
+                startRoboTour = ""
                 stopDesc = "¿Estás seguro de que quieres detener RoboTour?"
                 start = "Iniciar RoboTour"
                 startDesc = "¿Quieres iniciar RoboTour?"
@@ -139,6 +254,7 @@ class NavigatingActivity : AppCompatActivity() {
                 changeSpeed = "Cambiar Velocidad"
             }
             "German" -> {
+                startRoboTour = "Drücken Sie Start, wenn Sie bereit sind für die Fortsetzung von RoboTour"
                 positive = "Ja"
                 negative = "Nein"
                 skip = "Bild Überspringen"
@@ -157,6 +273,7 @@ class NavigatingActivity : AppCompatActivity() {
                 btnTextSize = 20f
             }
             else -> {
+                startRoboTour = "Press start when you are ready for RoboTour to resume"
                 positive = "Yes"
                 negative = "No"
                 skip = "Skip Painting"
@@ -174,226 +291,240 @@ class NavigatingActivity : AppCompatActivity() {
                 changeSpeed = "Change speed"
             }
         }
-        verticalLayout {
-            titleView = textView {
-                textSize = 32f
-                typeface = Typeface.DEFAULT_BOLD
-                padding = dip(5)
-                gravity = Gravity.CENTER_HORIZONTAL
-            }
-            //get image the pictures.php file that is true
-            imageView = imageView {
-                setImageResource(R.drawable.robotourfornavigating)
-                backgroundColor = Color.TRANSPARENT //Removes gray border
-                gravity = Gravity.CENTER_HORIZONTAL
-            }.lparams {
-                bottomMargin = dip(10)
-                topMargin = dip(10)
-            }
-            descriptionView = textView {
-                text = ""
-                textSize = 16f
-                typeface = Typeface.DEFAULT
-                padding = dip(10)
-            }
-            relativeLayout {
-                tableLayout {
-                    isStretchAllColumns = true
-                    tableRow {
-                        button(skip) {
-                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                            textSize = btnTextSize
-                            height = dip(btnHgt)
-                            width = wrapContent
-                            onClick {
-                                alert(skipDesc) {
-                                    positiveButton(positive) {
-                                        if (isNetworkConnected()) {
-                                            async {
-                                                skip()
-                                            }
-                                        } else {
-                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                        }
+        relativeLayout {
+            floatingActionButton {
+                //UI
+                imageResource = R.drawable.ic_volume_up_black_24dp
+                //ColorStateList usually requires a list of states but this works for a single color
+                backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
+                lparams { alignParentRight(); topMargin = dip(100); rightMargin = dip(5) }
 
-                                    }
-                                    negativeButton(negative) {
-                                        //Do nothing the user changed their minds
-                                    }
-                                }.show()
-                            }
-                        }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                        stopButton = button(stop) {
-                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                            textSize = btnTextSize
-                            height = dip(btnHgt)
-                            width = wrapContent
-                            onClick {
-                                if (toggleStBtn) {
-                                    alertStBtn = stopDesc
-                                } else {
-                                    alertStBtn = startDesc
-                                }
-                                alert(alertStBtn) {
-                                    positiveButton(positive) {
-                                        if (isNetworkConnected()) {
-                                            if (!toggleStBtn) {
-                                                text = stop
+                //Text-to-speech
+                onClick {
+                    println("&&& clicked")
+                    resetSpeech()
+                    speakOutButton(currentPic) // use below code once currentArtPiece is implemented
+                }
+            }
+            verticalLayout {
+                lparams { width = matchParent }
+                titleView = textView {
+                    textSize = 32f
+                    typeface = Typeface.DEFAULT_BOLD
+                    padding = dip(5)
+                    gravity = Gravity.CENTER_HORIZONTAL
+                }
+                //get image the pictures.php file that is true
+                imageView = imageView {
+                    backgroundColor = Color.TRANSPARENT //Removes gray border
+                    gravity = Gravity.CENTER_HORIZONTAL
+                }.lparams {
+                    bottomMargin = dip(10)
+                    topMargin = dip(10)
+                }
+                descriptionView = textView {
+                    text = ""
+                    textSize = 16f
+                    typeface = Typeface.DEFAULT
+                    padding = dip(10)
+                }
+                relativeLayout {
+                    tableLayout {
+                        isStretchAllColumns = true
+                        tableRow {
+                            button(skip) {
+                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                textSize = btnTextSize
+                                height = dip(btnHgt)
+                                width = wrapContent
+                                onClick {
+                                    alert(skipDesc) {
+                                        positiveButton(positive) {
+                                            if (isNetworkConnected()) {
                                                 async {
-                                                    stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                                    skip()
                                                 }
                                             } else {
-                                                text = start
-                                                async {
-                                                    startRoboTour()
-                                                }
+                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                             }
-                                            toggleStBtn = !toggleStBtn
-                                        } else {
-                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                        }
-                                    }
-                                    negativeButton(negative) { }
-                                }.show()
-                            }
-                        }.lparams { rightMargin = 2 }
-                    }.lparams { bottomMargin = dip(8) }
-                    tableRow {
-                        button(cancelTour) {
-                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                            textSize = btnTextSize
-                            height = dip(btnHgt)
-                            width = matchParent
-                            onClick {
-                                alert(cancelDesc) {
-                                    positiveButton(positive) {
-                                        if (isNetworkConnected()) {
-                                            async {
-                                                cancelGuideTotal()
-                                            }
-                                        } else {
-                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                        }
 
+                                        }
+                                        negativeButton(negative) {
+                                            //Do nothing the user changed their minds
+                                        }
+                                    }.show()
+                                }
+                            }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
+                            stopButton = button(stop) {
+                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                textSize = btnTextSize
+                                height = dip(btnHgt)
+                                width = wrapContent
+                                onClick {
+                                    alertStBtn = if (toggleStBtn) {
+                                        startDesc
+                                    } else {
+                                        stopDesc
                                     }
-                                    negativeButton(negative) {
-                                        onBackPressed() //Call on back pressed to take them back to the main activity
-                                    }
-                                }.show()
-                            }
-                        }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                        button(changeSpeed) {
-                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                            textSize = btnTextSize
-                            height = dip(btnHgt)
-                            width = matchParent
-                            onClick {
-                                alert {
-                                    customView {
-                                        verticalLayout {
-                                            listView {
-                                                val options: List<String>
-                                                val SelectSpeed: String
-                                                when (language) {
-                                                    "English" -> {
-                                                        options = listOf("Slow", "Normal", "Fast")
-                                                        SelectSpeed = "Select speed"
+                                    alert(alertStBtn) {
+                                        positiveButton(positive) {
+                                            if (isNetworkConnected()) {
+                                                if (!toggleStBtn) {
+                                                    text = stop
+                                                    async {
+                                                        stopRoboTour() /*This function will call for RoboTour to be stopped*/
                                                     }
-                                                    "French" -> {
-                                                        options = listOf("lent", "Ordinaire", "vite")
-                                                        SelectSpeed = "Sélectionnez la vitesse"
-                                                    }
-                                                    "Chinese" -> {
-                                                        options = listOf("慢", "正常", "快")
-                                                        SelectSpeed = "选择速度"
-                                                    }
-                                                    "Spanish" -> {
-                                                        options = listOf("lento", "Normal", "rápido")
-                                                        SelectSpeed = "Seleccionar velocidad"
-                                                    }
-                                                    "German" -> {
-                                                        options = listOf("Langsam", "Normal", "Schnell")
-                                                        SelectSpeed = "Wählen Sie Geschwindigkeit"
-                                                    }
-                                                    else -> {
-                                                        options = listOf("Slow", "Normal", "Fast")
-                                                        SelectSpeed = "Select speed"
+                                                } else {
+                                                    text = start
+                                                    async {
+                                                        startRoboTour()
                                                     }
                                                 }
-                                                selector(SelectSpeed, options) { j ->
-                                                    if (j == 0) {
-                                                        toast(options[0])
-                                                    } else if (j == 1) {
-                                                        toast(options[1])
-                                                    } else {
-                                                        toast(options[2])
+                                                toggleStBtn = !toggleStBtn
+                                            } else {
+                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                            }
+                                        }
+                                        negativeButton(negative) { }
+                                    }.show()
+                                }
+                            }.lparams { rightMargin = 2 }
+                        }.lparams { bottomMargin = dip(8) }
+                        tableRow {
+                            button(cancelTour) {
+                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                textSize = btnTextSize
+                                height = dip(btnHgt)
+                                width = matchParent
+                                onClick {
+                                    alert(cancelDesc) {
+                                        positiveButton(positive) {
+                                            if (isNetworkConnected()) {
+                                                async {
+                                                    cancelGuideTotal()
+                                                }
+                                            } else {
+                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                            }
+
+                                        }
+                                        negativeButton(negative) {
+                                            onBackPressed()
+                                            //Call on back pressed to take them back to the main activity
+                                        }
+                                    }.show()
+                                }
+                            }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
+                            button(changeSpeed) {
+                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                textSize = btnTextSize
+                                height = dip(btnHgt)
+                                width = matchParent
+                                onClick {
+                                    alert {
+                                        customView {
+                                            verticalLayout {
+                                                listView {
+                                                    val options: List<String>
+                                                    val selectSpeed: String
+                                                    when (language) {
+                                                        "English" -> {
+                                                            options = listOf("Slow", "Normal", "Fast")
+                                                            selectSpeed = "Select speed"
+                                                        }
+                                                        "French" -> {
+                                                            options = listOf("lent", "Ordinaire", "vite")
+                                                            selectSpeed = "Sélectionnez la vitesse"
+                                                        }
+                                                        "Chinese" -> {
+                                                            options = listOf("慢", "正常", "快速")
+                                                            selectSpeed = "选择速度"
+                                                        }
+                                                        "Spanish" -> {
+                                                            options = listOf("lento", "Normal", "rápido")
+                                                            selectSpeed = "Seleccionar velocidad"
+                                                        }
+                                                        "German" -> {
+                                                            options = listOf("Langsam", "Normal", "Schnell")
+                                                            selectSpeed = "Wählen Sie Geschwindigkeit"
+                                                        }
+                                                        else -> {
+                                                            options = listOf("Slow", "Normal", "Fast")
+                                                            selectSpeed = "Select speed"
+                                                        }
+                                                    }
+                                                    selector(selectSpeed, options) { j ->
+                                                        when (j) {
+                                                            0 -> toast(options[0])
+                                                            1 -> toast(options[1])
+                                                            else -> toast(options[2])
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            }
-                        }.lparams { rightMargin = 2 }
-                    }.lparams { bottomMargin = dip(8) }
-                    tableRow {
-                        button(toilet) {
-                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                            textSize = btnTextSize
-                            height = dip(btnHgt)
-                            width = matchParent
-                            onClick {
-                                alert(toiletDesc) {
-                                    positiveButton(positive) {
-                                        if (isNetworkConnected()) {
-                                            async {
-                                                sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/toilet.php")
+                            }.lparams { rightMargin = 2 }
+                        }.lparams { bottomMargin = dip(8) }
+                        tableRow {
+                            button(toilet) {
+                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                textSize = btnTextSize
+                                height = dip(btnHgt)
+                                width = matchParent
+                                onClick {
+                                    alert(toiletDesc) {
+                                        positiveButton(positive) {
+                                            if (isNetworkConnected()) {
+                                                async {
+                                                    sendPUTNEW(14, "T")
+                                                }
+                                            } else {
+                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                             }
-                                        } else {
-                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                        }
 
-                                    }
-                                    negativeButton(negative) { }
-                                }.show()
-                            }
-                        }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                        button(exit) {
-                            background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                            textSize = btnTextSize
-                            height = dip(btnHgt)
-                            width = matchParent
-                            onClick {
-                                alert(exitDesc) {
-                                    positiveButton(positive) {
-                                        if (isNetworkConnected()) {
-                                            async {
-                                                sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/exit.php")
+                                        }
+                                        negativeButton(negative) { }
+                                    }.show()
+                                }
+                            }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
+                            button(exit) {
+                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                textSize = btnTextSize
+                                height = dip(btnHgt)
+                                width = matchParent
+                                onClick {
+                                    alert(exitDesc) {
+                                        positiveButton(positive) {
+                                            if (isNetworkConnected()) {
+                                                async {
+                                                    exitDoor()
+                                                }
+                                            } else {
+                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                             }
-                                        } else {
-                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                        }
 
-                                    }
-                                    negativeButton(negative) { }
-                                }.show()
-                            }
-                        }.lparams { rightMargin = 2 }
-                    }.lparams { bottomMargin = dip(15) }
-                }.lparams { alignParentBottom() }
+                                        }
+                                        negativeButton(negative) { }
+                                    }.show()
+                                }
+                            }.lparams { rightMargin = 2 }
+                        }.lparams { bottomMargin = dip(15) }
+                    }.lparams { alignParentBottom() }
+                }
+
             }
-
         }
         when (language) {
             "English" -> titleView?.text = "RoboTour calculating optimal route..."
             "German" -> titleView?.text = "RoboTour berechnet optimale Route ..."
             "Spanish" -> titleView?.text = "RoboTour calcula la ruta óptima ..."
             "French" -> titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
-            "Chinese" -> titleView?.text = "RoboTour正在计算最佳路线..."
+            "Chinese" -> titleView?.text = "RoboTour计算最佳路线..."
             "other" -> titleView?.text = "RoboTour calculating optimal route..."
             "else" -> titleView?.text = "RoboTour calculating optimal route..."
         }
-
         t = object : Thread() {
             override fun run() {
                 while (!isInterrupted) {
@@ -402,16 +533,61 @@ class NavigatingActivity : AppCompatActivity() {
                         runOnUiThread(object : Runnable {
                             override fun run() {
                                 async {
+                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                                    println("++++++++" + a)
+                                    /*This updates the picture and text for the user*/
                                     for (i in 0..9) {
-                                        //This part checks for updates of the next location we are going to
-                                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/$i.php").readText()
-                                        if (a == "N") {
+                                        if (a[i] == 'A' && speaking != i) {
+                                            /*This will mean that when the robot has arrived at the painting*/
+                                            if (tts != null) {
+                                                tts!!.stop()
+                                            }
+                                            runOnUiThread {
+                                                currentPic = i // Set current pic to the one being shown
+                                                resetSpeech()
+                                                println("getting here 1")
+                                                speaking = i
+                                                println("getting here 2")
+                                                println("getting here 3")
+                                                //Change the image, text and descrioption
+                                                imageView?.setImageResource(allArtPieces[i].imageID)
+                                                val text: String = when (language) {
+                                                    "German" -> allArtPieces[i].nameGerman
+                                                    "French" -> allArtPieces[i].nameFrench
+                                                    "Spanish" -> allArtPieces[i].nameSpanish
+                                                    "Chinese" -> allArtPieces[i].nameChinese
+                                                    else -> allArtPieces[i].name
+                                                }
+                                                titleView?.text = text
+                                                currentPic = i /*This is to allow for the pics description to be read out to the user*/
+                                                when (intent.getStringExtra("language")) {
+                                                    "French" -> descriptionView?.text = allArtPieces[i].French_Desc
+                                                    "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
+                                                    "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
+                                                    "German" -> descriptionView?.text = allArtPieces[i].German_Desc
+                                                    else -> descriptionView?.text = allArtPieces[i].English_Desc
+                                                }
+                                            }
+                                            speakOut(i)
+                                            break
+                                        }
+
+                                        //Updates title
+                                        if (a[i] == 'N') {
                                             runOnUiThread {
                                                 //Change the image, text and descrioption
                                                 imageView?.setImageResource(allArtPieces[i].imageID)
-                                                titleView?.text = allArtPieces[i].name
-                                                val language = intent.getStringExtra("language")
-                                                when (language) {
+                                                val text: String = when (language) {
+                                                    "German" -> allArtPieces[i].nameGerman
+                                                    "French" -> allArtPieces[i].nameFrench
+                                                    "Spanish" -> allArtPieces[i].nameSpanish
+                                                    "Chinese" -> allArtPieces[i].nameChinese
+                                                    else -> allArtPieces[i].name
+
+                                                }
+                                                titleView?.text = text
+                                                currentPic = i /*This is to allow for the pics description to be read out to the user*/
+                                                when (intent.getStringExtra("language")) {
                                                     "French" -> descriptionView?.text = allArtPieces[i].French_Desc
                                                     "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
                                                     "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
@@ -421,40 +597,78 @@ class NavigatingActivity : AppCompatActivity() {
                                             }
                                             break
                                         }
+
                                     }
-                                }
-                                async {
-                                    Thread.sleep(200)
-                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/skip.php").readText()
-                                    if (a == "2" && Skippable) {
-                                        Skippable = false
+                                    if (userid == 1.toString()) {
+                                        if (a[10].toInt() == 2 && skippable) {
+                                            skippable = false
+                                            runOnUiThread {
+                                                alert(skip) {
+                                                    cancellable(false)
+                                                    setFinishOnTouchOutside(false)
+                                                    positiveButton(positive) {
+                                                        if (isNetworkConnected()) {
+                                                            skipImmediately()
+                                                        } else {
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
+                                                    }
+                                                    negativeButton(negative) {
+                                                        if (isNetworkConnected()) {
+                                                            rejectSkip()
+                                                        } else {
+                                                            skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
+                                                    }
+                                                }.show()
+                                            }
+                                        }
+                                    } else if (userid == 2.toString()) {
+                                        if (a[10].toInt() == 1 && skippable) {
+                                            skippable = false
+                                            runOnUiThread {
+                                                alert(skip) {
+                                                    cancellable(false)
+                                                    setFinishOnTouchOutside(false)
+                                                    positiveButton(positive) {
+                                                        if (isNetworkConnected()) {
+                                                            skipImmediately()
+                                                        } else {
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
+                                                    }
+                                                    negativeButton(negative) {
+                                                        if (isNetworkConnected()) {
+                                                            rejectSkip()
+                                                        } else {
+                                                            skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
+                                                    }
+                                                }.show()
+                                            }
+                                        }
+                                    }
+                                    if (a[14] == 'A' && toiletPopUpBool) {
+                                        toiletPopUpBool = false
                                         runOnUiThread {
-                                            alert(skip) {
+                                            toiletPopUp = alert(startRoboTour) {
                                                 cancellable(false)
                                                 setFinishOnTouchOutside(false)
                                                 positiveButton(positive) {
                                                     if (isNetworkConnected()) {
-                                                        skipImmediately()
+                                                        async {
+                                                            sendPUTNEW(11, "F")
+                                                        }
                                                     } else {
-                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                                    }
-                                                }
-                                                negativeButton(negative) {
-                                                    if (isNetworkConnected()) {
-                                                        rejectSkip()
-                                                    } else {
-                                                        Skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
                                                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                     }
                                                 }
                                             }.show()
                                         }
                                     }
-                                }
-                                async {
-                                    //This part checks if the other user has pressed the stop buttons and updates accordingly
-                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/stop.php").readText()
-                                    if (a == "T") {
+                                    if (a[11] == 'T') {
                                         runOnUiThread {
                                             toggleStBtn = true
                                             stopButton!!.text = start
@@ -466,19 +680,120 @@ class NavigatingActivity : AppCompatActivity() {
                                         }
                                     }
                                 }
+                                Thread.sleep(300)
                             }
                         }
                         )
                     } catch (e: InterruptedException) {
+                        Thread.currentThread().interrupt()
+                    } catch (e: InterruptedIOException) {
+                        Thread.currentThread().interrupt()
                     }
                 }
+                Thread.currentThread().interrupt()
             }
         }
+        //Starting the thread which is defined above to keep polling the server
         async {
-            //Starting the thread which is defined above to keep polling the server
             t.run()
         }
 
+    }
+
+    private fun speakOut(input: Int) {
+        println("getting here in speakout input:  $input")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            if (input != -1) {
+                when (language) {
+                    "French" -> {
+                        text = allArtPieces[input].French_Desc
+                    }
+                    "Chinese" -> {
+                        text = allArtPieces[input].Chinese_Desc
+                    }
+                    "Spanish" -> {
+                        text = allArtPieces[input].Spanish_Desc
+                    }
+                    "German" -> {
+                        text = allArtPieces[input].German_Desc
+                    }
+                    else -> {
+                        text = allArtPieces[input].English_Desc
+                    }
+                }
+                tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            } else {
+                when (language) {
+                    "French" -> {
+                        text = "RoboTour calcule l'itinéraire optimal"
+                    }
+                    "Chinese" -> {
+                        text = "RoboTour正在计算最佳路线"
+                    }
+                    "Spanish" -> {
+                        text = "RoboTour está calculando la ruta óptima"
+                    }
+                    "German" -> {
+                        text = "RoboTour berechnet die optimale Route"
+                    }
+                    else -> {
+                        text = "RoboTour is calculating the optimal route"
+                    }
+                }
+                println("speak 2")
+                tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            }
+        }
+    }
+
+    private fun speakOutButton(input: Int) {
+        println("getting here in speakout input:  $input")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            if (input != -1) {
+                when (language) {
+                    "French" -> {
+                        text = allArtPieces[input].French_Desc
+                    }
+                    "Chinese" -> {
+                        text = allArtPieces[input].Chinese_Desc
+                    }
+                    "Spanish" -> {
+                        text = allArtPieces[input].Spanish_Desc
+                    }
+                    "German" -> {
+                        text = allArtPieces[input].German_Desc
+                    }
+                    else -> {
+                        text = allArtPieces[input].English_Desc
+                    }
+                }
+                tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            } else {
+                when (language) {
+                    "French" -> {
+                        text = "RoboTour calcule l'itinéraire optimal"
+                    }
+                    "Chinese" -> {
+                        text = "RoboTour正在计算最佳路线"
+                    }
+                    "Spanish" -> {
+                        text = "RoboTour está calculando la ruta óptima"
+                    }
+                    "German" -> {
+                        text = "RoboTour berechnet die optimale Route"
+                    }
+                    else -> {
+                        text = "RoboTour is calculating the optimal route"
+                    }
+                }
+                println("speak 2")
+                tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            }
+        }
     }
 
     private fun isNetworkConnected(): Boolean {
@@ -489,78 +804,139 @@ class NavigatingActivity : AppCompatActivity() {
         return networkInfo != null && networkInfo.isConnected
     }
 
-    fun toiletAlert() {
-        alert {
-            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+    private fun exitDoor() {
+        //This function will tell the robot to take the user to the exit
+        if (isNetworkConnected()) {
+            sendPUTNEW(15, "T")
+        } else {
+            toast("Check your network connection, command not sent")
         }
     }
 
     override fun onBackPressed() {
         /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
         Send the user back to MainActivity */
-       alert(exitDesc){
-           positiveButton(positive){
-               t.interrupt()
-               switchToMain()
-           }
-           negativeButton(negative) {
-               /*Do nothing*/
-           }
-       }.show()
+        alert(exitDesc) {
+            positiveButton(positive) {
+                interruptThread()
+                if (userid == "1") {
+                    async {
+                        sendPUTNEW(16, "F")
+                    }
+                } else if (userid == "2") {
+                    async {
+                        sendPUTNEW(17, "F")
+                    }
+                }
+                clearFindViewByIdCache()
+                switchToMain()
+            }
+            negativeButton(negative) { /*Do nothing*/ }
+        }.show()
     }
 
-    fun cancelGuideTotal() {
-        sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/$userid.php")
-        switchToMain()
+    private fun interruptThread() {
+        t.interrupt()
+
     }
 
-    fun switchToMain() {
+    private fun cancelGuideTotal() {
+        if (isNetworkConnected()) {
+            sendPUTNEW(12, userid)
+            switchToMain()
+            interruptThread()
+            if (userid == "1") {
+                async {
+                    sendPUTNEW(16, "F")
+                }
+            } else if (userid == "2") {
+                async {
+                    sendPUTNEW(17, "F")
+                }
+            }
+        } else {
+            toast("Check your network connection, command not sent")
+        }
+    }
+
+    private fun switchToMain() {
+        clearFindViewByIdCache()
         startActivity<MainActivity>()
     }
 
-    fun rejectSkip() {
-        async {
-            //This function will reject the skip by adding the empty string
-            sendPUT(" ", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+    private fun rejectSkip() {
+        if (isNetworkConnected()) {
+            async {
+                //This function will reject the skip by adding the empty string
+                sendPUTNEW(10, " ")
+            }
+        } else {
+            toast("Check your network connection, command not sent")
         }
     }
 
-    fun skipImmediately() {
-        /*This function is only when both users have agreed to skip the next item*/
-        async {
-            sendPUT("Y", "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
-            Thread.sleep(400)
-            Skippable = true
-        }
-
-    }
-
-    fun skip() {
-        async {
-            sendPUT(userid, "http://homepages.inf.ed.ac.uk/s1553593/skip.php")
+    private fun vibrate() {
+        if (Build.VERSION.SDK_INT > 25) { /*Attempt to not use the deprecated version if possible, if the SDK version is >25, use the newer one*/
+            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(VibrationEffect.createOneShot(300, 10))
+        } else {
+            /*for backward comparability*/
+            @Suppress("DEPRECATION")
+            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(300)
         }
     }
 
-    fun stopRoboTour() {
-        async {
-            sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
+    private fun skipImmediately() {
+        if (isNetworkConnected()) {
+            /*This function is only when both users have agreed to skip the next item*/
+            async {
+                sendPUTNEW(10, "Y")
+                Thread.sleep(400)
+                skippable = true
+            }
+        } else {
+            toast("Check your network connection, command not sent")
         }
     }
 
-    fun startRoboTour() {
-        async {
-            sendPUT("F", "http://homepages.inf.ed.ac.uk/s1553593/stop.php")
+    private fun skip() {
+        if (isNetworkConnected()) {
+            async {
+                sendPUTNEW(10, userid)
+            }
+        } else {
+            toast("Check your network connection, command not sent")
         }
     }
 
-    fun sendPUT(command: String, url: String) {
+    private fun stopRoboTour() {
+        if (isNetworkConnected()) {
+            async {
+                sendPUTNEW(11, "T")
+            }
+        } else {
+            toast("Check your network connection, command not sent")
+        }
+    }
+
+    private fun startRoboTour() {
+        if (isNetworkConnected()) {
+            async {
+                sendPUTNEW(11, "F")
+            }
+        } else {
+            toast("Check your network connection, command not sent")
+        }
+    }
+
+    private fun sendPUTNEW(identifier: Int, command: String) {
+        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
         val httPpost = HttpPost(url)
         try {
             val nameValuePairs = ArrayList<NameValuePair>(4)
-            nameValuePairs.add(BasicNameValuePair("command", command))
+            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
             httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
             httpclient.execute(httPpost)
         } catch (e: ClientProtocolException) {

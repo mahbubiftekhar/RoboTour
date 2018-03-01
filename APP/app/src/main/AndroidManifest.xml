@@ -7,9 +7,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission." />
 
     <application
         android:allowBackup="true"
@@ -27,6 +27,7 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
+            android:noHistory="true"
             tools:ignore="ExtraText">
             android:screenOrientation="portrait"
             <intent-filter>
@@ -38,19 +39,29 @@
         <activity
             android:name=".PicturesActivity"
             android:noHistory="true"
-            android:screenOrientation="portrait"
-            />
-        <activity android:name=".NavigatingActivity"
-            android:screenOrientation="portrait"
-            >
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NavigatingActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait">
             android:screenOrientation="portrait"
         </activity>
         <activity
             android:name=".Waiting"
             android:label="@string/title_activity_waiting"
+            android:noHistory="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".TempActivity" />
+        <activity
+            android:name=".AdminActivity"
+            android:label="@string/title_activity_admin"
+            android:noHistory="true"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".FinnishActivity"
+            android:label="@string/title_activity_finnish"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

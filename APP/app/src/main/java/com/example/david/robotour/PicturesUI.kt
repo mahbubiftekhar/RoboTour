@@ -2,7 +2,6 @@ package com.example.david.robotour
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
-import android.preference.PreferenceManager
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
@@ -17,7 +16,8 @@ import org.jetbrains.anko.*
 import java.io.IOException
 import java.util.ArrayList
 
-class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: String, val ctx: Context) : AnkoComponent<PicturesActivity> {
+@Suppress("DEPRECATION")
+class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val language: String, private val ctx: Context) : AnkoComponent<PicturesActivity> {
     private lateinit var a: String
     private var navigate = ""
     lateinit var navigateButton: Button
@@ -26,7 +26,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
     private var negative = ""
 
     private fun notifyUser() {
-        Toast.makeText(ctx,toastText,Toast.LENGTH_LONG).show()
+        Toast.makeText(ctx, toastText, Toast.LENGTH_LONG).show()
     }
 
     override fun createView(ui: AnkoContext<PicturesActivity>): View = with(ui) {
@@ -99,6 +99,8 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                 positiveButton(positive) {
                                     async {
                                         sendList()
+                                        sendPUTNEW(16, "T")
+
                                     }
                                     async {
                                         val a = PicturesActivity()
@@ -111,43 +113,33 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                 }
                             }.show()
                         }
-
                     }
                 }.lparams { width = matchParent; height = wrapContent; weight = 0.0f }
                 lparams { width = matchParent; height = matchParent; orientation = LinearLayout.VERTICAL }
             }
         }
     }
-    private fun loadInt(key: String): Int {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
-        return sharedPreferences.getInt(key, 0)
-    }
 
     private fun sendList() {
         /*This function will upload to the server the required items simply - positive uploads only*/
-        navigateButton.background = ColorDrawable()
-
         allArtPieces
                 .filter { it.selected }
-                .map { it.eV3ID }
-                .forEach { sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/$it.php") }
-        val a = loadInt("user")
-        sendPUT("T", "http://homepages.inf.ed.ac.uk/s1553593/$a.php")
+                .forEach { sendPUTNEW(it.eV3ID, "T") }
     }
 
-    fun sendPUT(command: String, url: String) {
-        async {
-            val httpclient = DefaultHttpClient()
-            val httpPost = HttpPost(url)
-            try {
-                val nameValuePairs = ArrayList<NameValuePair>(4)
-                nameValuePairs.add(BasicNameValuePair("command", command))
-                httpPost.entity = UrlEncodedFormEntity(nameValuePairs)
-                httpclient.execute(httpPost)
-            } catch (e: ClientProtocolException) {
-            } catch (e: IOException) {
-            }
+    private fun sendPUTNEW(identifier: Int, command: String) {
+        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
+        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
+        * as security exception - just a heads up */
+        val httpclient = DefaultHttpClient()
+        val httPpost = HttpPost(url)
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
+            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
+            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+            httpclient.execute(httPpost)
+        } catch (e: ClientProtocolException) {
+        } catch (e: IOException) {
         }
     }
 }
