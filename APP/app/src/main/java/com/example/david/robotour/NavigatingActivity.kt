@@ -130,6 +130,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             } else {
             }
         } else {
+
         }
 
     }
@@ -516,7 +517,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 println("getting here 1")
                                                 speaking = i
                                                 println("getting here 2")
-                                                speakOut(i)
                                                 println("getting here 3")
                                                 //Change the image, text and descrioption
                                                 imageView?.setImageResource(allArtPieces[i].imageID)
@@ -537,6 +537,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                     else -> descriptionView?.text = allArtPieces[i].English_Desc
                                                 }
                                             }
+                                            speakOut(i)
                                             break
                                         }
 
@@ -665,8 +666,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             t.run()
         }
     }
-
-
+    
     private fun speakOut(input: Int) {
         println("getting here in speakout input:  $input")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -690,53 +690,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         text = allArtPieces[input].English_Desc
                     }
                 }
-                println("speak 1")
-                tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
-            } else {
-                when (language) {
-                    "French" -> {
-                        text = "RoboTour calcule l'itinéraire optimal"
-                    }
-                    "Chinese" -> {
-                        text = "RoboTour正在计算最佳路线"
-                    }
-                    "Spanish" -> {
-                        text = "RoboTour está calculando la ruta óptima"
-                    }
-                    "German" -> {
-                        text = "RoboTour berechnet die optimale Route"
-                    }
-                    else -> {
-                        text = "RoboTour is calculating the optimal route"
-                    }
-                }
-                println("speak 2")
-                tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
-            }
-        } else {
-            //For older versions of android, before lollipop
-            val text: String
-            val language = intent.getStringExtra("language")
-            if (input != -1) {
-
-                when (language) {
-                    "French" -> {
-                        text = allArtPieces[input].French_Desc
-                    }
-                    "Chinese" -> {
-                        text = allArtPieces[input].Chinese_Desc
-                    }
-                    "Spanish" -> {
-                        text = allArtPieces[input].Spanish_Desc
-                    }
-                    "German" -> {
-                        text = allArtPieces[input].German_Desc
-                    }
-                    else -> {
-                        text = allArtPieces[input].English_Desc
-                    }
-                }
-                println("speak 3")
                 tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
             } else {
                 when (language) {
@@ -756,7 +709,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         text = "RoboTour is calculating the optimal route"
                     }
                 }
-                println("speak 4")
+                println("speak 2")
                 tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
             }
         }
