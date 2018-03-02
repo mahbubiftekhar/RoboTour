@@ -13,6 +13,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.speech.tts.TextToSpeech
+import android.support.annotation.RequiresApi
 import android.support.v4.content.res.ResourcesCompat
 import android.view.Gravity
 import android.widget.Button
@@ -31,6 +32,7 @@ import org.jetbrains.anko.design.floatingActionButton
 import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.URL
+import java.nio.channels.InterruptedByTimeoutException
 import java.util.*
 
 @Suppress("DEPRECATION")
@@ -533,6 +535,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             "else" -> titleView?.text = "RoboTour calculating optimal route..."
         }
         t = object : Thread() {
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun run() {
                 while (!isInterrupted) {
                     try {
@@ -694,6 +697,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     } catch (e: InterruptedException) {
                         Thread.currentThread().interrupt()
                     } catch (e: InterruptedIOException) {
+                        Thread.currentThread().interrupt()
+                    } catch (e: InterruptedByTimeoutException){
                         Thread.currentThread().interrupt()
                     }
                 }

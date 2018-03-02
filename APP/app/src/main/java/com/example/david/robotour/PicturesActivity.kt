@@ -19,7 +19,6 @@ import com.google.cloud.translate.Translate
 import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
 import java.io.InterruptedIOException
-import java.net.URL
 import java.util.*
 import kotlin.collections.ArrayList
 import java.util.Random
@@ -32,8 +31,6 @@ class PicturesActivity : AppCompatActivity() {
 
     data class ArtPiece(val name: String, val artist: String, val nameChinese: String, val nameGerman: String, val nameSpanish: String, val nameFrench: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int, var selected: Boolean)
 
-    private var frequencyList = ArrayList<Int>()
-    private var frequencyListReady = false
     private var shownArtPieces = ArrayList<ArtPiece>()
     private val reqSpeechCode = 100
     private var queriedArtPieces = ArrayList<ArtPiece>()
@@ -136,6 +133,7 @@ class PicturesActivity : AppCompatActivity() {
     }
 
     private fun speakOut_recommendations() {
+        //This will simply output in speech "Here are your recommendations"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
             val language = intent.getStringExtra("language")
@@ -161,6 +159,7 @@ class PicturesActivity : AppCompatActivity() {
     }
 
     private fun speakOut_results() {
+        //This will simply output in speech "Here are the results"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
             val language = intent.getStringExtra("language")
@@ -200,9 +199,6 @@ class PicturesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         allArtPieces.clear()
-        async {
-            storeFrequencies()
-        }
         tts_recommendations = TextToSpeech(this, null)
         tts_results = TextToSpeech(this, null)
         onInit()
@@ -332,6 +328,7 @@ class PicturesActivity : AppCompatActivity() {
     }
 
     private fun getNewest(): Int {
+        /*This will return the newest painting*/
         var id = 1000
         (0..9)
                 .asSequence()
@@ -341,6 +338,7 @@ class PicturesActivity : AppCompatActivity() {
     }
 
     private fun getOldest(): Int {
+        /*This will return the oldest painting*/
         var id = -1
         (0..9)
                 .asSequence()
@@ -350,45 +348,19 @@ class PicturesActivity : AppCompatActivity() {
     }
 
     private fun rand(from: Int, to: Int): Int {
+        //This should return a number between 0 and 9, Yay!
         return random.nextInt(to - from) + from
     }
 
     private fun surpriseMe(): Int {
-        //This should return a number between 0 and 9, Yay!
+        /*This will pick a random painting!*/
         return rand(0, 9)
     }
 
-    private fun storeFrequencies() {
-        //This function is to be called in oncCreate, the reason is to reduce the users wait time
-        for (i in 0..9) {
-            //Sets the frequencyList
-            try {
-                frequencyList[i] = (URL("http://homepages.inf.ed.ac.uk/s1553593/$i.php").readText()).toInt()
-            } catch (e: Exception) {
-                //Catching all the exceptions that can be thrown
-            }
-        }
-        runOnUiThread {
-            frequencyListReady = true //Updates the variable to true
-        }
-    }
 
-    private fun popularArtPieces(): Int {
-        var max = -1000
-        if (frequencyListReady) {
-
-        } else {
-            Thread.sleep(200)
-        }
-        try {
-            (0..9)
-                    .asSequence()
-                    .filter { frequencyList[it] > max }
-                    .forEach { max = frequencyList[it] }
-        } catch (e: Exception) {
-            //Catching all the exceptions that can be thrown
-        }
-        return 1
+    private fun popularArtPieces(): List<Int> {
+        /*This will return a list of indexes to artpieces, where the first is the most popular*/
+        return listOf<Int>(4,7,8)
     }
 
 
