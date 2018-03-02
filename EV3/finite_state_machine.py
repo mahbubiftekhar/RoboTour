@@ -26,6 +26,7 @@ class State():
         self.default_state = default
         self.name=name
         self.transitions = []
+        self.activate_fun = None
 
     def next_state(self, env):
 
@@ -55,10 +56,15 @@ class State():
     def set_default(self, state):
         self.default_state = state
 
+    def on_activate(self, fun):
+        self.activate_fun = fun
+
     def activate(self, env):
         for t in self.transitions:
             t.arm(env)
-        pass
+        
+        if self.activate_fun is not None:
+            self.activate_fun(env)
 
 
 class Transition():
