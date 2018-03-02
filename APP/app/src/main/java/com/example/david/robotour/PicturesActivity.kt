@@ -360,7 +360,7 @@ class PicturesActivity : AppCompatActivity() {
 
     private fun popularArtPieces(): List<Int> {
         /*This will return a list of indexes to artpieces, where the first is the most popular*/
-        return listOf<Int>(4,7,8)
+        return listOf(4,7,8)
     }
 
 
