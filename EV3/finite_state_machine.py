@@ -88,4 +88,20 @@ class Transition():
         return self.trigger_fun(env)
 
 
+class TransitionTimed(Transition):
+    # override the constructor
+    def __init__(self, time_ms, next_state):
+        Transition.__init__(self, next_state)
+        self.transition_after = time_ms
 
+    # we need to utilise the function that gets called when we enter
+    # the state. Override it to remember starting time
+    def arm(self, env):
+        self.start_time = env.clock_ms
+
+    # now override the condition method that triggers the transition
+    def condition(self, env):
+        # calculate how much time has elapsed so far
+        time_since_arm = env.clock_ms - self.start_time
+        # return whether we've waited long enough
+        return time_since_arm >= self.transition_after
