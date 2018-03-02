@@ -618,7 +618,6 @@ class PicturesActivity : AppCompatActivity() {
         }
         queriedArtPieces.clear()
         adapter.notifyDataSetChanged()
-        println("text getting here")
         speakOut_results()
     }
 

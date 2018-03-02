@@ -81,12 +81,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-            advertisements.clear()
-            advertisements.add(R.drawable.your_ad_here)
-            advertisements.add(R.drawable.new_exhibit)
-            advertisements.add(R.drawable.gift_shop)
-            pictureThread.start()
-
+        advertisements.clear()
+        advertisements.add(R.drawable.your_ad_here)
+        advertisements.add(R.drawable.new_exhibit)
+        advertisements.add(R.drawable.gift_shop)
+        pictureThread.start()
         super.onResume()
     }
 
@@ -94,9 +93,11 @@ class MainActivity : AppCompatActivity() {
         pictureThread.interrupt()
         super.onStop()
     }
+
     private val pictureThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
+
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!isInterrupted) {
@@ -116,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
-                } catch (e: InterruptedByTimeoutException){
+                } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
                 }
             }

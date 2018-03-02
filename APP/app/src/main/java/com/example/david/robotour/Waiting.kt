@@ -76,8 +76,7 @@ class Waiting : AppCompatActivity() {
             background = ColorDrawable(Color.parseColor("#EEEEEE"))
         }
         async {
-            t.start()
-            pictureThread.start()
+
             switchToNavigate() //This should be removed in the final implementation
         }
 
@@ -99,7 +98,7 @@ class Waiting : AppCompatActivity() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!isInterrupted) {
-                println("in the thread Waiting 1")
+                println("++++ t thread Waiting")
                 try {
                     if (user == 1) {
                         val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user2.php").readText()
@@ -156,7 +155,7 @@ class Waiting : AppCompatActivity() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!isInterrupted) {
-                println("in the thread Waiting 2")
+                println("++++ picture thread Waiting")
                 if (a > 9) {
                     //Reset A to avoid null pointers
                     a = 0

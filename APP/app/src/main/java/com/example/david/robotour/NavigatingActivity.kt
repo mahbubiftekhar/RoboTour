@@ -706,10 +706,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         //Starting the thread which is defined above to keep polling the server
-        async {
-            t.run()
-        }
-
+          Thread{
+              t.run()
+          }
     }
 
     private fun speakOut(input: Int) {
