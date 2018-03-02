@@ -502,6 +502,7 @@ class PicturesActivity : AppCompatActivity() {
         }
         queriedArtPieces.clear()
         adapter.notifyDataSetChanged()
+        speakOut_results()
     }
 
     override fun onBackPressed() {
@@ -645,6 +646,8 @@ class PicturesActivity : AppCompatActivity() {
         }
         queriedArtPieces.clear()
         adapter.notifyDataSetChanged()
+        println("text getting here")
+        speakOut_results()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
