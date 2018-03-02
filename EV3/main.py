@@ -313,11 +313,22 @@ static_dictionary = {
 }
 
 dictionary = {
-    'Exit-Monalisa' : ['FORWARD','ACW'],
-    'Exit-Adam' : ['RIGHT','LEFT','CW'],
-    'Exit-Pearl' : ['RIGHT','FORWARD','LEFT','CW'],
-    'Exit-Lilies' : ['RIGHT','FORWARD','RIGHT','LEFT','CW'],
-    'Exit-Supper' : ['RIGHT','FORWARD','RIGHT','RIGHT','ACW']
+    'Exit' : {'Monalisa': ['FORWARD','ACW'],
+              'Adam': ['RIGHT', 'LEFT', 'CW'],
+              'Pearl': ['RIGHT', 'FORWARD', 'LEFT', 'CW'],
+              'Lilies': ['RIGHT', 'FORWARD', 'RIGHT', 'FORWARD', 'CW'],
+              'Supper': ['RIGHT', 'FORWARD', 'RIGHT', 'RIGHT', 'ACW']
+              },
+    'Monalisa' : {'Napoloeon' : ['FORWARD','CW'],
+                  'Kanagawa' : ['RIGHT','FORWARD','ACW'],
+                  'Venus' : ['RIGHT','RIGHT','ACW'],
+                  ## if painting on left
+                  'Exit' : ['FOWARD','ACW'],
+                  'Adam' : ['LEFT','LEFT','CW'],
+                  'Pearl' : ['LEFT','FORWARD','LEFT','CW'],
+                  'Lilies' : ['LEFT', 'FORWARD','RIGHT','FORWARD','CW'],
+                  'Supper' : ['LEFT', 'FORWARD','RIGHT','RIGHT','ACW']}
+
 }
 
 command_index = 0
