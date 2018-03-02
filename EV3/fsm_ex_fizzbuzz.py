@@ -4,13 +4,14 @@ from finite_state_machine import *
 
 
 # in this example we will use the FSMs to create FizzBuzz
+#
 # we want to print Fizz if the tick count is divisible by three
 #  and Buzz if it is divisible by 5
 
 # lets identify states
 
 # first there is the waiting state where we dont print anything
-waiting = State("Waiting...")
+waiting = State("...")
 
 # there are also states where we print Fizz and Buzz
 fizz = State("Fizz!")
@@ -52,7 +53,9 @@ env = Environment()
 
 waiting.add_transition(Transition(fizz, divisible_3))
 waiting.add_transition(Transition(buzz, divisible_5))
-waiting.add_transition(Transition(fizzbuzz, divisible_3_and_5))
+waiting.add_transition(Transition(fizzbuzz, divisible_3_and_5), priority=2)
+# the last one needs to have higher priority (1 is default)
+
 
 fizz.add_transition(Transition(buzz, divisible_5))
 fizz.set_default(waiting)
