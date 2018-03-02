@@ -18,7 +18,7 @@ class State():
 	def __init__(self, name, default=None):
 
 		# a default state if none of the transitions trigger
-		self.default_state = default if default is not None else self
+		self.default_state = default
 		self.name=name
 		self.transitions = []
 
@@ -41,7 +41,8 @@ class State():
 				current_priority = t.priority
 				next_state = t.next_state
 
-		return next_state
+		# make next state the default one, if it is defined. Otherwise point to self
+		return next_state if next_state is not None else self
 
 	def add_transition(self, transition):
 		self.transitions.append(transition)

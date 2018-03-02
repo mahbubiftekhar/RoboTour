@@ -21,6 +21,8 @@ def after_2_times(env):
 	if env.counter == 2:
 		env.counter = 0
 		return True
+	else:
+		return False
 
 # lets define the class that our triggers will use
 class environment():
