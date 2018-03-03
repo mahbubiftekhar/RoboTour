@@ -4,13 +4,18 @@ import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.WindowManager
 import org.jetbrains.anko.*
 import java.util.*
 
 class SelectLanguageActivity : AppCompatActivity() {
     data class Language(val name: String, val imageID: Int)
+
     private val languages = ArrayList<Language>()
 
+    override fun onBackPressed() {
+        startActivity<MainActivity>()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // add back button to actionbar
@@ -22,6 +27,7 @@ class SelectLanguageActivity : AppCompatActivity() {
         languages.add(Language("Spanish", R.drawable.spanishflag))
         languages.add(Language("English", R.drawable.ukflag))
         languages.add(Language("No Language", R.drawable.otherpicture))
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
 
         //UI
         tableLayout {

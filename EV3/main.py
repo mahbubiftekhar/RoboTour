@@ -312,6 +312,25 @@ static_dictionary = {
     'The Last Supper': ['RIGHT', 'FORWARD', 'CW']
 }
 
+dictionary = {
+    'Exit' : {'Monalisa': ['FORWARD','ACW'],
+              'Adam': ['RIGHT', 'LEFT', 'CW'],
+              'Pearl': ['RIGHT', 'FORWARD', 'LEFT', 'CW'],
+              'Lilies': ['RIGHT', 'FORWARD', 'RIGHT', 'FORWARD', 'CW'],
+              'Supper': ['RIGHT', 'FORWARD', 'RIGHT', 'RIGHT', 'ACW']
+              },
+    'Monalisa' : {'Napoloeon' : ['FORWARD','CW'],
+                  'Kanagawa' : ['RIGHT','FORWARD','ACW'],
+                  'Venus' : ['RIGHT','RIGHT','ACW'],
+                  ## if painting on left
+                  'Exit' : ['FOWARD','ACW'],
+                  'Adam' : ['LEFT','LEFT','CW'],
+                  'Pearl' : ['LEFT','FORWARD','LEFT','CW'],
+                  'Lilies' : ['LEFT', 'FORWARD','RIGHT','FORWARD','CW'],
+                  'Supper' : ['LEFT', 'FORWARD','RIGHT','RIGHT','ACW']}
+
+}
+
 command_index = 0
 pictures = server.getCommands()
 if (pictures[4] == "T"):

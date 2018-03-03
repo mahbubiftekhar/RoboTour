@@ -2,7 +2,6 @@ package com.example.david.robotour
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
-import android.preference.PreferenceManager
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
@@ -17,7 +16,8 @@ import org.jetbrains.anko.*
 import java.io.IOException
 import java.util.ArrayList
 
-class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: String, val ctx: Context) : AnkoComponent<PicturesActivity> {
+@Suppress("DEPRECATION")
+class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val language: String, private val ctx: Context) : AnkoComponent<PicturesActivity> {
     private lateinit var a: String
     private var navigate = ""
     lateinit var navigateButton: Button
@@ -26,7 +26,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
     private var negative = ""
 
     private fun notifyUser() {
-        Toast.makeText(ctx,toastText,Toast.LENGTH_LONG).show()
+        Toast.makeText(ctx, toastText, Toast.LENGTH_LONG).show()
     }
 
     override fun createView(ui: AnkoContext<PicturesActivity>): View = with(ui) {
@@ -54,7 +54,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                     negative = "Non"
                 }
                 "Chinese" -> {
-                    a = "开始旅游"
+                    a = "开始导航"
                     navigate = "导航到选定的艺术品？"
                     toastText = "请选择一件或多件作品参观"
                     positive = "是"
@@ -97,7 +97,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                             //need to translate here
                             alert(navigate) {
                                 positiveButton(positive) {
-                                    async{
+                                    async {
                                         sendList()
                                         sendPUTNEW(16, "T")
 
@@ -113,17 +113,11 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
                                 }
                             }.show()
                         }
-
                     }
                 }.lparams { width = matchParent; height = wrapContent; weight = 0.0f }
                 lparams { width = matchParent; height = matchParent; orientation = LinearLayout.VERTICAL }
             }
         }
-    }
-    private fun loadInt(key: String): Int {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
-        return sharedPreferences.getInt(key, 0)
     }
 
     private fun sendList() {
@@ -139,7 +133,8 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, val language: Str
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
         val httPpost = HttpPost(url)
-        try { val nameValuePairs = ArrayList<NameValuePair>(4)
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
             nameValuePairs.add(BasicNameValuePair("command$identifier", command))
             httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
             httpclient.execute(httPpost)

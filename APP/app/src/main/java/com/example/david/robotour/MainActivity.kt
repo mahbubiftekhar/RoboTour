@@ -10,21 +10,21 @@ import org.jetbrains.anko.*
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Build
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.preference.PreferenceManager
+import android.support.annotation.RequiresApi
 import android.view.Gravity
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.Toast
 import kotlinx.android.synthetic.*
+import java.io.InterruptedIOException
+import java.nio.channels.InterruptedByTimeoutException
 
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
-    private var count = 0
     private var advertisements = ArrayList<Int>()
     private var imageView: ImageView? = null
     private var continueThread = true
-
 
     override fun onBackPressed() {
         clearFindViewByIdCache()
@@ -45,20 +45,11 @@ class MainActivity : AppCompatActivity() {
         return networkInfo != null && networkInfo.isConnected
     }
 
-    private fun vibrate() {
-        if (Build.VERSION.SDK_INT > 25) { /*Attempt to not use the deprecated version if possible, if the SDK version is >25, use the newer one*/
-            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(VibrationEffect.createOneShot(300, 10))
-        } else {
-            /*for backward comparability*/
-            @Suppress("DEPRECATION")
-            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(300)
-        }
-    }
-
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         verticalLayout {
             imageView(R.drawable.robotour_small) {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
@@ -70,18 +61,17 @@ class MainActivity : AppCompatActivity() {
                     if (isNetworkConnected()) {
                         continueThread = false
                         interuptPicturesThread()
+                        pictureThread.interrupt()
                         startActivity<SelectLanguageActivity>()
                     } else {
                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                     }
                 }
                 onLongClick {
-                    if (count < 5) {
-                        count++
-                        vibrate()
-                    } else {
-                        switchToAdmin()
-                    }
+
+                    interuptPicturesThread()
+                    switchToAdmin()
+
                     true
                 }
             }
@@ -90,23 +80,30 @@ class MainActivity : AppCompatActivity() {
                 gravity = Gravity.CENTER_HORIZONTAL
             }
         }
-        async {
-            //Populate Advertisements
-            advertisements.add(R.drawable.your_ad_here)
-            advertisements.add(R.drawable.new_exhibit)
-            advertisements.add(R.drawable.gift_shop)
-            //This thread essentially starts the pictures at the bottom of the screen
-           pictureThread.start()
-        }
     }
 
+    override fun onResume() {
+        advertisements.clear()
+        advertisements.add(R.drawable.your_ad_here)
+        advertisements.add(R.drawable.new_exhibit)
+        advertisements.add(R.drawable.gift_shop)
+        pictureThread.start()
+        super.onResume()
+    }
+
+    override fun onStop() {
+        pictureThread.interrupt()
+        super.onStop()
+    }
 
     private val pictureThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
+
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
-            while (!isInterrupted && continueThread) {
-                println("+++ running here")
+            while (!isInterrupted) {
+                println("+++ running here main activity")
                 if (a > (advertisements.size - 1)) {
                     //Reset A to avoid null pointers
                     a = 0
@@ -119,13 +116,18 @@ class MainActivity : AppCompatActivity() {
                     Thread.sleep(3000)
                     a++
                 } catch (e: InterruptedException) {
-                  Thread.currentThread().interrupt()
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedIOException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedByTimeoutException) {
+                    Thread.currentThread().interrupt()
                 }
             }
+            Thread.currentThread().interrupt()
         }
     }
 
-    private fun interuptPicturesThread(){
+    private fun interuptPicturesThread() {
         pictureThread.interrupt()
     }
 }
