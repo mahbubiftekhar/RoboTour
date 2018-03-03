@@ -3,17 +3,21 @@ package com.example.david.robotour
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.Gravity.CENTER
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.*
 import org.jetbrains.anko.*
 import java.io.InterruptedIOException
 import java.net.URL
+import java.nio.channels.InterruptedByTimeoutException
 
 class Waiting : AppCompatActivity() {
     private var user = 1
@@ -42,7 +46,7 @@ class Waiting : AppCompatActivity() {
             "Chinese" -> "请等待其他用户..."
             else -> "Please Wait For the Other User..."
         }
-
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         verticalLayout {
             webView {
                 loadUrl("file:///android_asset/robotour_spinning_grey.gif")
@@ -73,8 +77,7 @@ class Waiting : AppCompatActivity() {
             background = ColorDrawable(Color.parseColor("#EEEEEE"))
         }
         async {
-            t.start()
-            pictureThread.start()
+
             switchToNavigate() //This should be removed in the final implementation
         }
 
@@ -93,9 +96,10 @@ class Waiting : AppCompatActivity() {
 
     private val t: Thread = object : Thread() {
         /*This thread will check if the other use has made their selection*/
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!isInterrupted) {
-                println("in the thread Waiting 1")
+                println("++++ t thread Waiting")
                 try {
                     if (user == 1) {
                         val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user2.php").readText()
@@ -115,6 +119,8 @@ class Waiting : AppCompatActivity() {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
+                } catch (e: InterruptedByTimeoutException) {
+                    Thread.currentThread().interrupt()
                 }
             }
             Thread.currentThread().interrupt()
@@ -125,22 +131,32 @@ class Waiting : AppCompatActivity() {
         //This function interrupts all the threads
         pictureThread.interrupt()
         t.interrupt()
-    }
-
-    override fun onStop() {
         pictureThread.interrupt()
         t.interrupt()
+    }
 
-        super.onStop()
+    override fun onPause() {
+        pictureThread.interrupt()
+        t.interrupt()
+        pictureThread.interrupt()
+        t.interrupt()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        pictureThread.start()
+        t.start()
+        super.onResume()
     }
 
     private val pictureThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
 
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!isInterrupted) {
-                println("in the thread Waiting 2")
+                println("++++ picture thread Waiting")
                 if (a > 9) {
                     //Reset A to avoid null pointers
                     a = 0
@@ -157,7 +173,10 @@ class Waiting : AppCompatActivity() {
                     a++
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
-                } catch (e: IndexOutOfBoundsException) {
+                } catch (e: InterruptedIOException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedByTimeoutException) {
+                    Thread.currentThread().interrupt()
                 }
             }
             Thread.currentThread().interrupt()

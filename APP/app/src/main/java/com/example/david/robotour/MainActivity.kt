@@ -12,6 +12,7 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.view.Gravity
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.Toast
 import kotlinx.android.synthetic.*
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         verticalLayout {
             imageView(R.drawable.robotour_small) {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
@@ -81,12 +83,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-            advertisements.clear()
-            advertisements.add(R.drawable.your_ad_here)
-            advertisements.add(R.drawable.new_exhibit)
-            advertisements.add(R.drawable.gift_shop)
-            pictureThread.start()
-
+        advertisements.clear()
+        advertisements.add(R.drawable.your_ad_here)
+        advertisements.add(R.drawable.new_exhibit)
+        advertisements.add(R.drawable.gift_shop)
+        pictureThread.start()
         super.onResume()
     }
 
@@ -94,9 +95,11 @@ class MainActivity : AppCompatActivity() {
         pictureThread.interrupt()
         super.onStop()
     }
+
     private val pictureThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
+
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!isInterrupted) {
@@ -116,7 +119,7 @@ class MainActivity : AppCompatActivity() {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
-                } catch (e: InterruptedByTimeoutException){
+                } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
                 }
             }

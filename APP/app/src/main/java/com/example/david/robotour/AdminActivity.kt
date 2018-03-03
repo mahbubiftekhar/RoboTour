@@ -6,6 +6,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
+import android.view.WindowManager
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_admin.*
 import org.apache.http.NameValuePair
@@ -97,14 +98,40 @@ class AdminActivity : AppCompatActivity() {
         }
     }
 
+    private fun destination(destination: Int): Boolean {
+        /*This is a validity check to ensure no malarkey is put on the server*/
+        return when (destination) {
+            0 -> true
+            1 -> true
+            2 -> true
+            3 -> true
+            4 -> true
+            5 -> true
+            6 -> true
+            7 -> true
+            8 -> true
+            9 -> true
+            10 -> true
+            11 -> true
+            12 -> true
+            14 -> true
+            13 -> true
+            15 -> true
+            16 -> true
+            17 -> true
+            else -> false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
 
         sendy.setOnClickListener {
             val destination = destination.text.toString()
             val message = messageToSend.text.toString().toUpperCase()
-            if (destination.toInt() in 0..17 && messageValid(message)) {
+            if (destination(destination.toInt()) && messageValid(message)) {
                 vibrate()
                 async {
                     sendPUTNEW(destination.toInt(), message)

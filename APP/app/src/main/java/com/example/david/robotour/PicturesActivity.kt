@@ -10,18 +10,22 @@ import org.jetbrains.anko.*
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
+import android.speech.tts.TextToSpeech
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import com.google.cloud.translate.Translate
 import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
-import java.io.InterruptedIOException
 import java.util.*
 import kotlin.collections.ArrayList
 
+
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
+@Suppress("DEPRECATION")
 class PicturesActivity : AppCompatActivity() {
 
     data class ArtPiece(val name: String, val artist: String, val nameChinese: String, val nameGerman: String, val nameSpanish: String, val nameFrench: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int, var selected: Boolean)
@@ -33,6 +37,8 @@ class PicturesActivity : AppCompatActivity() {
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     lateinit var t: Thread
     private var language = ""
+    private var ttsRecommendations: TextToSpeech? = null
+    private var ttsResults: TextToSpeech? = null
 
     private fun translate(textToTranslate: List<String>): MutableList<String> {
         /*This function takes a list and returns a list of translated text using Google's API
@@ -47,6 +53,162 @@ class PicturesActivity : AppCompatActivity() {
             translated.add(translation.translatedText)
         }
         return translated
+    }
+
+    override fun onDestroy() {
+        // Shutdown TTS
+        if (ttsRecommendations != null) {
+            ttsRecommendations!!.stop()
+            ttsRecommendations!!.shutdown()
+        }
+        if (ttsResults != null) {
+            ttsResults!!.stop()
+            ttsResults!!.shutdown()
+        }
+
+        super.onDestroy()
+    }
+
+    override fun onStop() {
+        if (ttsRecommendations != null) {
+            ttsRecommendations!!.stop()
+            ttsRecommendations!!.shutdown()
+        }
+        if (ttsResults != null) {
+            ttsResults!!.stop()
+            ttsResults!!.shutdown()
+        }
+        t.interrupt()
+        t.interrupt()
+        super.onStop()
+    }
+
+    private fun onInit() {
+        val language = intent.getStringExtra("language")
+        var result: Int
+        when (language) {
+            "French" -> {
+                result = ttsRecommendations!!.setLanguage(Locale.FRENCH)
+            }
+            "Chinese" -> {
+                result = ttsRecommendations!!.setLanguage(Locale.CHINESE)
+            }
+            "Spanish" -> {
+                val spanish = Locale("es", "ES")
+                result = ttsRecommendations!!.setLanguage(spanish)
+            }
+            "German" -> {
+                result = ttsRecommendations!!.setLanguage(Locale.GERMAN)
+            }
+            else -> {
+                result = ttsRecommendations!!.setLanguage(Locale.UK)
+            }
+        }
+        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+        } else {
+        }
+        when (language) {
+            "French" -> {
+                result = ttsResults!!.setLanguage(Locale.FRENCH)
+            }
+            "Chinese" -> {
+                result = ttsResults!!.setLanguage(Locale.CHINESE)
+            }
+            "Spanish" -> {
+                val spanish = Locale("es", "ES")
+                result = ttsResults!!.setLanguage(spanish)
+            }
+            "German" -> {
+                result = ttsResults!!.setLanguage(Locale.GERMAN)
+            }
+            else -> {
+                result = ttsResults!!.setLanguage(Locale.UK)
+            }
+        }
+        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+        } else {
+        }
+    }
+
+    private fun speakOutnew() {
+        //This will simply output in speech "Here are your recommendations"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "French" -> {
+                    text = "Voici les dernières pièces d'art"
+                }
+                "Chinese" -> {
+                    text = "这里是最新的艺术作品"
+                }
+                "Spanish" -> {
+                    text = "Aquí están las piezas de arte más nuevas"
+                }
+                "German" -> {
+                    text = "Hier sind die neuesten Kunststücke"
+                }
+                else -> {
+                    text = "Here are the newest art pieces"
+                }
+            }
+            longToast(text)
+            ttsRecommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+        }
+    }
+
+    private fun speakOutrecommendations() {
+        //This will simply output in speech "Here are your recommendations"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "French" -> {
+                    text = "Voici nos recommandations"
+                }
+                "Chinese" -> {
+                    text = "这里是我们的建议"
+                }
+                "Spanish" -> {
+                    text = "Aquí están nuestras recomendaciones"
+                }
+                "German" -> {
+                    text = "Hier sind unsere Empfehlungen"
+                }
+                else -> {
+                    text = "Here are our recommendations"
+                }
+            }
+            longToast(text)
+            ttsRecommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+        }
+    }
+
+    private fun speakOutPopular() {
+        //This will simply output in speech "Here are your recommendations"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "French" -> {
+                    text = "Voici les pièces d'art les plus populaires"
+                }
+                "Chinese" -> {
+                    text = "这里是最受欢迎的艺术作品"
+                }
+                "Spanish" -> {
+                    text = "Aquí están las piezas de arte más populares"
+                }
+                "German" -> {
+                    text = "Hier sind die beliebtesten Kunststücke"
+                }
+                else -> {
+                    text = "Here are the most popular art pieces"
+                }
+            }
+            longToast(text)
+            ttsRecommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+        }
     }
 
     private fun translateText(textToTranslate: String): String? {
@@ -64,7 +226,10 @@ class PicturesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         allArtPieces.clear()
-
+        ttsRecommendations = TextToSpeech(this, null)
+        ttsResults = TextToSpeech(this, null)
+        onInit()
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         //Obtain language from SelectLanguageActivity
         language = intent.getStringExtra("language")
         when (language) {
@@ -181,8 +346,6 @@ class PicturesActivity : AppCompatActivity() {
                         Thread.sleep(100)
                     } catch (e: InterruptedException) {
                         Thread.currentThread().interrupt()
-                    } catch (e: InterruptedIOException) {
-                        Thread.currentThread().interrupt()
                     }
                 }
             }
@@ -190,9 +353,31 @@ class PicturesActivity : AppCompatActivity() {
         t.start() /*Start to run the thread*/
     }
 
-    override fun onStop() {
-        t.interrupt()
-        super.onStop()
+    private fun getNewest() {
+        /*This will return the newest painting*/
+        val recommended = listOf(allArtPieces[0], allArtPieces[5], allArtPieces[8])
+        recommended
+                .filterNot { queriedArtPieces.contains(it) }
+                .forEach { queriedArtPieces.add(it) }
+        speakOutnew()
+    }
+
+    private fun getRecommended() {
+        /*This will return the recommended paintings*/
+        val recommended = listOf(allArtPieces[1], allArtPieces[3], allArtPieces[6])
+        recommended
+                .filterNot { queriedArtPieces.contains(it) }
+                .forEach { queriedArtPieces.add(it) }
+        speakOutrecommendations()
+    }
+
+    private fun getPopular() {
+        /*This will return the popular paintings*/
+        val recommended = listOf(allArtPieces[2], allArtPieces[4], allArtPieces[7])
+        recommended
+                .filterNot { queriedArtPieces.contains(it) }
+                .forEach { queriedArtPieces.add(it) }
+        speakOutPopular()
     }
 
     //Add mic & search icons in actionbar
@@ -219,17 +404,17 @@ class PicturesActivity : AppCompatActivity() {
                             search = "Search"
                         }
                         "German" -> {
-                            title = "Bitte geben Sie ein Gemälde ein, zu dem Sie gehen möchten\n"
+                            title = "Bitte geben Sie ein Gemälde ein, zu dem Sie gehen möchten"
                             search = "Suche"
 
                         }
                         "Spanish" -> {
-                            title = "Por favor, ingrese la pintura a la que desea ir\n"
+                            title = "Por favor, ingrese la pintura a la que desea ir"
                             search = "buscar"
 
                         }
                         "French" -> {
-                            title = "S'il vous plaît entrer la peinture que vous souhaitez aller à\n"
+                            title = "S'il vous plaît entrer la peinture que vous souhaitez aller à"
                             search = "chercher"
 
                         }
@@ -305,6 +490,7 @@ class PicturesActivity : AppCompatActivity() {
         }
         queriedArtPieces.clear()
         adapter.notifyDataSetChanged()
+        //speakOut_results()
     }
 
     override fun onBackPressed() {
@@ -387,6 +573,7 @@ class PicturesActivity : AppCompatActivity() {
         for (i in 0 until result.size) {
             val test = result[i]
             val regEx = Regex("[^A-Za-z0-9 ]")
+            val recommendationWords = mutableListOf("new", "newest", "best", "recommend", "popular") // new & newest, and best & recommend are the same request
             if (language == "English") {
                 allArtPieces
                         .filter {
@@ -438,6 +625,17 @@ class PicturesActivity : AppCompatActivity() {
                     if ((commonWords1.isNotEmpty() || commonWords2.isNotEmpty()) && !queriedArtPieces.contains(artPiece)) queriedArtPieces.add(artPiece)
                 }
             }
+            recommendationWords
+                    .filter { regEx.replace(test, "").contains(regEx.replace(it, ""), ignoreCase = true) }
+                    .forEach {
+                        when (it) {
+                            "new" -> getNewest()
+                            "newest" -> getNewest()
+                            "best" -> getRecommended()
+                            "recommend" -> getRecommended()
+                            "popular" -> getPopular()
+                        }
+                    }
         }
         shownArtPieces.clear()
         for (artPiece in queriedArtPieces) {
@@ -448,6 +646,7 @@ class PicturesActivity : AppCompatActivity() {
         }
         queriedArtPieces.clear()
         adapter.notifyDataSetChanged()
+        //speakOut_results()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
