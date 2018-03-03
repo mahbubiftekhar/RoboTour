@@ -174,11 +174,27 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     }
 
-    fun resetSpeech() {
+    private fun resetSpeech() {
         tts = null
         tts = TextToSpeech(this, this)
     }
 
+    private fun switchToFinnished(){
+        t.interrupt()
+        if (userid == "1") {
+            async {
+                sendPUTNEW(16, "F")
+            }
+        } else if (userid == "2") {
+            async {
+                sendPUTNEW(17, "F")
+            }
+        }
+        interruptThread()
+        clearFindViewByIdCache()
+        startActivity<FinnishActivity>()
+
+    }
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         userid = loadInt("user").toString()
@@ -546,6 +562,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
                                     println("++++++++" + a)
                                     /*This updates the picture and text for the user*/
+                                    val counter = (0..9).count { a[it] == 'F' }
+                                    if(counter==10){
+
+                                    }
                                     for (i in 0..9) {
                                         if (a[i] == 'A' && speaking != i) {
                                             /*This will mean that when the robot has arrived at the painting*/
@@ -706,9 +726,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         //Starting the thread which is defined above to keep polling the server
-          Thread{
-              t.run()
-          }
+        async{
+            t.run()
+        }
     }
 
     private fun speakOut(input: Int) {
