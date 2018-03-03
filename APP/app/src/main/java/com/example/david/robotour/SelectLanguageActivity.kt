@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.WindowManager
 import org.jetbrains.anko.*
 import java.util.*
 
@@ -23,6 +24,7 @@ class SelectLanguageActivity : AppCompatActivity() {
         languages.add(Language("Spanish", R.drawable.spanishflag))
         languages.add(Language("English", R.drawable.ukflag))
         languages.add(Language("No Language", R.drawable.otherpicture))
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
 
         //UI
         tableLayout {

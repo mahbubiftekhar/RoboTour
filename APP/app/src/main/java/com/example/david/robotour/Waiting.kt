@@ -10,6 +10,7 @@ import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.Gravity.CENTER
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.*
@@ -45,7 +46,7 @@ class Waiting : AppCompatActivity() {
             "Chinese" -> "请等待其他用户..."
             else -> "Please Wait For the Other User..."
         }
-
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         verticalLayout {
             webView {
                 loadUrl("file:///android_asset/robotour_spinning_grey.gif")

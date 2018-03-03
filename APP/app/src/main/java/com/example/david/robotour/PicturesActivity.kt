@@ -14,6 +14,7 @@ import android.os.Build
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import com.google.cloud.translate.Translate
 import com.google.cloud.translate.TranslateOptions
@@ -38,7 +39,6 @@ class PicturesActivity : AppCompatActivity() {
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     lateinit var t: Thread
     private var language = ""
-    private val random = Random()
     private var tts_recommendations: TextToSpeech? = null
     private var tts_results: TextToSpeech? = null
 
@@ -231,6 +231,7 @@ class PicturesActivity : AppCompatActivity() {
         tts_recommendations = TextToSpeech(this, null)
         tts_results = TextToSpeech(this, null)
         onInit()
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         //Obtain language from SelectLanguageActivity
         language = intent.getStringExtra("language")
         when (language) {
