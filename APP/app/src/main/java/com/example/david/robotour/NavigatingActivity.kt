@@ -875,11 +875,25 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             switchToMain()
             if (userid == "1") {
                 async {
-                    sendPUTNEW(16, "F")
+                   val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                    if(a[12] == '2'){
+                        sendPUTNEW(12,"T")
+                        sendPUTNEW(16,"F")
+                    } else {
+                        sendPUTNEW(12,"1")
+                        sendPUTNEW(16, "F")
+                    }
                 }
             } else if (userid == "2") {
                 async {
-                    sendPUTNEW(17, "F")
+                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                    if(a[16] == '1'){
+                        sendPUTNEW(12,"T")
+                        sendPUTNEW(17,"F")
+                    } else {
+                        sendPUTNEW(12,"2")
+                        sendPUTNEW(17,"F")
+                    }
                 }
             }
             checkerThread.interrupt()
@@ -897,7 +911,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (isNetworkConnected()) {
             async {
                 //This function will reject the skip by adding the empty string
-                sendPUTNEW(10, " ")
+                sendPUTNEW(10, "F")
             }
         } else {
             toast("Check your network connection, command not sent")
