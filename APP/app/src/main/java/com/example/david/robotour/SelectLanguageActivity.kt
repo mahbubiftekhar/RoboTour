@@ -13,6 +13,9 @@ class SelectLanguageActivity : AppCompatActivity() {
 
     private val languages = ArrayList<Language>()
 
+    override fun onBackPressed() {
+        startActivity<MainActivity>()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // add back button to actionbar

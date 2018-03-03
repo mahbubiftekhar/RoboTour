@@ -60,7 +60,7 @@
             android:noHistory="true"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".FinnishActivity"
+            android:name=".FinishActivity"
             android:label="@string/title_activity_finnish"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

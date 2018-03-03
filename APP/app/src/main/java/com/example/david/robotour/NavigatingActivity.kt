@@ -184,7 +184,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         clearFindViewByIdCache()
-        startActivity<FinnishActivity>()
+        startActivity<FinishActivity>()
 
     }
 
@@ -538,7 +538,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         when (language) {
-            "English" -> titleView?.text = "RoboTour calculating optimal route..."
+            "English" -> titleView?.text = "RoboeTour calculating optimal route..."
             "German" -> titleView?.text = "RoboTour berechnet optimale Route ..."
             "Spanish" -> titleView?.text = "RoboTour calcula la ruta óptima ..."
             "French" -> titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
