@@ -98,7 +98,7 @@ class Waiting : AppCompatActivity() {
         /*This thread will check if the other use has made their selection*/
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
-            while (!isInterrupted) {
+            while (!Thread.currentThread().isInterrupted) {
                 println("++++ t thread Waiting")
                 try {
                     if (user == 1) {

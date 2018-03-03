@@ -334,7 +334,7 @@ class PicturesActivity : AppCompatActivity() {
             /*This thread will check if the user has selected at least one picture, if they haven't then it will change the background
             * colour of the start button to grey*/
             override fun run() {
-                while (!isInterrupted) {
+                while (!Thread.currentThread().isInterrupted) {
                     try {
                         val count = allArtPieces.count { it.selected }
                         if (count > 0) {

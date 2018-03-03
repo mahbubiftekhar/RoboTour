@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
-            while (!isInterrupted) {
+            while (!Thread.currentThread().isInterrupted) {
                 println("+++ running here main activity")
                 if (a > (advertisements.size - 1)) {
                     //Reset A to avoid null pointers
