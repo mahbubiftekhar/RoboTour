@@ -27,9 +27,11 @@ class SensorHub():
 		self.last_poll += 1
 
 		tries = 0
+
 		while self.serial_port.inWaiting() < 1:
 			self.send_request()
 			time.sleep(0.001)
+
 			if(tries >= self.tries_limit):
 				print("POLLING TIMEOUT")
 				return False
@@ -37,6 +39,7 @@ class SensorHub():
 
 		frame = self.get_frame()
 		self.extract_from_frame(frame)
+
 
 	def send_request(self):
 		self.serial_port.write(b'r\n')
@@ -51,6 +54,7 @@ class SensorHub():
 				# remove newline and last comma
 				out = out[:-2]
 				break
+
 
 		return out if out != '' else None
 
