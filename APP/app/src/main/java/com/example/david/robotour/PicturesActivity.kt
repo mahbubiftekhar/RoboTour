@@ -132,6 +132,33 @@ class PicturesActivity : AppCompatActivity() {
         }
     }
 
+    private fun speakOut_new() {
+        //This will simply output in speech "Here are your recommendations"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "French" -> {
+                    text = "Voici les dernières pièces d'art"
+                }
+                "Chinese" -> {
+                    text = "这里是最新的艺术作品"
+                }
+                "Spanish" -> {
+                    text = "Aquí están las piezas de arte más nuevas"
+                }
+                "German" -> {
+                    text = "Hier sind die neuesten Kunststücke"
+                }
+                else -> {
+                    text = "Here are the newest art pieces"
+                }
+            }
+            longToast(text)
+            tts_recommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+        }
+    }
+
     private fun speakOut_recommendations() {
         //This will simply output in speech "Here are your recommendations"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -139,47 +166,49 @@ class PicturesActivity : AppCompatActivity() {
             val language = intent.getStringExtra("language")
             when (language) {
                 "French" -> {
-                    text = "Voici vos recommandations"
+                    text = "Voici nos recommandations"
                 }
                 "Chinese" -> {
-                    text = "这是你的建议"
+                    text = "这里是我们的建议"
                 }
                 "Spanish" -> {
-                    text = "Aquí están tus recomendaciones"
+                    text = "Aquí están nuestras recomendaciones"
                 }
                 "German" -> {
-                    text = "Hier sind deine Empfehlungen"
+                    text = "Hier sind unsere Empfehlungen"
                 }
                 else -> {
-                    text = "Here are your recommendations"
+                    text = "Here are our recommendations"
                 }
             }
+            longToast(text)
             tts_recommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
 
-    private fun speakOut_results() {
-        //This will simply output in speech "Here are the results"
+    private fun speakOut_popular() {
+        //This will simply output in speech "Here are your recommendations"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
             val language = intent.getStringExtra("language")
             when (language) {
                 "French" -> {
-                    text = "Voici les résultats"
+                    text = "Voici les pièces d'art les plus populaires"
                 }
                 "Chinese" -> {
-                    text = "结果如下"
+                    text = "这里是最受欢迎的艺术作品"
                 }
                 "Spanish" -> {
-                    text = "Aquí están los resultados"
+                    text = "Aquí están las piezas de arte más populares"
                 }
                 "German" -> {
-                    text = "Here are the results"
+                    text = "Hier sind die beliebtesten Kunststücke"
                 }
                 else -> {
-                    text = "Here are the results"
+                    text = "Here are the most popular art pieces"
                 }
             }
+            longToast(text)
             tts_recommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
@@ -318,8 +347,6 @@ class PicturesActivity : AppCompatActivity() {
                         Thread.sleep(100)
                     } catch (e: InterruptedException) {
                         Thread.currentThread().interrupt()
-                    } catch (e: InterruptedIOException) {
-                        Thread.currentThread().interrupt()
                     }
                 }
             }
@@ -327,42 +354,38 @@ class PicturesActivity : AppCompatActivity() {
         t.start() /*Start to run the thread*/
     }
 
-    private fun getNewest(): Int {
+    private fun getNewest() {
         /*This will return the newest painting*/
-        var id = 1000
-        (0..9)
-                .asSequence()
-                .filter { allArtPieces[it].eV3ID <= id }
-                .forEach { id = allArtPieces[it].eV3ID }
-        return id
+        val recommended = listOf(allArtPieces[0], allArtPieces[5], allArtPieces[8])
+        for (artPiece in recommended) {
+            if (!queriedArtPieces.contains(artPiece)) {
+                queriedArtPieces.add(artPiece)
+            }
+        }
+        speakOut_new()
     }
 
-    private fun getOldest(): Int {
-        /*This will return the oldest painting*/
-        var id = -1
-        (0..9)
-                .asSequence()
-                .filter { allArtPieces[it].eV3ID > id }
-                .forEach { id = allArtPieces[it].eV3ID }
-        return id
+    private fun getRecommended(){
+        /*This will return the recommended paintings*/
+        val recommended = listOf(allArtPieces[1], allArtPieces[3], allArtPieces[6])
+        for (artPiece in recommended) {
+            if (!queriedArtPieces.contains(artPiece)) {
+                queriedArtPieces.add(artPiece)
+            }
+        }
+        speakOut_recommendations()
     }
 
-    private fun rand(from: Int, to: Int): Int {
-        //This should return a number between 0 and 9, Yay!
-        return random.nextInt(to - from) + from
+    private fun getPopular() {
+        /*This will return the popular paintings*/
+        val recommended = listOf(allArtPieces[2], allArtPieces[4], allArtPieces[7])
+        for (artPiece in recommended) {
+            if (!queriedArtPieces.contains(artPiece)) {
+                queriedArtPieces.add(artPiece)
+            }
+        }
+        speakOut_popular()
     }
-
-    private fun surpriseMe(): Int {
-        /*This will pick a random painting!*/
-        return rand(0, 9)
-    }
-
-
-    private fun popularArtPieces(): List<Int> {
-        /*This will return a list of indexes to artpieces, where the first is the most popular*/
-        return listOf(4,7,8)
-    }
-
 
     //Add mic & search icons in actionbar
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -474,7 +497,7 @@ class PicturesActivity : AppCompatActivity() {
         }
         queriedArtPieces.clear()
         adapter.notifyDataSetChanged()
-        speakOut_results()
+        //speakOut_results()
     }
 
     override fun onBackPressed() {
@@ -557,6 +580,7 @@ class PicturesActivity : AppCompatActivity() {
         for (i in 0 until result.size) {
             val test = result[i]
             val regEx = Regex("[^A-Za-z0-9 ]")
+            val recommendationWords = mutableListOf("new", "newest", "best", "recommend", "popular") // new & newest, and best & recommend are the same request
             if (language == "English") {
                 allArtPieces
                         .filter {
@@ -608,6 +632,18 @@ class PicturesActivity : AppCompatActivity() {
                     if ((commonWords1.isNotEmpty() || commonWords2.isNotEmpty()) && !queriedArtPieces.contains(artPiece)) queriedArtPieces.add(artPiece)
                 }
             }
+            for (word in recommendationWords) {
+                if (regEx.replace(test, "").contains(regEx.replace(word, ""), ignoreCase = true)) {
+                    when (word) {
+                        "new" -> getNewest()
+                        "newest" -> getNewest()
+                        "best" -> getRecommended()
+                        "recommend" -> getRecommended()
+                        "popular" -> getPopular()
+                    }
+
+                }
+            }
         }
         shownArtPieces.clear()
         for (artPiece in queriedArtPieces) {
@@ -618,7 +654,7 @@ class PicturesActivity : AppCompatActivity() {
         }
         queriedArtPieces.clear()
         adapter.notifyDataSetChanged()
-        speakOut_results()
+        //speakOut_results()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

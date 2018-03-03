@@ -59,14 +59,9 @@
             android:noHistory="true"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".FinnishActivity"
+            android:name=".FinishActivity"
             android:label="@string/title_activity_finnish"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Recommendations" />
-        <activity
-            android:name=".PicturesActivity2"
-            android:label="@string/title_activity_pictures2"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

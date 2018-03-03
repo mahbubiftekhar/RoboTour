@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_finnish.*
 import org.jetbrains.anko.startActivity
 
-class FinnishActivity : AppCompatActivity() {
+class FinishActivity : AppCompatActivity() {
     /*This activity will be shown to the user when they */
 
     override fun onBackPressed() {
