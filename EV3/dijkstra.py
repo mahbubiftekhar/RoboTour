@@ -66,6 +66,6 @@ if __name__ == "__main__":
 
 
 
-    (path, distance) = dijkstra(graph, 'A', 'D')
+    (path, distance) = dijkstra(graph, '10', '15')
     print(str(path))
     print(str(distance))
