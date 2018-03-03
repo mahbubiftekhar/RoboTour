@@ -140,7 +140,7 @@ class PicturesActivity : AppCompatActivity() {
                     text = "Voici les dernières pièces d'art"
                 }
                 "Chinese" -> {
-                    text = "这里是最新的艺术作品"
+                    text = "萝卜途已为您筛选出最新的作品"
                 }
                 "Spanish" -> {
                     text = "Aquí están las piezas de arte más nuevas"
@@ -167,7 +167,7 @@ class PicturesActivity : AppCompatActivity() {
                     text = "Voici nos recommandations"
                 }
                 "Chinese" -> {
-                    text = "这里是我们的建议"
+                    text = "以下是萝卜途的推荐"
                 }
                 "Spanish" -> {
                     text = "Aquí están nuestras recomendaciones"
@@ -194,7 +194,7 @@ class PicturesActivity : AppCompatActivity() {
                     text = "Voici les pièces d'art les plus populaires"
                 }
                 "Chinese" -> {
-                    text = "这里是最受欢迎的艺术作品"
+                    text = "萝卜途已为您筛选出最受欢迎的作品"
                 }
                 "Spanish" -> {
                     text = "Aquí están las piezas de arte más populares"
@@ -245,7 +245,7 @@ class PicturesActivity : AppCompatActivity() {
         //Populate List
         allArtPieces.run {
             add(ArtPiece(name = "The Birth of Venus",
-                    artist = "Sandro Botticelli", nameChinese = "金星的诞生", nameGerman = "Die Geburt der Venus", nameSpanish = "El nacimiento de Venus", nameFrench = "La naissance de Vénus",
+                    artist = "Sandro Botticelli", nameChinese = "维纳斯的诞生", nameGerman = "Die Geburt der Venus", nameSpanish = "El nacimiento de Venus", nameFrench = "La naissance de Vénus",
                     English_Desc = "Depicts the goddess Venus arriving at the shore after her birth",
                     German_Desc = "Stellt die Göttin Venus dar, die nach ihrer Geburt am Ufer ankommt",
                     French_Desc = "Représente la déesse Vénus arrivant au rivage après sa naissance",
@@ -253,21 +253,21 @@ class PicturesActivity : AppCompatActivity() {
                     Spanish_Desc = "Representa a la diosa Venus llegando a la orilla después de su nacimiento",
                     imageID = R.drawable.birthofvenus, eV3ID = 0, selected = false))
             add(ArtPiece(name = "The Creation of Adam",
-                    artist = "Michelangelo", nameChinese = "亚当的创造", nameGerman = "Die Schaffung von Adam", nameSpanish = "La creación de adam", nameFrench = "La création d'Adam",
+                    artist = "Michelangelo", nameChinese = "创造亚当", nameGerman = "Die Schaffung von Adam", nameSpanish = "La creación de adam", nameFrench = "La création d'Adam",
                     English_Desc = "A fresco painting by Michelangelo, which forms part of the Sistine Chapel's ceiling",
                     German_Desc = "Ein Fresko von Michelangelo, das Teil der Sixtinischen Kapelle ist",
                     French_Desc = "Une fresque de Michel-Ange, qui fait partie du plafond de la chapelle Sixtine",
                     Chinese_Desc = "《创造亚当》是米开朗基罗创作的西斯廷礼拜堂天顶画《创世纪》的一部分，创作于1511至1512年间的文艺复兴全盛期。这幅壁画描绘的是《圣经·创世纪》中上帝创造人类始祖亚当的情形，按照事情发展顺序是创世纪天顶画中的第四幅。",
                     Spanish_Desc = "Una pintura al fresco de Miguel Ángel, que forma parte del techo de la Capilla Sixtina",
                     imageID = R.drawable.creationofadam, eV3ID = 1, selected = false))
-            add(ArtPiece(name = "David", artist = "Michelangelo", nameChinese = "大卫", nameGerman = "David", nameSpanish = "David", nameFrench = "David",
+            add(ArtPiece(name = "David", artist = "Michelangelo", nameChinese = "大卫像", nameGerman = "David", nameSpanish = "David", nameFrench = "David",
                     English_Desc = "A masterpiece of Renaissance sculpture created in marble between 1501 and 1504 by Michelangelo",
                     German_Desc = "Ein Meisterwerk der Renaissanceskulpturen, das zwischen 1501 und 1504 von Michelangelo aus Marmor geschaffen wurde",
                     French_Desc = "Une fresque de Michel-Ange, qui fait partie du plafond de la chapelle Sixtine",
                     Chinese_Desc = "《大卫像》是文艺复兴时代米开朗基罗的杰作，于1501年至1504年雕成。雕像为白色大理石雕成的站立的男性裸体，高5.17米，重约6吨。用以表现圣经中的犹太英雄大卫王。",
                     Spanish_Desc = "Una obra maestra de la escultura renacentista creada en mármol entre 1501 y 1504 por Miguel Ángel",
                     imageID = R.drawable.david, eV3ID = 2, selected = false))
-            add(ArtPiece(name = "Girl with a Pearl Earring", artist = "Johannes Vermeer", nameChinese = "珍珠耳环的女孩", nameGerman = "Das Mädchen mit dem Perlenohrring", nameSpanish = "Chica con un pendiente de perla", nameFrench = "une fille avec une boucle d'oreille",
+            add(ArtPiece(name = "Girl with a Pearl Earring", artist = "Johannes Vermeer", nameChinese = "戴珍珠耳环的少女", nameGerman = "Das Mädchen mit dem Perlenohrring", nameSpanish = "Chica con un pendiente de perla", nameFrench = "une fille avec une boucle d'oreille",
                     English_Desc = "Showcasing the electrifying gaze of a young girl adorned with a blue and gold turban.",
                     German_Desc = "Den elektrisierenden Blick eines jungen Mädchens zeigen, das mit einem Blau- und Goldturban geschmückt wird.",
                     French_Desc = "Mettant en vedette le regard électrisant d'une jeune fille avec un turban bleu et or.",
@@ -283,7 +283,7 @@ class PicturesActivity : AppCompatActivity() {
                     imageID = R.drawable.monalisa, eV3ID = 4, selected = false))
 
             add(ArtPiece(name = "Napoleon Crossing the Alps",
-                    artist = "Jacques-Louis David", nameChinese = "拿破仑穿越阿尔卑斯山", nameGerman = "Napoleon über die Alpen", nameSpanish = "Napoleón cruzando los Alpes", nameFrench = "Napoléon franchissant les Alpes",
+                    artist = "Jacques-Louis David", nameChinese = "拿破仑翻越阿尔卑斯山", nameGerman = "Napoleon über die Alpen", nameSpanish = "Napoleón cruzando los Alpes", nameFrench = "Napoléon franchissant les Alpes",
                     English_Desc = "Oil on canvas equestrian portrait of Napoleon Bonaparte painted by the French artist Jacques-Louis David between 1801 and 1805",
                     German_Desc = "Öl auf Leinwand Reiterporträt von Napoleon Bonaparte von dem französischen Künstler Jacques-Louis David zwischen 1801 und 1805 gemalt",
                     French_Desc = "Huile sur toile portrait équestre de Napoléon Bonaparte peint par l'artiste français Jacques-Louis David entre 1801 et 1805",
@@ -304,7 +304,7 @@ class PicturesActivity : AppCompatActivity() {
                     Chinese_Desc = "《最后的晚餐》是文艺复兴时期由列奥纳多·达·芬奇于米兰的天主教恩宠圣母的多明我会院食堂墙壁上绘成，取材自基督教圣经马太福音第26章，描绘了耶稣在遭罗马兵逮捕的前夕和十二宗徒共进最后一餐时预言\"你们其中一人将出卖我\"后，门徒们显得困惑、哀伤与骚动，纷纷询问耶稣：\"主啊，是我吗？\"的瞬间情景。唯有坐在耶稣右侧的叛徒犹达斯惊恐地将身体后倾，一手抓着出卖耶稣的酬劳，脸部显得阴暗。",
                     Spanish_Desc = "El tema era tradicional para los refectorios, aunque la sala no era un refectorio en el momento en que Leonardo la pintó.",
                     imageID = R.drawable.thelastsupper, eV3ID = 7, selected = false))
-            add(ArtPiece(name = "The Great Wave of Kanagawa", artist = "Hokusai", nameChinese = "神奈川的大浪", nameGerman = "Die Große Welle vor Kanagawa", nameSpanish = "La gran ola de Kanagawa", nameFrench = "La grande vague de Kanagawa",
+            add(ArtPiece(name = "The Great Wave of Kanagawa", artist = "Hokusai", nameChinese = "神奈川冲浪里", nameGerman = "Die Große Welle vor Kanagawa", nameSpanish = "La gran ola de Kanagawa", nameFrench = "La grande vague de Kanagawa",
                     English_Desc = "The Great Wave off Kanagawa, also known as The Great Wave or simply The Wave, is a woodblock print by the Japanese ukiyo-e artist Hokusai.",
                     German_Desc = "Die Große Welle vor Kanagawa, auch bekannt als The Great Wave oder einfach The Wave, ist ein Holzschnitt des japanischen Ukiyo-e Künstlers Hokusai.",
                     French_Desc = "La Gran Ola de Kanagawa, también conocida como La Gran Ola o simplemente La Ola, es un grabado en madera del artista ukiyo-e japonés Hokusai.",
@@ -419,7 +419,7 @@ class PicturesActivity : AppCompatActivity() {
 
                         }
                         "Chinese" -> {
-                            title = "请输入你想要去看的作品"
+                            title = "请输入您想要去看的作品"
                             search = "搜索"
 
                         }
