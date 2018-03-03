@@ -97,6 +97,30 @@ class AdminActivity : AppCompatActivity() {
             else -> false
         }
     }
+    private fun destination(destination: Int): Boolean {
+        /*This is a validity check to ensure no malarkey is put on the server*/
+        return when (destination) {
+            0 -> true
+            1 -> true
+            2 -> true
+            3 -> true
+            4 -> true
+            5 -> true
+            6 -> true
+            7 -> true
+            8 -> true
+            9 -> true
+            10 -> true
+            11 -> true
+            12 -> true
+            14 -> true
+            13 -> true
+            15 -> true
+            16 -> true
+            17 -> true
+            else -> false
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,7 +130,7 @@ class AdminActivity : AppCompatActivity() {
         sendy.setOnClickListener {
             val destination = destination.text.toString()
             val message = messageToSend.text.toString().toUpperCase()
-            if (destination.toInt() in 0..17 && messageValid(message)) {
+            if (destination(destination.toInt()) && messageValid(message)) {
                 vibrate()
                 async {
                     sendPUTNEW(destination.toInt(), message)
