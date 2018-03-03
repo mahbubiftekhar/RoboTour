@@ -34,6 +34,7 @@ class AdminActivity : AppCompatActivity() {
 
     28/02/2018
      */
+
     private fun sendPUTNEW(identifier: Int, command: String) {
         val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
@@ -135,9 +136,9 @@ class AdminActivity : AppCompatActivity() {
             if (destination(destination.toInt()) && messageValid(message)) {
                 vibrate()
                 async {
-                    try{
+                    try {
                         sendPUTNEW(destination.toInt(), message)
-                    } catch(e: Exception){
+                    } catch (e: Exception) {
                         toast("Error!! Please don't do that!")
 
                     }
