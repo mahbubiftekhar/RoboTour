@@ -132,10 +132,15 @@ class AdminActivity : AppCompatActivity() {
         sendy.setOnClickListener {
             val destination = destination.text.toString()
             val message = messageToSend.text.toString().toUpperCase()
-            if (isDigit(destination.toInt()) && destination(destination.toInt()) && messageValid(message)) {
+            if (destination(destination.toInt()) && messageValid(message)) {
                 vibrate()
                 async {
-                    sendPUTNEW(destination.toInt(), message)
+                    try{
+                        sendPUTNEW(destination.toInt(), message)
+                    } catch(e: Exception){
+                        toast("Error!! Please don't do that!")
+
+                    }
                     runOnUiThread {
                         toast("Sent $message to $destination successfully")
                     }
