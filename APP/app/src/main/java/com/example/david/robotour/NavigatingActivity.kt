@@ -540,7 +540,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         when (language) {
-            "English" -> titleView?.text = "RoboeTour calculating optimal route..."
+            "English" -> titleView?.text = "RoboTour calculating optimal route..."
             "German" -> titleView?.text = "RoboTour berechnet optimale Route ..."
             "Spanish" -> titleView?.text = "RoboTour calcula la ruta óptima ..."
             "French" -> titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
@@ -584,10 +584,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             runOnUiThread {
                                                 currentPic = i // Set current pic to the one being shown
                                                 resetSpeech()
-                                                println("getting here 1")
                                                 speaking = i
-                                                println("getting here 2")
-                                                println("getting here 3")
                                                 //Change the image, text and descrioption
                                                 imageView?.setImageResource(allArtPieces[i].imageID)
                                                 val text: String = when (language) {
@@ -739,7 +736,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     /////
     private fun speakOut(input: Int) {
-        println("getting here in speakout input:  $input")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
             val language = intent.getStringExtra("language")
@@ -777,17 +773,16 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         text = "RoboTour berechnet die optimale Route"
                     }
                     else -> {
-                        text = "RoboTour is calculating the optimal route"
+                        text = "Ro-bow-Tour is calculating the optimal route"
+                        //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                     }
                 }
-                println("speak 2")
                 tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
             }
         }
     }
 
     private fun speakOutButton(input: Int) {
-        println("getting here in speakout input:  $input")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
             val language = intent.getStringExtra("language")
@@ -825,10 +820,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         text = "RoboTour berechnet die optimale Route"
                     }
                     else -> {
-                        text = "RoboTour is calculating the optimal route"
+                        text = "Ro-bow-Tour is calculating the optimal route"
+                        //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                     }
                 }
-                println("speak 2")
                 tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
             }
         }
@@ -867,7 +862,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
                 checkerThread.interrupt()
                 clearFindViewByIdCache()
-                switchToMain()
+                switchToFinnished()
             }
             negativeButton(negative) { /*Do nothing*/ }
         }.show()

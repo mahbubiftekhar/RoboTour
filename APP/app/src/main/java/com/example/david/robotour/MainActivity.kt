@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
+        //window.decorView.setBackgroundColor(Color.parseColor("#24E8EA"))
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         verticalLayout {
             imageView(R.drawable.robotour_small) {

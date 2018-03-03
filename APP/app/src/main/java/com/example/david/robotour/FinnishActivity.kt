@@ -8,16 +8,17 @@ import android.view.Gravity
 import org.jetbrains.anko.*
 import android.content.Intent
 import android.support.v4.content.res.ResourcesCompat
-import android.app.Activity
-
-
+import kotlinx.android.synthetic.*
 
 
 @Suppress("DEPRECATION")
 class FinishActivity : AppCompatActivity() {
     /*This activity will be shown to the user when they cancel or finish the tour */
+    private lateinit var closeApp: String
+    private lateinit var restartApp: String
 
     override fun onBackPressed() {
+        //Restart the app cleanly
         val i = baseContext.packageManager
                 .getLaunchIntentForPackage(baseContext.packageName)
         i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -36,6 +37,28 @@ class FinishActivity : AppCompatActivity() {
             "Spanish" -> "Gracias por usar RoboTour.\nEsperamos que hayas disfrutado tu recorrido."
             "Chinese" -> "感谢您使用 RoboTour\n我们希望你喜欢你的旅程"
             else -> "Thank you for using RoboTour.\nWe hope you enjoyed your tour."
+        }
+        when (language) {
+            "French" -> {
+                restartApp = "START"
+                closeApp = "FERMER APP"
+            }
+            "German" -> {
+                restartApp = "ANFANG"
+                closeApp = "SCHLIEßE APP"
+            }
+            "Spanish" -> {
+                restartApp = "COMIENZO"
+                closeApp = "CERRAR APP"
+            }
+            "Chinese" -> {
+                restartApp = "开始"
+                closeApp = "关闭APP"
+            }
+            else -> {
+                restartApp = "START"
+                closeApp = "CLOSE APP"
+            }
         }
 
         verticalLayout {
@@ -57,26 +80,30 @@ class FinishActivity : AppCompatActivity() {
                 text = message
                 setTextColor(resources.getColor(R.color.roboTourTeal))
             }
-            button("RESTART") {
-                textSize = 32f
+            button(restartApp) {
+                textSize = 20f
                 background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
 
-
                 onClick {
+                    //Restart the app cleanly
                     val i = baseContext.packageManager
                             .getLaunchIntentForPackage(baseContext.packageName)
                     i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     startActivity(i)
                 }
             }
-            button("RESTART") {
-                textSize = 32f
+            button(closeApp) {
+                textSize = 20f
                 background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                 onClick {
-
+                    //Kill the app
+                    clearFindViewByIdCache()
+                    val closeTheApp = Intent(Intent.ACTION_MAIN)
+                    closeTheApp.addCategory(Intent.CATEGORY_HOME)
+                    closeTheApp.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    startActivity(closeTheApp)
                 }
             }
         }
-
     }
 }
