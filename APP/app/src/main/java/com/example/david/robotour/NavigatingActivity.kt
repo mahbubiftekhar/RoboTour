@@ -242,21 +242,21 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 changeSpeed = "Changer Vitesse"
             }
             "Chinese" -> {
-                startRoboTour = "当您准备好RoboTour继续时，按开始"
+                startRoboTour = "当您准备好跟随萝卜途时，请按开始。"
                 positive = "是的"
                 negative = "不是"
                 skip = "跳到下一幅作品"
-                skipDesc = "你确定要跳到下一幅作品吗？"
-                stop = "停止RoboTour"
-                stopDesc = "你确定要停止RoboTour？"
-                start = "開始RoboTour"
-                startDesc = "你想開始RoboTour？"
+                skipDesc = "确定要跳到下一幅作品吗？"
+                stop = "停止萝卜途"
+                stopDesc = "确定要停止萝卜途吗？"
+                start = "开始萝卜途"
+                startDesc = "确定开始萝卜途吗？"
                 cancelTour = "取消游览"
-                cancelDesc = "你确定要取消游览吗？"
+                cancelDesc = "确定要取消游览吗？"
                 exit = "带我去出口"
-                exitDesc = "你确定要去出口吗？"
+                exitDesc = "确定要去出口吗？"
                 toilet = "带我去厕所"
-                toiletDesc = "你确定要去厕所吗？"
+                toiletDesc = "确定要去厕所吗？"
                 changeSpeed = "改变速度"
             }
             "Spanish" -> {
@@ -460,7 +460,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                             selectSpeed = "Sélectionnez la vitesse"
                                                         }
                                                         "Chinese" -> {
-                                                            options = listOf("慢", "正常", "快速")
+                                                            options = listOf("慢", "正常", "快")
                                                             selectSpeed = "选择速度"
                                                         }
                                                         "Spanish" -> {
@@ -544,7 +544,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             "German" -> titleView?.text = "RoboTour berechnet optimale Route ..."
             "Spanish" -> titleView?.text = "RoboTour calcula la ruta óptima ..."
             "French" -> titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
-            "Chinese" -> titleView?.text = "RoboTour计算最佳路线..."
+            "Chinese" -> titleView?.text = "萝卜途正在计算最佳路线..."
             "other" -> titleView?.text = "RoboTour calculating optimal route..."
             "else" -> titleView?.text = "RoboTour calculating optimal route..."
         }
@@ -764,7 +764,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         text = "RoboTour calcule l'itinéraire optimal"
                     }
                     "Chinese" -> {
-                        text = "RoboTour正在计算最佳路线"
+                        text = "萝卜途正在计算最佳路线"
                     }
                     "Spanish" -> {
                         text = "RoboTour está calculando la ruta óptima"
@@ -811,7 +811,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         text = "RoboTour calcule l'itinéraire optimal"
                     }
                     "Chinese" -> {
-                        text = "RoboTour正在计算最佳路线"
+                        text = "萝卜途正在计算最佳路线"
                     }
                     "Spanish" -> {
                         text = "RoboTour está calculando la ruta óptima"

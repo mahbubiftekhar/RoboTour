@@ -35,7 +35,7 @@ class FinishActivity : AppCompatActivity() {
             "French" -> "Merci d'utiliser RoboTour.\nNous espérons que vous avez apprécié votre visite."
             "German" -> "Vielen Dank für die Verwendung von RoboTour.\nWir hoffen, Sie haben Ihre Tour genossen."
             "Spanish" -> "Gracias por usar RoboTour.\nEsperamos que hayas disfrutado tu recorrido."
-            "Chinese" -> "感谢您使用 RoboTour\n我们希望你喜欢你的旅程"
+            "Chinese" -> "感谢您使用萝卜途\n希望您喜欢这次旅程"
             else -> "Thank you for using RoboTour.\nWe hope you enjoyed your tour."
         }
         when (language) {
