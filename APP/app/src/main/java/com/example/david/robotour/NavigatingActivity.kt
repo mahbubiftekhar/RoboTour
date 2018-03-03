@@ -564,7 +564,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     /*This updates the picture and text for the user*/
                                     val counter = (0..9).count { a[it] == 'F' }
                                     if(counter==10){
-
+                                        switchToFinnished()
                                     }
                                     for (i in 0..9) {
                                         if (a[i] == 'A' && speaking != i) {
