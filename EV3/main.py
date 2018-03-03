@@ -7,17 +7,21 @@ import re
 from threading import Thread
 from sensor_hub import *
 from comms import *
+from dijkstra import *
+
 
 ####################### GLOBAL VARIABLE ####################
 obstacle_detection_distance = 200 # in mm
 side_distance = 17
 link = "https://homepages.inf.ed.ac.uk/s1553593/receiver.php"
-command = ""
-commands = ""
-previouscommandid = "1"
-currentcommandid = "0"
 pointerState = ""
-preDifference = 0
+startPosition = 10 # Toilet
+currentLocation = startPosition
+robotOrientation = "N" # N,S,W,E (North South West East)
+remainingPicturesToGo = []
+oMap = dict() # Map for Orientation between neighbouring points
+dMap = dict() # Map for Distance between neighbouring points
+
 ############################################################
 
 ####################### SETUP SENSORS ######################
@@ -26,11 +30,6 @@ sonarFront = ev3.UltrasonicSensor(ev3.INPUT_2)
 sonarFront.mode = 'US-DIST-CM' # Will return value in mm
 sonarLeft = HubSonar(hub, 's0')
 sonarRight = HubSonar(hub,'s1')
-#sonarLeft = ev3.UltrasonicSensor(ev3.INPUT_4)
-#sonarLeft.mode = 'US-DIST-CM' # Will return value in mm
-#sonarRight = None
-#sonarRight.mode = 'US-DIST-CM' # Will return value in mm
-
 motorPointer = ev3.LargeMotor('outC')
 motorLeft = ev3.LargeMotor('outB')
 motorRight= ev3.LargeMotor('outD')
@@ -186,25 +185,78 @@ def turnAndResetPointer(direction):
 
 ####################### ROBOTOUR FUNCTIONS ###########################
 
-def getArtPiecesFromApp(): # returns an list of direction commands
-    #example
-    pieces = ["Monalisa"]
-    return pieces # returns list
+def initialiseMap():
+    # Orientation from point X to Y is N/S/W/E
+    # 38 edges in total
+    oMap[(0, 1)] = "S"
+    oMap[(0, 8)] = "N"
+    oMap[(1, 12)] = "S"
+    oMap[(1, 0)] = "N"
+    oMap[(2, 9)] = "N"
+    oMap[(2, 3)] = "S"
+    oMap[(3, 2)] = "N"
+    oMap[(3, 13)] = "S"
+    oMap[(4, 11)] = "S"
+    oMap[(4, 14)] = "N"
+    oMap[(5, 14)] = "WS" # Special Case
+    oMap[(5, 6)] = "E"
+    oMap[(6, 5)] = "W"
+    oMap[(6, 7)] = "E"
+    oMap[(7, 15)] = "ES"
+    oMap[(7, 6)] = "W"
+    oMap[(8, 0)] = "S"
+    oMap[(8, 9)] = "E"
+    oMap[(8, 14)] = "W"
+    oMap[(9, 15)] = "E"
+    oMap[(9, 2)] = "S"
+    oMap[(9, 8)] = "W"
+    oMap[(10, 11)] = "N"
+    oMap[(11, 10)] = "S"
+    oMap[(11, 4)] = "N"
+    oMap[(11, 12)] = "E"
+    oMap[(12, 13)] = "E"
+    oMap[(12, 1)] = "N"
+    oMap[(12, 11)] = "W"
+    oMap[(13, 3)] = "N"
+    oMap[(13, 15)] = "EN"
+    oMap[(13, 12)] = "W"
+    oMap[(14, 4)] = "S"
+    oMap[(14, 8)] = "E"
+    oMap[(14, 5)] = "NE"
+    oMap[(15, 13)] = "SW"
+    oMap[(15, 9)] = "W"
+    oMap[(15, 7)] = "NW"
 
-def getCommandFromServer():
-    global currentcommandid
-    global previouscommandid
+    # Distance Map
+    dMap = {
+        '0': {'1':26, '8':21},
+        '1': {'0':26, '12':19.5},
+        '2': {'3':26.5, '9':19.5},
+        '3': {'2':26.5, '13':20},
+        '4': {'11':33.5, '14':31.5},
+        '5': {'6':27, '14':46},
+        '6': {'5':27, '7':28},
+        '7': {'6':28, '15':46.5},
+        '8': {'0':21, '9':31.5, '14':28},
+        '9': {'2':19.5, '8':31.5, '15':32},
+        '10': {'11':20},
+        '11': {'4':33.5, '10':20, '12':28},
+        '12': {'1':19.5, '11':28, '13':32},
+        '13': {'3':20, '12':32, '15':85},
+        '14': {'4':31.5, '5':46, '8':28},
+        '15': {'7':46.5, '9':32, '13':85}
+    }
 
-    f = urlopen(link) #open url
+def getClosestPainting():
+    pass
 
-    myfile = f.read() #read url contents
-    string = myfile.decode("utf-8") #convert bytearray to string
-    array = re.split('-', string)
-    command = array[0]
-    currentcommandid = array[1]
-    #print("currentcommandid fun:" + currentcommandid)
-    #print("previouscommandid fun:" + previouscommandid)
-    return command
+def getArtPiecesFromApp():
+    pictures = server.getCommands()
+    picturesToGo = []
+    for index in range(10):
+        if (pictures[index] == "T"):
+            picturesToGo.append(index)
+    return picturesToGo
 
 def onPauseCommand():
     pass
@@ -223,19 +275,11 @@ def getReadyForObstacle(direction): #90 degree
         turnRightNinety()
         waitForMotor()
         moveForward(100,500)
-        #while(not isLeftSideObstacle()):
-        #    turnRight(10)
-        #while(isLineDetected()):
-        #    turnRight(10)
+
     else:  # All default will go through the Left side. IE
         turnLeftNinety()
         waitForMotor()
 
-        #print(sonarRight.value())
-        #while (not isRightSideObstacle()):
-        #    turnLeft(10)
-        #while(isLineDetected()):
-        #turnLeft(10)
 
 def goAroundObstacle(direction):
     print("GO AROUND OBSTACLE")
@@ -307,6 +351,22 @@ def getBackToLine(direction):
 
         print("Find line again!")
 
+def waitForUserToGetReady():
+    print("Press left for single user and press right for double user...")
+    buttonEV3 = ev3.Button()
+    while(True):
+        if (buttonEV3.left):
+            print("Waiting for User 1 to complete...")
+            server.startUpSingle()
+            print("User 1 is ready!")
+            break
+        elif(buttonEV3.right):
+            print("Waiting for User 1 and User 2 to complete...")
+            server.startUpDouble()
+            print("Both users are ready!")
+            break
+
+
 
 """
 def keepDistance():
@@ -321,44 +381,23 @@ def keepDistance():
 print("SensorHub have set up.")
 #speak("Carson, we love you. Group 18. ")
 
-#Use to test the pointer. The following code turns and resets in both direction 3x
-#turnAndResetPointer("CW")
-#time.sleep(1)
-#turnAndResetPointer("CW")
-#time.sleep(1)
-#turnAndResetPointer("CW")
-#time.sleep(1)
-#turnAndResetPointer("ACW")
-#time.sleep(1)
-#turnAndResetPointer("ACW")
-#time.sleep(1)
-#turnAndResetPointer("ACW")
-
 ###################SETUP SERVER############################
 server = Server()
-print("Waiting for User 1 to complete")
-server.startUp()
-print("User 1 completed")
+waitForUserToGetReady()
+print("Users are ready!")
+
+###########################################################
+
 
 target = 40
 errorSumR = 0
 oldR = colourSensorRight.value()
 oldL = colourSensorLeft.value()
-static_dictionary = {
-    'Monalisa': ['FORWARD', 'LEFT', 'CW'],
-    'The Last Supper': ['RIGHT', 'FORWARD', 'CW']
-}
 
-command_index = 0
-pictures = server.getCommands()
-if (pictures[4] == "T"):
-    commands = static_dictionary['Monalisa']
-elif (pictures[7] == "T"):
-    commands = static_dictionary['The Last Supper']
-else:
-    print ("No pictures selected")
 
-print(commands)
+remainingPicturesToGo = getArtPiecesFromApp()
+
+
 try:
     while(True):
         if(command_index == len(commands)):
@@ -436,35 +475,3 @@ except:
     raise
 
 
-
-
-
-
-
-#moveForward(300,10000)
-
-"""
-while (True):
-    #print("currentcommandid before:" + currentcommandid)
-    #print("previouscommandid before" + previouscommandid)
-    command = getCommandFromServer()
-    if (previouscommandid != currentcommandid):
-        previouscommandid = currentcommandid
-        #print("currentcommandid after:" + currentcommandid)
-        #print("previouscommandid after" + previouscommandid)
-        if(command == "STOP"):95
-            stopWheelMotor()
-        elif(command == "FORWARD"):colourSensorLeft
-            moveForward(300, 10000)
-        elif(command == "BACKWARDS"):
-            moveBackward(300, 10000)
-        elif(command == "SPEAK"):
-            speak("Hello, I am RoboTour")
-        elif(command == "RIGHT"):
-            turnRight(10000)
-        elif(command == "LEFT"):
-            turnLeft(10000)
-        else:
-            pass
-
-"""
