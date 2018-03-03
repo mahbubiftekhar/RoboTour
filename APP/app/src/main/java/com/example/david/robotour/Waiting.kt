@@ -119,7 +119,7 @@ class Waiting : AppCompatActivity() {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
-                } catch (e: InterruptedByTimeoutException){
+                } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
                 }
             }
@@ -175,7 +175,7 @@ class Waiting : AppCompatActivity() {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
-                } catch (e: InterruptedByTimeoutException){
+                } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
                 }
             }

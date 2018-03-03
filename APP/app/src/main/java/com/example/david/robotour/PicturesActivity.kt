@@ -19,10 +19,8 @@ import android.view.inputmethod.InputMethodManager
 import com.google.cloud.translate.Translate
 import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
-import java.io.InterruptedIOException
 import java.util.*
 import kotlin.collections.ArrayList
-import java.util.Random
 
 
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
@@ -39,8 +37,8 @@ class PicturesActivity : AppCompatActivity() {
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     lateinit var t: Thread
     private var language = ""
-    private var tts_recommendations: TextToSpeech? = null
-    private var tts_results: TextToSpeech? = null
+    private var ttsRecommendations: TextToSpeech? = null
+    private var ttsResults: TextToSpeech? = null
 
     private fun translate(textToTranslate: List<String>): MutableList<String> {
         /*This function takes a list and returns a list of translated text using Google's API
@@ -59,51 +57,51 @@ class PicturesActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         // Shutdown TTS
-        if (tts_recommendations != null) {
-            tts_recommendations!!.stop()
-            tts_recommendations!!.shutdown()
+        if (ttsRecommendations != null) {
+            ttsRecommendations!!.stop()
+            ttsRecommendations!!.shutdown()
         }
-        if (tts_results != null) {
-            tts_results!!.stop()
-            tts_results!!.shutdown()
+        if (ttsResults != null) {
+            ttsResults!!.stop()
+            ttsResults!!.shutdown()
         }
 
         super.onDestroy()
     }
 
     override fun onStop() {
-        if (tts_recommendations != null) {
-            tts_recommendations!!.stop()
-            tts_recommendations!!.shutdown()
+        if (ttsRecommendations != null) {
+            ttsRecommendations!!.stop()
+            ttsRecommendations!!.shutdown()
         }
-        if (tts_results != null) {
-            tts_results!!.stop()
-            tts_results!!.shutdown()
+        if (ttsResults != null) {
+            ttsResults!!.stop()
+            ttsResults!!.shutdown()
         }
         t.interrupt()
         t.interrupt()
         super.onStop()
     }
 
-    fun onInit() {
+    private fun onInit() {
         val language = intent.getStringExtra("language")
         var result: Int
         when (language) {
             "French" -> {
-                result = tts_recommendations!!.setLanguage(Locale.FRENCH)
+                result = ttsRecommendations!!.setLanguage(Locale.FRENCH)
             }
             "Chinese" -> {
-                result = tts_recommendations!!.setLanguage(Locale.CHINESE)
+                result = ttsRecommendations!!.setLanguage(Locale.CHINESE)
             }
             "Spanish" -> {
                 val spanish = Locale("es", "ES")
-                result = tts_recommendations!!.setLanguage(spanish)
+                result = ttsRecommendations!!.setLanguage(spanish)
             }
             "German" -> {
-                result = tts_recommendations!!.setLanguage(Locale.GERMAN)
+                result = ttsRecommendations!!.setLanguage(Locale.GERMAN)
             }
             else -> {
-                result = tts_recommendations!!.setLanguage(Locale.UK)
+                result = ttsRecommendations!!.setLanguage(Locale.UK)
             }
         }
         if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -111,20 +109,20 @@ class PicturesActivity : AppCompatActivity() {
         }
         when (language) {
             "French" -> {
-                result = tts_results!!.setLanguage(Locale.FRENCH)
+                result = ttsResults!!.setLanguage(Locale.FRENCH)
             }
             "Chinese" -> {
-                result = tts_results!!.setLanguage(Locale.CHINESE)
+                result = ttsResults!!.setLanguage(Locale.CHINESE)
             }
             "Spanish" -> {
                 val spanish = Locale("es", "ES")
-                result = tts_results!!.setLanguage(spanish)
+                result = ttsResults!!.setLanguage(spanish)
             }
             "German" -> {
-                result = tts_results!!.setLanguage(Locale.GERMAN)
+                result = ttsResults!!.setLanguage(Locale.GERMAN)
             }
             else -> {
-                result = tts_results!!.setLanguage(Locale.UK)
+                result = ttsResults!!.setLanguage(Locale.UK)
             }
         }
         if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -132,7 +130,7 @@ class PicturesActivity : AppCompatActivity() {
         }
     }
 
-    private fun speakOut_new() {
+    private fun speakOutnew() {
         //This will simply output in speech "Here are your recommendations"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
@@ -155,11 +153,11 @@ class PicturesActivity : AppCompatActivity() {
                 }
             }
             longToast(text)
-            tts_recommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            ttsRecommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
 
-    private fun speakOut_recommendations() {
+    private fun speakOutrecommendations() {
         //This will simply output in speech "Here are your recommendations"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
@@ -182,11 +180,11 @@ class PicturesActivity : AppCompatActivity() {
                 }
             }
             longToast(text)
-            tts_recommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            ttsRecommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
 
-    private fun speakOut_popular() {
+    private fun speakOutPopular() {
         //This will simply output in speech "Here are your recommendations"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
@@ -209,7 +207,7 @@ class PicturesActivity : AppCompatActivity() {
                 }
             }
             longToast(text)
-            tts_recommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            ttsRecommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
 
@@ -228,8 +226,8 @@ class PicturesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         allArtPieces.clear()
-        tts_recommendations = TextToSpeech(this, null)
-        tts_results = TextToSpeech(this, null)
+        ttsRecommendations = TextToSpeech(this, null)
+        ttsResults = TextToSpeech(this, null)
         onInit()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         //Obtain language from SelectLanguageActivity
@@ -358,34 +356,28 @@ class PicturesActivity : AppCompatActivity() {
     private fun getNewest() {
         /*This will return the newest painting*/
         val recommended = listOf(allArtPieces[0], allArtPieces[5], allArtPieces[8])
-        for (artPiece in recommended) {
-            if (!queriedArtPieces.contains(artPiece)) {
-                queriedArtPieces.add(artPiece)
-            }
-        }
-        speakOut_new()
+        recommended
+                .filterNot { queriedArtPieces.contains(it) }
+                .forEach { queriedArtPieces.add(it) }
+        speakOutnew()
     }
 
-    private fun getRecommended(){
+    private fun getRecommended() {
         /*This will return the recommended paintings*/
         val recommended = listOf(allArtPieces[1], allArtPieces[3], allArtPieces[6])
-        for (artPiece in recommended) {
-            if (!queriedArtPieces.contains(artPiece)) {
-                queriedArtPieces.add(artPiece)
-            }
-        }
-        speakOut_recommendations()
+        recommended
+                .filterNot { queriedArtPieces.contains(it) }
+                .forEach { queriedArtPieces.add(it) }
+        speakOutrecommendations()
     }
 
     private fun getPopular() {
         /*This will return the popular paintings*/
         val recommended = listOf(allArtPieces[2], allArtPieces[4], allArtPieces[7])
-        for (artPiece in recommended) {
-            if (!queriedArtPieces.contains(artPiece)) {
-                queriedArtPieces.add(artPiece)
-            }
-        }
-        speakOut_popular()
+        recommended
+                .filterNot { queriedArtPieces.contains(it) }
+                .forEach { queriedArtPieces.add(it) }
+        speakOutPopular()
     }
 
     //Add mic & search icons in actionbar
@@ -633,18 +625,17 @@ class PicturesActivity : AppCompatActivity() {
                     if ((commonWords1.isNotEmpty() || commonWords2.isNotEmpty()) && !queriedArtPieces.contains(artPiece)) queriedArtPieces.add(artPiece)
                 }
             }
-            for (word in recommendationWords) {
-                if (regEx.replace(test, "").contains(regEx.replace(word, ""), ignoreCase = true)) {
-                    when (word) {
-                        "new" -> getNewest()
-                        "newest" -> getNewest()
-                        "best" -> getRecommended()
-                        "recommend" -> getRecommended()
-                        "popular" -> getPopular()
+            recommendationWords
+                    .filter { regEx.replace(test, "").contains(regEx.replace(it, ""), ignoreCase = true) }
+                    .forEach {
+                        when (it) {
+                            "new" -> getNewest()
+                            "newest" -> getNewest()
+                            "best" -> getRecommended()
+                            "recommend" -> getRecommended()
+                            "popular" -> getPopular()
+                        }
                     }
-
-                }
-            }
         }
         shownArtPieces.clear()
         for (artPiece in queriedArtPieces) {

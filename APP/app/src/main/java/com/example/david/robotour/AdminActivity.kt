@@ -97,6 +97,7 @@ class AdminActivity : AppCompatActivity() {
             else -> false
         }
     }
+
     private fun destination(destination: Int): Boolean {
         /*This is a validity check to ensure no malarkey is put on the server*/
         return when (destination) {

@@ -60,8 +60,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var descriptionView: TextView? = null
     private var stopButton: Button? = null
     private lateinit var toiletPopUp: AlertDialogBuilder
-    private var Skippable = true
-    private lateinit var t: Thread
+    private var skippable = true
     private var tts: TextToSpeech? = null
     private var tts2: TextToSpeech? = null
     private var currentPic = -1
@@ -627,8 +626,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                                 }
                                 if (userid == 1.toString()) {
-                                    if (a[10].toInt() == 2 && Skippable) {
-                                        Skippable = false
+                                    if (a[10].toInt() == 2 && skippable) {
+                                        skippable = false
                                         runOnUiThread {
                                             alert(skip) {
                                                 cancellable(false)
@@ -644,7 +643,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                     if (isNetworkConnected()) {
                                                         rejectSkip()
                                                     } else {
-                                                        Skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                        skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
                                                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                     }
                                                 }
@@ -652,8 +651,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         }
                                     }
                                 } else if (userid == 2.toString()) {
-                                    if (a[10].toInt() == 1 && Skippable) {
-                                        Skippable = false
+                                    if (a[10].toInt() == 1 && skippable) {
+                                        skippable = false
                                         runOnUiThread {
                                             alert(skip) {
                                                 cancellable(false)
@@ -669,7 +668,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                     if (isNetworkConnected()) {
                                                         rejectSkip()
                                                     } else {
-                                                        Skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                        skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
                                                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                     }
                                                 }
@@ -907,7 +906,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             async {
                 sendPUTNEW(10, "Y")
                 Thread.sleep(400)
-                Skippable = true
+                skippable = true
             }
         } else {
             toast("Check your network connection, command not sent")
