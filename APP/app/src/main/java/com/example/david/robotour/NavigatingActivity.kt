@@ -110,6 +110,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     override fun onInit(status: Int) {
+        println("status code: $status")
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
             val language = intent.getStringExtra("language")
@@ -172,6 +173,14 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun resetSpeech() {
         tts = null
         tts = TextToSpeech(this, this)
+    }
+
+    override fun onResume() {
+        //This ensures that when the nav activity is minimized and reloaded up, the speech still works
+        tts = TextToSpeech(this, this)
+        tts2 = TextToSpeech(this, this)
+        onInit(0)
+        super.onResume()
     }
 
     private fun switchToFinnished() {
@@ -558,180 +567,179 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             val language = intent.getStringExtra("language")
-                while (!Thread.currentThread().isInterrupted) {
-                    try {
-                        Thread.sleep(1000) //1000ms = 1 sec
-                        runOnUiThread(object : Runnable {
-                            override fun run() {
-                                async {
-                                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
-                                    println("++++++++" + a)
-                                    /*This updates the picture and text for the user*/
-                                    val counter = (0..9).count { a[it] == 'F' }
-                                    println("+++counter: $counter")
-                                    if (counter == 10) {
+            while (!Thread.currentThread().isInterrupted) {
+                try {
+                    Thread.sleep(1000) //1000ms = 1 sec
+                    runOnUiThread(object : Runnable {
+                        override fun run() {
+                            async {
+                                val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                                println("++++++++" + a)
+                                /*This updates the picture and text for the user*/
+                                val counter = (0..9).count { a[it] == 'F' }
+                                println("+++counter: $counter")
+                                if (counter == 10) {
+                                    runOnUiThread {
+                                        switchToFinnished()
+                                        killThread = true
+                                    }
+                                }
+                                for (i in 0..9) {
+                                    if (a[i] == 'A' && speaking != i) {
+                                        /*This will mean that when the robot has arrived at the painting*/
+                                        if (tts != null) {
+                                            tts!!.stop()
+                                        }
                                         runOnUiThread {
-                                            switchToFinnished()
-                                            killThread = true
+                                            currentPic = i // Set current pic to the one being shown
+                                            resetSpeech()
+                                            speaking = i
+                                            //Change the image, text and descrioption
+                                            imageView?.setImageResource(allArtPieces[i].imageID)
+                                            val text: String = when (language) {
+                                                "German" -> allArtPieces[i].nameGerman
+                                                "French" -> allArtPieces[i].nameFrench
+                                                "Spanish" -> allArtPieces[i].nameSpanish
+                                                "Chinese" -> allArtPieces[i].nameChinese
+                                                else -> allArtPieces[i].name
+                                            }
+                                            titleView?.text = text
+                                            currentPic = i /*This is to allow for the pics description to be read out to the user*/
+                                            when (intent.getStringExtra("language")) {
+                                                "French" -> descriptionView?.text = allArtPieces[i].French_Desc
+                                                "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
+                                                "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
+                                                "German" -> descriptionView?.text = allArtPieces[i].German_Desc
+                                                else -> descriptionView?.text = allArtPieces[i].English_Desc
+                                            }
                                         }
+                                        speakOut(i)
+                                        break
                                     }
-                                    for (i in 0..9) {
-                                        if (a[i] == 'A' && speaking != i) {
-                                            /*This will mean that when the robot has arrived at the painting*/
-                                            if (tts != null) {
-                                                tts!!.stop()
-                                            }
-                                            runOnUiThread {
-                                                currentPic = i // Set current pic to the one being shown
-                                                resetSpeech()
-                                                speaking = i
-                                                //Change the image, text and descrioption
-                                                imageView?.setImageResource(allArtPieces[i].imageID)
-                                                val text: String = when (language) {
-                                                    "German" -> allArtPieces[i].nameGerman
-                                                    "French" -> allArtPieces[i].nameFrench
-                                                    "Spanish" -> allArtPieces[i].nameSpanish
-                                                    "Chinese" -> allArtPieces[i].nameChinese
-                                                    else -> allArtPieces[i].name
-                                                }
-                                                titleView?.text = text
-                                                currentPic = i /*This is to allow for the pics description to be read out to the user*/
-                                                when (intent.getStringExtra("language")) {
-                                                    "French" -> descriptionView?.text = allArtPieces[i].French_Desc
-                                                    "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
-                                                    "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
-                                                    "German" -> descriptionView?.text = allArtPieces[i].German_Desc
-                                                    else -> descriptionView?.text = allArtPieces[i].English_Desc
-                                                }
-                                            }
-                                            speakOut(i)
-                                            break
-                                        }
 
-                                        //Updates title
-                                        if (a[i] == 'N') {
-                                            runOnUiThread {
-                                                //Change the image, text and descrioption
-                                                imageView?.setImageResource(allArtPieces[i].imageID)
-                                                val text: String = when (language) {
-                                                    "German" -> allArtPieces[i].nameGerman
-                                                    "French" -> allArtPieces[i].nameFrench
-                                                    "Spanish" -> allArtPieces[i].nameSpanish
-                                                    "Chinese" -> allArtPieces[i].nameChinese
-                                                    else -> allArtPieces[i].name
-
-                                                }
-                                                titleView?.text = text
-                                                currentPic = i /*This is to allow for the pics description to be read out to the user*/
-                                                when (intent.getStringExtra("language")) {
-                                                    "French" -> descriptionView?.text = allArtPieces[i].French_Desc
-                                                    "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
-                                                    "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
-                                                    "German" -> descriptionView?.text = allArtPieces[i].German_Desc
-                                                    else -> descriptionView?.text = allArtPieces[i].English_Desc
-                                                }
-                                            }
-                                            break
-                                        }
-
-                                    }
-                                    if (userid == 1.toString()) {
-                                        if (a[10].toInt() == 2 && skippable) {
-                                            skippable = false
-                                            runOnUiThread {
-                                                alert(skip) {
-                                                    cancellable(false)
-                                                    setFinishOnTouchOutside(false)
-                                                    positiveButton(positive) {
-                                                        if (isNetworkConnected()) {
-                                                            skipImmediately()
-                                                        } else {
-                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                                        }
-                                                    }
-                                                    negativeButton(negative) {
-                                                        if (isNetworkConnected()) {
-                                                            rejectSkip()
-                                                        } else {
-                                                            skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
-                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                                        }
-                                                    }
-                                                }.show()
-                                            }
-                                        }
-                                    } else if (userid == 2.toString()) {
-                                        if (a[10].toInt() == 1 && skippable) {
-                                            skippable = false
-                                            runOnUiThread {
-                                                alert(skip) {
-                                                    cancellable(false)
-                                                    setFinishOnTouchOutside(false)
-                                                    positiveButton(positive) {
-                                                        if (isNetworkConnected()) {
-                                                            skipImmediately()
-                                                        } else {
-                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                                        }
-                                                    }
-                                                    negativeButton(negative) {
-                                                        if (isNetworkConnected()) {
-                                                            rejectSkip()
-                                                        } else {
-                                                            skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
-                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                                        }
-                                                    }
-                                                }.show()
-                                            }
-                                        }
-                                    }
-                                    if (a[14] == 'A' && toiletPopUpBool) {
-                                        toiletPopUpBool = false
+                                    //Updates title
+                                    if (a[i] == 'N') {
                                         runOnUiThread {
-                                            toiletPopUp = alert(startRoboTour) {
+                                            //Change the image, text and descrioption
+                                            imageView?.setImageResource(allArtPieces[i].imageID)
+                                            val text: String = when (language) {
+                                                "German" -> allArtPieces[i].nameGerman
+                                                "French" -> allArtPieces[i].nameFrench
+                                                "Spanish" -> allArtPieces[i].nameSpanish
+                                                "Chinese" -> allArtPieces[i].nameChinese
+                                                else -> allArtPieces[i].name
+
+                                            }
+                                            titleView?.text = text
+                                            currentPic = i /*This is to allow for the pics description to be read out to the user*/
+                                            when (intent.getStringExtra("language")) {
+                                                "French" -> descriptionView?.text = allArtPieces[i].French_Desc
+                                                "Chinese" -> descriptionView?.text = allArtPieces[i].Chinese_Desc
+                                                "Spanish" -> descriptionView?.text = allArtPieces[i].Spanish_Desc
+                                                "German" -> descriptionView?.text = allArtPieces[i].German_Desc
+                                                else -> descriptionView?.text = allArtPieces[i].English_Desc
+                                            }
+                                        }
+                                        break
+                                    }
+
+                                }
+                                if (userid == 1.toString()) {
+                                    if (a[10].toInt() == 2 && skippable) {
+                                        skippable = false
+                                        runOnUiThread {
+                                            alert(skip) {
                                                 cancellable(false)
                                                 setFinishOnTouchOutside(false)
                                                 positiveButton(positive) {
                                                     if (isNetworkConnected()) {
-                                                        async {
-                                                            sendPUTNEW(11, "F")
-                                                        }
+                                                        skipImmediately()
                                                     } else {
+                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                    }
+                                                }
+                                                negativeButton(negative) {
+                                                    if (isNetworkConnected()) {
+                                                        rejectSkip()
+                                                    } else {
+                                                        skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
                                                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                     }
                                                 }
                                             }.show()
                                         }
                                     }
-                                    if (a[11] == 'T') {
+                                } else if (userid == 2.toString()) {
+                                    if (a[10].toInt() == 1 && skippable) {
+                                        skippable = false
                                         runOnUiThread {
-                                            toggleStBtn = true
-                                            stopButton!!.text = start
-                                        }
-                                    } else {
-                                        runOnUiThread {
-                                            stopButton!!.text = stop
-                                            toggleStBtn = false
+                                            alert(skip) {
+                                                cancellable(false)
+                                                setFinishOnTouchOutside(false)
+                                                positiveButton(positive) {
+                                                    if (isNetworkConnected()) {
+                                                        skipImmediately()
+                                                    } else {
+                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                    }
+                                                }
+                                                negativeButton(negative) {
+                                                    if (isNetworkConnected()) {
+                                                        rejectSkip()
+                                                    } else {
+                                                        skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                    }
+                                                }
+                                            }.show()
                                         }
                                     }
                                 }
-                                Thread.sleep(300)
+                                if (a[14] == 'A' && toiletPopUpBool) {
+                                    toiletPopUpBool = false
+                                    runOnUiThread {
+                                        toiletPopUp = alert(startRoboTour) {
+                                            cancellable(false)
+                                            setFinishOnTouchOutside(false)
+                                            positiveButton(positive) {
+                                                if (isNetworkConnected()) {
+                                                    async {
+                                                        sendPUTNEW(11, "F")
+                                                    }
+                                                } else {
+                                                    Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                }
+                                            }
+                                        }.show()
+                                    }
+                                }
+                                if (a[11] == 'T') {
+                                    runOnUiThread {
+                                        toggleStBtn = true
+                                        stopButton!!.text = start
+                                    }
+                                } else {
+                                    runOnUiThread {
+                                        stopButton!!.text = stop
+                                        toggleStBtn = false
+                                    }
+                                }
                             }
+                            Thread.sleep(300)
                         }
-                        )
-                    } catch (e: InterruptedException) {
-                        Thread.currentThread().interrupt()
-                    } catch (e: InterruptedIOException) {
-                        Thread.currentThread().interrupt()
-                    } catch (e: InterruptedByTimeoutException) {
-                        Thread.currentThread().interrupt()
                     }
+                    )
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedIOException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedByTimeoutException) {
+                    Thread.currentThread().interrupt()
                 }
+            }
             Thread.currentThread().interrupt()
         }
     }
-
 
 
     /////
@@ -875,11 +883,25 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             switchToMain()
             if (userid == "1") {
                 async {
-                    sendPUTNEW(16, "F")
+                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                    if (a[12] == '2') {
+                        sendPUTNEW(12, "T")
+                        sendPUTNEW(16, "F")
+                    } else {
+                        sendPUTNEW(12, "1")
+                        sendPUTNEW(16, "F")
+                    }
                 }
             } else if (userid == "2") {
                 async {
-                    sendPUTNEW(17, "F")
+                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                    if (a[16] == '1') {
+                        sendPUTNEW(12, "T")
+                        sendPUTNEW(17, "F")
+                    } else {
+                        sendPUTNEW(12, "2")
+                        sendPUTNEW(17, "F")
+                    }
                 }
             }
             checkerThread.interrupt()
@@ -897,7 +919,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (isNetworkConnected()) {
             async {
                 //This function will reject the skip by adding the empty string
-                sendPUTNEW(10, " ")
+                sendPUTNEW(10, "F")
             }
         } else {
             toast("Check your network connection, command not sent")

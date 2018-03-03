@@ -386,6 +386,14 @@ class PicturesActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onResume() {
+        //This ensures that when the Pictures activity is minimized and reloaded up, the speech still works
+        ttsRecommendations = TextToSpeech(this, null)
+        ttsResults = TextToSpeech(this, null)
+        onInit()
+        super.onResume()
+    }
+
     //Define Functions upon actionbar button pressed
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
