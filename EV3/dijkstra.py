@@ -1,5 +1,5 @@
 # Adapted from source: http://www.gilles-bertrand.com/2014/03/dijkstra-algorithm-python-example-source-code-shortest-path.html
-
+import sys
 def dijkstra(graph, src, dest, visited=[], distances={}, predecessors={}):
     """ calculates a shortest path tree routed in src
     """
@@ -42,6 +42,20 @@ def dijkstra(graph, src, dest, visited=[], distances={}, predecessors={}):
         return dijkstra(graph, x, dest, visited, distances, predecessors)
 
 
+# Test
+def getClosestPainting():
+    shortestDistance = sys.maxint
+    shortestPath = None
+
+    for painting in ['1', '3', '4', '5']:
+        (path, distance) = dijkstra(graph, currentLocation, painting, [], {}, {})
+        if(shortestDistance > distance):
+            shortestDistance = distance
+            shortestPath = path
+    return shortestPath
+
+
+
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
     # unittest.main()
@@ -66,8 +80,12 @@ if __name__ == "__main__":
 
 
 
-    (path, distance) = dijkstra(graph, '3', '15')
-    print(str(path))
-    print(str(distance))
+    #(path, distance) = dijkstra(graph, '3', '1')
+    #print(str(path))
+    #print(str(distance))
+    # Test
+    currentLocation = '10'
+    print(getClosestPainting())
+
 
 

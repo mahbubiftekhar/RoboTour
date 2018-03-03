@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 # Core imports
 import time
+import sys
 import ev3dev.ev3 as ev3
 from urllib.request import urlopen
 import re
@@ -15,7 +16,7 @@ obstacle_detection_distance = 200 # in mm
 side_distance = 17
 link = "https://homepages.inf.ed.ac.uk/s1553593/receiver.php"
 pointerState = ""
-startPosition = 10 # Toilet
+startPosition = '10' # Toilet
 currentLocation = startPosition
 robotOrientation = "N" # N,S,W,E (North South West East)
 remainingPicturesToGo = []
@@ -188,44 +189,44 @@ def turnAndResetPointer(direction):
 def initialiseMap():
     # Orientation from point X to Y is N/S/W/E
     # 38 edges in total
-    oMap[(0, 1)] = "S"
-    oMap[(0, 8)] = "N"
-    oMap[(1, 12)] = "S"
-    oMap[(1, 0)] = "N"
-    oMap[(2, 9)] = "N"
-    oMap[(2, 3)] = "S"
-    oMap[(3, 2)] = "N"
-    oMap[(3, 13)] = "S"
-    oMap[(4, 11)] = "S"
-    oMap[(4, 14)] = "N"
-    oMap[(5, 14)] = "WS" # Special Case
-    oMap[(5, 6)] = "E"
-    oMap[(6, 5)] = "W"
-    oMap[(6, 7)] = "E"
-    oMap[(7, 15)] = "ES"
-    oMap[(7, 6)] = "W"
-    oMap[(8, 0)] = "S"
-    oMap[(8, 9)] = "E"
-    oMap[(8, 14)] = "W"
-    oMap[(9, 15)] = "E"
-    oMap[(9, 2)] = "S"
-    oMap[(9, 8)] = "W"
-    oMap[(10, 11)] = "N"
-    oMap[(11, 10)] = "S"
-    oMap[(11, 4)] = "N"
-    oMap[(11, 12)] = "E"
-    oMap[(12, 13)] = "E"
-    oMap[(12, 1)] = "N"
-    oMap[(12, 11)] = "W"
-    oMap[(13, 3)] = "N"
-    oMap[(13, 15)] = "EN"
-    oMap[(13, 12)] = "W"
-    oMap[(14, 4)] = "S"
-    oMap[(14, 8)] = "E"
-    oMap[(14, 5)] = "NE"
-    oMap[(15, 13)] = "SW"
-    oMap[(15, 9)] = "W"
-    oMap[(15, 7)] = "NW"
+    oMap[('0', '1')] = "S"
+    oMap[('0', '8')] = "N"
+    oMap[('1', '12')] = "S"
+    oMap[('1', '0')] = "N"
+    oMap[('2', '9')] = "N"
+    oMap[('2', '3')] = "S"
+    oMap[('3', '2')] = "N"
+    oMap[('3', '13')] = "S"
+    oMap[('4', '11')] = "S"
+    oMap[('4', '14')] = "N"
+    oMap[('5', '14')] = "WS" # Special Case
+    oMap[('5', '6')] = "E"
+    oMap[('6', '5')] = "W"
+    oMap[('6', '7')] = "E"
+    oMap[('7', '15')] = "ES"
+    oMap[('7', '6')] = "W"
+    oMap[('8', '0')] = "S"
+    oMap[('8', '9')] = "E"
+    oMap[('8', '14')] = "W"
+    oMap[('9', '15')] = "E"
+    oMap[('9', '2')] = "S"
+    oMap[('9', '8')] = "W"
+    oMap[('10', '11')] = "N"
+    oMap[('11', '10')] = "S"
+    oMap[('11', '4')] = "N"
+    oMap[('11', '12')] = "E"
+    oMap[('12', '13')] = "E"
+    oMap[('12', '1')] = "N"
+    oMap[('12', '11')] = "W"
+    oMap[('13', '3')] = "N"
+    oMap[('13', '15')] = "EN"
+    oMap[('13', '12')] = "W"
+    oMap[('14', '4')] = "S"
+    oMap[('14', '8')] = "E"
+    oMap[('14', '5')] = "NE"
+    oMap[('15', '13')] = "SW"
+    oMap[('15', '9')] = "W"
+    oMap[('15', '7')] = "NW"
 
     # Distance Map
     dMap = {
@@ -247,15 +248,25 @@ def initialiseMap():
         '15': {'7':46.5, '9':32, '13':85}
     }
 
+
 def getClosestPainting():
-    pass
+    shortestDistance = sys.maxint
+    shortestPath = None
+
+    for painting in remainingPicturesToGo:
+        (path, distance) = dijkstra(graph, currentLocation, painting, [], {}, {})
+        if(shortestDistance > distance):
+            shortestDistance = distance
+            shortestPath = path
+    return shortestPath
+
 
 def getArtPiecesFromApp():
     pictures = server.getCommands()
     picturesToGo = []
     for index in range(10):
         if (pictures[index] == "T"):
-            picturesToGo.append(index)
+            picturesToGo.append(str(index))
     return picturesToGo
 
 def onPauseCommand():
