@@ -77,7 +77,6 @@ class Waiting : AppCompatActivity() {
             background = ColorDrawable(Color.parseColor("#EEEEEE"))
         }
         async {
-
             switchToNavigate() //This should be removed in the final implementation
         }
 

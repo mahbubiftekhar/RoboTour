@@ -548,15 +548,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             "other" -> titleView?.text = "RoboTour calculating optimal route..."
             "else" -> titleView?.text = "RoboTour calculating optimal route..."
         }
-        //Starting the thread which is defined above to keep polling the server
-
-        async {
-            checkerThread.run()
-        }
+        //Starting the thread which is defined above to keep polling the server for changes
+        checkerThread.start()
     }
 
     /////
-    private val checkerThread: Thread = object : Thread() {
+    val checkerThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
