@@ -14,6 +14,7 @@ import android.os.Build
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
+import android.support.annotation.RequiresApi
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import com.google.cloud.translate.Translate
@@ -21,7 +22,6 @@ import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
 import java.util.*
 import kotlin.collections.ArrayList
-
 
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
@@ -79,10 +79,10 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
             ttsResults!!.shutdown()
         }
         t.interrupt()
-        t.interrupt()
         super.onStop()
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onInit(status: Int) {
         println("status code: $status")
         if (status == TextToSpeech.SUCCESS) {
@@ -96,7 +96,7 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
                 }
                 "Chinese" -> {
                     result = ttsRecommendations!!.setLanguage(Locale.CHINESE)
-                    println("status getting in chinese")
+
                 }
                 "Spanish" -> {
                     val spanish = Locale("es", "ES")
@@ -406,7 +406,6 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
         ttsRecommendations = TextToSpeech(this, null)
         ttsResults = TextToSpeech(this, null)
         t.start() //Restart the thread that highlights the start button green
-        onInit(0)
         super.onResume()
     }
 
