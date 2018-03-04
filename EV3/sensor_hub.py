@@ -26,6 +26,7 @@ class SensorHub():
 		self.sensor_values = {}
 
 		self.last_poll = 0
+		self.last_poll_time = 0
 
 		self.dropped_frames = 0
 		self.frame_dropped = False
@@ -111,7 +112,7 @@ class SensorHub():
 
 
 	def get_frame(self):
-		out = ''
+		out = bytearray()
 		waiting = 0
 		dt = 0.00001 # 10us
 		cycles = 0
@@ -120,8 +121,8 @@ class SensorHub():
 		while True:
 			waiting = time.perf_counter() - start
 			if self.serial_port.inWaiting() > 0:
-				out += self.serial_port.read(1).decode('ascii')
-				if(out[-1] == '\n'):
+				out.append(self.serial_port.read(1)[0])
+				if(out[-1] == 10): #ASCII for \n
 					# remove newline and last comma
 					self.debug_print("Frame received in {} cycles ({:.2f}ms)".format(cycles, waiting*1000))
 					out = out[:-2]
@@ -134,7 +135,7 @@ class SensorHub():
 				time.sleep(dt)
 				cycles += 1
 
-		return out if out != '' else None
+		return out.decode('ascii') if len(out) != 0 else None
 
 	def extract_from_frame(self, frame):
 		if frame is None:
@@ -169,6 +170,7 @@ class HubSonar():
 		self.maxrange = self.hub.sonar_maxrange
 
 		self.hub.sensor_values[name] = 0
+		self.val = 0
 
 	def value(self):
 		# if a new value is requested
