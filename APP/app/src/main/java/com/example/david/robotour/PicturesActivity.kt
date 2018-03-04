@@ -26,7 +26,7 @@ import kotlin.collections.ArrayList
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
 @Suppress("DEPRECATION")
-class PicturesActivity : AppCompatActivity() {
+class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
 
     data class ArtPiece(val name: String, val artist: String, val nameChinese: String, val nameGerman: String, val nameSpanish: String, val nameFrench: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int, var selected: Boolean)
 
@@ -83,7 +83,7 @@ class PicturesActivity : AppCompatActivity() {
         super.onStop()
     }
 
-    private fun onInit() {
+    override fun onInit(status: Int){
         val language = intent.getStringExtra("language")
         var result: Int
         when (language) {
@@ -224,11 +224,9 @@ class PicturesActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         allArtPieces.clear()
         ttsRecommendations = TextToSpeech(this, null)
         ttsResults = TextToSpeech(this, null)
-        onInit()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         //Obtain language from SelectLanguageActivity
         language = intent.getStringExtra("language")
@@ -390,7 +388,7 @@ class PicturesActivity : AppCompatActivity() {
         //This ensures that when the Pictures activity is minimized and reloaded up, the speech still works
         ttsRecommendations = TextToSpeech(this, null)
         ttsResults = TextToSpeech(this, null)
-        onInit()
+        t.start() //Restart the thread that highlights the start button green
         super.onResume()
     }
 
