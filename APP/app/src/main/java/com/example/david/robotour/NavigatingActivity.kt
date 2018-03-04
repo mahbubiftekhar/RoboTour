@@ -106,6 +106,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts2!!.stop()
             tts2!!.shutdown()
         }
+        checkerThread.interrupt()
         super.onStop()
     }
 
@@ -177,6 +178,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     override fun onResume() {
         //This ensures that when the nav activity is minimized and reloaded up, the speech still works
+        checkerThread.start()
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         onInit(0)

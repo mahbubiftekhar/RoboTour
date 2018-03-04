@@ -14,7 +14,6 @@ import android.os.Build
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
-import android.support.annotation.RequiresApi
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import com.google.cloud.translate.Translate
@@ -37,8 +36,8 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     lateinit var t: Thread
     private var language = ""
-    private var ttsRecommendations: TextToSpeech? = null
-    private var ttsResults: TextToSpeech? = null
+    private var tts: TextToSpeech? = null
+    private var tts2: TextToSpeech? = null
 
     private fun translate(textToTranslate: List<String>): MutableList<String> {
         /*This function takes a list and returns a list of translated text using Google's API
@@ -54,59 +53,56 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
         }
         return translated
     }
-
-    override fun onDestroy() {
+    public override fun onDestroy() {
         // Shutdown TTS
-        if (ttsRecommendations != null) {
-            ttsRecommendations!!.stop()
-            ttsRecommendations!!.shutdown()
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
         }
-        if (ttsResults != null) {
-            ttsResults!!.stop()
-            ttsResults!!.shutdown()
+        if (tts2 != null) {
+            tts2!!.stop()
+            tts2!!.shutdown()
         }
 
         super.onDestroy()
     }
 
-    override fun onStop() {
-        if (ttsRecommendations != null) {
-            ttsRecommendations!!.stop()
-            ttsRecommendations!!.shutdown()
+    public override fun onStop() {
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
         }
-        if (ttsResults != null) {
-            ttsResults!!.stop()
-            ttsResults!!.shutdown()
+        if (tts2 != null) {
+            tts2!!.stop()
+            tts2!!.shutdown()
+
         }
         t.interrupt()
+
         super.onStop()
     }
-
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onInit(status: Int) {
         println("status code: $status")
         if (status == TextToSpeech.SUCCESS) {
-            println("STATUS SETTING HERE")
             // set US English as language for tts
             val language = intent.getStringExtra("language")
             val result: Int
             when (language) {
                 "French" -> {
-                    result = ttsRecommendations!!.setLanguage(Locale.FRENCH)
+                    result = tts!!.setLanguage(Locale.FRENCH)
                 }
                 "Chinese" -> {
-                    result = ttsRecommendations!!.setLanguage(Locale.CHINESE)
-
+                    result = tts!!.setLanguage(Locale.CHINESE)
                 }
                 "Spanish" -> {
                     val spanish = Locale("es", "ES")
-                    result = ttsRecommendations!!.setLanguage(spanish)
+                    result = tts!!.setLanguage(spanish)
                 }
                 "German" -> {
-                    result = ttsRecommendations!!.setLanguage(Locale.GERMAN)
+                    result = tts!!.setLanguage(Locale.GERMAN)
                 }
                 else -> {
-                    result = ttsRecommendations!!.setLanguage(Locale.UK)
+                    result = tts!!.setLanguage(Locale.UK)
                 }
             }
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -116,27 +112,25 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
 
         }
         if (status == TextToSpeech.SUCCESS) {
-            println("STATUS SETTING HERE2")
             // set US English as language for tts
             val language = intent.getStringExtra("language")
-            println("status language: $language")
             val result: Int
             when (language) {
                 "French" -> {
-                    result = ttsResults!!.setLanguage(Locale.FRENCH)
+                    result = tts2!!.setLanguage(Locale.FRENCH)
                 }
                 "Chinese" -> {
-                    result = ttsResults!!.setLanguage(Locale.CHINESE)
+                    result = tts2!!.setLanguage(Locale.CHINESE)
                 }
                 "Spanish" -> {
                     val spanish = Locale("es", "ES")
-                    result = ttsResults!!.setLanguage(spanish)
+                    result = tts2!!.setLanguage(spanish)
                 }
                 "German" -> {
-                    result = ttsResults!!.setLanguage(Locale.GERMAN)
+                    result = tts2!!.setLanguage(Locale.GERMAN)
                 }
                 else -> {
-                    result = ttsResults!!.setLanguage(Locale.UK)
+                    result = tts2!!.setLanguage(Locale.UK)
                 }
             }
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -145,7 +139,9 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
         } else {
 
         }
+
     }
+
 
     private fun speakOutnew() {
         //This will simply output in speech "Here are your recommendations"
@@ -170,7 +166,7 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
                 }
             }
             longToast(text)
-            ttsRecommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
 
@@ -197,7 +193,7 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
                 }
             }
             longToast(text)
-            ttsRecommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
 
@@ -224,7 +220,7 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
                 }
             }
             longToast(text)
-            ttsRecommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
 
@@ -242,11 +238,16 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         allArtPieces.clear()
-        ttsRecommendations = TextToSpeech(this, null)
-        ttsResults = TextToSpeech(this, null)
+        tts?.setLanguage(Locale.CHINESE)
+        tts2 = TextToSpeech(this, null)
+        tts= TextToSpeech(this, null)
+        println("STATUS"+tts?.language)
+        tts2?.language = Locale.CHINESE
+        println("STATUS"+tts?.language)
+        val language = intent.getStringExtra("language")
+
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         //Obtain language from SelectLanguageActivity
-        language = intent.getStringExtra("language")
         when (language) {
             "English" -> supportActionBar?.title = "Select Picture"
             "German" -> supportActionBar?.title = "Wähle ein Bild"
@@ -403,8 +404,8 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
 
     override fun onResume() {
         //This ensures that when the Pictures activity is minimized and reloaded up, the speech still works
-        ttsRecommendations = TextToSpeech(this, null)
-        ttsResults = TextToSpeech(this, null)
+        tts = TextToSpeech(this, null)
+        tts2 = TextToSpeech(this, null)
         t.start() //Restart the thread that highlights the start button green
         super.onResume()
     }
