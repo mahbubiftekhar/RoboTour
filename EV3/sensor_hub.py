@@ -109,25 +109,34 @@ class SensorHub():
 
 
 
+	# THE PROBLEM IS HERE!!!
 
-
+	# method for receiving the full data frame over serial
 	def get_frame(self):
+		# frame buffer
 		out = bytearray()
+
+		# for timeout purposes
 		waiting = 0
 		dt = 0.00001 # 10us
 		cycles = 0
 
+		# record starting time
 		start = time.perf_counter()
 		while True:
+			# calculate elapsed time
 			waiting = time.perf_counter() - start
 			if self.serial_port.inWaiting() > 0:
+
 				out.append(self.serial_port.read(1)[0])
+				# end of frame designated by endline character
 				if(out[-1] == 10): #ASCII for \n
-					# remove newline and last comma
 					self.debug_print("Frame received in {} cycles ({:.2f}ms)".format(cycles, waiting*1000))
+					# remove newline and last comma
 					out = out[:-2]
 					break
 			else:
+				# if there is nothing received and we've waited long enough
 				if(waiting > self.response_timeout):
 					# self.debug_print("!!!Response timeout!!!")
 					break
@@ -136,6 +145,8 @@ class SensorHub():
 				cycles += 1
 
 		return out.decode('ascii') if len(out) != 0 else None
+
+	# THE PROBLEM IS ABOVE !!!
 
 	def extract_from_frame(self, frame):
 		if frame is None:

@@ -32,7 +32,8 @@ delay_s = float(input("Delay (ms)? >>> "))/1000
 
 # set up the logger
 test_name = "hub_resp_"+test_case+"_t{}s_d{}ms".format(test_length,delay_s*1000)
-logger = DataLogger(test_name, folder='../tests/logs/')
+# logger = DataLogger(test_name, folder='./logs/') # for ev3
+logger = DataLogger(test_name, folder='../tests/logs/') # for PC
 
 # set up callbacks for logging
 def get_s0():
