@@ -27,6 +27,9 @@ class SensorHub():
 
 		self.last_poll = 0
 
+		self.dropped_frames = 0
+		self.frame_dropped = False
+
 		self.poll()
 
 
@@ -150,7 +153,10 @@ class SensorHub():
 					print("Error with pair: {} : {}".format(data[0], data[1]))
 				
 				self.debug_print("Sensor {}: {}".format(data[0], data[1]))
+			self.frame_dropped = False
 		except:
+			self.frame_dropped = True
+			self.dropped_frames += 1
 			print("Error processing frame: {}".format(frame))
 		
 
