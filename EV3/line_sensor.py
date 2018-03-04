@@ -149,6 +149,7 @@ class SimpleLineDetector():
 
 		if self.line_low:
 			self.line_detected = self.raw_value < self.threshold
+		
 		else:
 			self.line_detected = self.raw_value > self.threshold
 
@@ -156,12 +157,12 @@ class SimpleLineDetector():
 
 	def calibrate(self):
 		
-		if self.raw_value > self.max_val:
-			self.max_val = self.raw_value
+		if self.raw_value > self.hi_max:
+			self.hi_max = self.raw_value
 			self.threshold = (self.hi_max + self.lo_min) / 2
 
-		if self.raw_value < self.min_val:
-			self.min_val = self.raw_value
+		if self.raw_value < self.lo_min:
+			self.lo_min = self.raw_value
 			self.threshold = (self.hi_max + self.lo_min) / 2
 
 class LineSensor():
@@ -192,8 +193,8 @@ class LineSensor():
 			self.detector[n].update(0)
 
 	def calibrate(self):
-		for d in self.detector:
-			d.calibrate()
+		for n in self.detector_names:
+			self.detector[n].calibrate()
 
 
 	def raw_values(self):
@@ -219,9 +220,8 @@ class LineSensor():
 		activated_sens = 0
 
 		for s in order:
-
 			#check if sensor on line
-			if self.detetector[s].line_detected:
+			if self.detector[s].line_detected:
 				err += weight
 				activated_sens += 1
 
