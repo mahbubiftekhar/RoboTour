@@ -1,6 +1,6 @@
 # ROBOTOUR - SDP- GROUP 18 - 2017/2018
 
-![Screenshot](logo.png)
+![Screenshot](Logo.png)
 
 Group members
 
