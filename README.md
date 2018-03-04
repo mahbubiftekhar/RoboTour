@@ -1,4 +1,4 @@
-# ROBOTOUR - SDP-GROUP18
+# ROBOTOUR - SDP- GROUP 18 - 2017/2018
 
 Group members
 
