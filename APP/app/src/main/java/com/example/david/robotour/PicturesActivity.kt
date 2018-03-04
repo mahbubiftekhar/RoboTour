@@ -39,20 +39,6 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
     private var tts: TextToSpeech? = null
     private var tts2: TextToSpeech? = null
 
-    private fun translate(textToTranslate: List<String>): MutableList<String> {
-        /*This function takes a list and returns a list of translated text using Google's API
-        * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
-        * network on main thread exception */
-        val translated: MutableList<String> = mutableListOf()
-        val apiKey = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finnished
-        for (i in textToTranslate) {
-            val options = TranslateOptions.newBuilder().setApiKey(apiKey).build()
-            val translate = options.service
-            val translation = translate.translate(i, Translate.TranslateOption.targetLanguage("en"))
-            translated.add(translation.translatedText)
-        }
-        return translated
-    }
     public override fun onDestroy() {
         // Shutdown TTS
         if (tts != null) {
@@ -78,7 +64,6 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
 
         }
         t.interrupt()
-
         super.onStop()
     }
     override fun onInit(status: Int) {
@@ -222,6 +207,21 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
             longToast(text)
             tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
+    }
+
+    private fun translate(textToTranslate: List<String>): MutableList<String> {
+        /*This function takes a list and returns a list of translated text using Google's API
+        * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
+        * network on main thread exception */
+        val translated: MutableList<String> = mutableListOf()
+        val apiKey = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finished
+        for (i in textToTranslate) {
+            val options = TranslateOptions.newBuilder().setApiKey(apiKey).build()
+            val translate = options.service
+            val translation = translate.translate(i, Translate.TranslateOption.targetLanguage("en"))
+            translated.add(translation.translatedText)
+        }
+        return translated
     }
 
     private fun translateText(textToTranslate: String): String? {
