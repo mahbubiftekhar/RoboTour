@@ -38,8 +38,7 @@
         <activity
             android:name=".PicturesActivity"
             android:label="@string/title_activity_pictures"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".NavigatingActivity"
             android:screenOrientation="portrait">

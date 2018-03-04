@@ -83,50 +83,67 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
         super.onStop()
     }
 
-    override fun onInit(status: Int){
-        val language = intent.getStringExtra("language")
-        var result: Int
-        when (language) {
-            "French" -> {
-                result = ttsRecommendations!!.setLanguage(Locale.FRENCH)
+    override fun onInit(status: Int) {
+        println("status code: $status")
+        if (status == TextToSpeech.SUCCESS) {
+            println("STATUS SETTING HERE")
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = ttsRecommendations!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = ttsRecommendations!!.setLanguage(Locale.CHINESE)
+                    println("status getting in chinese")
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = ttsRecommendations!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = ttsRecommendations!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = ttsRecommendations!!.setLanguage(Locale.UK)
+                }
             }
-            "Chinese" -> {
-                result = ttsRecommendations!!.setLanguage(Locale.CHINESE)
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
             }
-            "Spanish" -> {
-                val spanish = Locale("es", "ES")
-                result = ttsRecommendations!!.setLanguage(spanish)
-            }
-            "German" -> {
-                result = ttsRecommendations!!.setLanguage(Locale.GERMAN)
-            }
-            else -> {
-                result = ttsRecommendations!!.setLanguage(Locale.UK)
-            }
-        }
-        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
         } else {
+
         }
-        when (language) {
-            "French" -> {
-                result = ttsResults!!.setLanguage(Locale.FRENCH)
+        if (status == TextToSpeech.SUCCESS) {
+            println("STATUS SETTING HERE2")
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            println("status language: $language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = ttsResults!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = ttsResults!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = ttsResults!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = ttsResults!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = ttsResults!!.setLanguage(Locale.UK)
+                }
             }
-            "Chinese" -> {
-                result = ttsResults!!.setLanguage(Locale.CHINESE)
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
             }
-            "Spanish" -> {
-                val spanish = Locale("es", "ES")
-                result = ttsResults!!.setLanguage(spanish)
-            }
-            "German" -> {
-                result = ttsResults!!.setLanguage(Locale.GERMAN)
-            }
-            else -> {
-                result = ttsResults!!.setLanguage(Locale.UK)
-            }
-        }
-        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
         } else {
+
         }
     }
 
@@ -389,6 +406,7 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
         ttsRecommendations = TextToSpeech(this, null)
         ttsResults = TextToSpeech(this, null)
         t.start() //Restart the thread that highlights the start button green
+        onInit(0)
         super.onResume()
     }
 
