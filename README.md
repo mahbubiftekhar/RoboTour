@@ -2,10 +2,8 @@
 # ROBOTOUR - SDP- GROUP 18 - 2017/2018
   </p>
 
-<p align="center">
   ![Screenshot](Logo.png)
-</p>
-
+<p align="center">
 Group members
 
 Mariyana Cholakova
@@ -21,3 +19,4 @@ David Speers
 Alice Wu
 
 Finn Zhan Chen
+  </p>
