@@ -21,3 +21,4 @@
 # for logging
 /tests/logs/*
 /tests/graphs/*
+*.png
