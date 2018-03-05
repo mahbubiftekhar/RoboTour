@@ -88,9 +88,9 @@ def initialising_map():
         '10': {'11': 20},
         '11': {'4': 33.5, '10': 20, '12': 28},
         '12': {'1': 19.5, '11': 28, '13': 32},
-        '13': {'3': 20, '12': 32, '15': 1},
+        '13': {'3': 20, '12': 32, '15': 85},
         '14': {'4': 31.5, '5': 46, '8': 28},
-        '15': {'7': 46.5, '9': 32, '13': 1}
+        '15': {'7': 46.5, '9': 32, '13': 85}
     }
 
     global motor_map
@@ -514,6 +514,7 @@ def getBackToLine(direction):
 
         print("Find line again!")
 
+
 def waitForUserToGetReady():
     print("Press left for single user and press right for double user...")
     buttonEV3 = ev3.Button()
@@ -558,8 +559,9 @@ errorSumR = 0
 oldR = colourSensorRight.value()
 oldL = colourSensorLeft.value()
 try:
-    while(True):
-        if(len(remainingPicturesToGo) == 0):
+    while True:
+
+        if len(remainingPicturesToGo) == 0:
             # Finished everything
             # Go to start position
             # dummy
@@ -577,14 +579,18 @@ try:
             exit()
 
         for location in shortest_path[1:]:
+
+            while isBranchDetected(colourSensorLeft.value(), colourSensorRight.value()):
+                moveForward(100, 100)
+
             alignOrientation(orientation_map[(robot_location, location)])
             # Follow line until reaching a painting OR a branch
-            while(True):
+            while True:
                 baseSpeed = 130
                 currR = colourSensorRight.value()
                 currL = colourSensorLeft.value()
-                # print("currR=",currR," currL",currL)
-                if(isBranchDetected(currL, currR)):
+
+                if isBranchDetected(currL, currR):
                     global robot_location
                     robot_location = location
                     print("Current location is ", robot_location)
@@ -592,8 +598,6 @@ try:
                     moveForward(300, 500)
                     waitForMotor()
                     '''
-                    while(isBranchDetected(colourSensorLeft.value(),colourSensorRight.value())):
-                        moveForward(100,100)
                     break
 
                 differenceL = currL - target

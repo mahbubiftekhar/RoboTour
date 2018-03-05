@@ -80,6 +80,8 @@ class Server():
     def exitArrived(self):
         self.httpPost(15, "A")
 
+    def pictureArrived(self, picture_id):
+        self.httpPost(picture_id, "A")
 
     # Checks if the user wishes for RoboTOur to stop
     def stopCheck(self):
@@ -124,29 +126,31 @@ class Server():
     def skipCheck(self):
         return self.commands[10]
 
-
     def constantCheck(self):
-        while True:
-            self.getListConstant()
-            if self.toiletCheck() == "T":
-                # Do something to take the user to the toilet2
-                pass
-            if self.exitArrived() == "T":
-                # Take the user to the exit
-                pass
-            if self.skipCheck() == "Y":
-                # Do something to skip the next artPiece
-                pass
-            if self.stopCheck() == "T":
-                # Stop the robot until the user presses stop
-                pass
-            if self.stopCheck() == "F":
-                # Start the robot, iff if is not started already
-                pass
-            time.sleep(2)  # Sleep for 2 seconds
+        # while True:
+        self.getListConstant()
+        if self.toiletCheck() == "T":
+            # Do something to take the user to the toilet2
             print("toilet: " + self.toiletCheck())
+            return "Toilet"
+        elif self.exitArrived() == "T":
+            # Take the user to the exit
+            return "Exit"
+        elif self.skipCheck() == "Y":
+            # Do something to skip the next artPiece
             print("skip: " + self.skipCheck())
+            return "Skip"
+        elif self.stopCheck() == "T":
+            # Stop the robot until the user presses stop
             print("stop: " + self.stopCheck())
+            return "Stop"
+        elif self.stopCheck() == "F":
+            # Start the robot, iff if is not started already
+            return "Continue"
+        else:
+            return "None"
+        # time.sleep(2)  # Sleep for 2 seconds
+
     def getCommands(self):
         return self.commands
 
