@@ -37,7 +37,7 @@ class Server():
         self.updatePicturesToGo()
 
     def startUpDouble(self):
-        self.getListConstant()httpPost
+        self.getListConstant()
         while (self.user1Check() != "T" or self.user2Check() != 'T'):
             self.getListConstant()
             time.sleep(0.5)
