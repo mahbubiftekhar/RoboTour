@@ -1,5 +1,9 @@
 <h1 style="text-align: center;"><span style="color: #00ccff;"><strong> RoboTOUR&nbsp;</strong></span></h1>
 <h1 style="text-align: center;"><span style="color: #ff0000;"><strong><span style="color: #000000;"> SDP- GROUP 18</span> </strong></span></h1>
+<p align="center">
+  <img src="https://github.com/mahbubiftekhar/RoboTour/blob/SpeechVoiceImprovements/robotour_small.png" width="350"/>
+  <img src="https://github.com/mahbubiftekhar/RoboTour/blob/SpeechVoiceImprovements/robotour_small.png" width="350"/>
+</p>
 <p style="text-align: center;">&nbsp;</p>
 <h2 style="text-align: center;"><span style="color: #ff0000;"><strong>Group members</strong></span></h2>
 <ul style="list-style-type: square;">
