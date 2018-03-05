@@ -42,20 +42,20 @@ def dijkstra(graph, src, dest, visited=[], distances={}, predecessors={}):
         return dijkstra(graph, x, dest, visited, distances, predecessors)
 
 
+
+
+"""
 # Test
-def getClosestPainting():
+def getClosestPainting(map, currentLocation, paintings):
     shortestDistance = sys.maxint
     shortestPath = None
 
-    for painting in ['1', '3', '4', '5']:
-        (path, distance) = dijkstra(graph, currentLocation, painting, [], {}, {})
+    for painting in paintings:
+        (path, distance) = dijkstra(map, currentLocation, painting, [], {}, {})
         if(shortestDistance > distance):
             shortestDistance = distance
             shortestPath = path
     return shortestPath
-
-
-
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
     # unittest.main()
@@ -85,7 +85,8 @@ if __name__ == "__main__":
     #print(str(distance))
     # Test
     currentLocation = '10'
-    print(getClosestPainting())
+    print(getClosestPainting(['12', '14', '13']))
 
 
 
+"""

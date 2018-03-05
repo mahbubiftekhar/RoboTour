@@ -35,19 +35,19 @@ class Server():
         while (self.user1Check() != "T"):
             self.getListConstant()
             time.sleep(0.5)
-        self.getListFirstTime()
+        self.updatePicturesToGo()
 
     def startUpDouble(self):
         self.getListConstant()
         while (self.user1Check() != "T" or self.user2Check() != 'T'):
             self.getListConstant()
             time.sleep(0.5)
-        self.getListFirstTime()
+        self.updatePicturesToGo()
 
     # Updates the picturesToGoTO as an array, T means that the user wish's to go to the painting, F means they do not,
     # This will be the union of both users wishes
-    def getListFirstTime(self):
-        self.picturesToGoTO = self.httpGet()
+    def updatePicturesToGo(self):
+        self.picturesToGoTO = self.commands[0:10]
 
 
     # This will be used to constantly update the list AFTER the first instance
@@ -150,5 +150,7 @@ class Server():
             print("stop: " + self.stopCheck())
     def getCommands(self):
         return self.commands
+
+
     def getPicturesToGo(self):
         return self.picturesToGoTO
