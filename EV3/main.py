@@ -230,8 +230,12 @@ def turnRight():
 
 
 def turnLeft():
-    motorLeft.run_timed(speed_sp=-200, time_sp=500)
-    motorRight.run_timed(speed_sp=200, time_sp=1000)
+    motorLeft.run_timed(speed_sp=-250, time_sp = 850)
+    motorRight.run_timed(speed_sp=150, time_sp=800)
+    motorLeft.wait_until_not_moving()
+    motorRight.wait_until_not_moving()
+    motorLeft.run_timed(speed_sp=200, time_sp = 150)
+    motorRight.run_timed(speed_sp=200, time_sp= 150)
     motorLeft.wait_until_not_moving()
     motorRight.wait_until_not_moving()
 
@@ -513,6 +517,8 @@ def getBackToLine(direction):
 def waitForUserToGetReady():
     print("Press left for single user and press right for double user...")
     buttonEV3 = ev3.Button()
+    server.startUpSingle()
+    '''
     while(True):
         if (buttonEV3.left):
             print("Waiting for User 1 to complete...")
@@ -524,7 +530,7 @@ def waitForUserToGetReady():
             server.startUpDouble()
             print("Both users are ready!")
             break
-
+    '''
 ############################################################
 
 ##################### MAIN #################################
@@ -551,62 +557,67 @@ target = 40
 errorSumR = 0
 oldR = colourSensorRight.value()
 oldL = colourSensorLeft.value()
+try:
+    while(True):
+        if(len(remainingPicturesToGo) == 0):
+            # Finished everything
+            # Go to start position
+            # dummy
+            print("No more pictures to go.")
+            stopWheelMotor()
+            exit()
+            break
+        print("Remain picture: ", remainingPicturesToGo)
+        closest_painting, shortest_path = getClosestPainting(dijkstra_map, robot_location, remainingPicturesToGo)
+        print("Going to picture ",closest_painting)
+        # Sanity check, is robot's location the starting position of the shortest path?
+        if (shortest_path[0] != robot_location):
+            print("Robot's location is not the starting position of the shortest path")
+            exit()
 
-while(True):
-    if(len(remainingPicturesToGo) == 0):
-        # Finished everything
-        # Go to start position
-        # dummy
-        print("No more pictures to go.")
-        stopWheelMotor()
-        exit()
-        break
-    print("Remain picture: ", remainingPicturesToGo)
-    closest_painting, shortest_path = getClosestPainting(dijkstra_map, robot_location, remainingPicturesToGo)
-    print("Going to picture ",closest_painting)
-    # Sanity check, is robot's location the starting position of the shortest path?
-    if (shortest_path[0] != robot_location):
-        print("Robot's location is not the starting position of the shortest path")
-        exit()
+        for location in shortest_path[1:]:
+            alignOrientation(orientation_map[(robot_location, location)])
+            # Follow line until reaching a painting OR a branch
+            while(True):
+                baseSpeed = 130
+                currR = colourSensorRight.value()
+                currL = colourSensorLeft.value()
+                # print("currR=",currR," currL",currL)
+                if(isBranchDetected(currL, currR)):
+                    global robot_location
+                    robot_location = location
+                    print("Current location is ", robot_location)
+                    '''
+                    moveForward(300, 500)
+                    waitForMotor()
+                    '''
+                    while(isBranchDetected(colourSensorLeft.value(),colourSensorRight.value())):
+                        moveForward(100,100)
+                    break
 
-    for location in shortest_path[1:]:
-        alignOrientation(orientation_map[(robot_location, location)])
-        # Follow line until reaching a painting OR a branch
-        while(True):
-            baseSpeed = 90
-            currR = colourSensorRight.value()
-            currL = colourSensorLeft.value()
-            # print("currR=",currR," currL",currL)
-            if(isBranchDetected(currL, currR)):
-                global robot_location
-                robot_location = location
-                print("Current location is ", robot_location)
-                '''
-                moveForward(300, 500)
-                waitForMotor()
-                '''
-                while(isBranchDetected(colourSensorLeft.value(),colourSensorRight.value())):
-                    moveForward(100,100)
-                break
+                differenceL = currL - target
+                differenceR = currR - target
+                errorSumR += differenceR
+                if (abs(errorSumR) > 400):
+                    errorSumR = 400 * errorSumR / abs(errorSumR)
+                D = currR - oldR
+                baseSpeed -= abs(errorSumR) * 0.14
+                if(baseSpeed <45):
+                    baseSpeed = 45
+                motorRight.run_forever(speed_sp=baseSpeed - differenceR * 6.5 - errorSumR * 0.05 - D * 2)
+                motorLeft.run_forever(speed_sp=baseSpeed + differenceR * 6.5 + errorSumR * 0.05 + D * 2)
+                oldR = currR
+                oldL = currL
 
-            differenceL = currL - target
-            differenceR = currR - target
-            errorSumR += differenceR
-            if (abs(errorSumR) > 400):
-                errorSumR = 400 * errorSumR / abs(errorSumR)
-            D = currR - oldR
-            baseSpeed -= abs(errorSumR) * 0.16
-            motorRight.run_forever(speed_sp=baseSpeed - differenceR * 3 - errorSumR * 0.05 - D * 2)
-            motorLeft.run_forever(speed_sp=baseSpeed + differenceR * 3 + errorSumR * 0.05 + D * 2)
-            oldR = currR
-            oldL = currL
+        speak("Find picture "+closest_painting)
+        time.sleep(5)
+        remainingPicturesToGo.remove(closest_painting)
+        #pointToPainting(shortest_path[-1]) # points to the painting at the destination
 
-    speak("Find picture "+closest_painting)
-    time.sleep(5)
-    remainingPicturesToGo.remove(closest_painting)
-    #pointToPainting(shortest_path[-1]) # points to the painting at the destination
-
-
+except:
+    motorLeft.stop()
+    motorRight.stop()
+    raise
 
 ################# For testing ####################
 """
