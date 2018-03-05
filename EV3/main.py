@@ -88,9 +88,9 @@ def initialising_map():
         '10': {'11': 20},
         '11': {'4': 33.5, '10': 20, '12': 28},
         '12': {'1': 19.5, '11': 28, '13': 32},
-        '13': {'3': 20, '12': 32, '15': 85},
+        '13': {'3': 20, '12': 32, '15': 1},
         '14': {'4': 31.5, '5': 46, '8': 28},
-        '15': {'7': 46.5, '9': 32, '13': 85}
+        '15': {'7': 46.5, '9': 32, '13': 1}
     }
 
     global motor_map
@@ -570,6 +570,7 @@ try:
         print("Remain picture: ", remainingPicturesToGo)
         closest_painting, shortest_path = getClosestPainting(dijkstra_map, robot_location, remainingPicturesToGo)
         print("Going to picture ",closest_painting)
+        server.updateArtPiece(closest_painting)
         # Sanity check, is robot's location the starting position of the shortest path?
         if (shortest_path[0] != robot_location):
             print("Robot's location is not the starting position of the shortest path")

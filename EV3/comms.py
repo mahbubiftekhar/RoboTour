@@ -22,7 +22,6 @@ class Server():
         data = bytes(urllib.parse.urlencode({"command" + str(position): message}).encode())
         urllib.request.urlopen("http://homepages.inf.ed.ac.uk/s1553593/receiver.php", data)
 
-
     # Helper function that does HTTP get request
     def httpGet(self):
         f = urllib.request.urlopen("http://homepages.inf.ed.ac.uk/s1553593/receiver.php")  # open url
@@ -38,7 +37,7 @@ class Server():
         self.updatePicturesToGo()
 
     def startUpDouble(self):
-        self.getListConstant()
+        self.getListConstant()httpPost
         while (self.user1Check() != "T" or self.user2Check() != 'T'):
             self.getListConstant()
             time.sleep(0.5)
@@ -109,7 +108,7 @@ class Server():
     # the rest is sorted
     def updateArtPiece(self, nextArtWork):
         if self.previousArtPiece != "-1":
-            self.httpPost(previousArtPiece, "F")
+            self.httpPost(self.previousArtPiece, "F")
         self.httpPost(nextArtWork, "N")
         self.previousArtPiece = nextArtWork
 
