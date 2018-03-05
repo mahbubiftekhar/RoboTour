@@ -166,6 +166,28 @@ class Waiting : AppCompatActivity() {
                         imageView?.setImageResource(allArtPieces[a].imageID)
 
                         descriptionView?.text = allArtPieces[a].name
+                        when (language) {
+                            "French" -> {
+                                descriptionView?.text = allArtPieces[a].nameFrench
+
+                            }
+                            "German" -> {
+                                descriptionView?.text = allArtPieces[a].nameGerman
+
+                            }
+                            "Spanish" -> {
+                                descriptionView?.text = allArtPieces[a].nameSpanish
+
+                            }
+                            "Chinese" -> {
+                                descriptionView?.text = allArtPieces[a].nameChinese
+
+                            }
+                            else -> {
+                                descriptionView?.text = allArtPieces[a].name
+                            }
+                        }
+
 
                     }
                     Thread.sleep(2000)

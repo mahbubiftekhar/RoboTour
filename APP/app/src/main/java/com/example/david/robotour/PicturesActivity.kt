@@ -25,7 +25,7 @@ import kotlin.collections.ArrayList
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
 @Suppress("DEPRECATION")
-class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
+class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     data class ArtPiece(val name: String, val artist: String, val nameChinese: String, val nameGerman: String, val nameSpanish: String, val nameFrench: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int, var selected: Boolean)
 
@@ -66,13 +66,6 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
         t.interrupt()
         super.onStop()
     }
-
-
-     fun asonInit(status: Int) {
-
-
-    }
-
 
     private fun speakOutnew() {
         //This will simply output in speech "Here are your recommendations"
@@ -187,7 +180,7 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
         val language = intent.getStringExtra("language")
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         tts2 = TextToSpeech(this, null)
-        tts= TextToSpeech(this, null)
+        tts = TextToSpeech(this, null)
         onInit(0)
 
         //Obtain language from SelectLanguageActivity
@@ -370,6 +363,7 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
 
         }
     }
+
     private fun getNewest() {
         /*This will return the newest painting*/
         val recommended = listOf(allArtPieces[0], allArtPieces[5], allArtPieces[8])

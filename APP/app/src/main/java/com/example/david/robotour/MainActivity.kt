@@ -100,10 +100,9 @@ class MainActivity : AppCompatActivity() {
     private val pictureThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
-
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
-            while (!Thread.currentThread().isInterrupted) {
+            while (!isInterrupted) {
                 println("+++ running here main activity")
                 if (a > (advertisements.size - 1)) {
                     //Reset A to avoid null pointers

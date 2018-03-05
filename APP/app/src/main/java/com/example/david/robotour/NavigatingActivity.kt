@@ -106,7 +106,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts2!!.stop()
             tts2!!.shutdown()
         }
-        checkerThread.interrupt()
         super.onStop()
     }
 
@@ -178,7 +177,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     override fun onResume() {
         //This ensures that when the nav activity is minimized and reloaded up, the speech still works
-        checkerThread.start()
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         onInit(0)
@@ -434,9 +432,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     alert(cancelDesc) {
                                         positiveButton(positive) {
                                             if (isNetworkConnected()) {
-                                                async {
-                                                    cancelGuideTotal()
-                                                }
+                                                checkerThread.interrupt()
+                                                cancelGuideTotal()
                                             } else {
                                                 Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                             }
@@ -569,7 +566,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             val language = intent.getStringExtra("language")
-            while (!Thread.currentThread().isInterrupted) {
+            while (!isInterrupted) {
                 try {
                     Thread.sleep(1000) //1000ms = 1 sec
                     runOnUiThread(object : Runnable {
@@ -881,7 +878,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun cancelGuideTotal() {
         if (isNetworkConnected()) {
-            sendPUTNEW(12, userid)
             switchToMain()
             if (userid == "1") {
                 async {
