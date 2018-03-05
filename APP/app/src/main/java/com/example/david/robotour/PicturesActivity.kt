@@ -66,64 +66,10 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
         t.interrupt()
         super.onStop()
     }
-    override fun onInit(status: Int) {
-        println("status code: $status")
-        if (status == TextToSpeech.SUCCESS) {
-            // set US English as language for tts
-            val language = intent.getStringExtra("language")
-            val result: Int
-            when (language) {
-                "French" -> {
-                    result = tts!!.setLanguage(Locale.FRENCH)
-                }
-                "Chinese" -> {
-                    result = tts!!.setLanguage(Locale.CHINESE)
-                }
-                "Spanish" -> {
-                    val spanish = Locale("es", "ES")
-                    result = tts!!.setLanguage(spanish)
-                }
-                "German" -> {
-                    result = tts!!.setLanguage(Locale.GERMAN)
-                }
-                else -> {
-                    result = tts!!.setLanguage(Locale.UK)
-                }
-            }
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-            } else {
-            }
-        } else {
 
-        }
-        if (status == TextToSpeech.SUCCESS) {
-            // set US English as language for tts
-            val language = intent.getStringExtra("language")
-            val result: Int
-            when (language) {
-                "French" -> {
-                    result = tts2!!.setLanguage(Locale.FRENCH)
-                }
-                "Chinese" -> {
-                    result = tts2!!.setLanguage(Locale.CHINESE)
-                }
-                "Spanish" -> {
-                    val spanish = Locale("es", "ES")
-                    result = tts2!!.setLanguage(spanish)
-                }
-                "German" -> {
-                    result = tts2!!.setLanguage(Locale.GERMAN)
-                }
-                else -> {
-                    result = tts2!!.setLanguage(Locale.UK)
-                }
-            }
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-            } else {
-            }
-        } else {
 
-        }
+     fun asonInit(status: Int) {
+
 
     }
 
@@ -238,15 +184,12 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         allArtPieces.clear()
-        tts?.setLanguage(Locale.CHINESE)
+        val language = intent.getStringExtra("language")
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         tts2 = TextToSpeech(this, null)
         tts= TextToSpeech(this, null)
-        println("STATUS"+tts?.language)
-        tts2?.language = Locale.CHINESE
-        println("STATUS"+tts?.language)
-        val language = intent.getStringExtra("language")
+        onInit(0)
 
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         //Obtain language from SelectLanguageActivity
         when (language) {
             "English" -> supportActionBar?.title = "Select Picture"
@@ -369,12 +312,71 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
         t.start() /*Start to run the thread*/
     }
 
+    override fun onInit(p0: Int) {
+        if (p0 == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+
+        }
+        if (p0 == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts2!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts2!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts2!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts2!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts2!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+
+        }
+    }
     private fun getNewest() {
         /*This will return the newest painting*/
         val recommended = listOf(allArtPieces[0], allArtPieces[5], allArtPieces[8])
         recommended
                 .filterNot { queriedArtPieces.contains(it) }
                 .forEach { queriedArtPieces.add(it) }
+        onInit(0)
         speakOutnew()
     }
 
@@ -384,6 +386,7 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
         recommended
                 .filterNot { queriedArtPieces.contains(it) }
                 .forEach { queriedArtPieces.add(it) }
+        onInit(0)
         speakOutrecommendations()
     }
 
@@ -393,6 +396,7 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
         recommended
                 .filterNot { queriedArtPieces.contains(it) }
                 .forEach { queriedArtPieces.add(it) }
+        onInit(0)
         speakOutPopular()
     }
 
@@ -406,6 +410,7 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
         //This ensures that when the Pictures activity is minimized and reloaded up, the speech still works
         tts = TextToSpeech(this, null)
         tts2 = TextToSpeech(this, null)
+        onInit(0)
         t.start() //Restart the thread that highlights the start button green
         super.onResume()
     }
@@ -577,7 +582,7 @@ class PicturesActivity : AppCompatActivity(),TextToSpeech.OnInitListener {
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "cmn-Hans-CN")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "你在找什么艺术品？")
             }
-            "else" -> {
+            else -> {
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What Art Pieces Are You Looking For?")
             }
