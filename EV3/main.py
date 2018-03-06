@@ -22,8 +22,9 @@ robot_orientation = 'N' # N,S,W,E (North South West East)
 robot_pointer = 'N' # N,S,W,E (North of the robot)
 remainingPicturesToGo = []
 orientation_map = dict() # Map for Orientation between neighbouring points
-dijkstra_map = None # Map for Distance between neighbouring points
+dijkstra_map = dict() # Map for Distance between neighbouring points
 motor_map = dict()
+art_pieces_map = dict()
 
 
 ###############################################################
@@ -107,6 +108,21 @@ def initialising_map():
         '7': "N",
         '8': "N",
         '9': "E"
+    }
+
+    global art_pieces_map
+    art_pieces_map = {
+        '0': "The Birth of Venus",
+        '1': "The Creation of Adam",
+        '2': "David",
+        '3': "Girl with a Pearl Earring",
+        '4': "Mona Lisa",
+        '5': "Napoleon Crossing the Alps",
+        '6': "The Starry Night",
+        '7': "The Last Supper",
+        '8': "The Great Wave of Kanagawa",
+        '9': "Water Lilies",
+        '10': "Exit"
     }
 
 #####################################################################
@@ -206,7 +222,7 @@ def isRightSideObstacle():
     return getSonarReadingsRight() < side_distance
 
 
-def isBranchDetected(currl, currR):
+def isBranchDetected(currL, currR):
     return currL > 60 and currR > 60
 
 
@@ -554,6 +570,45 @@ def waitForUserToGetReady():
             print("Both users are ready!")
             break
     '''
+
+def goToClosestPainting(shortest_path):
+
+    for location in shortest_path[1:]:
+
+        while isBranchDetected(colourSensorLeft.value(), colourSensorRight.value()):
+            moveForward(100, 100)
+
+        alignOrientation(orientation_map[(robot_location, location)])
+        # Follow line until reaching a painting OR a branch
+        while True:
+            baseSpeed = 130
+            currR = colourSensorRight.value()
+            currL = colourSensorLeft.value()
+
+            if isBranchDetected(currL, currR):
+                global robot_location
+                robot_location = location
+                print("Current location is ", robot_location)
+
+                break
+
+            differenceL = currL - target
+            differenceR = currR - target
+            global errorSumR
+            errorSumR += differenceR
+            if (abs(errorSumR) > 400):
+                errorSumR = 400 * errorSumR / abs(errorSumR)
+            D = currR - oldR
+            baseSpeed -= abs(errorSumR) * 0.14
+            if(baseSpeed <45):
+                baseSpeed = 45
+            motorRight.run_forever(speed_sp=baseSpeed - differenceR * 6.5 - errorSumR * 0.05 - D * 2)
+            motorLeft.run_forever(speed_sp=baseSpeed + differenceR * 6.5 + errorSumR * 0.05 + D * 2)
+            global oldR
+            oldR = currR
+            global oldL
+            oldL = currL
+
 ############################################################
 
 ##################### MAIN #################################
@@ -565,6 +620,7 @@ print("SensorHub have set up.")
 initialising_map()
 print("Map has been initialised.")
 server = Server()
+print("Waiting for users...")
 waitForUserToGetReady()
 print("Users are ready!")
 print("Current location is ", robot_location, ", facing ", robot_orientation)
@@ -587,57 +643,31 @@ try:
             # Finished everything
             # Go to start position
             # dummy
-            print("No more pictures to go.")
-            stopWheelMotor()
+            print("No more pictures to go. Go to exit.")
+            closest_painting, shortest_path = getClosestPainting(dijkstra_map, robot_location, ['10'])
+            goToClosestPainting(shortest_path)
+            server.exitArrived()
+            turnBack()
+            print("Back to exit")
             exit()
             break
+
         print("Remain picture: ", remainingPicturesToGo)
         closest_painting, shortest_path = getClosestPainting(dijkstra_map, robot_location, remainingPicturesToGo)
-        print("Going to picture ",closest_painting)
-        server.updateArtPiece(closest_painting)
+
         # Sanity check, is robot's location the starting position of the shortest path?
         if (shortest_path[0] != robot_location):
             print("Robot's location is not the starting position of the shortest path")
             exit()
 
-        for location in shortest_path[1:]:
-
-            while isBranchDetected(colourSensorLeft.value(), colourSensorRight.value()):
-                moveForward(100, 100)
-
-            alignOrientation(orientation_map[(robot_location, location)])
-            # Follow line until reaching a painting OR a branch
-            while True:
-                baseSpeed = 130
-                currR = colourSensorRight.value()
-                currL = colourSensorLeft.value()
-
-                if isBranchDetected(currL, currR):
-                    global robot_location
-                    robot_location = location
-                    print("Current location is ", robot_location)
-                    '''
-                    moveForward(300, 500)
-                    waitForMotor()
-                    '''
-                    break
-
-                differenceL = currL - target
-                differenceR = currR - target
-                errorSumR += differenceR
-                if (abs(errorSumR) > 400):
-                    errorSumR = 400 * errorSumR / abs(errorSumR)
-                D = currR - oldR
-                baseSpeed -= abs(errorSumR) * 0.14
-                if(baseSpeed <45):
-                    baseSpeed = 45
-                motorRight.run_forever(speed_sp=baseSpeed - differenceR * 6.5 - errorSumR * 0.05 - D * 2)
-                motorLeft.run_forever(speed_sp=baseSpeed + differenceR * 6.5 + errorSumR * 0.05 + D * 2)
-                oldR = currR
-                oldL = currL
-
-        speak("Find picture "+closest_painting)
-        time.sleep(5)
+        print("Going to picture ",closest_painting)
+        server.updateArtPiece(int(closest_painting))    # tell the app the robot is going to this painting
+        goToClosestPainting(shortest_path)
+        speak("This is "+art_pieces_map[closest_painting])
+        pointToPainting(closest_painting)
+        server.pictureArrived(int(closest_painting))    # tell the app the robot is arrived to this painting
+        server.constantContinueCheck()  # check for user ready to go
+        turnBackPointer()                               # Continue when the stop command become 'F'
         remainingPicturesToGo.remove(closest_painting)
         #pointToPainting(shortest_path[-1]) # points to the painting at the destination
 

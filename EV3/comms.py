@@ -82,11 +82,17 @@ class Server():
 
     def pictureArrived(self, picture_id):
         self.httpPost(picture_id, "A")
+        self.httpPost(11, "T")
 
-    # Checks if the user wishes for RoboTOur to stop
+    # Checks if the user wishes for RoboTour to stop
     def stopCheck(self):
         return self.commands[11]
 
+    def constantContinueCheck(self):
+        self.getListConstant()
+        while(self.command[11]=='T'):
+            self.getListConstant()
+            time.sleep(0.5)
 
     ############
     # THESE ARE NOT FOR CD2, Don't worry about it now
@@ -113,7 +119,7 @@ class Server():
             self.httpPost(self.previousArtPiece, "F")
         self.httpPost(nextArtWork, "N")
         self.previousArtPiece = nextArtWork
-
+        self.getListConstant()  # update command
 
     ###########
 
