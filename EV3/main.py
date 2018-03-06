@@ -25,6 +25,7 @@ orientation_map = dict() # Map for Orientation between neighbouring points
 dijkstra_map = dict() # Map for Distance between neighbouring points
 motor_map = dict()
 art_pieces_map = dict()
+id_map = dict()
 
 
 ###############################################################
@@ -125,8 +126,8 @@ def initialising_map():
         '10': "Exit"
     }
 
-#####################################################################
 
+#####################################################################
 
 ####################### SETUP SENSORS ######################
 hub = SensorHub()
@@ -146,24 +147,21 @@ lineThreshold = 57
 wallThreshold = 15
 
 
-if(motorPointer.connected & sonarFront.connected &
-       motorLeft.connected & motorRight.connected):
+if motorPointer.connected & sonarFront.connected & motorLeft.connected & motorRight.connected:
     print('All sensors and motors connected')
 else:
-    if(not motorPointer.connected):
+    if not motorPointer.connected:
         print("motorPointer not connected")
-    if(not sonarFront.connected):
+    if not sonarFront.connected:
         print("Sonar not connected")
-    if(not motorLeft.connected):
+    if not motorLeft.connected:
         print("MotorLeft not connected")
-    if(not motorRight.connected):
+    if not motorRight.connected:
         print("MotorRight not connected")
-    if(not colourSensorLeft.connected):
+    if not colourSensorLeft.connected:
         print("ColorLeft not connected")
-    if(not colourSensorRight.connected):
+    if not colourSensorRight.connected:
         print("ColorRight not connected")
-    if(not sonarLeft.connected):
-        print("SonarLeft not connected")
     print('Please check all sensors and actuators are connected.')
     exit()
 
@@ -172,30 +170,30 @@ else:
 ##################### SENSOR AND ACTUATOR FUNCTIONS ############################
 
 
-def getColourRight():
+def get_colour_right():
     return colourSensorRight.value()
 
 
-def getColourLeft():
+def get_colour_left():
     return colourSensorLeft.value()
 
 
-def isRightLineDetected():  # Right Lego sensor
+def is_right_line_detected():  # Right Lego sensor
     # print(getColourRight())
-    return getColourRight() > lineThreshold
+    return get_colour_right() > lineThreshold
 
 
-def isLeftLineDetected():
+def is_left_line_detected():
     # print(getColourLeft())
-    return getColourLeft() > lineThreshold
+    return get_colour_left() > lineThreshold
 
 
 def isLineDetected():
-    return isLeftLineDetected() or isRightLineDetected()
+    return is_left_line_detected() or is_right_line_detected()
 
 
 def isWallDetected():
-    return getColourLeft() < wallThreshold or getColourRight() < wallThreshold
+    return get_colour_left() < wallThreshold or get_colour_right() < wallThreshold
 
 
 def getSonarReadingsFront():
@@ -266,6 +264,8 @@ def turn(left, right, time):  # For unclear speed
 def turnBack():  # 180
     motorLeft.run_timed(speed_sp=400,time_sp=1000)
     motorRight.run_timed(speed_sp=-400, time_sp=1000)
+    motorLeft.wait_until_not_moving()
+    motorRight.wait_until_not_moving()
 
 
 def turnRightNinety():  # 90
@@ -313,10 +313,14 @@ def turnAndResetPointer(direction):
 
 def pointToPainting(picture_id):
     if isOrientationLeft(motor_map[picture_id]):
+        moveForward(300,100)
+        waitForMotor()
         turnPointer("ACW")
         global robot_pointer
         robot_pointer = 'W'
     elif isOrientationRight(motor_map[picture_id]):
+        moveForward(300, 100)
+        waitForMotor()
         turnPointer("CW")
         global robot_pointer
         robot_pointer = 'E'
@@ -333,8 +337,12 @@ def turnBackPointer():
         turnPointer("CW")
         turnPointer("CW")
     elif robot_pointer == 'W':
+        moveBackward(300, 100)
+        waitForMotor()
         turnPointer("CW")
     elif robot_pointer == 'E':
+        moveBackward(300, 100)
+        waitForMotor()
         turnPointer("ACW")
     else:
         pass
@@ -364,7 +372,7 @@ def getArtPiecesFromApp():
     print(pictures)
     picturesToGo = []
     for index in range(len(pictures)):
-        if (pictures[index] == "T"):
+        if pictures[index] == "T":
             picturesToGo.append(str(index))
     print(picturesToGo)
     return picturesToGo
@@ -379,19 +387,19 @@ def alignOrientation(desired_orientation):
     elif(isOrientationLeft(first)):
         turnLeft()
     elif(isOrientationBack(first)):
-        turnRight()
-        turnRight()
+        turnBack()
     else:
         print("Errors on aligning orientation - Robot orientation ", robot_orientation, " Desired orientation: ", desired_orientation)
     # Update orientation
     global robot_orientation
     robot_orientation = first
 
-    if (len(desired_orientation) == 2):
+    if len(desired_orientation) == 2:
         # Update in special case
         robot_orientation = desired_orientation[1]
 
     print("Current orientation is "+robot_orientation)
+
 
 def isOrientationRight(desired_orientation):
     if(robot_orientation == "N" and desired_orientation == "E"):
@@ -405,6 +413,7 @@ def isOrientationRight(desired_orientation):
     else:
         return False
 
+
 def isOrientationLeft(desired_orientation):
     if(robot_orientation == "N" and desired_orientation == "W"):
         return True
@@ -416,6 +425,7 @@ def isOrientationLeft(desired_orientation):
         return True
     else:
         return False
+
 
 def isOrientationBack(desired_orientation):
     if(robot_orientation == "N" and desired_orientation == "S"):
@@ -522,32 +532,32 @@ def goAroundObstacle(direction):
 def getBackToLine(direction):
     print("GET BACK TO LINE")
     if (direction == 'RIGHT'):
-        if(isLeftLineDetected()):
+        if(is_left_line_detected()):
             # That means when it detect the line, it is not facing to the obstacle
             pass
         else:
             # That means when it detect the line, it is facing to the obstacle
-            while(not isLeftLineDetected()):
+            while(not is_left_line_detected()):
                 turn(150,-100,100)
 
-        while(isLeftLineDetected()):
+        while(is_left_line_detected()):
             turn(100,100,100)
-        while(not isLeftLineDetected()):
+        while(not is_left_line_detected()):
             turn(150,-100,100)
         print("Find line again!")
     else:
-        if(isRightLineDetected()):
+        if(is_right_line_detected()):
             # That means when it detect the line, it is not facing to the obstacle
             pass
 
         else:
             # That means when it detect the line, it is facing to the obstacle
-            while(not isRightLineDetected()):
+            while(not is_right_line_detected()):
                 turn(-100,150,100)
 
-        while(isRightLineDetected()):
+        while(is_right_line_detected()):
             turn(100,100,100)
-        while(not isRightLineDetected()):
+        while(not is_right_line_detected()):
             turn(-100,150,100)
 
         print("Find line again!")
@@ -571,43 +581,47 @@ def waitForUserToGetReady():
             break
     '''
 
-def goToClosestPainting(shortest_path):
 
-    for location in shortest_path[1:]:
+def goToClosestPainting(path):
+
+    for location in path[1:]:
 
         while isBranchDetected(colourSensorLeft.value(), colourSensorRight.value()):
             moveForward(100, 100)
 
+        print("Going to " + location)
         alignOrientation(orientation_map[(robot_location, location)])
         # Follow line until reaching a painting OR a branch
         while True:
-            baseSpeed = 130
-            currR = colourSensorRight.value()
-            currL = colourSensorLeft.value()
+            base_speed = 130
+            curr_r = colourSensorRight.value()
+            curr_l = colourSensorLeft.value()
 
-            if isBranchDetected(currL, currR):
+            if isBranchDetected(curr_l, curr_r):
+                stopWheelMotor()
+                print("Find a branch")
                 global robot_location
                 robot_location = location
                 print("Current location is ", robot_location)
 
                 break
 
-            differenceL = currL - target
-            differenceR = currR - target
+            differenceL = curr_l - target
+            differenceR = curr_r - target
             global errorSumR
             errorSumR += differenceR
             if (abs(errorSumR) > 400):
                 errorSumR = 400 * errorSumR / abs(errorSumR)
-            D = currR - oldR
-            baseSpeed -= abs(errorSumR) * 0.14
-            if(baseSpeed <45):
-                baseSpeed = 45
-            motorRight.run_forever(speed_sp=baseSpeed - differenceR * 6.5 - errorSumR * 0.05 - D * 2)
-            motorLeft.run_forever(speed_sp=baseSpeed + differenceR * 6.5 + errorSumR * 0.05 + D * 2)
+            D = curr_r - oldR
+            base_speed -= abs(errorSumR) * 0.14
+            if(base_speed <45):
+                base_speed = 45
+            motorRight.run_forever(speed_sp=base_speed - differenceR * 6.5 - errorSumR * 0.05 - D * 2)
+            motorLeft.run_forever(speed_sp=base_speed + differenceR * 6.5 + errorSumR * 0.05 + D * 2)
             global oldR
-            oldR = currR
+            oldR = curr_r
             global oldL
-            oldL = currL
+            oldL = curr_l
 
 ############################################################
 
@@ -646,7 +660,7 @@ try:
             print("No more pictures to go. Go to exit.")
             closest_painting, shortest_path = getClosestPainting(dijkstra_map, robot_location, ['10'])
             goToClosestPainting(shortest_path)
-            server.exitArrived()
+            server.arrivedPosition('Exit')
             turnBack()
             print("Back to exit")
             exit()
@@ -660,13 +674,17 @@ try:
             print("Robot's location is not the starting position of the shortest path")
             exit()
 
-        print("Going to picture ",closest_painting)
-        server.updateArtPiece(int(closest_painting))    # tell the app the robot is going to this painting
+        print("Going to picture ", closest_painting)
+        server.updateArtPiece(closest_painting)    # tell the app the robot is going to this painting
         goToClosestPainting(shortest_path)
+
         speak("This is "+art_pieces_map[closest_painting])
         pointToPainting(closest_painting)
-        server.pictureArrived(int(closest_painting))    # tell the app the robot is arrived to this painting
-        server.constantContinueCheck()  # check for user ready to go
+        server.arrivedPosition(closest_painting)    # tell the app the robot is arrived to this painting
+
+        #server.waitForContinue()  # check for user ready to go
+        time.sleep(5)
+
         turnBackPointer()                               # Continue when the stop command become 'F'
         remainingPicturesToGo.remove(closest_painting)
         #pointToPainting(shortest_path[-1]) # points to the painting at the destination

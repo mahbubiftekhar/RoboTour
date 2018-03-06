@@ -16,6 +16,26 @@ class Server():
         self.picturesToGoTO = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F"]
         self.commands = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F","F", "F"]
 
+        self.id_map = {
+            '0': 0,
+            '1': 1,
+            '2': 2,
+            '3': 3,
+            '4': 4,
+            '5': 5,
+            '6': 6,
+            '7': 7,
+            '8': 8,
+            '9': 9,
+            'Skip': 10,
+            'Stop': 11,
+            'Cancel': 12,
+            'Speed': 13,
+            'Toilet': 14,
+            'Exit': 15,
+            'User 1': 16,
+            'User 2': 17
+        }
 
     # Helper function that does a http post request
     def httpPost(self, position, message):
@@ -30,16 +50,19 @@ class Server():
         return self.command
 
     def startUpSingle(self):
-        self.getListConstant()
+        self.commands = ["F", "T", "T", "T", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F","F", "F"]
+        self.updatePicturesToGo()
+        '''
+        self.updateCommands()
         while (self.user1Check() != "T"):
-            self.getListConstant()
+            self.updateCommands()
             time.sleep(0.5)
         self.updatePicturesToGo()
-
+        '''
     def startUpDouble(self):
-        self.getListConstant()
+        self.updateCommands()
         while (self.user1Check() != "T" or self.user2Check() != 'T'):
-            self.getListConstant()
+            self.updateCommands()
             time.sleep(0.5)
         self.updatePicturesToGo()
 
@@ -50,7 +73,7 @@ class Server():
 
 
     # This will be used to constantly update the list AFTER the first instance
-    def getListConstant(self):
+    def updateCommands(self):
         data = self.httpGet()
         for i in range(0, len(self.commands)):
             self.commands[i] = data[i]
@@ -65,33 +88,19 @@ class Server():
             self.httpPost(x, "F")
         self.picturesToGoTO = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F"]
 
-
-    # Checks if the user wants to go to the toilet or the exit
-    def toiletCheck(self):
-        return self.commands[14]
-
+    def checkPosition(self, position):  # get command of Toilet, Stop etc.
+        return self.commands[self.id_map[position]]
 
     # Updates the user once they have arrived at the TOILET
-    def toiletArrived(self):
-        self.httpPost(14, "A")
+    def arrivedPosition(self, position):
+        self.httpPost(self.id_map[position], "A")
+        self.httpPost(self.id_map['Stop'], "T")
 
-
-    # Updates the user once they have arrived at the EXIT
-    def exitArrived(self):
-        self.httpPost(15, "A")
-
-    def pictureArrived(self, picture_id):
-        self.httpPost(picture_id, "A")
-        self.httpPost(11, "T")
-
-    # Checks if the user wishes for RoboTour to stop
-    def stopCheck(self):
-        return self.commands[11]
-
-    def constantContinueCheck(self):
-        self.getListConstant()
-        while(self.command[11]=='T'):
-            self.getListConstant()
+    def waitForContinue(self):
+        print("Wait for user to press continue.")
+        self.updateCommands()
+        while self.command[self.id_map['Stop']]=='T':
+            self.updateCommands()
             time.sleep(0.5)
 
     ############
@@ -106,60 +115,22 @@ class Server():
     def user2Check(self):
         return self.commands[17]
 
-
-    # Check if the user wishes to change the speed
-    def speedCheck(self):
-        return self.commands[13]
-
-
     # Update the users screen with the artPiece they should be displayed - simply pass in the next optimal artPiece and
     # the rest is sorted
-    def updateArtPiece(self, nextArtWork):
+    def updateArtPiece(self, nextArtWork):  # input string
         if self.previousArtPiece != "-1":
-            self.httpPost(self.previousArtPiece, "F")
-        self.httpPost(nextArtWork, "N")
+            self.httpPost(self.id_map[self.previousArtPiece], "F")
+        self.httpPost(self.id_map[nextArtWork], "N")
         self.previousArtPiece = nextArtWork
-        self.getListConstant()  # update command
+        self.updateCommands()  # update command
 
     ###########
 
-    # Checks if user wants to cancel the tour
-    def cancelTourCheck(self):
-        return self.commands[12]
-
-
-    # Check if the user wishes to skip the tour
-    def skipCheck(self):
-        return self.commands[10]
-
     def constantCheck(self):
-        # while True:
-        self.getListConstant()
-        if self.toiletCheck() == "T":
-            # Do something to take the user to the toilet2
-            print("toilet: " + self.toiletCheck())
-            return "Toilet"
-        elif self.exitArrived() == "T":
-            # Take the user to the exit
-            return "Exit"
-        elif self.skipCheck() == "Y":
-            # Do something to skip the next artPiece
-            print("skip: " + self.skipCheck())
-            return "Skip"
-        elif self.stopCheck() == "T":
-            # Stop the robot until the user presses stop
-            print("stop: " + self.stopCheck())
-            return "Stop"
-        elif self.stopCheck() == "F":
-            # Start the robot, iff if is not started already
-            return "Continue"
-        else:
-            return "None"
-        # time.sleep(2)  # Sleep for 2 seconds
+        pass
 
     def getCommands(self):
         return self.commands
-
 
     def getPicturesToGo(self):
         return self.picturesToGoTO
