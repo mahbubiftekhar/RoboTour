@@ -18,7 +18,8 @@ link = "https://homepages.inf.ed.ac.uk/s1553593/receiver.php"
 pointerState = ""
 startPosition = '10' # Toilet
 robot_location = startPosition
-robot_orientation = "N" # N,S,W,E (North South West East)
+robot_orientation = 'N' # N,S,W,E (North South West East)
+robot_pointer = 'N' # N,S,W,E (North of the robot)
 remainingPicturesToGo = []
 orientation_map = dict() # Map for Orientation between neighbouring points
 dijkstra_map = None # Map for Distance between neighbouring points
@@ -296,14 +297,34 @@ def turnAndResetPointer(direction):
 
 def pointToPainting(picture_id):
     if isOrientationLeft(motor_map[picture_id]):
-        pass
+        turnPointer("ACW")
+        global robot_pointer
+        robot_pointer = 'W'
     elif isOrientationRight(motor_map[picture_id]):
-        pass
+        turnPointer("CW")
+        global robot_pointer
+        robot_pointer = 'E'
     elif isOrientationBack(motor_map[picture_id]):
-        pass
+        turnPointer("CW")
+        turnPointer("CW")
+        global robot_pointer
+        robot_pointer = 'S'
     else:
         pass
 
+def turnBackPointer():
+    if robot_pointer == 's':
+        turnPointer("CW")
+        turnPointer("CW")
+    elif robot_pointer == 'W':
+        turnPointer("CW")
+    elif robot_pointer == 'E':
+        turnPointer("ACW")
+    else:
+        pass
+
+    global robot_pointer
+    robot_pointer = 'N'
 
 ######################################################################
 
