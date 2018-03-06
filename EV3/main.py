@@ -188,11 +188,11 @@ def is_left_line_detected():
     return get_colour_left() > lineThreshold
 
 
-def isLineDetected():
+def is_line_detected():
     return is_left_line_detected() or is_right_line_detected()
 
 
-def isWallDetected():
+def is_wall_detected():
     return get_colour_left() < wallThreshold or get_colour_right() < wallThreshold
 
 
@@ -224,7 +224,7 @@ def isBranchDetected(currL, currR):
     return currL > 60 and currR > 60
 
 
-def isPaitingDetected():
+def is_painting_detected():
     pass
 
 
@@ -472,7 +472,7 @@ def goAroundObstacle(direction):
     set_sharp_distance = 18
     isSharpBefore = False
     if (direction == 'RIGHT'):
-        while(not isLineDetected()):
+        while(not is_line_detected()):
             '''
             if (isWallDetected()):
                 turnBack()
@@ -501,7 +501,7 @@ def goAroundObstacle(direction):
                     isSharpBefore = False
 
     else: # All default will go through the Left side. IE
-        while(not isLineDetected()):
+        while(not is_line_detected()):
             '''
             if (isWallDetected()):
                 turnBack()
