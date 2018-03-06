@@ -50,7 +50,7 @@ class Server():
         return self.command
 
     def startUpSingle(self):
-        self.commands = ["F", "T", "T", "T", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F","F", "F"]
+        self.commands = ["T", "F", "F", "F", "F", "F", "F", "F", "T", "F", "F", "F", "F", "F", "F", "F","F", "F"]
         self.updatePicturesToGo()
         '''
         self.updateCommands()

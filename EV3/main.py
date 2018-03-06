@@ -244,12 +244,12 @@ def turn_right():
 
 
 def turn_left():
-    motor_left.run_timed(speed_sp=-250, time_sp = 850)
+    motor_left.run_timed(speed_sp=-250, time_sp=850)
     motor_right.run_timed(speed_sp=150, time_sp=800)
     motor_left.wait_until_not_moving()
     motor_right.wait_until_not_moving()
-    motor_left.run_timed(speed_sp=200, time_sp = 150)
-    motor_right.run_timed(speed_sp=200, time_sp= 150)
+    motor_left.run_timed(speed_sp=200, time_sp=150)
+    motor_right.run_timed(speed_sp=200, time_sp=150)
     motor_left.wait_until_not_moving()
     motor_right.wait_until_not_moving()
 
@@ -271,7 +271,7 @@ def turn_right_ninety():  # 90
     motor_right.run_timed(speed_sp=-175, time_sp=1000)
 
 
-def turn_left_ninety(): # -90
+def turn_left_ninety():  # -90
     motor_left.run_timed(speed_sp=-175, time_sp=1000)
     motor_right.run_timed(speed_sp=175, time_sp=1000)
 
@@ -290,13 +290,14 @@ def speak(string):
     ev3.Sound.speak(string)
 
 
-def turn_pointer(direction):  # Turn 90
+def turn_pointer(direction):  # Turn 45
     if direction == "CW":
-        motor_pointer.run_timed(speed_sp=-414, time_sp=1000)
-        time.sleep(5)
+        motor_pointer.run_timed(speed_sp=-414, time_sp=500)
+        time.sleep(1)
+
     if direction == "ACW":
-        motor_pointer.run_timed(speed_sp=414, time_sp=1000)
-        time.sleep(5)
+        motor_pointer.run_timed(speed_sp=414, time_sp=500)
+        time.sleep(1)
 
 
 def turn_and_reset_pointer(direction):
@@ -311,14 +312,10 @@ def turn_and_reset_pointer(direction):
 
 def point_to_painting(picture_id):
     if is_orientation_left(motor_map[picture_id]):
-        move_forward(300, 100)
-        wait_for_motor()
         turn_pointer("ACW")
         global robot_pointer
         robot_pointer = 'W'
     elif is_orientation_right(motor_map[picture_id]):
-        move_forward(300, 100)
-        wait_for_motor()
         turn_pointer("CW")
         global robot_pointer
         robot_pointer = 'E'
@@ -336,12 +333,8 @@ def turn_back_pointer():
         turn_pointer("CW")
         turn_pointer("CW")
     elif robot_pointer == 'W':
-        move_backward(300, 100)
-        wait_for_motor()
         turn_pointer("CW")
     elif robot_pointer == 'E':
-        move_backward(300, 100)
-        wait_for_motor()
         turn_pointer("ACW")
     else:
         pass
@@ -601,7 +594,7 @@ def go_to_closest_painting(path):
             curr_l = colour_sensor_left.value()
 
             if is_branch_detected(curr_l, curr_r):
-                stop_wheel_motor()
+
                 print("Find a branch")
                 global robot_location
                 robot_location = location
@@ -615,17 +608,18 @@ def go_to_closest_painting(path):
             errorSumR += difference_r
             if abs(errorSumR) > 400:
                 errorSumR = 400 * errorSumR / abs(errorSumR)
-            D = curr_r - oldR
+            d = curr_r - oldR
             base_speed -= abs(errorSumR) * 0.14
-            if base_speed <45:
+            if base_speed < 45:
                 base_speed = 45
-            motor_right.run_forever(speed_sp=base_speed - difference_r * 6.5 - errorSumR * 0.05 - D * 2)
-            motor_left.run_forever(speed_sp=base_speed + difference_r * 6.5 + errorSumR * 0.05 + D * 2)
+            motor_right.run_forever(speed_sp=base_speed - difference_r * 6.5 - errorSumR * 0.05 - d * 2)
+            motor_left.run_forever(speed_sp=base_speed + difference_r * 6.5 + errorSumR * 0.05 + d * 2)
             global oldR
             oldR = curr_r
             global oldL
             oldL = curr_l
 
+    stop_wheel_motor()
 ############################################################
 
 # #################### MAIN #################################
@@ -682,7 +676,7 @@ try:
         server.updateArtPiece(closest_painting)    # tell the app the robot is going to this painting
         go_to_closest_painting(shortest_path)
 
-        speak("This is "+art_pieces_map[closest_painting])
+        speak("This is " + art_pieces_map[closest_painting])
         point_to_painting(closest_painting)
         server.arrivedPosition(closest_painting)    # tell the app the robot is arrived to this painting
 
