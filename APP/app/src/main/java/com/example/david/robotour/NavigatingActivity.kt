@@ -490,9 +490,25 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                     }
                                                     selector(selectSpeed, options) { j ->
                                                         when (j) {
-                                                            0 -> toast(options[0])
-                                                            1 -> toast(options[1])
-                                                            else -> toast(options[2])
+                                                            0 -> {
+                                                                async {
+                                                                    sendSpeed(0)
+                                                                }
+                                                                toast(options[0])
+
+                                                            }
+                                                            1 -> {
+                                                                async {
+                                                                    sendSpeed(1)
+                                                                }
+                                                                toast(options[1])
+                                                            }
+                                                            else -> {
+                                                                async {
+                                                                    sendSpeed(2)
+                                                                }
+                                                                toast(options[2])
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -745,8 +761,26 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
+    private fun sendSpeed(speed: Int) {
+        //This function will send the speed to the server
+        when (speed) {
+            1 -> {
+                sendPUTNEW(13, "1")
+            }
+            2 -> {
+                sendPUTNEW(13, "2")
 
-    /////
+            }
+            3 -> {
+                sendPUTNEW(13, "3")
+
+            }
+            else -> {
+                toast("Sorry that's not a valid input")
+            }
+        }
+    }
+
     private fun speakOut(input: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
