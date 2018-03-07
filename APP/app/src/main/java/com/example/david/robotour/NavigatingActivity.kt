@@ -315,9 +315,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 negative = "No"
                 skip = "Skip Painting"
                 skipDesc = "Are you sure you want to skip to the next painting?"
-                stop = "Stop RoboTour"
+                stop = "STOP"
                 stopDesc = "Are you sure you want to stop RoboTour?"
-                start = "Start RoboTour"
+                start = "CONTINUE"
                 startDesc = "Do you want to start RoboTour?"
                 cancelTour = "Cancel tour"
                 cancelDesc = "Are you sure you want to cancel the tour?"
@@ -338,7 +338,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                 //Text-to-speech
                 onClick {
-                    println("&&& clicked")
                     speakOutButton(currentPic)
                 }
             }
@@ -555,6 +554,17 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 async {
                                                     exitDoor()
                                                 }
+                                                async {
+                                                    var a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                                                    if (a == "1") {
+                                                        sendPUTNEW(12, "T")
+                                                    }
+                                                    a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                                                    if (a[16] == 'T' && a[17] == 'T') {
+                                                        sendPUTNEW(12, "T")
+                                                    }
+
+                                                }
                                             }
                                             negativeButton(negative) { }
                                         }.show()
@@ -572,13 +582,46 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         when (language) {
-            "English" -> titleView?.text = "RoboTour calculating optimal route..."
-            "German" -> titleView?.text = "RoboTour berechnet optimale Route ..."
-            "Spanish" -> titleView?.text = "RoboTour calcula la ruta óptima ..."
-            "French" -> titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
-            "Chinese" -> titleView?.text = "萝卜途正在计算最佳路线..."
-            "other" -> titleView?.text = "RoboTour calculating optimal route..."
-            "else" -> titleView?.text = "RoboTour calculating optimal route..."
+            "English" -> {
+                titleView?.text = "RoboTour calculating optimal route..."
+                descriptionView?.text = "RoboTour calculating optimal route..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+            }
+            "German" -> {
+                titleView?.text = "RoboTour berechnet optimale Route ..."
+                descriptionView?.text = "RoboTour berechnet optimale Route ..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+            }
+            "Spanish" -> {
+                titleView?.text = "RoboTour calcula la ruta óptima ..."
+                descriptionView?.text = "RoboTour calcula la ruta óptima ..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+            }
+            "French" -> {
+                titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
+                descriptionView?.text = "RoboTour calculant l'itinéraire optimal ..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+            }
+            "Chinese" -> {
+                titleView?.text = "萝卜途正在计算最佳路线..."
+                descriptionView?.text = "萝卜途正在计算最佳路线..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+            }
+            "other" -> {
+                titleView?.text = "RoboTour calculating optimal route..."
+                descriptionView?.text = "RoboTour calculating optimal route..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+            }
+            "else" -> {
+                titleView?.text = "RoboTour calculating optimal route..."
+                descriptionView?.text = "RoboTour calculating optimal route..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+            }
         }
         //Starting the thread which is defined above to keep polling the server for changes
         checkerThread.start()
@@ -900,6 +943,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         Send the user back to MainActivity */
         alert(exitDesc) {
             positiveButton(positive) {
+                var a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                if (a == "1") {
+                    sendPUTNEW(12, "T")
+                }
                 if (userid == "1") {
                     async {
                         sendPUTNEW(16, "F")
@@ -907,6 +954,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 } else if (userid == "2") {
                     async {
                         sendPUTNEW(17, "F")
+                    }
+                }
+                async {
+                    a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                    if (a[16] == 'T' && a[17] == 'T') {
+                        sendPUTNEW(12, "T")
                     }
                 }
                 checkerThread.interrupt()
@@ -976,6 +1029,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun skipImmediately() {
         if (isNetworkConnected()) {
             /*This function is only when both users have agreed to skip the next item*/
@@ -983,6 +1037,16 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 sendPUTNEW(10, "T")
                 Thread.sleep(400)
                 skippable = true
+            }
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "English" -> titleView?.text = "RoboTour calculating optimal route..."
+                "German" -> titleView?.text = "RoboTour berechnet optimale Route ..."
+                "Spanish" -> titleView?.text = "RoboTour calcula la ruta óptima ..."
+                "French" -> titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
+                "Chinese" -> titleView?.text = "萝卜途正在计算最佳路线..."
+                "other" -> titleView?.text = "RoboTour calculating optimal route..."
+                "else" -> titleView?.text = "RoboTour calculating optimal route..."
             }
         } else {
             toast("Check your network connection, command not sent")

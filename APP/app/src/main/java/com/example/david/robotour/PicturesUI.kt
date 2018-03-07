@@ -2,6 +2,7 @@ package com.example.david.robotour
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
+import android.preference.PreferenceManager
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
@@ -100,8 +101,15 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                                 positiveButton(positive) {
                                     async {
                                         sendList()
-                                        sendPUTNEW(16, "T")
-                                    }
+                                        if (loadInt("user").toString() == "1") {
+                                            async {
+                                                sendPUTNEW(16, "T")
+                                            }
+                                        } else  {
+                                            async {
+                                                sendPUTNEW(17, "T")
+                                            }
+                                        }                                    }
                                     async {
                                         val a = PicturesActivity()
                                         a.t.interrupt() //Stops the thread
@@ -135,7 +143,11 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                 .filter { it.selected }
                 .forEach { sendPUTNEW(it.eV3ID, "T") }
     }
-
+    private fun loadInt(key: String): Int {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
+        return sharedPreferences.getInt(key, 0)
+    }
     private fun sendPUTNEW(identifier: Int, command: String) {
         val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get

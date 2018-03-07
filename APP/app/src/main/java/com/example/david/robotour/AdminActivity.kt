@@ -26,11 +26,8 @@ class AdminActivity : AppCompatActivity() {
 
     /*
     THE PURPOSE OF THIS ACTIVITY IS FOR DEBUGGING AND TESTING PURPOSES
-
     NOT FOR THE CLIENT TO BE SEEN
-
     M IFTEKHAR
-
     28/02/2018
      */
 
