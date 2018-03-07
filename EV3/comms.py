@@ -36,6 +36,12 @@ class Server():
             'User 2': 17
         }
 
+    def get_commands(self):
+        return self.commands
+
+    def get_pictures_to_go(self):
+        return self.picturesToGoTO
+
     # Helper function that does a http post request
     def http_post(self, position, message):
         data = bytes(urllib.parse.urlencode({"command" + str(position): message}).encode())
@@ -89,6 +95,7 @@ class Server():
         self.commands = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F"]
 
     def check_position(self, position):  # get command of Toilet, Stop etc.
+        self.update_commands()
         return self.commands[self.id_map[position]]
 
     # Updates the user once they have arrived at the TOILET
@@ -135,9 +142,3 @@ class Server():
         self.http_post(self.id_map[nextArtWork], "N")
         self.previousArtPiece = nextArtWork
         self.update_commands()  # update command
-
-    def get_commands(self):
-        return self.commands
-
-    def get_pictures_to_go(self):
-        return self.picturesToGoTO
