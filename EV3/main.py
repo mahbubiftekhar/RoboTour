@@ -649,20 +649,7 @@ errorSumR = 0
 oldR = colour_sensor_right.value()
 oldL = colour_sensor_left.value()
 try:
-    while True:
-
-        if len(remainingPicturesToGo) == 0:
-            # Finished everything
-            # Go to start position
-            # dummy
-            print("No more pictures to go. Go to exit.")
-            closest_painting, shortest_path = get_closest_painting(dijkstra_map, robot_location, ['10'])
-            go_to_closest_painting(shortest_path)
-            server.arrivedPosition('Exit')
-            turn_back()
-            print("Back to exit")
-            exit()
-            break
+    while not len(remainingPicturesToGo) == 0:
 
         print("Remain picture: ", remainingPicturesToGo)
         closest_painting, shortest_path = get_closest_painting(dijkstra_map, robot_location, remainingPicturesToGo)
@@ -686,6 +673,22 @@ try:
         turn_back_pointer()                               # Continue when the stop command become 'F'
         remainingPicturesToGo.remove(closest_painting)
         # pointToPainting(shortest_path[-1]) # points to the painting at the destination
+
+    # if len(remainingPicturesToGo) == 0:
+        # Finished everything
+        # Go to start position
+        # dummy
+
+    if not robot_location == '10':
+        print("No more pictures to go. Go to exit.")
+        closest_painting, shortest_path = get_closest_painting(dijkstra_map, robot_location, ['10'])
+        go_to_closest_painting(shortest_path)   # Go to exit
+
+    align_orientation('N')
+    server.arrivedPosition('Exit')
+    print("Finish program!")
+    exit()
+
 
 except KeyboardInterrupt:
     motor_left.stop()
