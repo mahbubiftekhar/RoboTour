@@ -47,6 +47,16 @@ class AdminActivity : AppCompatActivity() {
         }
     }
 
+    public override fun onResume() {
+        updateTextThread.start()
+        super.onResume()
+    }
+
+    public override fun onStop() {
+        updateTextThread.start()
+        super.onStop()
+    }
+
     private val updateTextThread: Thread = object : Thread() {
         /*This thread is used to update the header*/
         /*Will update the header automatically*/
@@ -125,7 +135,6 @@ class AdminActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
-
         sendy.setOnClickListener {
             val destination = destination.text.toString()
             var message = ""
