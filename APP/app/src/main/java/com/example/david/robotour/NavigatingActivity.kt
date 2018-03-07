@@ -68,6 +68,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var toiletPopUpBool = true
     private var speaking = -1
     private var killThread = false
+    private var userTwoMode = false
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -370,21 +371,20 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 height = dip(btnHgt)
                                 width = wrapContent
                                 onClick {
-                                    alert(skipDesc) {
-                                        positiveButton(positive) {
-                                            if (isNetworkConnected()) {
+                                    if (isNetworkConnected()) {
+                                        alert(skipDesc) {
+                                            positiveButton(positive) {
                                                 async {
                                                     skip()
                                                 }
-                                            } else {
-                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                             }
-
-                                        }
-                                        negativeButton(negative) {
-                                            //Do nothing the user changed their minds
-                                        }
-                                    }.show()
+                                            negativeButton(negative) {
+                                                //Do nothing the user changed their minds
+                                            }
+                                        }.show()
+                                    } else {
+                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                    }
                                 }
                             }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
                             stopButton = button(stop) {
@@ -393,32 +393,36 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 height = dip(btnHgt)
                                 width = wrapContent
                                 onClick {
-                                    alertStBtn = if (toggleStBtn) {
-                                        startDesc
-                                    } else {
-                                        stopDesc
-                                    }
-                                    alert(alertStBtn) {
-                                        positiveButton(positive) {
-                                            if (isNetworkConnected()) {
-                                                if (!toggleStBtn) {
-                                                    text = stop
-                                                    async {
-                                                        stopRoboTour() /*This function will call for RoboTour to be stopped*/
-                                                    }
-                                                } else {
-                                                    text = start
-                                                    async {
-                                                        startRoboTour()
-                                                    }
-                                                }
-                                                toggleStBtn = !toggleStBtn
-                                            } else {
-                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                            }
+                                    if (isNetworkConnected()) {
+                                        alertStBtn = if (toggleStBtn) {
+                                            startDesc
+                                        } else {
+                                            stopDesc
                                         }
-                                        negativeButton(negative) { }
-                                    }.show()
+                                        alert(alertStBtn) {
+                                            positiveButton(positive) {
+                                                if (isNetworkConnected()) {
+                                                    if (!toggleStBtn) {
+                                                        text = stop
+                                                        async {
+                                                            stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                                        }
+                                                    } else {
+                                                        text = start
+                                                        async {
+                                                            startRoboTour()
+                                                        }
+                                                    }
+                                                    toggleStBtn = !toggleStBtn
+                                                } else {
+                                                    Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                }
+                                            }
+                                            negativeButton(negative) { }
+                                        }.show()
+                                    } else {
+                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                    }
                                 }
                             }.lparams { rightMargin = 2 }
                         }.lparams { bottomMargin = dip(8) }
@@ -429,21 +433,21 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 height = dip(btnHgt)
                                 width = matchParent
                                 onClick {
-                                    alert(cancelDesc) {
-                                        positiveButton(positive) {
-                                            if (isNetworkConnected()) {
+                                    if (isNetworkConnected()) {
+                                        alert(cancelDesc) {
+                                            positiveButton(positive) {
                                                 checkerThread.interrupt()
                                                 cancelGuideTotal()
-                                            } else {
-                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                            }
 
-                                        }
-                                        negativeButton(negative) {
-                                            onBackPressed()
-                                            //Call on back pressed to take them back to the main activity
-                                        }
-                                    }.show()
+                                            }
+                                            negativeButton(negative) {
+                                                onBackPressed()
+                                                //Call on back pressed to take them back to the main activity
+                                            }
+                                        }.show()
+                                    } else {
+                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                    }
                                 }
                             }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
                             button(changeSpeed) {
@@ -526,19 +530,20 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 height = dip(btnHgt)
                                 width = matchParent
                                 onClick {
-                                    alert(exitDesc) {
-                                        positiveButton(positive) {
-                                            if (isNetworkConnected()) {
+                                    if (isNetworkConnected()) {
+                                        alert(exitDesc) {
+                                            positiveButton(positive) {
                                                 async {
                                                     exitDoor()
                                                 }
-                                            } else {
-                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                             }
+                                            negativeButton(negative) { }
+                                        }.show()
+                                    } else {
+                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
 
-                                        }
-                                        negativeButton(negative) { }
-                                    }.show()
+                                    }
+
                                 }
                             }.lparams { rightMargin = 2 }
                         }.lparams { bottomMargin = dip(15) }
@@ -561,7 +566,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     /////
-    val checkerThread: Thread = object : Thread() {
+    private val checkerThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
@@ -641,8 +646,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         }
                                         break
                                     }
-
                                 }
+                                userTwoMode = a[16] == 'T' && a[17] == 'T' /* This checks if the both users are online, if both are then we are in user two mode, otherwise immediate skip is allowed */
                                 if (userid == 1.toString()) {
                                     if (a[10].toInt() == 2 && skippable) {
                                         skippable = false
@@ -938,7 +943,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (isNetworkConnected()) {
             /*This function is only when both users have agreed to skip the next item*/
             async {
-                sendPUTNEW(10, "Y")
+                sendPUTNEW(10, "T")
                 Thread.sleep(400)
                 skippable = true
             }
@@ -948,12 +953,16 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun skip() {
-        if (isNetworkConnected()) {
-            async {
-                sendPUTNEW(10, userid)
+        if (userTwoMode) {
+            if (isNetworkConnected()) {
+                async {
+                    sendPUTNEW(10, userid)
+                }
+            } else {
+                toast("Check your network connection, command not sent")
             }
         } else {
-            toast("Check your network connection, command not sent")
+            skipImmediately()
         }
     }
 

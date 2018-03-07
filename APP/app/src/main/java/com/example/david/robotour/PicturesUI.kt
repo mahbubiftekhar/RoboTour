@@ -14,6 +14,7 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
 import java.io.IOException
+import java.net.URL
 import java.util.ArrayList
 
 @Suppress("DEPRECATION")
@@ -100,13 +101,21 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                                     async {
                                         sendList()
                                         sendPUTNEW(16, "T")
-
                                     }
                                     async {
                                         val a = PicturesActivity()
                                         a.t.interrupt() //Stops the thread
                                     }
-                                    startActivity<Waiting>("language" to language)
+                                    async {
+                                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                                        uiThread {
+                                            if (a == "2") {
+                                                startActivity<Waiting>("language" to language)
+                                            } else {
+                                                startActivity<NavigatingActivity>("language" to language)
+                                            }
+                                        }
+                                    }
                                 }
                                 negativeButton(negative) {
                                     // navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))

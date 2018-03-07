@@ -19,7 +19,6 @@ import java.io.IOException
 import java.util.ArrayList
 import org.jetbrains.anko.*
 import java.io.InterruptedIOException
-import java.lang.Character.isDigit
 import java.net.URL
 
 
@@ -132,18 +131,24 @@ class AdminActivity : AppCompatActivity() {
 
         sendy.setOnClickListener {
             val destination = destination.text.toString()
-            val message = messageToSend.text.toString().toUpperCase()
-            if (destination(destination.toInt()) && messageValid(message)) {
+            var message = ""
+            try {
+                message = messageToSend.text.toString().toUpperCase()
+            } catch (e: NumberFormatException) {
+                toast("Error!! Please don't do that!")
+            }
+            if (destination(destination.toInt()) && messageValid(message) && message != "") {
                 vibrate()
                 async {
                     try {
                         sendPUTNEW(destination.toInt(), message)
                     } catch (e: Exception) {
                         toast("Error!! Please don't do that!")
-
+                    } catch (e: NumberFormatException) {
+                        toast("Error!! Please don't do that!")
                     }
                     runOnUiThread {
-                        toast("Sent $message to $destination successfully")
+                        toast("SENT $message TO $destination SUCCESSFULLY")
                     }
                 }
             } else {
