@@ -121,6 +121,8 @@ class SensorHub():
 		dt = 0.00001 # 10us
 		cycles = 0
 
+		read_wait = 0
+
 		# record starting time
 		start = time.perf_counter()
 		while True:
@@ -128,10 +130,14 @@ class SensorHub():
 			waiting = time.perf_counter() - start
 			if self.serial_port.inWaiting() > 0:
 
-				out.append(self.serial_port.read(1)[0])
+				read_wait -= time.perf_counter()
+				c = self.serial_port.read(1)[0]
+				read_wait += time.perf_counter()
+				out.append(c)
 				# end of frame designated by endline character
 				if(out[-1] == 10): #ASCII for \n
 					self.debug_print("Frame received in {} cycles ({:.2f}ms)".format(cycles, waiting*1000))
+					self.debug_print("Total read time: {}ms".format(read_wait*1000))
 					# remove newline and last comma
 					out = out[:-2]
 					break
