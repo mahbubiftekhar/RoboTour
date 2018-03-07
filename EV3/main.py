@@ -377,10 +377,13 @@ def align_orientation(desired_orientation):
     if robot_orientation == first_char:
         pass
     elif is_orientation_right(first_char):
+        print("Turn right")
         turn_right()
     elif is_orientation_left(first_char):
+        print("Turn left")
         turn_left()
     elif is_orientation_back(first_char):
+        print("Turn back")
         turn_back()
     else:
         print("Errors on aligning orientation - Robot orientation ", robot_orientation,
@@ -580,8 +583,9 @@ def wait_for_user_to_get_ready():
 
 def go_to_closest_painting(path):
 
-    for location in path[1:]:
-
+    index = 1
+    while index < len(path):
+        location = path[index]
         while is_branch_detected(colour_sensor_left.value(), colour_sensor_right.value()):
             move_forward(100, 100)
 
@@ -600,7 +604,7 @@ def go_to_closest_painting(path):
                 global robot_location
                 robot_location = location
                 print("Current location is ", robot_location)
-
+                index = index + 1
                 break
 
             difference_l = curr_l - target
@@ -633,7 +637,6 @@ print("SensorHub have set up.")
 initialising_map()
 print("Map has been initialised.")
 server = Server()
-#server.reset_list_on_server()
 print("Waiting for users...")
 wait_for_user_to_get_ready()
 print("Users are ready!")
@@ -679,11 +682,6 @@ try:
         remainingPicturesToGo.remove(closest_painting)
         # pointToPainting(shortest_path[-1]) # points to the painting at the destination
 
-    # if len(remainingPicturesToGo) == 0:
-        # Finished everything
-        # Go to start position
-        # dummy
-
     if not robot_location == '10':
         print("No more pictures to go. Go to exit.")
         closest_painting, shortest_path = get_closest_painting(dijkstra_map, robot_location, ['10'])
@@ -692,6 +690,7 @@ try:
     align_orientation('N')
     server.update_status_arrived('Exit')
     print("Finish program!")
+    server.reset_list_on_server()
     exit()
 
 
