@@ -38,6 +38,8 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var language = ""
     private var tts: TextToSpeech? = null
     private var tts2: TextToSpeech? = null
+    private var search = ""
+    private var cancel = ""
 
     public override fun onDestroy() {
         // Shutdown TTS
@@ -192,6 +194,48 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             "Chinese" -> supportActionBar?.title = "选择图片"
             "other" -> supportActionBar?.title = "Select Picture"
             "else" -> supportActionBar?.title = "Select Picture"
+        }
+        when (language) {
+            "English" -> {
+                title = "Please enter painting you wish to go to"
+                search = "Search"
+                cancel = "Cancel"
+            }
+            "German" -> {
+                title = "Bitte geben Sie ein Gemälde ein, zu dem Sie gehen möchten"
+                search = "Suche"
+                cancel = "Stornieren"
+            }
+            "Spanish" -> {
+                title = "Por favor, ingrese la pintura a la que desea ir"
+                search = "buscar"
+                cancel = "Cancelar"
+
+            }
+            "French" -> {
+                title = "S'il vous plaît entrer la peinture que vous souhaitez aller à"
+                search = "chercher"
+                cancel = "Annuler"
+
+            }
+            "Chinese" -> {
+                title = "请输入您想要去看的作品"
+                search = "搜索"
+                cancel = "取消"
+
+            }
+            "other" -> {
+                title = "Please enter painting you wish to go to"
+                search = "Search"
+                cancel = "Cancel"
+
+            }
+            "else" -> {
+                title = "Please enter painting you wish to go to"
+                search = "Search"
+                cancel = "Cancel"
+
+            }
         }
 
         //Populate List
@@ -420,40 +464,45 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 alert {
                     //Force Keyboard to open
                     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    var search = ""
                     when (language) {
                         "English" -> {
                             title = "Please enter painting you wish to go to"
                             search = "Search"
+                            cancel = "Cancel"
                         }
                         "German" -> {
                             title = "Bitte geben Sie ein Gemälde ein, zu dem Sie gehen möchten"
                             search = "Suche"
-
+                            cancel = "Stornieren"
                         }
                         "Spanish" -> {
                             title = "Por favor, ingrese la pintura a la que desea ir"
                             search = "buscar"
+                            cancel = "Cancelar"
 
                         }
                         "French" -> {
                             title = "S'il vous plaît entrer la peinture que vous souhaitez aller à"
                             search = "chercher"
+                            cancel = "Annuler"
 
                         }
                         "Chinese" -> {
                             title = "请输入您想要去看的作品"
                             search = "搜索"
+                            cancel = "取消"
 
                         }
                         "other" -> {
                             title = "Please enter painting you wish to go to"
                             search = "Search"
+                            cancel = "Cancel"
 
                         }
                         "else" -> {
                             title = "Please enter painting you wish to go to"
                             search = "Search"
+                            cancel = "Cancel"
 
                         }
                     }
@@ -479,7 +528,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 }
                             }
                         }
-                        negativeButton("Cancel") {
+                        negativeButton(cancel) {
                             //Hide keyboard
                             imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
                         }
@@ -557,28 +606,70 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         when (language) {
             "English" -> {
+                language = Locale.getDefault().language
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What Art Pieces Are You Looking For?")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, language)
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_RESULTS, language)
             }
             "German" -> {
+                language = "de-DE"
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "de-DE")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Nach Welchen Kunstwerken Suchst Du?")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, language)
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_RESULTS, language)
             }
             "Spanish" -> {
+                language = "es-ES"
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "¿Qué Piezas de Arte Estás Buscando?")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, language)
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_RESULTS, language)
             }
             "French" -> {
+                language = "fr-FR"
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "fr-FR")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Quelles Pièces d'Art Recherchez-vous?")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, language)
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_RESULTS, language)
             }
             "Chinese" -> {
+                language = "cmn-Hans-CN"
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "cmn-Hans-CN")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "你在找什么艺术品？")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, language)
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_RESULTS, language)
             }
             else -> {
+                language = Locale.ENGLISH.language
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What Art Pieces Are You Looking For?")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, language)
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, language)
+                intent.putExtra(RecognizerIntent.EXTRA_RESULTS, language)
             }
         }
         try {

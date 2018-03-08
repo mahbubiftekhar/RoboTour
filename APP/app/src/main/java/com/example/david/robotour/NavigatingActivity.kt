@@ -180,6 +180,17 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
     }
 
+    override fun onPause() {
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
+        }
+        if (tts2 != null) {
+            tts2!!.stop()
+            tts2!!.shutdown()
+        }
+        super.onPause()
+    }
     override fun onResume() {
         //This ensures that when the nav activity is minimized and reloaded up, the speech still works
         tts = TextToSpeech(this, this)
