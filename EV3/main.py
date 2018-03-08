@@ -168,7 +168,6 @@ else:
 
 # #################### SENSOR AND ACTUATOR FUNCTIONS ############################
 
-
 def get_colour_right():
     return colour_sensor_right.value()
 
@@ -270,11 +269,13 @@ def turn_back():  # 180
 def turn_right_ninety():  # 90
     motor_left.run_timed(speed_sp=175, time_sp=1000)
     motor_right.run_timed(speed_sp=-175, time_sp=1000)
+    wait_for_motor()
 
 
 def turn_left_ninety():  # -90
     motor_left.run_timed(speed_sp=-175, time_sp=1000)
     motor_right.run_timed(speed_sp=175, time_sp=1000)
+    wait_for_motor()
 
 
 def stop_wheel_motor():
@@ -462,31 +463,44 @@ def get_ready_for_obstacle(direction):  # 90 degree
     print("GET READY FOR OBSTACLE")
     if direction == 'RIGHT':
         turn_right_ninety()
-        wait_for_motor()
-        move_forward(100, 500)
+
+        while is_line_detected():
+            move_forward(100, 100)
 
     else:  # All default will go through the Left side. IE
         turn_left_ninety()
-        wait_for_motor()
+
+        while is_line_detected():
+            move_forward(100, 100)
 
 
-def go_around_obstacle(direction):
-    print("GO AROUND OBSTACLE")
+def go_around_obstacle(direction, tries):
+    print("GO AROUND OBSTACLE Direction: ", direction)
     set_distance = 11
     set_sharp_distance = 18
     is_sharp_before = False
     if direction == 'RIGHT':
         while not is_line_detected():
-            '''
-            if (isWallDetected()):
-                turnBack()
-                waitForMotor()
-                goAroundObstacle('LEFT')
-                break;
-            '''
+
+            if is_wall_detected():
+                print("Go around the Right")
+                print('Detect wall!')
+                turn_back()
+                # Go back to line
+                go_around_obstacle('LEFT', tries=tries+1)
+                #get_ready_for_obstacle('LEFT')
+                while is_line_detected():
+                    move_forward(100, 100)
+                print("Try to go around the other side")
+                go_around_obstacle('LEFT', tries=1)
+                # get_back_to_line('LEFT')
+
+                #print("Both way tried, cannot go through.")
+                #time.sleep(10)
+                return
+
             if get_sonar_readings_front() < set_distance*10:
                 turn_right_ninety()
-                wait_for_motor()
                 is_sharp_before = False
             else:
                 left = get_sonar_readings_left()
@@ -506,16 +520,25 @@ def go_around_obstacle(direction):
 
     else:  # All default will go through the Left side. IE
         while not is_line_detected():
-            '''
-            if (isWallDetected()):
-                turnBack()
-                waitForMotor()
-                goAroundObstacle('RIGHT')
-                break;
-            '''
+
+            if is_wall_detected():
+                print("Go around the Left")
+                print('Detect wall!')
+                turn_back()
+                # Go back to line
+                go_around_obstacle('RIGHT', tries=2)
+                # turn_left_ninety()
+                get_back_to_line('LEFT')
+
+                speak("Carson please remove the obstacle in front of me. Thank you. I love you.")
+                while(is_front_obstacle()):
+                    stop_wheel_motor()
+                    time.sleep(1)
+
+                return
+
             if get_sonar_readings_front() < set_distance*10:
                 turn_left_ninety()
-                wait_for_motor()
                 is_sharp_before = False
             else:
                 right = get_sonar_readings_right()
@@ -532,10 +555,44 @@ def go_around_obstacle(direction):
                 else:
                     turn(100, 100, 100)
                     is_sharp_before = False
+    if (tries == 1):
+        get_back_to_line(direction)
 
 
 def get_back_to_line(turning_direction):
     print("GET BACK TO LINE")
+
+    if turning_direction == 'RIGHT':
+        if is_left_line_detected():
+            while not is_right_line_detected():
+                turn(0, 100, 100)
+            while not is_left_line_detected():
+                turn(-100, 0, 100)
+
+        elif is_right_line_detected():
+            while not is_left_line_detected():
+                turn(100, 0, 100)
+            while not is_right_line_detected():
+                turn(0, -100, 100)
+
+        turn_right_ninety()
+
+    else:
+        if is_right_line_detected():
+            while not is_left_line_detected():
+                turn(0, 100, 100)
+            while not is_right_line_detected():
+                turn(-100, 0, 100)
+
+        elif is_left_line_detected():
+            while not is_right_line_detected():
+                turn(100, 0, 100)
+            while not is_left_line_detected():
+                turn(0, -100, 100)
+
+        turn_left_ninety()
+
+    '''
     if turning_direction == 'RIGHT':
         if is_left_line_detected():
             # That means when it detect the line, it is not facing to the obstacle
@@ -566,7 +623,7 @@ def get_back_to_line(turning_direction):
             turn(-100, 150, 100)
 
         print("Find line again!")
-
+    '''
 
 def wait_for_user_to_get_ready():
     print("Press left for single user and press right for double user...")
@@ -619,7 +676,15 @@ def go_to_closest_painting(painting, path):
             global oldL
             oldL = curr_l
 
-            if is_branch_detected(curr_l, curr_r):
+            if is_front_obstacle():
+                stop_wheel_motor()
+                print("Stop at: (Front) ", sonar_front.value())
+                obstacle_turn = 'RIGHT'
+                get_ready_for_obstacle(obstacle_turn)  # step 1
+                print("Stop at: (Side) ", sonar_right.value())
+                go_around_obstacle(obstacle_turn, tries= 1)
+
+            elif is_branch_detected(curr_l, curr_r):
                 stop_wheel_motor()
                 print("Find a branch")
                 global robot_location
@@ -709,7 +774,16 @@ def go_to_toilet():
             global oldL
             oldL = curr_l
 
-            if is_branch_detected(curr_l, curr_r):
+            if is_front_obstacle():
+                stop_wheel_motor()
+                print("Stop at: (Front) ", sonar_front.value())
+                obstacle_turn = 'RIGHT'
+                get_ready_for_obstacle(obstacle_turn)  # step 1
+                print("Stop at: (Side) ", sonarRight.value())
+                go_around_obstacle(obstacle_turn)
+                get_back_to_line(obstacle_turn)
+
+            elif is_branch_detected(curr_l, curr_r):
                 stop_wheel_motor()
                 print("Find a branch")
                 global robot_location
@@ -787,7 +861,16 @@ def go_to_exit():
             global oldL
             oldL = curr_l
 
-            if is_branch_detected(curr_l, curr_r):
+            if is_front_obstacle():
+                stop_wheel_motor()
+                print("Stop at: (Front) ", sonar_front.value())
+                obstacle_turn = 'RIGHT'
+                get_ready_for_obstacle(obstacle_turn)  # step 1
+                print("Stop at: (Side) ", sonarRight.value())
+                go_around_obstacle(obstacle_turn)
+                get_back_to_line(obstacle_turn)
+
+            elif is_branch_detected(curr_l, curr_r):
                 stop_wheel_motor()
                 print("Find a branch")
                 global robot_location
@@ -810,7 +893,8 @@ initialising_map()
 print("Map has been initialised.")
 server = Server()
 print("Waiting for users...")
-wait_for_user_to_get_ready()
+#wait_for_user_to_get_ready()
+server.start_up_single()
 print("Users are ready!")
 print("Current location is ", robot_location, ", facing ", robot_orientation)
 

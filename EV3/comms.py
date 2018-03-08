@@ -55,10 +55,10 @@ class Server():
         return self.command
 
     def start_up_single(self):
-        self.commands = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F","F", "F"]
+        self.commands = ["F", "F", "F", "F", "T", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "T", "F"]
         self.update_pictures_to_go()
 
-        self.update_commands()
+        # self.update_commands()
         while (self.user_1_check() != "T"):
             self.update_commands()
             time.sleep(0.5)
