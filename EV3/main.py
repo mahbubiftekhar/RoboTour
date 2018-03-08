@@ -106,7 +106,8 @@ def initialising_map():
         '6': "N",
         '7': "N",
         '8': "N",
-        '9': "E"
+        '9': "E",
+        '10': "S"
     }
 
     global art_pieces_map
@@ -596,20 +597,11 @@ def go_to_closest_painting(painting, path):
         align_orientation(orientation_map[(robot_location, location)])
         # Follow line until reaching a painting OR a branch
         while True:
-            
+
+            # Line following
             base_speed = 130
             curr_r = colour_sensor_right.value()
             curr_l = colour_sensor_left.value()
-
-            if is_branch_detected(curr_l, curr_r):
-
-                print("Find a branch")
-                global robot_location
-                robot_location = location
-                print("Current location is ", robot_location)
-                index = index + 1
-                break
-
             difference_l = curr_l - target
             difference_r = curr_r - target
             global errorSumR
@@ -627,7 +619,41 @@ def go_to_closest_painting(painting, path):
             global oldL
             oldL = curr_l
 
-    stop_wheel_motor()
+            if is_branch_detected(curr_l, curr_r):
+                stop_wheel_motor()
+                print("Find a branch")
+                global robot_location
+                robot_location = location
+                print("Current location is ", robot_location)
+                index = index + 1
+
+                server.update_commands()
+                if server.check_position('Skip') == 'T':  # Only skip at branch
+                    print("User press skip!")
+                    index = len(path) + 1
+                    remainingPicturesToGo.remove(painting)
+                    server.update_status_false('Skip')
+                elif server.check_position('Toilet') == 'T':
+                    print("User press toilet!")
+                    index = len(path) + 1
+                    server.update_status_false('Toilet')
+                    go_to_toilet()
+                elif server.check_position('Exit') == 'T':
+                    print("User press exit!")
+                    index = len(path) + 1
+                    server.update_status_false('Exit')
+                    global remainingPicturesToGo
+                    remainingPicturesToGo = []
+                elif server.check_position('Cancel') == 'T':
+                    print("User press cancel!")
+                    index = len(path) + 1
+                    server.update_status_false('Cancel')
+                    global remainingPicturesToGo
+                    remainingPicturesToGo = []
+
+                break
+
+
 
     if index == len(path):
         #speak("This is " + art_pieces_map[painting])
@@ -643,6 +669,83 @@ def go_to_closest_painting(painting, path):
         turn_back_pointer()  # Continue when the stop command become 'F'
 
         remainingPicturesToGo.remove(painting)
+
+
+def go_to_toilet():
+
+    toilet_position, path = get_closest_painting(dijkstra_map, robot_location, ['10'])
+
+    index = 1
+
+    while index < len(path):
+
+        location = path[index]
+
+        while is_branch_detected(colour_sensor_left.value(), colour_sensor_right.value()):
+            move_forward(100, 100)
+
+        print("Going to " + location)
+        align_orientation(orientation_map[(robot_location, location)])
+        # Follow line until reaching a painting OR a branch
+        while True:
+
+            base_speed = 130
+            curr_r = colour_sensor_right.value()
+            curr_l = colour_sensor_left.value()
+            difference_l = curr_l - target
+            difference_r = curr_r - target
+            global errorSumR
+            errorSumR += difference_r
+            if abs(errorSumR) > 400:
+                errorSumR = 400 * errorSumR / abs(errorSumR)
+            d = curr_r - oldR
+            base_speed -= abs(errorSumR) * 0.14
+            if base_speed < 45:
+                base_speed = 45
+            motor_right.run_forever(speed_sp=base_speed - difference_r * 6.5 - errorSumR * 0.05 - d * 2)
+            motor_left.run_forever(speed_sp=base_speed + difference_r * 6.5 + errorSumR * 0.05 + d * 2)
+            global oldR
+            oldR = curr_r
+            global oldL
+            oldL = curr_l
+
+            if is_branch_detected(curr_l, curr_r):
+                stop_wheel_motor()
+                print("Find a branch")
+                global robot_location
+                robot_location = location
+                print("Current location is ", robot_location)
+                index = index + 1
+
+                server.update_commands()
+                if server.check_position('Skip') == 'T':  # Only skip at branch
+                    index = len(path) + 1
+                    server.update_status_false('Skip')
+                elif server.check_position('Exit') == 'T':
+                    index = len(path) + 1
+                    server.update_status_false('Exit')
+                    global remainingPicturesToGo
+                    remainingPicturesToGo = []
+                elif server.check_position('Cancel') == 'T':
+                    index = len(path) + 1
+                    server.update_status_false('Cancel')
+                    global remainingPicturesToGo
+                    remainingPicturesToGo = []
+
+                break
+
+    if index == len(path):
+        #speak("This is " + art_pieces_map[painting])
+        point_to_painting(toilet_position)
+        server.update_status_arrived('Toilet')  # tell the app the robot is arrived to this painting
+        server.set_stop_true()
+
+        server.wait_for_continue()  # check for user ready to go
+
+        server.update_status_false('Toilet')
+        server.set_stop_false()
+
+        turn_back_pointer()  # Continue when the stop command become 'F'
 
 
 def go_to_exit():
@@ -667,15 +770,6 @@ def go_to_exit():
             base_speed = 130
             curr_r = colour_sensor_right.value()
             curr_l = colour_sensor_left.value()
-
-            if is_branch_detected(curr_l, curr_r):
-                print("Find a branch")
-                global robot_location
-                robot_location = location
-                print("Current location is ", robot_location)
-                index = index + 1
-                break
-
             difference_l = curr_l - target
             difference_r = curr_r - target
             global errorSumR
@@ -693,7 +787,14 @@ def go_to_exit():
             global oldL
             oldL = curr_l
 
-    stop_wheel_motor()
+            if is_branch_detected(curr_l, curr_r):
+                stop_wheel_motor()
+                print("Find a branch")
+                global robot_location
+                robot_location = location
+                print("Current location is ", robot_location)
+                index = index + 1
+                break
 
 
 ############################################################

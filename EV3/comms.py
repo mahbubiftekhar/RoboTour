@@ -95,8 +95,11 @@ class Server():
         self.commands = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F"]
 
     def check_position(self, position):  # get command of Toilet, Stop etc.
-        self.update_commands()
         return self.commands[self.id_map[position]]
+
+    def check_stop(self):       # Stop should be keep pulling and checking
+        self.update_commands()
+        return self.commands[self.id_map['Stop']]
 
     # Updates the user once they have arrived at the TOILET
     def update_status_arrived(self, position):
