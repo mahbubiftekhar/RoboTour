@@ -585,7 +585,7 @@ def wait_for_user_to_get_ready():
             break
 
 
-def go_to_closest_painting(path):
+def go_to_closest_painting(painting, path):
 
     index = 1
     while index < len(path):
@@ -629,6 +629,21 @@ def go_to_closest_painting(path):
             oldL = curr_l
 
     stop_wheel_motor()
+
+    if index == len(path):
+        speak("This is " + art_pieces_map[painting])
+        point_to_painting(painting)
+        server.update_status_arrived(painting)  # tell the app the robot is arrived to this painting
+        server.set_stop_true()
+
+        server.wait_for_continue()  # check for user ready to go
+
+        server.update_status_false(painting)
+        server.set_stop_false()
+
+        turn_back_pointer()  # Continue when the stop command become 'F'
+
+        remainingPicturesToGo.remove(painting)
 
 
 def go_to_exit():
@@ -680,6 +695,7 @@ def go_to_exit():
 
     stop_wheel_motor()
 
+
 ############################################################
 
 # #################### MAIN #################################
@@ -721,21 +737,7 @@ try:
 
         print("Going to picture ", closest_painting)
         server.update_art_piece(closest_painting)    # tell the app the robot is going to this painting
-        go_to_closest_painting(shortest_path)
-
-        speak("This is " + art_pieces_map[closest_painting])
-        point_to_painting(closest_painting)
-        server.update_status_arrived(closest_painting)    # tell the app the robot is arrived to this painting
-        server.set_stop_true()
-
-        server.wait_for_continue()  # check for user ready to go
-        time.sleep(5)
-        server.update_status_false(closest_painting)
-        server.set_stop_false()
-
-        turn_back_pointer()                               # Continue when the stop command become 'F'
-        remainingPicturesToGo.remove(closest_painting)
-        # pointToPainting(shortest_path[-1]) # points to the painting at the destination
+        go_to_closest_painting(closest_painting, shortest_path)
 
     if not robot_location == '10':
         print("No more pictures to go. Go to exit.")
