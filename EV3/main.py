@@ -379,7 +379,8 @@ def align_orientation(desired_orientation):
 
     first_char = desired_orientation[0]
     if robot_orientation == first_char:
-        pass
+        print("FORWARD!")
+        wait_for_motor()
     elif is_orientation_right(first_char):
         print("Turn right")
         turn_right()
@@ -569,7 +570,6 @@ def get_back_to_line(turning_direction):
 def wait_for_user_to_get_ready():
     print("Press left for single user and press right for double user...")
     button_ev3 = ev3.Button()
-    server.start_up_single()
 
     while True:
         if button_ev3.left:
@@ -630,7 +630,7 @@ def go_to_closest_painting(painting, path):
     stop_wheel_motor()
 
     if index == len(path):
-        speak("This is " + art_pieces_map[painting])
+        #speak("This is " + art_pieces_map[painting])
         point_to_painting(painting)
         server.update_status_arrived(painting)  # tell the app the robot is arrived to this painting
         server.set_stop_true()
@@ -657,6 +657,7 @@ def go_to_exit():
 
         while is_branch_detected(colour_sensor_left.value(), colour_sensor_right.value()):
             move_forward(100, 100)
+
 
         print("Going to " + location)
         align_orientation(orientation_map[(robot_location, location)])
@@ -738,6 +739,7 @@ try:
         server.update_art_piece(closest_painting)    # tell the app the robot is going to this painting
         go_to_closest_painting(closest_painting, shortest_path)
 
+    # If not skip do this
     if not robot_location == '10':
         print("No more pictures to go. Go to exit.")
         go_to_exit()   # Go to exit
