@@ -113,6 +113,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         super.onStop()
     }
 
+    @RequiresApi(Build.VERSION_CODES.DONUT)
     override fun onInit(status: Int) {
         println("status code: $status")
         if (status == TextToSpeech.SUCCESS) {
@@ -221,7 +222,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             "English" -> {
                 positive = "Yes"
                 negative = "No"
-                skip = "Skip Painting"
+                skip = "SKIP"
                 skipDesc = "Are you sure you want to skip to the next painting?"
                 stop = "STOP"
                 stopDesc = "Are you sure you want to stop RoboTour?"
@@ -313,7 +314,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 startRoboTour = "Press start when you are ready for RoboTour to resume"
                 positive = "Yes"
                 negative = "No"
-                skip = "Skip Painting"
+                skip = "SKIP"
                 skipDesc = "Are you sure you want to skip to the next painting?"
                 stop = "STOP"
                 stopDesc = "Are you sure you want to stop RoboTour?"
@@ -943,10 +944,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         Send the user back to MainActivity */
         alert(exitDesc) {
             positiveButton(positive) {
-                var a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-                if (a == "1") {
-                    sendPUTNEW(12, "T")
-                }
+               async{
+                   val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                   if (a == "1") {
+                       sendPUTNEW(12, "T")
+                   }
+               }
                 if (userid == "1") {
                     async {
                         sendPUTNEW(16, "F")
@@ -957,7 +960,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     }
                 }
                 async {
-                    a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
                     if (a[16] == 'T' && a[17] == 'T') {
                         sendPUTNEW(12, "T")
                     }
