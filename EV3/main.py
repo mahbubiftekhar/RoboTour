@@ -293,11 +293,11 @@ def speak(string):
 def turn_pointer(direction):  # Turn 45
     if direction == "CW":
         motor_pointer.run_timed(speed_sp=-414, time_sp=500)
-        time.sleep(1)
+        time.sleep(0.5)
 
     if direction == "ACW":
         motor_pointer.run_timed(speed_sp=414, time_sp=500)
-        time.sleep(1)
+        time.sleep(0.5)
 
 
 def turn_and_reset_pointer(direction):
@@ -322,6 +322,8 @@ def point_to_painting(picture_id):
     elif is_orientation_back(motor_map[picture_id]):
         turn_pointer("CW")
         turn_pointer("CW")
+        turn_pointer("CW")
+        turn_pointer("CW")
         global robot_pointer
         robot_pointer = 'S'
     else:
@@ -329,9 +331,11 @@ def point_to_painting(picture_id):
 
 
 def turn_back_pointer():
-    if robot_pointer == 's':
-        turn_pointer("CW")
-        turn_pointer("CW")
+    if robot_pointer == 'S':
+        turn_pointer("ACW")
+        turn_pointer("ACW")
+        turn_pointer("ACW")
+        turn_pointer("ACW")
     elif robot_pointer == 'W':
         turn_pointer("CW")
     elif robot_pointer == 'E':
@@ -625,6 +629,57 @@ def go_to_closest_painting(path):
             oldL = curr_l
 
     stop_wheel_motor()
+
+
+def go_to_exit():
+
+    exit_position, path = get_closest_painting(dijkstra_map, robot_location, ['10'])
+
+    index = 1
+
+    while index < len(path):
+
+        location = path[index]
+
+        while is_branch_detected(colour_sensor_left.value(), colour_sensor_right.value()):
+            move_forward(100, 100)
+
+        print("Going to " + location)
+        align_orientation(orientation_map[(robot_location, location)])
+        # Follow line until reaching a painting OR a branch
+        while True:
+
+            base_speed = 130
+            curr_r = colour_sensor_right.value()
+            curr_l = colour_sensor_left.value()
+
+            if is_branch_detected(curr_l, curr_r):
+                print("Find a branch")
+                global robot_location
+                robot_location = location
+                print("Current location is ", robot_location)
+                index = index + 1
+                break
+
+            difference_l = curr_l - target
+            difference_r = curr_r - target
+            global errorSumR
+            errorSumR += difference_r
+            if abs(errorSumR) > 400:
+                errorSumR = 400 * errorSumR / abs(errorSumR)
+            d = curr_r - oldR
+            base_speed -= abs(errorSumR) * 0.14
+            if base_speed < 45:
+                base_speed = 45
+            motor_right.run_forever(speed_sp=base_speed - difference_r * 6.5 - errorSumR * 0.05 - d * 2)
+            motor_left.run_forever(speed_sp=base_speed + difference_r * 6.5 + errorSumR * 0.05 + d * 2)
+            global oldR
+            oldR = curr_r
+            global oldL
+            oldL = curr_l
+
+    stop_wheel_motor()
+
 ############################################################
 
 # #################### MAIN #################################
@@ -668,7 +723,7 @@ try:
         server.update_art_piece(closest_painting)    # tell the app the robot is going to this painting
         go_to_closest_painting(shortest_path)
 
-        #speak("This is " + art_pieces_map[closest_painting])
+        speak("This is " + art_pieces_map[closest_painting])
         point_to_painting(closest_painting)
         server.update_status_arrived(closest_painting)    # tell the app the robot is arrived to this painting
         server.set_stop_true()
@@ -684,11 +739,11 @@ try:
 
     if not robot_location == '10':
         print("No more pictures to go. Go to exit.")
-        closest_painting, shortest_path = get_closest_painting(dijkstra_map, robot_location, ['10'])
-        go_to_closest_painting(shortest_path)   # Go to exit
+        go_to_exit()   # Go to exit
 
     align_orientation('N')
     server.update_status_arrived('Exit')
+    server.set_stop_true()
     print("Finish program!")
     server.reset_list_on_server()
     exit()
