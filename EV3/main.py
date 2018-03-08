@@ -566,19 +566,18 @@ def get_back_to_line(turning_direction):
         print("Find line again!")
 
 
-
 def wait_for_user_to_get_ready():
     print("Press left for single user and press right for double user...")
     button_ev3 = ev3.Button()
     server.start_up_single()
 
-    while(True):
-        if (button_ev3.left):
+    while True:
+        if button_ev3.left:
             print("Waiting for User 1 to complete...")
             server.start_up_single()
             print("User 1 is ready!")
             break
-        elif(button_ev3.right):
+        elif button_ev3.right:
             print("Waiting for User 1 and User 2 to complete...")
             server.start_up_double()
             print("Both users are ready!")
