@@ -24,7 +24,7 @@ orientation_map = dict()  # Map for Orientation between neighbouring points
 dijkstra_map = dict()  # Map for Distance between neighbouring points
 motor_map = dict()
 art_pieces_map = dict()
-
+is_stop = False
 
 ###############################################################
 
@@ -654,6 +654,10 @@ def go_to_closest_painting(painting, path):
         align_orientation(orientation_map[(robot_location, location)])
         # Follow line until reaching a painting OR a branch
         while True:
+            # Sleeps if Stop
+
+            while(is_stop):
+                stop_wheel_motor()
 
             # Line following
             base_speed = 130
@@ -675,6 +679,7 @@ def go_to_closest_painting(painting, path):
             oldR = curr_r
             global oldL
             oldL = curr_l
+
 
             if is_front_obstacle():
                 stop_wheel_motor()
@@ -753,6 +758,11 @@ def go_to_toilet():
         align_orientation(orientation_map[(robot_location, location)])
         # Follow line until reaching a painting OR a branch
         while True:
+
+            # Sleeps if Stop
+
+            while (is_stop):
+                stop_wheel_motor()
 
             base_speed = 130
             curr_r = colour_sensor_right.value()
@@ -841,6 +851,11 @@ def go_to_exit():
         # Follow line until reaching a painting OR a branch
         while True:
 
+            # Sleeps if Stop
+
+            while (is_stop):
+                stop_wheel_motor()
+
             base_speed = 130
             curr_r = colour_sensor_right.value()
             curr_l = colour_sensor_left.value()
@@ -882,7 +897,18 @@ def go_to_exit():
 
 ############################################################
 
-# #################### MAIN #################################
+###################### POLLING FROM SERVER ########################
+
+def is_stop_thread():
+    while True:
+        global is_stop
+        if server.check_stop() == "T":
+            is_stop = True
+        else:
+            is_stop = False
+
+
+##################### MAIN #################################
 
 
 print("SensorHub have set up.")
@@ -897,8 +923,10 @@ print("Waiting for users...")
 server.start_up_single()
 print("Users are ready!")
 print("Current location is ", robot_location, ", facing ", robot_orientation)
-
 remainingPicturesToGo = get_art_pieces_from_app()
+
+stop_thread = Thread(target=is_stop_thread)
+stop_thread.start()
 
 
 ###########################################################
@@ -934,6 +962,7 @@ try:
     server.set_stop_true()
     print("Finish program!")
     server.reset_list_on_server()
+    stop_thread.ter
     exit()
 
 
