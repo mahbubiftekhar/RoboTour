@@ -722,7 +722,6 @@ def go_to_closest_painting(painting, path):
                     server.update_status_false('Cancel')
                     global remainingPicturesToGo
                     remainingPicturesToGo = []
-
                 break
 
 
@@ -806,18 +805,22 @@ def go_to_toilet():
 
                 server.update_commands()
                 if server.check_position('Skip') == 'T':  # Only skip at branch
+                    print("User pressed Skip")
                     index = len(path) + 1
                     server.update_status_false('Skip')
                 elif server.check_position('Exit') == 'T':
+                    print("User pressed Exit")
                     index = len(path) + 1
                     server.update_status_false('Exit')
                     global remainingPicturesToGo
                     remainingPicturesToGo = []
                 elif server.check_position('Cancel') == 'T':
+                    print("User pressed Cancel")
                     index = len(path) + 1
                     server.update_status_false('Cancel')
                     global remainingPicturesToGo
                     remainingPicturesToGo = []
+                    server.update_status_false('Stop')
 
                 break
 
@@ -931,19 +934,13 @@ print("SensorHub have set up.")
 initialising_map()
 print("Map has been initialised.")
 server = Server()
-print("Waiting for users...")
-wait_for_user_to_get_ready()
-#server.start_up_single()
-print("Users are ready!")
-print("Current location is ", robot_location, ", facing ", robot_orientation)
-remainingPicturesToGo = get_art_pieces_from_app()
-
 stop_thread = Thread(target=check_stop_speed_thread)
 stop_thread.daemon = True
 stop_thread.start()
 
 
 ###########################################################
+
 
 # ################ MAIN ##########################
 
@@ -952,32 +949,39 @@ errorSumR = 0
 oldR = colour_sensor_right.value()
 oldL = colour_sensor_left.value()
 try:
-    while not len(remainingPicturesToGo) == 0:
+    while True:
+        print("\n\n\nWaiting for users...")
+        #wait_for_user_to_get_ready()
+        server.start_up_single()
+        print("Users are ready!")
+        print("Current location is ", robot_location, ", facing ", robot_orientation)
+        remainingPicturesToGo = get_art_pieces_from_app()
 
-        print("Remain picture: ", remainingPicturesToGo)
-        closest_painting, shortest_path = get_closest_painting(dijkstra_map, robot_location, remainingPicturesToGo)
+        while not len(remainingPicturesToGo) == 0:
+            print("Remain picture: ", remainingPicturesToGo)
+            closest_painting, shortest_path = get_closest_painting(dijkstra_map, robot_location, remainingPicturesToGo)
 
-        # Sanity check, is robot's location the starting position of the shortest path?
-        if shortest_path[0] != robot_location:
-            print("Robot's location is not the starting position of the shortest path")
-            exit()
+            # Sanity check, is robot's location the starting position of the shortest path?
+            if shortest_path[0] != robot_location:
+                print("Robot's location is not the starting position of the shortest path")
+                exit()
 
-        print("Going to picture ", closest_painting)
-        server.update_art_piece(closest_painting)    # tell the app the robot is going to this painting
-        go_to_closest_painting(closest_painting, shortest_path)
+            print("Going to picture ", closest_painting)
+            server.update_art_piece(closest_painting)    # tell the app the robot is going to this painting
+            go_to_closest_painting(closest_painting, shortest_path)
 
-    # If not skip do this
-    if not robot_location == '10':
-        print("No more pictures to go. Go to exit.")
-        go_to_exit()   # Go to exit
+        # If not skip do this
+        if not robot_location == '10':
+            print("No more pictures to go. Go to exit.")
+            go_to_exit()   # Go to exit
 
-    align_orientation('N')
-    server.update_status_arrived('Exit')
-    server.set_stop_true()
-    print("Finish program!")
-    server.reset_list_on_server()
-    #terminate thread stop_thread
-    exit()
+        align_orientation('N')
+        server.update_status_arrived('Exit')
+        server.set_stop_true()
+        print("Finish program!")
+        server.reset_list_on_server()
+        #terminate thread stop_thread
+        #exit()
 
 
 except KeyboardInterrupt:
