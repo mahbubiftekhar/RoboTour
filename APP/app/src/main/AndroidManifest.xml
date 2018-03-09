@@ -60,6 +60,14 @@
             android:label="@string/title_activity_finnish"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ListenInActivity"
+            android:label="@string/title_activity_listen_in"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ChooseLevel"
+            android:label="@string/title_activity_choose_level"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

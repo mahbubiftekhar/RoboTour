@@ -113,4 +113,6 @@
     <string name="title_activity_finnish">FinnishActivity</string>
     <string name="title_activity_pictures2">PicturesActivity2</string>
     <string name="title_activity_pictures">PicturesActivity</string>
+    <string name="title_activity_listen_in">ListenInActivity</string>
+    <string name="title_activity_choose_level">chooseLevel</string>
 </resources>

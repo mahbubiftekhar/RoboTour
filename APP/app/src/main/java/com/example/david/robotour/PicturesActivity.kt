@@ -30,7 +30,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     data class ArtPiece(val name: String, val artist: String, val nameChinese: String, val nameGerman: String, val nameSpanish: String, val nameFrench: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int, var selected: Boolean)
 
     private var shownArtPieces = ArrayList<ArtPiece>()
-    private val reqSpeechCode = 100
+    private val REQ_CODE_SPEECH_INPUT = 100
     private var queriedArtPieces = ArrayList<ArtPiece>()
     private var searchedForPainting = false //true if we've searched for a painting
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
@@ -345,7 +345,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
             }
         }
-       t.start() /*Start to run the thread*/
+        t.start() /*Start to run the thread*/
     }
 
     override fun onInit(p0: Int) {
@@ -601,80 +601,91 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun askSpeechInput() {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        /*val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         when (language) {
             "English" -> {
-                language = Locale.getDefault().language
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What are piecs are you looking for??")
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What Art Pieces Are You Looking For?")
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, language)
-                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_RESULTS, language)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, Locale.getDefault())
             }
             "German" -> {
-                language = "de-DE"
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "de-DE")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "de-DE")
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "de-DE")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Nach Welchen Kunstwerken Suchst Du?")
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, language)
-                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_RESULTS, language)
             }
             "Spanish" -> {
-                language = "es-ES"
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "es-ES")
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "es-ES")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "¿Qué Piezas de Arte Estás Buscando?")
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, language)
-                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_RESULTS, language)
             }
             "French" -> {
-                language = "fr-FR"
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "fr-FR")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "fr-FR")
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "fr-FR")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Quelles Pièces d'Art Recherchez-vous?")
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, language)
-                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_RESULTS, language)
             }
             "Chinese" -> {
-                language = "cmn-Hans-CN"
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "cmn-Hans-CN")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "cmn-Hans-CN")
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "cmn-Hans-CN")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "你在找什么艺术品？")
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, language)
-                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_RESULTS, language)
             }
-            else -> {
-                language = Locale.ENGLISH.language
+            "else" -> {
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, Locale.getDefault())
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What Art Pieces Are You Looking For?")
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, language)
-                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, language)
-                intent.putExtra(RecognizerIntent.EXTRA_RESULTS, language)
             }
         }
         try {
             async {
                 searchedForPainting = true
                 startActivityForResult(intent, reqSpeechCode)
+            }
+        } catch (a: ActivityNotFoundException) {
+        } catch (e: java.lang.RuntimeException) {
+        } catch (e: java.lang.IllegalArgumentException) {
+        }*/
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        when (language) {
+            "English" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
+            }
+            "German" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.GERMAN)
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Nach welchen Kunstwerken suchst du?")
+            }
+            "Spanish" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "¿Qué piezas de arte estás buscando?")
+            }
+            "French" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.FRENCH)
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Quelles pièces d'art recherchez-vous?")
+            }
+            "Chinese" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.CHINESE)
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "你在找什么艺术品？")
+            }
+            "other" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
+            }
+            "else" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
+            }
+        }
+        try {
+            async {
+                searchedForPainting = true
+                startActivityForResult(intent, REQ_CODE_SPEECH_INPUT)
             }
         } catch (a: ActivityNotFoundException) {
         } catch (e: java.lang.RuntimeException) {
@@ -766,14 +777,14 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (resultCode != RESULT_CANCELED && requestCode != RESULT_CANCELED) {
             if (data != null) {
                 when (requestCode) {
-                    reqSpeechCode -> {
+                    REQ_CODE_SPEECH_INPUT -> {
                         if (resultCode == RESULT_OK) {
                             var result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                             if (language == "English") {
                                 afterAsyncSpeech(result)
                                 //If the language is english, continue no problemo
                             } else {
-                                //If language is not english or other, we run the translator
+                                //If language is not english or other, we  run the translator
                                 async {
                                     println("+++ Original Text: " + result)
                                     result = translate(result) as ArrayList<String>?
