@@ -1076,8 +1076,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
                     descriptionView?.text = "RoboTour calcula la ruta óptima ..."
                     imageView?.setImageResource(R.drawable.robotourfornavigating)
-
-
                 }
                 "Chinese" -> {
                     titleView?.text = "萝卜途正在计算最佳路线..."
@@ -1102,9 +1100,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             toast("Check your network connection, command not sent")
         }
     }
-
     private fun skip() {
-        println("+++++ user mode" + userTwoMode)
+        println("+++++user mode" + userTwoMode)
         if (userTwoMode) {
             if (isNetworkConnected()) {
                 async {

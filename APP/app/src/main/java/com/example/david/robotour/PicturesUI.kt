@@ -102,14 +102,11 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                                     async {
                                         sendList()
                                         if (loadInt("user").toString() == "1") {
-                                            async {
                                                 sendPUTNEW(16, "T")
-                                            }
                                         } else  {
-                                            async {
                                                 sendPUTNEW(17, "T")
-                                            }
-                                        }                                    }
+                                        }
+                                    }
                                     async {
                                         val a = PicturesActivity()
                                         a.t.interrupt() //Stops the thread
