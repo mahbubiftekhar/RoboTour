@@ -72,7 +72,7 @@ class FinishActivity : AppCompatActivity() {
                 }
             }
             textView {
-                textSize = 34f
+                textSize = 24f
                 typeface = Typeface.DEFAULT_BOLD
                 padding = dip(5)
                 topPadding = dip(20)

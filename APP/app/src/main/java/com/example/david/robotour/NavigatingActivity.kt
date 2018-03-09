@@ -72,6 +72,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var speaking = -1
     private var killThread = false
     private var userTwoMode = false
+
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -191,6 +192,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         super.onPause()
     }
+
     override fun onResume() {
         //This ensures that when the nav activity is minimized and reloaded up, the speech still works
         tts = TextToSpeech(this, this)
@@ -211,7 +213,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         checkerThread.interrupt()
         clearFindViewByIdCache()
-        startActivity<FinishActivity>()
+        startActivity<FinishActivity>("language" to intent.getStringExtra("language"))
 
     }
 
@@ -388,9 +390,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     if (isNetworkConnected()) {
                                         alert(skipDesc) {
                                             positiveButton(positive) {
-                                                async {
-                                                    skip()
-                                                }
+                                                skip()
                                             }
                                             negativeButton(negative) {
                                                 //Do nothing the user changed their minds
@@ -413,29 +413,22 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         } else {
                                             stopDesc
                                         }
-                                        alert(alertStBtn) {
-                                            positiveButton(positive) {
-                                                if (isNetworkConnected()) {
-                                                    if (!toggleStBtn) {
-                                                        text = stop
-                                                        async {
-                                                            stopRoboTour() /*This function will call for RoboTour to be stopped*/
-                                                        }
-                                                    } else {
-                                                        text = start
-                                                        async {
-                                                            startRoboTour()
-                                                        }
-                                                    }
-                                                    toggleStBtn = !toggleStBtn
-                                                } else {
-                                                    Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                        if (isNetworkConnected()) {
+                                            if (!toggleStBtn) {
+                                                text = stop
+                                                async {
+                                                    stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                                }
+                                            } else {
+                                                text = start
+                                                async {
+                                                    startRoboTour()
                                                 }
                                             }
-                                            negativeButton(negative) { }
-                                        }.show()
-                                    } else {
-                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                            toggleStBtn = !toggleStBtn
+                                        } else {
+                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                        }
                                     }
                                 }
                             }.lparams { rightMargin = 2 }
@@ -663,6 +656,14 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                                 for (i in 0..9) {
+                                    if (a[14] == 'N') {
+                                        runOnUiThread {
+                                            imageView?.setImageResource(R.drawable.toiletimage)
+                                            titleView?.text = toilet
+                                            descriptionView?.text = ""
+                                        }
+                                        break
+                                    }
                                     if (a[i] == 'A' && speaking != i) {
                                         /*This will mean that when the robot has arrived at the painting*/
                                         if (tts != null) {
@@ -721,7 +722,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         break
                                     }
                                 }
-                                userTwoMode = a[16] == 'T' && a[17] == 'T' /* This checks if the both users are online, if both are then we are in user two mode, otherwise immediate skip is allowed */
+                                userTwoMode = a[16] == 'T' && a[17] == 'T'
+                                println("+++" + userTwoMode)/* This checks if the both users are online, if both are then we are in user two mode, otherwise immediate skip is allowed */
                                 if (userid == 1.toString()) {
                                     if (a[10].toInt() == 2 && skippable) {
                                         skippable = false
@@ -955,12 +957,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         Send the user back to MainActivity */
         alert(exitDesc) {
             positiveButton(positive) {
-               async{
-                   val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-                   if (a == "1") {
-                       sendPUTNEW(12, "T")
-                   }
-               }
+                async {
+                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                    if (a == "1") {
+                        sendPUTNEW(12, "T")
+                    }
+                }
                 if (userid == "1") {
                     async {
                         sendPUTNEW(16, "F")
@@ -1054,13 +1056,47 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
             val language = intent.getStringExtra("language")
             when (language) {
-                "English" -> titleView?.text = "RoboTour calculating optimal route..."
-                "German" -> titleView?.text = "RoboTour berechnet optimale Route ..."
-                "Spanish" -> titleView?.text = "RoboTour calcula la ruta óptima ..."
-                "French" -> titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
-                "Chinese" -> titleView?.text = "萝卜途正在计算最佳路线..."
-                "other" -> titleView?.text = "RoboTour calculating optimal route..."
-                "else" -> titleView?.text = "RoboTour calculating optimal route..."
+                "English" -> {
+                    titleView?.text = "RoboTour calculating optimal route..."
+                    descriptionView?.text = "RoboTour calculating optimal route..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+                }
+                "German" -> {
+                    titleView?.text = "RoboTour berechnet optimale Route ..."
+                    descriptionView?.text = "RoboTour berechnet optimale Route ..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+                }
+                "Spanish" -> {
+                    titleView?.text = "RoboTour calcula la ruta óptima ..."
+                    descriptionView?.text = "RoboTour calcula la ruta óptima ..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+
+                }
+                "French" -> {
+                    titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
+                    descriptionView?.text = "RoboTour calcula la ruta óptima ..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+
+
+                }
+                "Chinese" -> {
+                    titleView?.text = "萝卜途正在计算最佳路线..."
+                    descriptionView?.text = "萝卜途正在计算最佳路线..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+
+                }
+                "other" -> {
+                    titleView?.text = "RoboTour calculating optimal route..."
+                    descriptionView?.text = "RoboTour calcula la ruta óptima ..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+
+                }
+                "else" -> {
+                    titleView?.text = "RoboTour calculating optimal route..."
+                    descriptionView?.text = "RoboTour calculating optimal route..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+
+                }
             }
         } else {
             toast("Check your network connection, command not sent")
@@ -1068,6 +1104,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun skip() {
+        println("+++++ user mode" + userTwoMode)
         if (userTwoMode) {
             if (isNetworkConnected()) {
                 async {

@@ -53,10 +53,12 @@
         <activity
             android:name=".AdminActivity"
             android:label="@string/title_activity_admin"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".FinishActivity"
             android:label="@string/title_activity_finnish"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
