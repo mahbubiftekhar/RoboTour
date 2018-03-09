@@ -345,7 +345,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
             }
         }
-        t.start() /*Start to run the thread*/
+       t.start() /*Start to run the thread*/
     }
 
     override fun onInit(p0: Int) {
@@ -448,7 +448,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, null)
         tts2 = TextToSpeech(this, null)
         onInit(0)
-        t.start() //Restart the thread that highlights the start button green
+       // t.start() //Restart the thread that highlights the start button green
         super.onResume()
     }
 

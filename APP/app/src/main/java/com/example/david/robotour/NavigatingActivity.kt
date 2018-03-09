@@ -499,20 +499,20 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                         when (j) {
                                                             0 -> {
                                                                 async {
-                                                                    sendSpeed(0)
+                                                                    sendSpeed(1)
                                                                 }
                                                                 toast(options[0])
 
                                                             }
                                                             1 -> {
                                                                 async {
-                                                                    sendSpeed(1)
+                                                                    sendSpeed(2)
                                                                 }
                                                                 toast(options[1])
                                                             }
                                                             else -> {
                                                                 async {
-                                                                    sendSpeed(2)
+                                                                    sendSpeed(3)
                                                                 }
                                                                 toast(options[2])
                                                             }
@@ -989,7 +989,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun cancelGuideTotal() {
         if (isNetworkConnected()) {
-            switchToMain()
+            switchToFinnished()
             if (userid == "1") {
                 async {
                     val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()

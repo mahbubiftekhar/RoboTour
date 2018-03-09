@@ -100,6 +100,9 @@ class AdminActivity : AppCompatActivity() {
             "F" -> true
             "T" -> true
             "N" -> true
+            "1" -> true
+            "2" -> true
+            "3" -> true
             "" -> true
             " " -> true
             else -> false
