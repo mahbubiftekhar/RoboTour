@@ -99,11 +99,9 @@ class Server():
         return self.commands[self.id_map[position]]
 
     def check_stop(self):       # Stop should be keep pulling and checking
-        self.update_commands()
         return self.commands[self.id_map['Stop']]
 
     def check_speed(self):       # Stop should be keep pulling and checking
-        self.update_commands()
         return self.commands[self.id_map['Speed']]
 
     # Updates the user once they have arrived at the TOILET

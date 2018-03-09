@@ -384,6 +384,7 @@ def align_orientation(desired_orientation):
     first_char = desired_orientation[0]
     if robot_orientation == first_char:
         print("FORWARD!")
+        move_forward(100, 100)
         wait_for_motor()
     elif is_orientation_right(first_char):
         print("Turn right")
@@ -724,8 +725,6 @@ def go_to_closest_painting(painting, path):
                     remainingPicturesToGo = []
                 break
 
-
-
     if index == len(path):
         #speak("This is " + art_pieces_map[painting])
         point_to_painting(painting)
@@ -909,6 +908,7 @@ def check_stop_speed_thread():
     while True:
         global is_stop
         global default_speed
+        server.update_commands()
         if server.check_stop() == "T":
             is_stop = True
         else:
