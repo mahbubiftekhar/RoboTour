@@ -3,13 +3,14 @@
 
 import ev3dev.ev3 as ev3
 from sensor_hub import *
+from line_sensor import LineSensor
 from model import Model
 from environment import Environment
 
 class Robot():
 	def __init__(self):
 		self.setup_hardware()
-		self.hardware_check()
+		#self.hardware_check()
 
 		self.model = Model()
 		self.env = Environment()
@@ -19,7 +20,7 @@ class Robot():
 		self.motorR = ev3.LargeMotor("outD")
 		self.motorL = ev3.LargeMotor("outB")
 
-		self.motorPointer = ev3.LargeMotor('outD')
+		self.motorPointer = ev3.LargeMotor("outC")
 
 		self.colourSensorR = ev3.ColorSensor("in1") 
 		self.colourSensorL = ev3.ColorSensor("in4")
@@ -30,6 +31,8 @@ class Robot():
 
 		self.sonarR = HubSonar(self.hub, "s0")
 		self.sonarL = HubSonar(self.hub, "s1")
+
+		self.line_sensor = LineSensor(self.hub)
 
 
 		# setup modes if appropriate
@@ -42,28 +45,21 @@ class Robot():
 		self.motorL.stop_action = "hold"
 
 	def hardware_check(self):
-		if(motorPointer.connected & sonarFront.connected &
-		       motorLeft.connected & motorRight.connected):
-		    print('All sensors and motors connected')
-		else:
-		    if(not motorPointer.connected)
-		        print("motorPointer not connected")
-		    if(not sonarFront.connected):
-		        print("Sonar not connected")
-		    if(not motorLeft.connected):
-		        print("MotorLeft not connected")
-		    if(not motorRight.connected):
-		        print("MotorRight not connected")
-		    if(not colourSensorLeft.connected):
-		        print("ColorLeft not connected")
-		    if(not colourSensorRight.connected):
-		        print("ColorRight not connected")
-		    if(not sonarLeft.connected):
-		        print("SonarLeft not connected")
-		    print('Please check all sensors and actuators are connected.')
-		    exit()
+		pass	
+
+	def update_env(self):
+
+		self.env.line_sens_val = self.line_sensor.value_simple()
+		self.env.dist_front = self.sonarF.value() 
+
+		self.env.update()
+
 
 	def motor(self, pL, pR):
-		self.motorL = pL 
-		self.motorR = pR 
+		self.motorL.run_forever(speed_sp = pL) 
+		self.motorR.run_forever(speed_sp = pR)
+
+	def stop(self):
+		self.motorL.stop()
+		self.motorR.stop()
 
