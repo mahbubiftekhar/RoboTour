@@ -24,6 +24,8 @@ orientation_map = dict()  # Map for Orientation between neighbouring points
 dijkstra_map = dict()  # Map for Distance between neighbouring points
 motor_map = dict()
 art_pieces_map = dict()
+# Base speed for Line Following
+default_speed = 130
 is_stop = False
 
 ###############################################################
@@ -659,8 +661,7 @@ def go_to_closest_painting(painting, path):
             while(is_stop):
                 stop_wheel_motor()
 
-            # Line following
-            base_speed = 130
+            base_speed = default_speed
             curr_r = colour_sensor_right.value()
             curr_l = colour_sensor_left.value()
             difference_l = curr_l - target
@@ -670,6 +671,7 @@ def go_to_closest_painting(painting, path):
             if abs(errorSumR) > 400:
                 errorSumR = 400 * errorSumR / abs(errorSumR)
             d = curr_r - oldR
+
             base_speed -= abs(errorSumR) * 0.14
             if base_speed < 45:
                 base_speed = 45
@@ -764,7 +766,8 @@ def go_to_toilet():
             while (is_stop):
                 stop_wheel_motor()
 
-            base_speed = 130
+            base_speed = default_speed
+
             curr_r = colour_sensor_right.value()
             curr_l = colour_sensor_left.value()
             difference_l = curr_l - target
@@ -856,7 +859,7 @@ def go_to_exit():
             while (is_stop):
                 stop_wheel_motor()
 
-            base_speed = 130
+            base_speed = default_speed
             curr_r = colour_sensor_right.value()
             curr_l = colour_sensor_left.value()
             difference_l = curr_l - target
@@ -899,13 +902,23 @@ def go_to_exit():
 
 ###################### POLLING FROM SERVER ########################
 
-def is_stop_thread():
+def check_stop_speed_thread():
     while True:
         global is_stop
+        global default_speed
         if server.check_stop() == "T":
             is_stop = True
         else:
             is_stop = False
+
+        if server.check_speed() == "3":
+            default_speed = 130
+        elif server.check_speed() == "2":
+            default_speed = 100
+        elif server.check_speed() == "1":
+            default_speed = 70
+        else:
+            default_speed = 130
 
 
 ##################### MAIN #################################
@@ -919,13 +932,14 @@ initialising_map()
 print("Map has been initialised.")
 server = Server()
 print("Waiting for users...")
-#wait_for_user_to_get_ready()
-server.start_up_single()
+wait_for_user_to_get_ready()
+#server.start_up_single()
 print("Users are ready!")
 print("Current location is ", robot_location, ", facing ", robot_orientation)
 remainingPicturesToGo = get_art_pieces_from_app()
 
-stop_thread = Thread(target=is_stop_thread)
+stop_thread = Thread(target=check_stop_speed_thread)
+stop_thread.daemon = True
 stop_thread.start()
 
 
@@ -962,7 +976,7 @@ try:
     server.set_stop_true()
     print("Finish program!")
     server.reset_list_on_server()
-    stop_thread.ter
+    #terminate thread stop_thread
     exit()
 
 

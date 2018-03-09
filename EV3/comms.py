@@ -88,6 +88,7 @@ class Server():
     # Resets the entire list online,
     # should be called once the robot is finnished giving the tour and returns to the
     def reset_list_on_server(self):
+        print("Resetting Server")
         for x in range(0, 17):
             # Updating the list online
             self.http_post(x, "F")
@@ -100,6 +101,10 @@ class Server():
     def check_stop(self):       # Stop should be keep pulling and checking
         self.update_commands()
         return self.commands[self.id_map['Stop']]
+
+    def check_speed(self):       # Stop should be keep pulling and checking
+        self.update_commands()
+        return self.commands[self.id_map['Speed']]
 
     # Updates the user once they have arrived at the TOILET
     def update_status_arrived(self, position):
