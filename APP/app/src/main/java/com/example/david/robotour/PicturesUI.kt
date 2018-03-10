@@ -29,6 +29,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
 
     private fun notifyUser() {
         Toast.makeText(ctx, toastText, Toast.LENGTH_LONG).show()
+        Toast.makeText(ctx, toastText, Toast.LENGTH_LONG).show()
     }
 
     override fun createView(ui: AnkoContext<PicturesActivity>): View = with(ui) {
