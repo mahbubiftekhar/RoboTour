@@ -630,6 +630,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         //Starting the thread which is defined above to keep polling the server for changes
         checkerThread.start()
+        speakOutButton(-1) // Speak "RoboTour is finding optimal route
     }
 
     /////

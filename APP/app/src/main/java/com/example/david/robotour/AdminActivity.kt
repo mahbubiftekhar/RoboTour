@@ -222,7 +222,21 @@ class AdminActivity : AppCompatActivity() {
             }
             vibrate()
         }
-
+        RESET_PAINTINGS.setOnClickListener{
+            //Resets the paintings
+            for (i in 0..9) {
+                async {
+                    sendPUTNEW(i, "F")
+                }
+            }
+        }
+        CONTINUE.setOnClickListener{
+            //Tells RoboTour to continue
+            async {
+                sendPUTNEW(11, "T")
+            }
+            vibrate()
+        }
         SWITCH_USER.setOnClickListener {
             /*This will change the user, This is defaulted as 1, user two must be selected itself*/
             val a = loadInt("user")

@@ -20,8 +20,7 @@ class FinishActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         //Restart the app cleanly
-        val i = baseContext.packageManager
-                .getLaunchIntentForPackage(baseContext.packageName)
+        val i = baseContext.packageManager.getLaunchIntentForPackage(baseContext.packageName)
         i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(i)
     }

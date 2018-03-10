@@ -144,7 +144,12 @@ class ChooseLevel : AppCompatActivity() {
                                 }
                             }
                         } else {
-                            if (user1 && !user2) {
+                            if (!user1 && !user2){
+                                runOnUiThread {
+                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.androidsBackground))
+                                }
+                            }
+                            else if (user1 && !user2) {
                                 //set to green
                                 runOnUiThread {
                                     listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
@@ -298,6 +303,9 @@ class ChooseLevel : AppCompatActivity() {
                             }
                         } else {
                             when {
+                                (!user1 && !user2) -> {
+                                    toast(error_listen)
+                                }
                                 user1 -> {
                                     t.interrupt()
                                     checkerThread.interrupt()
@@ -315,7 +323,6 @@ class ChooseLevel : AppCompatActivity() {
                 }
             }
             t.start() /*Start to run the thread*/
-
         }
     }
 }

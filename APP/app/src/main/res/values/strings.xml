@@ -115,4 +115,6 @@
     <string name="title_activity_pictures">PicturesActivity</string>
     <string name="title_activity_listen_in">ListenInActivity</string>
     <string name="title_activity_choose_level">chooseLevel</string>
+    <string name="reset_paintings">RESET PAINTINGS</string>
+    <string name="start_robotour">START ROBOTOUR</string>
 </resources>
