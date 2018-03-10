@@ -127,7 +127,7 @@ class ChooseLevel : AppCompatActivity() {
                                 println("++++3")
                                 runOnUiThread {
                                     controlProgress = false
-                                    controlButton?.background = ColorDrawable(Color.parseColor("#505050"))
+                                    controlButton?.background = ColorDrawable(Color.parseColor("#A9A9A9"))
                                 }
                             }
                         } else {
@@ -147,7 +147,7 @@ class ChooseLevel : AppCompatActivity() {
                                 println("++++6")
                                 runOnUiThread {
                                     controlProgress = false
-                                    controlButton?.background = ColorDrawable(Color.parseColor("#505050"))
+                                    controlButton?.background = ColorDrawable(Color.parseColor("#A9A9A9"))
                                 }
                             }
                         }
@@ -176,7 +176,7 @@ class ChooseLevel : AppCompatActivity() {
                                 println("++++10")
                                 runOnUiThread {
                                     listenProgress = false
-                                    listenButton?.background = ColorDrawable(Color.parseColor("#505050"))
+                                    listenButton?.background = ColorDrawable(Color.parseColor("#A9A9A9"))
                                 }
                             }
                         } else {
@@ -184,13 +184,13 @@ class ChooseLevel : AppCompatActivity() {
                                 println("++++11")
                                 runOnUiThread {
                                     listenProgress = false
-                                    listenButton?.background = ColorDrawable(Color.parseColor("#505050"))
+                                    listenButton?.background = ColorDrawable(Color.parseColor("#A9A9A9"))
                                 }
                             } else if (userID == 2 && !user2) {
                                 println("++++12")
                                 runOnUiThread {
                                     listenProgress = false
-                                    listenButton?.background = ColorDrawable(Color.parseColor("#505050"))
+                                    listenButton?.background = ColorDrawable(Color.parseColor("#A9A9A9"))
                                 }
                             } else {
                                 println("++++13")

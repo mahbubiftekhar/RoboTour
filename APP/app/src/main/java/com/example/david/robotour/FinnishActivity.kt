@@ -54,7 +54,6 @@ class FinishActivity : AppCompatActivity() {
         val language = intent.getStringExtra("language")
         val message: String
         super.onCreate(savedInstanceState)
-        window.decorView.setBackgroundColor(Color.parseColor("#FFFF"))
         supportActionBar?.hide() //hide actionbar
         message = when (language) {
             "French" -> "Merci d'utiliser RoboTour.\nNous espérons que vous avez apprécié votre visite."
