@@ -1021,11 +1021,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    private fun switchToMain() {
-        clearFindViewByIdCache()
-        startActivity<MainActivity>()
-    }
-
     private fun rejectSkip() {
         if (isNetworkConnected()) {
             async {

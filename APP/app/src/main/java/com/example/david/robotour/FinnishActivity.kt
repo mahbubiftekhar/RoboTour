@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import org.jetbrains.anko.*
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.support.v4.content.res.ResourcesCompat
 import kotlinx.android.synthetic.*
 
@@ -90,6 +91,12 @@ class FinishActivity : AppCompatActivity() {
                             .getLaunchIntentForPackage(baseContext.packageName)
                     i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     startActivity(i)
+                }
+            }
+            verticalLayout {
+                button {
+                    textSize = 20f
+                    background = ColorDrawable(Color.parseColor("#FFFFFF"))
                 }
             }
             button(closeApp) {

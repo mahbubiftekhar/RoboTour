@@ -29,7 +29,9 @@ class ChooseLevel : AppCompatActivity() {
     private var language: String = ""
     private var controlButton: Button? = null
     private var listenButton: Button? = null
-    lateinit var t: Thread
+    private lateinit var t: Thread
+    private var error_control = ""
+    private var error_listen = ""
 
     override fun onBackPressed() {
         checkerThread.interrupt()
@@ -110,6 +112,29 @@ class ChooseLevel : AppCompatActivity() {
             "Spanish" -> "¿Quieres control o prefieres simplemente seguir el recorrido?"
             "Chinese" -> "你想要控制吗，还是只想跟着游览？"
             else -> "Do you want control or would you prefer to just follow the tour?"
+        }
+        when(language){
+            "French" -> {
+                error_control = "RoboTour en tournée, veuillez patienter ou suivre le tour"
+                error_listen = "RoboTour n'est pas en tournée, veuillez sélectionner Control RoboTour"
+            }
+            "German" ->{
+                error_control = "RoboTour auf Tour, bitte warten oder Tour folgen"
+                error_listen = "RoboTour ist nicht auf Tour, bitte wählen Sie RoboTour steuern"
+            }
+            "Spanish"->{
+                error_control = "RoboTour de gira, por favor espere o siga el recorrido"
+                error_listen = "RoboTour no gira, seleccione Control RoboTour"
+            }
+            "Chinese"->{
+                error_control = "RoboTour巡演时，请等待或关注巡演"
+                error_listen = "RoboTour不参观，请选择Control RoboTour\n"
+            }
+            else -> {
+                error_control = "RoboTour on tour, please wait or follow tour"
+                error_listen = "RoboTour not touring, please select Control RoboTour"
+            }
+
         }
 
         super.onCreate(savedInstanceState)
@@ -228,7 +253,7 @@ class ChooseLevel : AppCompatActivity() {
                             checkerThread.interrupt()
                             startActivity<PicturesActivity>("language" to language)
                         } else {
-                            toast("not available")
+                            toast(error_control)
                         }
 
                     }
@@ -252,7 +277,7 @@ class ChooseLevel : AppCompatActivity() {
                                 checkerThread.interrupt()
                                 startActivity<ListenInActivity>("language" to language)
                             } else {
-                                toast("Not available")
+                                toast(error_listen)
                             }
                         } else {
                             if (user1) {
@@ -260,7 +285,7 @@ class ChooseLevel : AppCompatActivity() {
                                 checkerThread.interrupt()
                                 startActivity<ListenInActivity>("language" to language)
                             } else {
-                                toast("Not avaialbe")
+                                toast(error_listen)
                             }
                         }
                     }

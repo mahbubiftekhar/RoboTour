@@ -56,6 +56,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var speaking = -1
     private var killThread = false
     private var userTwoMode = false
+    private var advertisements = ArrayList<Int>()
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -74,6 +75,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts2!!.shutdown()
         }
         checkerThread.interrupt()
+        pictureThread.interrupt()
         super.onDestroy()
     }
 
@@ -165,6 +167,8 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts2!!.stop()
             tts2!!.shutdown()
         }
+        pictureThread.interrupt()
+        checkerThread.interrupt()
         super.onPause()
     }
 
@@ -173,11 +177,18 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         onInit(0)
+        advertisements.clear()
+        advertisements.add(R.drawable.your_ad_here)
+        advertisements.add(R.drawable.new_exhibit)
+        advertisements.add(R.drawable.gift_shop)
+        pictureThread.start()
+        checkerThread.start()
         super.onResume()
     }
 
     private fun switchToFinnished() {
         checkerThread.interrupt()
+        pictureThread.interrupt()
         clearFindViewByIdCache()
         startActivity<FinishActivity>("language" to intent.getStringExtra("language"))
 
@@ -191,7 +202,10 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         setContentView(R.layout.activity_navigating)
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
-        val PicturesAct = PicturesActivity()
+        advertisements.clear()
+        advertisements.add(R.drawable.your_ad_here)
+        advertisements.add(R.drawable.new_exhibit)
+        advertisements.add(R.drawable.gift_shop)
         supportActionBar?.hide() //hide actionbar
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         vibrate()
@@ -345,6 +359,10 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     typeface = Typeface.DEFAULT
                     padding = dip(10)
                 }
+                imageView = imageView {
+                    backgroundColor = Color.TRANSPARENT //Removes gray border
+                    gravity = Gravity.CENTER_HORIZONTAL
+                }
             }
         }
         when (language) {
@@ -390,7 +408,39 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         //Starting the thread which is defined above to keep polling the server for changes
+        pictureThread.start()
         checkerThread.start()
+    }
+
+    private val pictureThread: Thread = object : Thread() {
+        /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
+        var a = 0
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun run() {
+            while (!isInterrupted) {
+                println("+++ running here main activity")
+                if (a > (advertisements.size - 1)) {
+                    //Reset A to avoid null pointers
+                    a = 0
+                }
+                try {
+                    //UI thread MUST be updates on the UI thread, other threads may not update the UI thread
+                    runOnUiThread {
+                        imageView?.setImageResource(advertisements[a])
+                    }
+                    Thread.sleep(3000)
+                    a++
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedIOException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedByTimeoutException) {
+                    Thread.currentThread().interrupt()
+                }
+            }
+            Thread.currentThread().interrupt()
+        }
     }
 
     /////
@@ -599,18 +649,11 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    private fun isNetworkConnected(): Boolean {
-        /*Function to check if a data connection is available, if a data connection is
-              * return true, otherwise false*/
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = connectivityManager.activeNetworkInfo
-        return networkInfo != null && networkInfo.isConnected
-    }
-
     override fun onBackPressed() {
         /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
-        Send the user back to MainActivity */
+        Send the user back to FinnishedActivity */
         checkerThread.interrupt()
+        pictureThread.interrupt()
         switchToFinnished()
     }
 
