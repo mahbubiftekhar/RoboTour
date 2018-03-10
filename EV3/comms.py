@@ -98,12 +98,6 @@ class Server():
     def check_position(self, position):  # get command of Toilet, Stop etc.
         return self.commands[self.id_map[position]]
 
-    def check_stop(self):       # Stop should be keep pulling and checking
-        return self.commands[self.id_map['Stop']]
-
-    def check_speed(self):       # Stop should be keep pulling and checking
-        return self.commands[self.id_map['Speed']]
-
     # Updates the user once they have arrived at the TOILET
     def update_status_arrived(self, position):
         self.http_post(self.id_map[position], "A")

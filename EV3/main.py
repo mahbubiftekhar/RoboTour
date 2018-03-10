@@ -27,6 +27,10 @@ art_pieces_map = dict()
 # Base speed for Line Following
 default_speed = 130
 is_stop = False
+is_skip = False
+is_toilet = False
+is_exit = False
+is_cancel = False
 
 ###############################################################
 
@@ -95,7 +99,6 @@ def initialising_map():
         '13': {'3': 20, '12': 32, '9': 85},
         '14': {'4': 31.5, '5': 46, '8': 28},
         '15': {'2': 19.5, '8': 31.5, '9': 32}
-
     }
 
     global motor_map
@@ -181,12 +184,10 @@ def get_colour_left():
 
 
 def is_right_line_detected():  # Right Lego sensor
-    # print(getColourRight())
     return get_colour_right() > line_threshold
 
 
 def is_left_line_detected():
-    # print(getColourLeft())
     return get_colour_left() > line_threshold
 
 
@@ -469,21 +470,26 @@ def get_ready_for_obstacle(direction):  # 90 degree
     if direction == 'RIGHT':
         turn_right_ninety()
 
+        # Get out of the line
         while is_line_detected():
             move_forward(100, 100)
 
     else:  # All default will go through the Left side. IE
         turn_left_ninety()
 
+        # Get out of the line
         while is_line_detected():
             move_forward(100, 100)
 
 
 def go_around_obstacle(direction, get_back_enabled):
+
     print("GO AROUND OBSTACLE Direction: ", direction)
+
     set_distance = 11
     set_sharp_distance = 18
     is_sharp_before = False
+
     if direction == 'RIGHT':
         while not is_line_detected():
 
@@ -629,7 +635,6 @@ def go_to_closest_painting(painting, path):
         # Follow line until reaching a painting OR a branch
         while True:
             # Sleeps if Stop
-
             while is_stop:
                 stop_wheel_motor()
 
@@ -670,29 +675,32 @@ def go_to_closest_painting(painting, path):
                 print("Current location is ", robot_location)
                 index = index + 1
 
-                server.update_commands()
-                if server.check_position('Skip') == 'T':  # Only skip at branch
+                if is_skip:  # Only skip at branch
                     print("User press skip!")
                     index = len(path) + 1
                     remainingPicturesToGo.remove(painting)
                     server.update_status_false('Skip')
-                elif server.check_position('Toilet') == 'T':
+
+                if is_toilet:
                     print("User press toilet!")
                     index = len(path) + 1
                     server.update_status_false('Toilet')
                     go_to_toilet()
-                elif server.check_position('Exit') == 'T':
+
+                if is_exit:
                     print("User press exit!")
                     index = len(path) + 1
                     server.update_status_false('Exit')
                     global remainingPicturesToGo
                     remainingPicturesToGo = []
-                elif server.check_position('Cancel') == 'T':
+
+                if is_cancel:
                     print("User press cancel!")
                     index = len(path) + 1
                     server.update_status_false('Cancel')
                     global remainingPicturesToGo
                     remainingPicturesToGo = []
+
                 break
 
     if index == len(path):
@@ -772,18 +780,19 @@ def go_to_toilet():
                 print("Current location is ", robot_location)
                 index = index + 1
 
-                server.update_commands()
-                if server.check_position('Skip') == 'T':  # Only skip at branch
+                if is_skip:  # Only skip at branch
                     print("User pressed Skip")
                     index = len(path) + 1
                     server.update_status_false('Skip')
-                elif server.check_position('Exit') == 'T':
+
+                if is_exit:
                     print("User pressed Exit")
                     index = len(path) + 1
                     server.update_status_false('Exit')
                     global remainingPicturesToGo
                     remainingPicturesToGo = []
-                elif server.check_position('Cancel') == 'T':
+
+                if is_cancel:
                     print("User pressed Cancel")
                     index = len(path) + 1
                     server.update_status_false('Cancel')
@@ -794,7 +803,7 @@ def go_to_toilet():
                 break
 
     if index == len(path):
-        # speak("This is " + art_pieces_map[painting])
+        speak("This is the toilet!")
         point_to_painting(toilet_position)
         server.update_status_arrived('Toilet')  # tell the app the robot is arrived to this painting
         server.set_stop_true()
@@ -873,25 +882,49 @@ def go_to_exit():
 
 # ##################### POLLING FROM SERVER ########################
 
-def check_stop_speed_thread():
+def server_check():
     while True:
-        global is_stop
-        global default_speed
         server.update_commands()
-        if server.check_stop() == "T":
-            is_stop = True
-        else:
-            is_stop = False
 
-        if server.check_speed() == "3":
+        global default_speed
+        if server.check_position('Speed') == "3":
             default_speed = 130
-        elif server.check_speed() == "2":
+        elif server.check_position('Speed') == "2":
             default_speed = 100
-        elif server.check_speed() == "1":
+        elif server.check_position('Speed') == "1":
             default_speed = 70
         else:
             default_speed = 130
 
+        global is_stop
+        if server.check_position('Stop') == "T":
+            is_stop = True
+        else:
+            is_stop = False
+
+        global is_skip
+        if server.check_position('Skip') == 'T':
+            is_skip = True
+        else:
+            is_skip = False
+
+        global is_toilet
+        if server.check_position('Toilet') == 'T':
+            is_toilet = True
+        else:
+            is_toilet = False
+
+        global is_exit
+        if server.check_position('Exit') == 'T':
+            is_exit = True
+        else:
+            is_exit = False
+
+        global is_cancel
+        if server.check_position('Cancel') == 'T':
+            is_cancel = True
+        else:
+            is_cancel = False
 
 # #################### MAIN #################################
 
@@ -903,10 +936,10 @@ print("SensorHub have set up.")
 initialising_map()
 print("Map has been initialised.")
 server = Server()
-stop_thread = Thread(target=check_stop_speed_thread)
-stop_thread.daemon = True
-stop_thread.start()
-
+server_check_thread = Thread(target=server_check)
+server_check_thread.daemon = True
+server_check_thread.start()
+print("Server start checking")
 
 ###########################################################
 
@@ -935,20 +968,21 @@ try:
                 print("Robot's location is not the starting position of the shortest path")
                 exit()
 
-            print("Going to picture ", closest_painting)
+            print("Going to "+art_pieces_map[closest_painting])
             server.update_art_piece(closest_painting)    # tell the app the robot is going to this painting
             go_to_closest_painting(closest_painting, shortest_path)
 
-        # If not skip do this
+        # If no more painting selected
         if not robot_location == '10':
-            print("No more pictures to go. Go to exit.")
+            print("No more pictures to go.")
+            print("Going to exit.")
             go_to_exit()   # Go to exit
 
         align_orientation('N')
         server.update_status_arrived('Exit')
         server.set_stop_true()
-        print("Finish program!")
         server.reset_list_on_server()
+        print("Finish program!")
         # terminate thread stop_thread
         # exit()
 
