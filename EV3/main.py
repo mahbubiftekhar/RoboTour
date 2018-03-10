@@ -32,6 +32,7 @@ is_stop = False
 
 # ###################### INITIALISING MAP #############################
 
+
 def initialising_map():
     # Orientation from point X to Y is N/S/W/E
     # 38 edges in total
@@ -169,6 +170,7 @@ else:
 ############################################################
 
 # #################### SENSOR AND ACTUATOR FUNCTIONS ############################
+
 
 def get_colour_right():
     return colour_sensor_right.value()
@@ -530,7 +532,7 @@ def go_around_obstacle(direction, get_back_enabled):
                 get_back_to_line('LEFT')
 
                 speak("Carson please remove the obstacle in front of me. Thank you.")
-                while(is_front_obstacle()):
+                while is_front_obstacle():
                     stop_wheel_motor()
                     time.sleep(1)
 
@@ -559,18 +561,19 @@ def go_around_obstacle(direction, get_back_enabled):
         get_back_to_line(direction)
 
 
-
 def get_back_to_line(turning_direction):
     print("GET BACK TO LINE")
 
     if turning_direction == 'RIGHT':
         if is_left_line_detected():
+            # That means when it detect the line, it is not facing to the obstacle
             while not is_right_line_detected():
                 turn(0, 100, 100)
             while not is_left_line_detected():
                 turn(-100, 0, 100)
 
         elif is_right_line_detected():
+            # That means when it detect the line, it is facing to the obstacle
             while not is_left_line_detected():
                 turn(100, 0, 100)
             while not is_right_line_detected():
@@ -580,12 +583,14 @@ def get_back_to_line(turning_direction):
 
     else:
         if is_right_line_detected():
+            # That means when it detect the line, it is not facing to the obstacle
             while not is_left_line_detected():
                 turn(0, 100, 100)
             while not is_right_line_detected():
                 turn(-100, 0, 100)
 
         elif is_left_line_detected():
+            # That means when it detect the line, it is facing to the obstacle
             while not is_right_line_detected():
                 turn(100, 0, 100)
             while not is_left_line_detected():
@@ -593,38 +598,6 @@ def get_back_to_line(turning_direction):
 
         turn_left_ninety()
 
-    '''
-    if turning_direction == 'RIGHT':
-        if is_left_line_detected():
-            # That means when it detect the line, it is not facing to the obstacle
-            pass
-        else:
-            # That means when it detect the line, it is facing to the obstacle
-            while not is_left_line_detected():
-                turn(150, -100, 100)
-
-        while is_left_line_detected():
-            turn(100, 100, 100)
-        while not is_left_line_detected():
-            turn(150, -100, 100)
-        print("Find line again!")
-    else:
-        if is_right_line_detected():
-            # That means when it detect the line, it is not facing to the obstacle
-            pass
-
-        else:
-            # That means when it detect the line, it is facing to the obstacle
-            while not is_right_line_detected():
-                turn(-100, 150, 100)
-
-        while is_right_line_detected():
-            turn(100, 100, 100)
-        while not is_right_line_detected():
-            turn(-100, 150, 100)
-
-        print("Find line again!")
-    '''
 
 def wait_for_user_to_get_ready():
     print("Press left for single user and press right for double user...")
@@ -657,7 +630,7 @@ def go_to_closest_painting(painting, path):
         while True:
             # Sleeps if Stop
 
-            while(is_stop):
+            while is_stop:
                 stop_wheel_motor()
 
             base_speed = default_speed
@@ -680,7 +653,6 @@ def go_to_closest_painting(painting, path):
             oldR = curr_r
             global oldL
             oldL = curr_l
-
 
             if is_front_obstacle():
                 stop_wheel_motor()
@@ -724,7 +696,7 @@ def go_to_closest_painting(painting, path):
                 break
 
     if index == len(path):
-        #speak("This is " + art_pieces_map[painting])
+        # speak("This is " + art_pieces_map[painting])
         point_to_painting(painting)
         server.update_status_arrived(painting)  # tell the app the robot is arrived to this painting
         server.set_stop_true()
@@ -759,7 +731,7 @@ def go_to_toilet():
 
             # Sleeps if Stop
 
-            while (is_stop):
+            while is_stop:
                 stop_wheel_motor()
 
             base_speed = default_speed
@@ -822,7 +794,7 @@ def go_to_toilet():
                 break
 
     if index == len(path):
-        #speak("This is " + art_pieces_map[painting])
+        # speak("This is " + art_pieces_map[painting])
         point_to_painting(toilet_position)
         server.update_status_arrived('Toilet')  # tell the app the robot is arrived to this painting
         server.set_stop_true()
@@ -848,7 +820,6 @@ def go_to_exit():
         while is_branch_detected(colour_sensor_left.value(), colour_sensor_right.value()):
             move_forward(100, 100)
 
-
         print("Going to " + location)
         align_orientation(orientation_map[(robot_location, location)])
         # Follow line until reaching a painting OR a branch
@@ -856,7 +827,7 @@ def go_to_exit():
 
             # Sleeps if Stop
 
-            while (is_stop):
+            while is_stop:
                 stop_wheel_motor()
 
             base_speed = default_speed
@@ -900,7 +871,7 @@ def go_to_exit():
 
 ############################################################
 
-###################### POLLING FROM SERVER ########################
+# ##################### POLLING FROM SERVER ########################
 
 def check_stop_speed_thread():
     while True:
@@ -922,7 +893,7 @@ def check_stop_speed_thread():
             default_speed = 130
 
 
-##################### MAIN #################################
+# #################### MAIN #################################
 
 
 print("SensorHub have set up.")
@@ -949,7 +920,7 @@ oldL = colour_sensor_left.value()
 try:
     while True:
         print("\n\n\nWaiting for users...")
-        #wait_for_user_to_get_ready()
+        # wait_for_user_to_get_ready()
         server.start_up_single()
         print("Users are ready!")
         print("Current location is ", robot_location, ", facing ", robot_orientation)
@@ -978,8 +949,8 @@ try:
         server.set_stop_true()
         print("Finish program!")
         server.reset_list_on_server()
-        #terminate thread stop_thread
-        #exit()
+        # terminate thread stop_thread
+        # exit()
 
 
 except KeyboardInterrupt:
