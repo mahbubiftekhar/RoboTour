@@ -52,8 +52,8 @@ class FinishActivity : AppCompatActivity() {
                 closeApp = "CERRAR APP"
             }
             "Chinese" -> {
-                restartApp = "开始"
-                closeApp = "关闭APP"
+                restartApp = "重新开始"
+                closeApp = "关闭"
             }
             else -> {
                 restartApp = "START"
