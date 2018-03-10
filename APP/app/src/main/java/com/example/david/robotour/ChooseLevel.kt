@@ -32,7 +32,9 @@ class ChooseLevel : AppCompatActivity() {
     private lateinit var t: Thread
     private var error_control = ""
     private var error_listen = ""
-
+    private var userID = 0
+    private var controlProgress = false
+    private var listenProgress = false
     override fun onBackPressed() {
         checkerThread.interrupt()
         t.interrupt()
@@ -101,6 +103,7 @@ class ChooseLevel : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         language = intent.getStringExtra("language")
+        userID = loadInt("user")
         window.decorView.setBackgroundColor(Color.parseColor("#FFFFFF"))
         t = object : Thread() {
             /*This thread will check if the user has selected at least one picture, if they haven't then it will change the background
@@ -109,60 +112,95 @@ class ChooseLevel : AppCompatActivity() {
             override fun run() {
                 while (!Thread.currentThread().isInterrupted) {
                     try {
-                        if (!user1 && loadInt("user") == 1) {
-                            runOnUiThread {
-                                controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
-                            }
-                        } else if (user1 && loadInt("user") == 1) {
-                            //set background as grey
-                            runOnUiThread {
-                                controlButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
-                            }
-                        }
-
-                        if (!user2 && loadInt("user") == 2) {
-                            //set background as grey
-                            runOnUiThread {
-                                controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
-                            }
-                        } else if (user2 && loadInt("user") == 2) {
-                            //set background as grey
-                            runOnUiThread {
-                                controlButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
-                            }
-                        }
-
+                        //Control
                         if (twoUsers) {
-                            if (user1 && user2) {
-                                //set to green
+                            if (!user1 && loadInt("user") == 1) {
+                                println("++++1")
                                 runOnUiThread {
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                    controlProgress = true
+                                    controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                }
+                            } else if (loadInt("user") == 2 && !user2) {
+                                println("++++2")
+                                runOnUiThread {
+                                    controlProgress = false
+                                    controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
                                 }
                             } else {
+                                println("++++3")
                                 runOnUiThread {
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.androidsBackground))
+                                    controlProgress = false
+                                    controlButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
                                 }
                             }
                         } else {
-                            if (!user1 && !user2) {
+                            if (!user1 && loadInt("user") == 1) {
+                                println("++++4")
                                 runOnUiThread {
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.androidsBackground))
+                                    controlProgress = true
+                                    controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
                                 }
-                            } else if (user1 && !user2) {
+                            } else if (loadInt("user") == 2 && !user2) {
+                                println("++++5")
+                                runOnUiThread {
+                                    controlProgress = true
+                                    controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                }
+                            } else {
+                                println("++++6")
+                                runOnUiThread {
+                                    controlProgress = false
+                                    controlButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
+                                }
+                            }
+                        }
+                        //Listen
+                        if (twoUsers) {
+                            if (user1 && user2) {
+                                println("++++7")
                                 //set to green
                                 runOnUiThread {
+                                    listenProgress = true
                                     listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
                                 }
-                            } else if (user2 && !user1) {
-                                //Set to green
+                            } else if (userID == 1 && !user1) {
+                                println("++++8")
                                 runOnUiThread {
+                                    listenProgress = true
+                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                }
+                            } else if (userID == 2 && !user2) {
+                                println("++++9")
+                                runOnUiThread {
+                                    listenProgress = true
                                     listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
                                 }
                             } else {
+                                println("++++10")
                                 runOnUiThread {
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.androidsBackground))
+                                    listenProgress = false
+                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
                                 }
-
+                            }
+                        } else {
+                            if (userID == 1 && !user1) {
+                                println("++++11")
+                                runOnUiThread {
+                                    listenProgress = false
+                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
+                                }
+                            } else if (userID == 2 && !user2) {
+                                println("++++12")
+                                runOnUiThread {
+                                    listenProgress = false
+                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
+                                }
+                            } else {
+                                println("++++13")
+                                runOnUiThread {
+                                    listenProgress = true
+                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                }
                             }
                         }
                         Thread.sleep(100)
@@ -251,24 +289,7 @@ class ChooseLevel : AppCompatActivity() {
                     textSize = 20f
                     background = ColorDrawable(resources.getColor(R.color.androidsBackground))
                     onClick {
-                        if (twoUsers) {
-                            if (!user1 && loadInt("user") == 1) {
-                                t.interrupt()
-                                checkerThread.interrupt()
-                                startActivity<PicturesActivity>("language" to language)
-                            } else if (loadInt("user") == 2 && !user2) {
-                                t.interrupt()
-                                checkerThread.interrupt()
-                                startActivity<PicturesActivity>("language" to language)
-                            } else {
-                                toast(error_control)
-                            }
-                        } else {
-                            if (!user1 && loadInt("user") == 1 && !user2) {
-                                t.interrupt()
-                                checkerThread.interrupt()
-                                startActivity<PicturesActivity>("language" to language)
-                            } else if (loadInt("user") == 2 && !user2 && !user1) {
+                            if(controlProgress){
                                 t.interrupt()
                                 checkerThread.interrupt()
                                 startActivity<PicturesActivity>("language" to language)
@@ -276,7 +297,6 @@ class ChooseLevel : AppCompatActivity() {
                                 toast(error_control)
                             }
                         }
-                    }
                 }
             }
             verticalLayout {
@@ -291,30 +311,12 @@ class ChooseLevel : AppCompatActivity() {
                     textSize = 20f
                     background = ColorDrawable(Color.parseColor("#505050"))
                     onClick {
-                        if (twoUsers) {
-                            if (user1 && user2) {
+                             if(listenProgress){
                                 t.interrupt()
                                 checkerThread.interrupt()
                                 startActivity<ListenInActivity>("language" to language)
                             } else {
                                 toast(error_listen)
-                            }
-                        } else {
-                            when {
-                                (!user1 && !user2) -> {
-                                    toast(error_listen)
-                                }
-                                user1 -> {
-                                    t.interrupt()
-                                    checkerThread.interrupt()
-                                    startActivity<ListenInActivity>("language" to language)
-                                }
-                                user2 -> {
-                                    t.interrupt()
-                                    checkerThread.interrupt()
-                                    startActivity<ListenInActivity>("language" to language)
-                                }
-                                else -> toast(error_listen)
                             }
                         }
                     }
@@ -327,4 +329,3 @@ class ChooseLevel : AppCompatActivity() {
             t.start() /*Start to run the thread*/
         }
     }
-}
