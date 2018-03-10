@@ -1,11 +1,9 @@
 package com.example.david.robotour
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
-import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -46,6 +44,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var toiletDesc = ""
     private var changeSpeed = ""
     private var imageView: ImageView? = null
+    private var imageView2: ImageView? = null
     private var titleView: TextView? = null
     private var descriptionView: TextView? = null
     private var tts: TextToSpeech? = null
@@ -442,7 +441,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     typeface = Typeface.DEFAULT
                     padding = dip(10)
                 }
-                imageView = imageView {
+                imageView2 = imageView {
                     backgroundColor = Color.TRANSPARENT //Removes gray border
                     gravity = Gravity.CENTER_HORIZONTAL
                 }
@@ -491,8 +490,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         //Starting the thread which is defined above to keep polling the server for changes
-        pictureThread.start()
-        checkerThread.start()
+       // pictureThread.start()
     }
 
     private val pictureThread: Thread = object : Thread() {
@@ -510,7 +508,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 try {
                     //UI thread MUST be updates on the UI thread, other threads may not update the UI thread
                     runOnUiThread {
-                        imageView?.setImageResource(advertisements[a])
+                        imageView2?.setImageResource(advertisements[a])
                     }
                     Thread.sleep(3000)
                     a++
@@ -539,10 +537,8 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         override fun run() {
                             async {
                                 val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
-                                println("++++++++" + a)
                                 /*This updates the picture and text for the user*/
                                 val counter = (0..9).count { a[it] == 'F' }
-                                println("+++counter: $counter")
                                 if (counter == 10) {
                                     runOnUiThread {
                                         switchToFinnished()

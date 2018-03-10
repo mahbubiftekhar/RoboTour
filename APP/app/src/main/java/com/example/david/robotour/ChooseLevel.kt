@@ -63,11 +63,6 @@ class ChooseLevel : AppCompatActivity() {
         return sharedPreferences.getInt(key, 0)
     }
 
-    ////
-
-
-    ////
-
     private val checkerThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         @RequiresApi(Build.VERSION_CODES.O)
@@ -106,6 +101,73 @@ class ChooseLevel : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         language = intent.getStringExtra("language")
+        window.decorView.setBackgroundColor(Color.parseColor("#FFFFFF"))
+        t = object : Thread() {
+            /*This thread will check if the user has selected at least one picture, if they haven't then it will change the background
+            * colour of the start button to grey*/
+            @SuppressLint("PrivateResource")
+            override fun run() {
+                while (!Thread.currentThread().isInterrupted) {
+                    try {
+                        if (!user1 && loadInt("user") == 1) {
+                            runOnUiThread {
+                                controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                            }
+                        } else if (user1 && loadInt("user") == 1) {
+                            //set background as grey
+                            runOnUiThread {
+                                controlButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
+                            }
+                        }
+
+                        if (!user2 && loadInt("user") == 2) {
+                            //set background as grey
+                            runOnUiThread {
+                                controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                            }
+                        } else if (user2 && loadInt("user") == 2) {
+                            //set background as grey
+                            runOnUiThread {
+                                controlButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
+                            }
+                        }
+
+                        if (twoUsers) {
+                            if (user1 && user2) {
+                                //set to green
+                                runOnUiThread {
+                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                }
+                            } else {
+                                runOnUiThread {
+                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.androidsBackground))
+                                }
+                            }
+                        } else {
+                            if (user1 && !user2) {
+                                //set to green
+                                runOnUiThread {
+                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                }
+                            } else if (user2 && !user1) {
+                                //Set to green
+                                runOnUiThread {
+                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                }
+                            } else {
+                                runOnUiThread {
+                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.androidsBackground))
+                                }
+
+                            }
+                        }
+                        Thread.sleep(100)
+                    } catch (e: InterruptedException) {
+                        Thread.currentThread().interrupt()
+                    }
+                }
+            }
+        }
         val message: String = when (language) {
             "French" -> "Voulez-vous le contrôle ou préférez-vous simplement suivre la tournée?"
             "German" -> "Möchten Sie die Kontrolle haben oder möchten Sie lieber der Tour folgen?"
@@ -113,20 +175,20 @@ class ChooseLevel : AppCompatActivity() {
             "Chinese" -> "你想要控制吗，还是只想跟着游览？"
             else -> "Do you want control or would you prefer to just follow the tour?"
         }
-        when(language){
+        when (language) {
             "French" -> {
                 error_control = "RoboTour en tournée, veuillez patienter ou suivre le tour"
                 error_listen = "RoboTour n'est pas en tournée, veuillez sélectionner Control RoboTour"
             }
-            "German" ->{
+            "German" -> {
                 error_control = "RoboTour auf Tour, bitte warten oder Tour folgen"
                 error_listen = "RoboTour ist nicht auf Tour, bitte wählen Sie RoboTour steuern"
             }
-            "Spanish"->{
+            "Spanish" -> {
                 error_control = "RoboTour de gira, por favor espere o siga el recorrido"
                 error_listen = "RoboTour no gira, seleccione Control RoboTour"
             }
-            "Chinese"->{
+            "Chinese" -> {
                 error_control = "RoboTour巡演时，请等待或关注巡演"
                 error_listen = "RoboTour不参观，请选择Control RoboTour\n"
             }
@@ -161,72 +223,9 @@ class ChooseLevel : AppCompatActivity() {
                 listenIn = "Follow the tour"
             }
         }
-        t = object : Thread() {
-            /*This thread will check if the user has selected at least one picture, if they haven't then it will change the background
-            * colour of the start button to grey*/
-            @SuppressLint("PrivateResource")
-            override fun run() {
-                while (!Thread.currentThread().isInterrupted) {
-                    try {
-                        if (!user1 && loadInt("user") == 1) {
-                            runOnUiThread {
-                                controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
-                            }
-                        }else if (user1 && loadInt("user") == 1) {
-                            //set background as grey
-                            runOnUiThread {
-                                controlButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
-                            }
-                        }
-
-                        if (!user2 && loadInt("user") == 2) {
-                            //set background as grey
-                            runOnUiThread {
-                                controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
-                            }
-                        }else if (user2 && loadInt("user") == 2) {
-                            //set background as grey
-                            runOnUiThread {
-                                controlButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
-                            }
-                        }
-
-                        if (twoUsers) {
-                            if (user1 && user2) {
-                                //set to green
-                                runOnUiThread {
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
-                                }
-                            } else {
-                                runOnUiThread {
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.androidsBackground))
-                                }
-
-                            }
-                        } else {
-                            if (user1) {
-                                //set to green
-                                runOnUiThread {
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
-                                }
-                            } else {
-                                runOnUiThread {
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.androidsBackground))
-                                }
-
-                            }
-                        }
-                        Thread.sleep(100)
-                    } catch (e: InterruptedException) {
-                        Thread.currentThread().interrupt()
-                    }
-                }
-            }
-        }
-        t.start() /*Start to run the thread*/
         verticalLayout {
             imageView(R.drawable.robotour_small) {
-                backgroundColor = Color.TRANSPARENT //Removes gray border
+                background = ColorDrawable(resources.getColor(R.color.androidsBackground))
                 onClick {
                     val i = baseContext.packageManager
                             .getLaunchIntentForPackage(baseContext.packageName)
@@ -246,16 +245,34 @@ class ChooseLevel : AppCompatActivity() {
             verticalLayout {
                 controlButton = button(controlRoboTour) {
                     textSize = 20f
-                    background = ColorDrawable(Color.parseColor("#505050"))
+                    background = ColorDrawable(resources.getColor(R.color.androidsBackground))
                     onClick {
-                        if (!user1 && !user2) {
-                            t.interrupt()
-                            checkerThread.interrupt()
-                            startActivity<PicturesActivity>("language" to language)
-                        } else {
-                            toast(error_control)
+                        if (twoUsers) {
+                            if (!user1 && loadInt("user") == 1) {
+                                t.interrupt()
+                                checkerThread.interrupt()
+                                startActivity<PicturesActivity>("language" to language)
+                            } else if (loadInt("user") == 2 && !user2){
+                                t.interrupt()
+                                checkerThread.interrupt()
+                                startActivity<PicturesActivity>("language" to language)
+                            } else{
+                                toast(error_control)
+                            }
                         }
-
+                        else {
+                            if (!user1 && loadInt("user") == 1 && !user2) {
+                                t.interrupt()
+                                checkerThread.interrupt()
+                                startActivity<PicturesActivity>("language" to language)
+                            } else if (loadInt("user") == 2 && !user2 && !user1){
+                                t.interrupt()
+                                checkerThread.interrupt()
+                                startActivity<PicturesActivity>("language" to language)
+                            } else{
+                                toast(error_control)
+                            }
+                        }
                     }
                 }
             }
@@ -280,17 +297,24 @@ class ChooseLevel : AppCompatActivity() {
                                 toast(error_listen)
                             }
                         } else {
-                            if (user1) {
-                                t.interrupt()
-                                checkerThread.interrupt()
-                                startActivity<ListenInActivity>("language" to language)
-                            } else {
-                                toast(error_listen)
+                            when {
+                                user1 -> {
+                                    t.interrupt()
+                                    checkerThread.interrupt()
+                                    startActivity<ListenInActivity>("language" to language)
+                                }
+                                user2 -> {
+                                    t.interrupt()
+                                    checkerThread.interrupt()
+                                    startActivity<ListenInActivity>("language" to language)
+                                }
+                                else -> toast(error_listen)
                             }
                         }
                     }
                 }
             }
+            t.start() /*Start to run the thread*/
 
         }
     }
