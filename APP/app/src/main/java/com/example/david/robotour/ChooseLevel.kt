@@ -1,5 +1,6 @@
 package com.example.david.robotour
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -32,6 +33,7 @@ class ChooseLevel : AppCompatActivity() {
 
     override fun onBackPressed() {
         checkerThread.interrupt()
+        t.interrupt()
         super.onBackPressed()
     }
 
@@ -137,6 +139,7 @@ class ChooseLevel : AppCompatActivity() {
         t = object : Thread() {
             /*This thread will check if the user has selected at least one picture, if they haven't then it will change the background
             * colour of the start button to grey*/
+            @SuppressLint("PrivateResource")
             override fun run() {
                 while (!Thread.currentThread().isInterrupted) {
                     try {
@@ -144,10 +147,10 @@ class ChooseLevel : AppCompatActivity() {
                             runOnUiThread {
                                 controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
                             }
-                        }else if (user1 && loadInt("user") == 2) {
+                        }else if (user1 && loadInt("user") == 1) {
                             //set background as grey
                             runOnUiThread {
-                                controlButton?.background = ColorDrawable(resources.getColor(R.color.androidsBackground))
+                                controlButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
                             }
                         }
 
@@ -159,7 +162,7 @@ class ChooseLevel : AppCompatActivity() {
                         }else if (user2 && loadInt("user") == 2) {
                             //set background as grey
                             runOnUiThread {
-                                controlButton?.background = ColorDrawable(resources.getColor(R.color.androidsBackground))
+                                controlButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
                             }
                         }
 
