@@ -6,5 +6,5 @@
     <color name="mybackground">#FFFFFF</color>
     <color name="roboTourTeal">#24E8EA</color>
     <color name="highlighted">#42F462</color>
-    <color name="androidsBackground">#EEEEEE</color>
+    <color name="androidsBackground">#FFFF</color>
 </resources>

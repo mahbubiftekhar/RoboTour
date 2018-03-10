@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import org.jetbrains.anko.*
-import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.preference.PreferenceManager
@@ -16,7 +15,6 @@ import android.widget.Button
 import java.io.InterruptedIOException
 import java.net.URL
 import java.nio.channels.InterruptedByTimeoutException
-
 
 @Suppress("DEPRECATION")
 class ChooseLevel : AppCompatActivity() {
@@ -104,7 +102,6 @@ class ChooseLevel : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         language = intent.getStringExtra("language")
         userID = loadInt("user")
-        window.decorView.setBackgroundColor(Color.parseColor("#FFFFFF"))
         t = object : Thread() {
             /*This thread will check if the user has selected at least one picture, if they haven't then it will change the background
             * colour of the start button to grey*/
@@ -130,7 +127,7 @@ class ChooseLevel : AppCompatActivity() {
                                 println("++++3")
                                 runOnUiThread {
                                     controlProgress = false
-                                    controlButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
+                                    controlButton?.background = ColorDrawable(Color.parseColor("#505050"))
                                 }
                             }
                         } else {
@@ -150,7 +147,7 @@ class ChooseLevel : AppCompatActivity() {
                                 println("++++6")
                                 runOnUiThread {
                                     controlProgress = false
-                                    controlButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
+                                    controlButton?.background = ColorDrawable(Color.parseColor("#505050"))
                                 }
                             }
                         }
@@ -179,7 +176,7 @@ class ChooseLevel : AppCompatActivity() {
                                 println("++++10")
                                 runOnUiThread {
                                     listenProgress = false
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
+                                    listenButton?.background = ColorDrawable(Color.parseColor("#505050"))
                                 }
                             }
                         } else {
@@ -187,13 +184,13 @@ class ChooseLevel : AppCompatActivity() {
                                 println("++++11")
                                 runOnUiThread {
                                     listenProgress = false
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
+                                    listenButton?.background = ColorDrawable(Color.parseColor("#505050"))
                                 }
                             } else if (userID == 2 && !user2) {
                                 println("++++12")
                                 runOnUiThread {
                                     listenProgress = false
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.material_grey_100))
+                                    listenButton?.background = ColorDrawable(Color.parseColor("#505050"))
                                 }
                             } else {
                                 println("++++13")
@@ -268,12 +265,6 @@ class ChooseLevel : AppCompatActivity() {
         verticalLayout {
             imageView(R.drawable.robotour_small) {
                 background = ColorDrawable(resources.getColor(R.color.androidsBackground))
-                onClick {
-                    val i = baseContext.packageManager
-                            .getLaunchIntentForPackage(baseContext.packageName)
-                    i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(i)
-                }
             }
             textView {
                 textSize = 24f
@@ -289,21 +280,20 @@ class ChooseLevel : AppCompatActivity() {
                     textSize = 20f
                     background = ColorDrawable(resources.getColor(R.color.androidsBackground))
                     onClick {
-                            if(controlProgress){
-                                t.interrupt()
-                                checkerThread.interrupt()
-                                startActivity<PicturesActivity>("language" to language)
-                            } else {
-                                toast(error_control)
-                            }
+                        if (controlProgress) {
+                            t.interrupt()
+                            checkerThread.interrupt()
+                            startActivity<PicturesActivity>("language" to language)
+                        } else {
+                            toast(error_control)
                         }
+                    }
                 }
             }
             verticalLayout {
                 button {
-                    textSize = 20f
+                    textSize = 10f
                     background = ColorDrawable(Color.parseColor("#FFFFFF"))
-
                 }
             }
             verticalLayout {
@@ -311,21 +301,21 @@ class ChooseLevel : AppCompatActivity() {
                     textSize = 20f
                     background = ColorDrawable(Color.parseColor("#505050"))
                     onClick {
-                             if(listenProgress){
-                                t.interrupt()
-                                checkerThread.interrupt()
-                                startActivity<ListenInActivity>("language" to language)
-                            } else {
-                                toast(error_listen)
-                            }
+                        if (listenProgress) {
+                            t.interrupt()
+                            checkerThread.interrupt()
+                            startActivity<ListenInActivity>("language" to language)
+                        } else {
+                            toast(error_listen)
                         }
                     }
-                    onLongClick {
-                        startActivity<FinishActivity>("language" to intent.getStringExtra("language"))
-                        true
-                    }
+                }
+                onLongClick {
+                    startActivity<FinishActivity>("language" to intent.getStringExtra("language"))
+                    true
                 }
             }
-            t.start() /*Start to run the thread*/
         }
+        t.start() /*Start to run the thread*/
     }
+}

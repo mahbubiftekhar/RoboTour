@@ -198,6 +198,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         onInit(0)
+        checkerThread.start()
         super.onResume()
     }
 
@@ -226,9 +227,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         vibrate()
-
         //Obtain language from PicturesUI
         val language = intent.getStringExtra("language")
         when (language) {
@@ -629,7 +628,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         //Starting the thread which is defined above to keep polling the server for changes
-        checkerThread.start()
+        //checkerThread.start()
         speakOutButton(-1) // Speak "RoboTour is finding optimal route
     }
 
@@ -947,7 +946,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun exitDoor() {
         //This function will tell the robot to take the user to the exit
         if (isNetworkConnected()) {
-            sendPUTNEW(11,"F")
+            sendPUTNEW(11, "F")
             sendPUTNEW(15, "T")
         } else {
             toast("Check your network connection, command not sent")
@@ -994,7 +993,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             switchToFinnished()
             if (userid == "1") {
                 async {
-                    sendPUTNEW(11,"F")
+                    sendPUTNEW(11, "F")
                     val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
                     if (a[12] == '2' || a[17] == 'F') {
                         sendPUTNEW(12, "T")
@@ -1098,6 +1097,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             toast("Check your network connection, command not sent")
         }
     }
+
     private fun skip() {
         println("+++++user mode" + userTwoMode)
         if (userTwoMode) {

@@ -64,9 +64,8 @@ class PicturesAdapter(private val list: ArrayList<PicturesActivity.ArtPiece>, pr
         if (list[i].selected) {
             element.background = ColorDrawable(Color.parseColor("#42F462"))
         } else {
-            element.background = ColorDrawable(Color.parseColor("#EEEEEE"))
+            element.background = ColorDrawable(Color.parseColor("#FFFFFF"))
         }
-
         return element
     }
 

@@ -103,9 +103,9 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                                     async {
                                         sendList()
                                         if (loadInt("user").toString() == "1") {
-                                                sendPUTNEW(16, "T")
-                                        } else  {
-                                                sendPUTNEW(17, "T")
+                                            sendPUTNEW(16, "T")
+                                        } else {
+                                            sendPUTNEW(17, "T")
                                         }
                                     }
                                     async {
@@ -141,11 +141,13 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                 .filter { it.selected }
                 .forEach { sendPUTNEW(it.eV3ID, "T") }
     }
+
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
         return sharedPreferences.getInt(key, 0)
     }
+
     private fun sendPUTNEW(identifier: Int, command: String) {
         val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get

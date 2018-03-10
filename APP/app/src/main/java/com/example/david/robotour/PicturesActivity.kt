@@ -448,7 +448,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, null)
         tts2 = TextToSpeech(this, null)
         onInit(0)
-       // t.start() //Restart the thread that highlights the start button green
+        // t.start() //Restart the thread that highlights the start button green
         super.onResume()
     }
 
@@ -601,7 +601,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun askSpeechInput() {
-        /*val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         when (language) {
             "English" -> {
@@ -642,55 +642,13 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         try {
-            async {
-                searchedForPainting = true
-                startActivityForResult(intent, reqSpeechCode)
-            }
-        } catch (a: ActivityNotFoundException) {
-        } catch (e: java.lang.RuntimeException) {
-        } catch (e: java.lang.IllegalArgumentException) {
-        }*/
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        when (language) {
-            "English" -> {
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
-            }
-            "German" -> {
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.GERMAN)
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Nach welchen Kunstwerken suchst du?")
-            }
-            "Spanish" -> {
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "¿Qué piezas de arte estás buscando?")
-            }
-            "French" -> {
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.FRENCH)
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Quelles pièces d'art recherchez-vous?")
-            }
-            "Chinese" -> {
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.CHINESE)
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "你在找什么艺术品？")
-            }
-            "other" -> {
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
-            }
-            "else" -> {
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What art pieces are you looking for?")
-            }
-        }
-        try {
-            async {
-                searchedForPainting = true
-                startActivityForResult(intent, REQ_CODE_SPEECH_INPUT)
-            }
+            searchedForPainting = true
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT)
         } catch (a: ActivityNotFoundException) {
         } catch (e: java.lang.RuntimeException) {
         } catch (e: java.lang.IllegalArgumentException) {
         }
+
     }
 
     private fun afterAsyncSpeech(result: ArrayList<String>) {
