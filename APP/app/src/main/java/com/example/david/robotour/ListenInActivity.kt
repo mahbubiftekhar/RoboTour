@@ -490,7 +490,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         //Starting the thread which is defined above to keep polling the server for changes
-       // pictureThread.start()
+        // pictureThread.start()
     }
 
     private val pictureThread: Thread = object : Thread() {

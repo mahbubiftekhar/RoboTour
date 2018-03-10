@@ -117,4 +117,5 @@
     <string name="title_activity_choose_level">chooseLevel</string>
     <string name="reset_paintings">RESET PAINTINGS</string>
     <string name="start_robotour">START ROBOTOUR</string>
+    <string name="STOPROBOTOUR">STOP ROBOTOUR</string>
 </resources>

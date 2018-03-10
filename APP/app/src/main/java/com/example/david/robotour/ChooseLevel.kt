@@ -144,12 +144,11 @@ class ChooseLevel : AppCompatActivity() {
                                 }
                             }
                         } else {
-                            if (!user1 && !user2){
+                            if (!user1 && !user2) {
                                 runOnUiThread {
                                     listenButton?.background = ColorDrawable(resources.getColor(R.color.androidsBackground))
                                 }
-                            }
-                            else if (user1 && !user2) {
+                            } else if (user1 && !user2) {
                                 //set to green
                                 runOnUiThread {
                                     listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
@@ -257,24 +256,23 @@ class ChooseLevel : AppCompatActivity() {
                                 t.interrupt()
                                 checkerThread.interrupt()
                                 startActivity<PicturesActivity>("language" to language)
-                            } else if (loadInt("user") == 2 && !user2){
+                            } else if (loadInt("user") == 2 && !user2) {
                                 t.interrupt()
                                 checkerThread.interrupt()
                                 startActivity<PicturesActivity>("language" to language)
-                            } else{
+                            } else {
                                 toast(error_control)
                             }
-                        }
-                        else {
+                        } else {
                             if (!user1 && loadInt("user") == 1 && !user2) {
                                 t.interrupt()
                                 checkerThread.interrupt()
                                 startActivity<PicturesActivity>("language" to language)
-                            } else if (loadInt("user") == 2 && !user2 && !user1){
+                            } else if (loadInt("user") == 2 && !user2 && !user1) {
                                 t.interrupt()
                                 checkerThread.interrupt()
                                 startActivity<PicturesActivity>("language" to language)
-                            } else{
+                            } else {
                                 toast(error_control)
                             }
                         }
@@ -319,6 +317,10 @@ class ChooseLevel : AppCompatActivity() {
                                 else -> toast(error_listen)
                             }
                         }
+                    }
+                    onLongClick {
+                        startActivity<FinishActivity>("language" to intent.getStringExtra("language"))
+                        true
                     }
                 }
             }

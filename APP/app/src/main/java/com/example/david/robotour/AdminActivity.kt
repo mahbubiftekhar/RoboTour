@@ -222,7 +222,7 @@ class AdminActivity : AppCompatActivity() {
             }
             vibrate()
         }
-        RESET_PAINTINGS.setOnClickListener{
+        RESET_PAINTINGS.setOnClickListener {
             //Resets the paintings
             for (i in 0..9) {
                 async {
@@ -230,33 +230,33 @@ class AdminActivity : AppCompatActivity() {
                 }
             }
         }
-        CONTINUE.setOnClickListener{
+        CONTINUE.setOnClickListener {
             //Tells RoboTour to continue
             async {
-                sendPUTNEW(11, "T")
+                sendPUTNEW(11, "F")
             }
             vibrate()
         }
         SWITCH_USER.setOnClickListener {
             /*This will change the user, This is defaulted as 1, user two must be selected itself*/
             val a = loadInt("user")
-            when (a) {
-                0 -> {
-                    saveInt("user", 1)
-                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
-                    vibrate()
-                }
-                1 -> {
-                    saveInt("user", 2)
-                    Toast.makeText(applicationContext, "User 2 mode", Toast.LENGTH_LONG).show()
-                    vibrate()
-                }
-                else -> {
-                    saveInt("user", 1)
-                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
-                    vibrate()
-                }
-            }
+                    when (a) {
+                        0 -> {
+                            saveInt("user", 1)
+                            Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
+                            vibrate()
+                        }
+                        1 -> {
+                            saveInt("user", 2)
+                            Toast.makeText(applicationContext, "User 2 mode", Toast.LENGTH_LONG).show()
+                            vibrate()
+                        }
+                        else -> {
+                            saveInt("user", 1)
+                            Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
+                            vibrate()
+                        }
+                    }
         }
         async {
             //This languages the user thread to check for updates
