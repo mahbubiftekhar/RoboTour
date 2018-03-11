@@ -11,10 +11,19 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.preference.PreferenceManager
 import android.support.annotation.RequiresApi
+import android.support.v4.content.res.ResourcesCompat
 import android.widget.Button
+import org.apache.http.NameValuePair
+import org.apache.http.client.ClientProtocolException
+import org.apache.http.client.entity.UrlEncodedFormEntity
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.message.BasicNameValuePair
+import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.URL
 import java.nio.channels.InterruptedByTimeoutException
+import java.util.ArrayList
 
 @Suppress("DEPRECATION")
 class ChooseLevel : AppCompatActivity() {
@@ -33,10 +42,36 @@ class ChooseLevel : AppCompatActivity() {
     private var userID = 0
     private var controlProgress = false
     private var listenProgress = false
+
     override fun onBackPressed() {
+        async {
+            val a = loadInt("user")
+            when (a) {
+                1 -> sendPUTNEW(16, "F")
+                2 -> sendPUTNEW(17, "F")
+                else -> {
+                    //Do nothing
+                }
+            }
+        }
         checkerThread.interrupt()
         t.interrupt()
         super.onBackPressed()
+    }
+    private fun sendPUTNEW(identifier: Int, command: String) {
+        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
+        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
+        * as security exception - just a heads up */
+        val httpclient = DefaultHttpClient()
+        val httPpost = HttpPost(url)
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
+            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
+            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+            httpclient.execute(httPpost)
+        } catch (e: ClientProtocolException) {
+        } catch (e: IOException) {
+        }
     }
 
     override fun onResume() {
@@ -75,9 +110,13 @@ class ChooseLevel : AppCompatActivity() {
                         uiThread {
                             if (a[16] == 'T') {
                                 user1 = true
+                            } else if (a[16] == 'O') {
+                                user1 = false
                             }
                             if (a[17] == 'T') {
                                 user2 = true
+                            } else if (a[17] == 'O') {
+                                user2 = false
                             }
                             if ("T" == b) {
                                 twoUsers = true
@@ -115,19 +154,19 @@ class ChooseLevel : AppCompatActivity() {
                                 println("++++1")
                                 runOnUiThread {
                                     controlProgress = true
-                                    controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
                                 }
                             } else if (loadInt("user") == 2 && !user2) {
                                 println("++++2")
                                 runOnUiThread {
                                     controlProgress = false
-                                    controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
                                 }
                             } else {
                                 println("++++3")
                                 runOnUiThread {
                                     controlProgress = false
-                                    controlButton?.background = ColorDrawable(Color.parseColor("#A9A9A9"))
+                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
                                 }
                             }
                         } else {
@@ -135,19 +174,19 @@ class ChooseLevel : AppCompatActivity() {
                                 println("++++4")
                                 runOnUiThread {
                                     controlProgress = true
-                                    controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
                                 }
                             } else if (loadInt("user") == 2 && !user2) {
                                 println("++++5")
                                 runOnUiThread {
                                     controlProgress = true
-                                    controlButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
                                 }
                             } else {
                                 println("++++6")
                                 runOnUiThread {
                                     controlProgress = false
-                                    controlButton?.background = ColorDrawable(Color.parseColor("#A9A9A9"))
+                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
                                 }
                             }
                         }
@@ -158,25 +197,25 @@ class ChooseLevel : AppCompatActivity() {
                                 //set to green
                                 runOnUiThread {
                                     listenProgress = true
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
                                 }
                             } else if (userID == 1 && !user1) {
                                 println("++++8")
                                 runOnUiThread {
                                     listenProgress = true
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
                                 }
                             } else if (userID == 2 && !user2) {
                                 println("++++9")
                                 runOnUiThread {
                                     listenProgress = true
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
                                 }
                             } else {
                                 println("++++10")
                                 runOnUiThread {
                                     listenProgress = false
-                                    listenButton?.background = ColorDrawable(Color.parseColor("#A9A9A9"))
+                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
                                 }
                             }
                         } else {
@@ -184,19 +223,19 @@ class ChooseLevel : AppCompatActivity() {
                                 println("++++11")
                                 runOnUiThread {
                                     listenProgress = false
-                                    listenButton?.background = ColorDrawable(Color.parseColor("#A9A9A9"))
+                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
                                 }
                             } else if (userID == 2 && !user2) {
                                 println("++++12")
                                 runOnUiThread {
                                     listenProgress = false
-                                    listenButton?.background = ColorDrawable(Color.parseColor("#A9A9A9"))
+                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
                                 }
                             } else {
                                 println("++++13")
                                 runOnUiThread {
                                     listenProgress = true
-                                    listenButton?.background = ColorDrawable(resources.getColor(R.color.highlighted))
+                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
                                 }
                             }
                         }

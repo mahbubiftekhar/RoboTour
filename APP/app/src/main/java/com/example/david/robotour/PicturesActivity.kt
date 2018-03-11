@@ -11,6 +11,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
+import android.preference.PreferenceManager
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
@@ -19,6 +20,13 @@ import android.view.inputmethod.InputMethodManager
 import com.google.cloud.translate.Translate
 import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
+import org.apache.http.NameValuePair
+import org.apache.http.client.ClientProtocolException
+import org.apache.http.client.entity.UrlEncodedFormEntity
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.message.BasicNameValuePair
+import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -576,10 +584,30 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             val count = allArtPieces.count { it.selected }
             if (count == 0) {
                 /*If the user has not made any selections, let them press back no questions asked*/
+                async {
+                    val a = loadInt("user")
+                    when (a) {
+                        1 -> sendPUTNEW(16, "F")
+                        2 -> sendPUTNEW(17, "F")
+                        else -> {
+                            //Do nothing
+                        }
+                    }
+                }
                 super.onBackPressed()
             } else {
                 alert("Are you sure you want to leave? Your selection will be lost") {
                     positiveButton {
+                        async {
+                            val a = loadInt("user")
+                            when (a) {
+                                1 -> sendPUTNEW(16, "F")
+                                2 -> sendPUTNEW(17, "F")
+                                else -> {
+                                    //Do nothing
+                                }
+                            }
+                        }
                         t.interrupt() //Stops the thread
                         async {
                             clearFindViewByIdCache()
@@ -598,6 +626,28 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun switchToMain() {
         startActivity<MainActivity>()
+    }
+
+    private fun loadInt(key: String): Int {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        return sharedPreferences.getInt(key, 0)
+    }
+
+    private fun sendPUTNEW(identifier: Int, command: String) {
+        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
+        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
+        * as security exception - just a heads up */
+        val httpclient = DefaultHttpClient()
+        val httPpost = HttpPost(url)
+        try {
+            val nameValuePairs = java.util.ArrayList<NameValuePair>(4)
+            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
+            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+            httpclient.execute(httPpost)
+        } catch (e: ClientProtocolException) {
+        } catch (e: IOException) {
+        }
     }
 
     private fun askSpeechInput() {

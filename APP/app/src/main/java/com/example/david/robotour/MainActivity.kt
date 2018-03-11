@@ -10,12 +10,20 @@ import org.jetbrains.anko.*
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Build
+import android.preference.PreferenceManager
 import android.support.annotation.RequiresApi
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.Toast
 import kotlinx.android.synthetic.*
+import org.apache.http.NameValuePair
+import org.apache.http.client.ClientProtocolException
+import org.apache.http.client.entity.UrlEncodedFormEntity
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.message.BasicNameValuePair
+import java.io.IOException
 import java.io.InterruptedIOException
 import java.nio.channels.InterruptedByTimeoutException
 
@@ -45,6 +53,12 @@ class MainActivity : AppCompatActivity() {
         return networkInfo != null && networkInfo.isConnected
     }
 
+    private fun loadInt(key: String): Int {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        return sharedPreferences.getInt(key, 0)
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +77,16 @@ class MainActivity : AppCompatActivity() {
                         continueThread = false
                         interuptPicturesThread()
                         pictureThread.interrupt()
+                        async {
+                            val a = loadInt("user")
+                            when (a) {
+                                1 -> sendPUTNEW(16, "O")
+                                2 -> sendPUTNEW(17, "O")
+                                else -> {
+                                    //Do nothing
+                                }
+                            }
+                        }
                         startActivity<SelectLanguageActivity>()
                     } else {
                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
@@ -90,6 +114,22 @@ class MainActivity : AppCompatActivity() {
         advertisements.add(R.drawable.gift_shop)
         pictureThread.start()
         super.onResume()
+    }
+
+    private fun sendPUTNEW(identifier: Int, command: String) {
+        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
+        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
+        * as security exception - just a heads up */
+        val httpclient = DefaultHttpClient()
+        val httPpost = HttpPost(url)
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
+            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
+            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+            httpclient.execute(httPpost)
+        } catch (e: ClientProtocolException) {
+        } catch (e: IOException) {
+        }
     }
 
     override fun onStop() {
