@@ -11,6 +11,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
+import android.preference.PreferenceManager
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
@@ -19,115 +20,61 @@ import android.view.inputmethod.InputMethodManager
 import com.google.cloud.translate.Translate
 import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
+import org.apache.http.NameValuePair
+import org.apache.http.client.ClientProtocolException
+import org.apache.http.client.entity.UrlEncodedFormEntity
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.message.BasicNameValuePair
+import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
-
 
 val allArtPieces = ArrayList<PicturesActivity.ArtPiece>()
 
 @Suppress("DEPRECATION")
-class PicturesActivity : AppCompatActivity() {
+class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     data class ArtPiece(val name: String, val artist: String, val nameChinese: String, val nameGerman: String, val nameSpanish: String, val nameFrench: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int, var selected: Boolean)
 
     private var shownArtPieces = ArrayList<ArtPiece>()
-    private val reqSpeechCode = 100
+    private val REQ_CODE_SPEECH_INPUT = 100
     private var queriedArtPieces = ArrayList<ArtPiece>()
     private var searchedForPainting = false //true if we've searched for a painting
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     lateinit var t: Thread
     private var language = ""
-    private var ttsRecommendations: TextToSpeech? = null
-    private var ttsResults: TextToSpeech? = null
+    private var tts: TextToSpeech? = null
+    private var tts2: TextToSpeech? = null
+    private var search = ""
+    private var cancel = ""
 
-    private fun translate(textToTranslate: List<String>): MutableList<String> {
-        /*This function takes a list and returns a list of translated text using Google's API
-        * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
-        * network on main thread exception */
-        val translated: MutableList<String> = mutableListOf()
-        val apiKey = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finnished
-        for (i in textToTranslate) {
-            val options = TranslateOptions.newBuilder().setApiKey(apiKey).build()
-            val translate = options.service
-            val translation = translate.translate(i, Translate.TranslateOption.targetLanguage("en"))
-            translated.add(translation.translatedText)
-        }
-        return translated
-    }
-
-    override fun onDestroy() {
+    public override fun onDestroy() {
         // Shutdown TTS
-        if (ttsRecommendations != null) {
-            ttsRecommendations!!.stop()
-            ttsRecommendations!!.shutdown()
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
         }
-        if (ttsResults != null) {
-            ttsResults!!.stop()
-            ttsResults!!.shutdown()
+        if (tts2 != null) {
+            tts2!!.stop()
+            tts2!!.shutdown()
         }
 
         super.onDestroy()
     }
 
-    override fun onStop() {
-        if (ttsRecommendations != null) {
-            ttsRecommendations!!.stop()
-            ttsRecommendations!!.shutdown()
+    public override fun onStop() {
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
         }
-        if (ttsResults != null) {
-            ttsResults!!.stop()
-            ttsResults!!.shutdown()
+        if (tts2 != null) {
+            tts2!!.stop()
+            tts2!!.shutdown()
+
         }
-        t.interrupt()
         t.interrupt()
         super.onStop()
-    }
-
-    private fun onInit() {
-        val language = intent.getStringExtra("language")
-        var result: Int
-        when (language) {
-            "French" -> {
-                result = ttsRecommendations!!.setLanguage(Locale.FRENCH)
-            }
-            "Chinese" -> {
-                result = ttsRecommendations!!.setLanguage(Locale.CHINESE)
-            }
-            "Spanish" -> {
-                val spanish = Locale("es", "ES")
-                result = ttsRecommendations!!.setLanguage(spanish)
-            }
-            "German" -> {
-                result = ttsRecommendations!!.setLanguage(Locale.GERMAN)
-            }
-            else -> {
-                result = ttsRecommendations!!.setLanguage(Locale.UK)
-            }
-        }
-        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-        } else {
-        }
-        when (language) {
-            "French" -> {
-                result = ttsResults!!.setLanguage(Locale.FRENCH)
-            }
-            "Chinese" -> {
-                result = ttsResults!!.setLanguage(Locale.CHINESE)
-            }
-            "Spanish" -> {
-                val spanish = Locale("es", "ES")
-                result = ttsResults!!.setLanguage(spanish)
-            }
-            "German" -> {
-                result = ttsResults!!.setLanguage(Locale.GERMAN)
-            }
-            else -> {
-                result = ttsResults!!.setLanguage(Locale.UK)
-            }
-        }
-        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-        } else {
-        }
     }
 
     private fun speakOutnew() {
@@ -153,7 +100,7 @@ class PicturesActivity : AppCompatActivity() {
                 }
             }
             longToast(text)
-            ttsRecommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
 
@@ -180,7 +127,7 @@ class PicturesActivity : AppCompatActivity() {
                 }
             }
             longToast(text)
-            ttsRecommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
 
@@ -207,8 +154,23 @@ class PicturesActivity : AppCompatActivity() {
                 }
             }
             longToast(text)
-            ttsRecommendations!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
+    }
+
+    private fun translate(textToTranslate: List<String>): MutableList<String> {
+        /*This function takes a list and returns a list of translated text using Google's API
+        * This function MUST be called ASYNCHRONOUSLY, if it is not you will crash the activity with a
+        * network on main thread exception */
+        val translated: MutableList<String> = mutableListOf()
+        val apiKey = "AIzaSyCYryDwlXkmbUfHZS5HLJIIoGoO8Yy5yGw" //My API key, MUST be removed after course finished
+        for (i in textToTranslate) {
+            val options = TranslateOptions.newBuilder().setApiKey(apiKey).build()
+            val translate = options.service
+            val translation = translate.translate(i, Translate.TranslateOption.targetLanguage("en"))
+            translated.add(translation.translatedText)
+        }
+        return translated
     }
 
     private fun translateText(textToTranslate: String): String? {
@@ -224,14 +186,14 @@ class PicturesActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         allArtPieces.clear()
-        ttsRecommendations = TextToSpeech(this, null)
-        ttsResults = TextToSpeech(this, null)
-        onInit()
+        val language = intent.getStringExtra("language")
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
+        tts2 = TextToSpeech(this, null)
+        tts = TextToSpeech(this, null)
+        onInit(0)
+
         //Obtain language from SelectLanguageActivity
-        language = intent.getStringExtra("language")
         when (language) {
             "English" -> supportActionBar?.title = "Select Picture"
             "German" -> supportActionBar?.title = "Wähle ein Bild"
@@ -240,6 +202,48 @@ class PicturesActivity : AppCompatActivity() {
             "Chinese" -> supportActionBar?.title = "选择图片"
             "other" -> supportActionBar?.title = "Select Picture"
             "else" -> supportActionBar?.title = "Select Picture"
+        }
+        when (language) {
+            "English" -> {
+                title = "Please enter painting you wish to go to"
+                search = "Search"
+                cancel = "Cancel"
+            }
+            "German" -> {
+                title = "Bitte geben Sie ein Gemälde ein, zu dem Sie gehen möchten"
+                search = "Suche"
+                cancel = "Stornieren"
+            }
+            "Spanish" -> {
+                title = "Por favor, ingrese la pintura a la que desea ir"
+                search = "buscar"
+                cancel = "Cancelar"
+
+            }
+            "French" -> {
+                title = "S'il vous plaît entrer la peinture que vous souhaitez aller à"
+                search = "chercher"
+                cancel = "Annuler"
+
+            }
+            "Chinese" -> {
+                title = "请输入您想要去看的作品"
+                search = "搜索"
+                cancel = "取消"
+
+            }
+            "other" -> {
+                title = "Please enter painting you wish to go to"
+                search = "Search"
+                cancel = "Cancel"
+
+            }
+            "else" -> {
+                title = "Please enter painting you wish to go to"
+                search = "Search"
+                cancel = "Cancel"
+
+            }
         }
 
         //Populate List
@@ -341,7 +345,6 @@ class PicturesActivity : AppCompatActivity() {
                             runOnUiThread { ui.navigateButton.background = ColorDrawable(Color.parseColor("#24E8EA")) }
                         } else {
                             runOnUiThread { ui.navigateButton.background = ColorDrawable(Color.parseColor("#505050")) }
-
                         }
                         Thread.sleep(100)
                     } catch (e: InterruptedException) {
@@ -353,12 +356,72 @@ class PicturesActivity : AppCompatActivity() {
         t.start() /*Start to run the thread*/
     }
 
+    override fun onInit(p0: Int) {
+        if (p0 == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+
+        }
+        if (p0 == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts2!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts2!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts2!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts2!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts2!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+
+        }
+    }
+
     private fun getNewest() {
         /*This will return the newest painting*/
         val recommended = listOf(allArtPieces[0], allArtPieces[5], allArtPieces[8])
         recommended
                 .filterNot { queriedArtPieces.contains(it) }
                 .forEach { queriedArtPieces.add(it) }
+        onInit(0)
         speakOutnew()
     }
 
@@ -368,6 +431,7 @@ class PicturesActivity : AppCompatActivity() {
         recommended
                 .filterNot { queriedArtPieces.contains(it) }
                 .forEach { queriedArtPieces.add(it) }
+        onInit(0)
         speakOutrecommendations()
     }
 
@@ -377,6 +441,7 @@ class PicturesActivity : AppCompatActivity() {
         recommended
                 .filterNot { queriedArtPieces.contains(it) }
                 .forEach { queriedArtPieces.add(it) }
+        onInit(0)
         speakOutPopular()
     }
 
@@ -388,9 +453,10 @@ class PicturesActivity : AppCompatActivity() {
 
     override fun onResume() {
         //This ensures that when the Pictures activity is minimized and reloaded up, the speech still works
-        ttsRecommendations = TextToSpeech(this, null)
-        ttsResults = TextToSpeech(this, null)
-        onInit()
+        tts = TextToSpeech(this, null)
+        tts2 = TextToSpeech(this, null)
+        onInit(0)
+        // t.start() //Restart the thread that highlights the start button green
         super.onResume()
     }
 
@@ -405,40 +471,45 @@ class PicturesActivity : AppCompatActivity() {
                 alert {
                     //Force Keyboard to open
                     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    var search = ""
                     when (language) {
                         "English" -> {
                             title = "Please enter painting you wish to go to"
                             search = "Search"
+                            cancel = "Cancel"
                         }
                         "German" -> {
                             title = "Bitte geben Sie ein Gemälde ein, zu dem Sie gehen möchten"
                             search = "Suche"
-
+                            cancel = "Stornieren"
                         }
                         "Spanish" -> {
                             title = "Por favor, ingrese la pintura a la que desea ir"
                             search = "buscar"
+                            cancel = "Cancelar"
 
                         }
                         "French" -> {
                             title = "S'il vous plaît entrer la peinture que vous souhaitez aller à"
                             search = "chercher"
+                            cancel = "Annuler"
 
                         }
                         "Chinese" -> {
                             title = "请输入您想要去看的作品"
                             search = "搜索"
+                            cancel = "取消"
 
                         }
                         "other" -> {
                             title = "Please enter painting you wish to go to"
                             search = "Search"
+                            cancel = "Cancel"
 
                         }
                         "else" -> {
                             title = "Please enter painting you wish to go to"
                             search = "Search"
+                            cancel = "Cancel"
 
                         }
                     }
@@ -464,7 +535,7 @@ class PicturesActivity : AppCompatActivity() {
                                 }
                             }
                         }
-                        negativeButton("Cancel") {
+                        negativeButton(cancel) {
                             //Hide keyboard
                             imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
                         }
@@ -542,39 +613,50 @@ class PicturesActivity : AppCompatActivity() {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         when (language) {
             "English" -> {
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What are piecs are you looking for??")
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What Art Pieces Are You Looking For?")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, Locale.getDefault())
             }
             "German" -> {
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "de-DE")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "de-DE")
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "de-DE")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Nach Welchen Kunstwerken Suchst Du?")
             }
             "Spanish" -> {
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "es-ES")
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "es-ES")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "¿Qué Piezas de Arte Estás Buscando?")
             }
             "French" -> {
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "fr-FR")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "fr-FR")
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "fr-FR")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Quelles Pièces d'Art Recherchez-vous?")
             }
             "Chinese" -> {
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "cmn-Hans-CN")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "cmn-Hans-CN")
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "cmn-Hans-CN")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "你在找什么艺术品？")
             }
             "else" -> {
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, Locale.getDefault())
+                intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, Locale.getDefault())
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What Art Pieces Are You Looking For?")
             }
         }
         try {
-            async {
-                searchedForPainting = true
-                startActivityForResult(intent, reqSpeechCode)
-            }
+            searchedForPainting = true
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT)
         } catch (a: ActivityNotFoundException) {
         } catch (e: java.lang.RuntimeException) {
         } catch (e: java.lang.IllegalArgumentException) {
         }
+
     }
 
     private fun afterAsyncSpeech(result: ArrayList<String>) {
@@ -661,14 +743,14 @@ class PicturesActivity : AppCompatActivity() {
         if (resultCode != RESULT_CANCELED && requestCode != RESULT_CANCELED) {
             if (data != null) {
                 when (requestCode) {
-                    reqSpeechCode -> {
+                    REQ_CODE_SPEECH_INPUT -> {
                         if (resultCode == RESULT_OK) {
                             var result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                             if (language == "English") {
                                 afterAsyncSpeech(result)
                                 //If the language is english, continue no problemo
                             } else {
-                                //If language is not english or other, we run the translator
+                                //If language is not english or other, we  run the translator
                                 async {
                                     println("+++ Original Text: " + result)
                                     result = translate(result) as ArrayList<String>?

@@ -6,12 +6,15 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.net.ConnectivityManager
-import android.os.*
-import android.support.v7.app.AppCompatActivity
+import android.os.Build
+import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.speech.tts.TextToSpeech
 import android.support.annotation.RequiresApi
 import android.support.v4.content.res.ResourcesCompat
+import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.Button
@@ -68,6 +71,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var toiletPopUpBool = true
     private var speaking = -1
     private var killThread = false
+    private var userTwoMode = false
+
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -109,6 +114,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         super.onStop()
     }
 
+    @RequiresApi(Build.VERSION_CODES.DONUT)
     override fun onInit(status: Int) {
         println("status code: $status")
         if (status == TextToSpeech.SUCCESS) {
@@ -175,11 +181,24 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
     }
 
+    override fun onPause() {
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
+        }
+        if (tts2 != null) {
+            tts2!!.stop()
+            tts2!!.shutdown()
+        }
+        super.onPause()
+    }
+
     override fun onResume() {
         //This ensures that when the nav activity is minimized and reloaded up, the speech still works
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         onInit(0)
+        checkerThread.start()
         super.onResume()
     }
 
@@ -195,7 +214,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         checkerThread.interrupt()
         clearFindViewByIdCache()
-        startActivity<FinishActivity>()
+        startActivity<FinishActivity>("language" to intent.getStringExtra("language"))
 
     }
 
@@ -208,20 +227,18 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         vibrate()
-
         //Obtain language from PicturesUI
         val language = intent.getStringExtra("language")
         when (language) {
             "English" -> {
                 positive = "Yes"
                 negative = "No"
-                skip = "Skip Painting"
+                skip = "SKIP"
                 skipDesc = "Are you sure you want to skip to the next painting?"
-                stop = "Stop RoboTour"
+                stop = "STOP"
                 stopDesc = "Are you sure you want to stop RoboTour?"
-                start = "Start RoboTour"
+                start = "CONTINUE"
                 startDesc = "Do you want to start RoboTour?"
                 cancelTour = "Cancel tour"
                 cancelDesc = "Are you sure you want to cancel the tour?"
@@ -309,11 +326,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 startRoboTour = "Press start when you are ready for RoboTour to resume"
                 positive = "Yes"
                 negative = "No"
-                skip = "Skip Painting"
+                skip = "SKIP"
                 skipDesc = "Are you sure you want to skip to the next painting?"
-                stop = "Stop RoboTour"
+                stop = "STOP"
                 stopDesc = "Are you sure you want to stop RoboTour?"
-                start = "Start RoboTour"
+                start = "CONTINUE"
                 startDesc = "Do you want to start RoboTour?"
                 cancelTour = "Cancel tour"
                 cancelDesc = "Are you sure you want to cancel the tour?"
@@ -334,7 +351,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                 //Text-to-speech
                 onClick {
-                    println("&&& clicked")
                     speakOutButton(currentPic)
                 }
             }
@@ -370,21 +386,18 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 height = dip(btnHgt)
                                 width = wrapContent
                                 onClick {
-                                    alert(skipDesc) {
-                                        positiveButton(positive) {
-                                            if (isNetworkConnected()) {
-                                                async {
-                                                    skip()
-                                                }
-                                            } else {
-                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                    if (isNetworkConnected()) {
+                                        alert(skipDesc) {
+                                            positiveButton(positive) {
+                                                skip()
                                             }
-
-                                        }
-                                        negativeButton(negative) {
-                                            //Do nothing the user changed their minds
-                                        }
-                                    }.show()
+                                            negativeButton(negative) {
+                                                //Do nothing the user changed their minds
+                                            }
+                                        }.show()
+                                    } else {
+                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                    }
                                 }
                             }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
                             stopButton = button(stop) {
@@ -393,32 +406,29 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 height = dip(btnHgt)
                                 width = wrapContent
                                 onClick {
-                                    alertStBtn = if (toggleStBtn) {
-                                        startDesc
-                                    } else {
-                                        stopDesc
-                                    }
-                                    alert(alertStBtn) {
-                                        positiveButton(positive) {
-                                            if (isNetworkConnected()) {
-                                                if (!toggleStBtn) {
-                                                    text = stop
-                                                    async {
-                                                        stopRoboTour() /*This function will call for RoboTour to be stopped*/
-                                                    }
-                                                } else {
-                                                    text = start
-                                                    async {
-                                                        startRoboTour()
-                                                    }
-                                                }
-                                                toggleStBtn = !toggleStBtn
-                                            } else {
-                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                            }
+                                    if (isNetworkConnected()) {
+                                        alertStBtn = if (toggleStBtn) {
+                                            startDesc
+                                        } else {
+                                            stopDesc
                                         }
-                                        negativeButton(negative) { }
-                                    }.show()
+                                        if (isNetworkConnected()) {
+                                            if (!toggleStBtn) {
+                                                text = stop
+                                                async {
+                                                    stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                                }
+                                            } else {
+                                                text = start
+                                                async {
+                                                    startRoboTour()
+                                                }
+                                            }
+                                            toggleStBtn = !toggleStBtn
+                                        } else {
+                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                        }
+                                    }
                                 }
                             }.lparams { rightMargin = 2 }
                         }.lparams { bottomMargin = dip(8) }
@@ -429,22 +439,21 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 height = dip(btnHgt)
                                 width = matchParent
                                 onClick {
-                                    alert(cancelDesc) {
-                                        positiveButton(positive) {
-                                            if (isNetworkConnected()) {
-                                                async {
-                                                    cancelGuideTotal()
-                                                }
-                                            } else {
-                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                            }
+                                    if (isNetworkConnected()) {
+                                        alert(cancelDesc) {
+                                            positiveButton(positive) {
+                                                checkerThread.interrupt()
+                                                cancelGuideTotal()
 
-                                        }
-                                        negativeButton(negative) {
-                                            onBackPressed()
-                                            //Call on back pressed to take them back to the main activity
-                                        }
-                                    }.show()
+                                            }
+                                            negativeButton(negative) {
+                                                onBackPressed()
+                                                //Call on back pressed to take them back to the main activity
+                                            }
+                                        }.show()
+                                    } else {
+                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                    }
                                 }
                             }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
                             button(changeSpeed) {
@@ -487,9 +496,25 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                     }
                                                     selector(selectSpeed, options) { j ->
                                                         when (j) {
-                                                            0 -> toast(options[0])
-                                                            1 -> toast(options[1])
-                                                            else -> toast(options[2])
+                                                            0 -> {
+                                                                async {
+                                                                    sendSpeed(1)
+                                                                }
+                                                                toast(options[0])
+
+                                                            }
+                                                            1 -> {
+                                                                async {
+                                                                    sendSpeed(2)
+                                                                }
+                                                                toast(options[1])
+                                                            }
+                                                            else -> {
+                                                                async {
+                                                                    sendSpeed(3)
+                                                                }
+                                                                toast(options[2])
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -527,19 +552,31 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 height = dip(btnHgt)
                                 width = matchParent
                                 onClick {
-                                    alert(exitDesc) {
-                                        positiveButton(positive) {
-                                            if (isNetworkConnected()) {
+                                    if (isNetworkConnected()) {
+                                        alert(exitDesc) {
+                                            positiveButton(positive) {
                                                 async {
                                                     exitDoor()
                                                 }
-                                            } else {
-                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                            }
+                                                async {
+                                                    var a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                                                    if (a == "1") {
+                                                        sendPUTNEW(12, "T")
+                                                    }
+                                                    a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                                                    if (a[16] == 'T' && a[17] == 'T') {
+                                                        sendPUTNEW(12, "T")
+                                                    }
 
-                                        }
-                                        negativeButton(negative) { }
-                                    }.show()
+                                                }
+                                            }
+                                            negativeButton(negative) { }
+                                        }.show()
+                                    } else {
+                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+
+                                    }
+
                                 }
                             }.lparams { rightMargin = 2 }
                         }.lparams { bottomMargin = dip(15) }
@@ -549,25 +586,59 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         when (language) {
-            "English" -> titleView?.text = "RoboTour calculating optimal route..."
-            "German" -> titleView?.text = "RoboTour berechnet optimale Route ..."
-            "Spanish" -> titleView?.text = "RoboTour calcula la ruta óptima ..."
-            "French" -> titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
-            "Chinese" -> titleView?.text = "萝卜途正在计算最佳路线..."
-            "other" -> titleView?.text = "RoboTour calculating optimal route..."
-            "else" -> titleView?.text = "RoboTour calculating optimal route..."
+            "English" -> {
+                titleView?.text = "RoboTour calculating optimal route..."
+                descriptionView?.text = "RoboTour calculating optimal route..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+            }
+            "German" -> {
+                titleView?.text = "RoboTour berechnet optimale Route ..."
+                descriptionView?.text = "RoboTour berechnet optimale Route ..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+            }
+            "Spanish" -> {
+                titleView?.text = "RoboTour calcula la ruta óptima ..."
+                descriptionView?.text = "RoboTour calcula la ruta óptima ..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+            }
+            "French" -> {
+                titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
+                descriptionView?.text = "RoboTour calculant l'itinéraire optimal ..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+            }
+            "Chinese" -> {
+                titleView?.text = "萝卜途正在计算最佳路线..."
+                descriptionView?.text = "萝卜途正在计算最佳路线..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+            }
+            "other" -> {
+                titleView?.text = "RoboTour calculating optimal route..."
+                descriptionView?.text = "RoboTour calculating optimal route..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+            }
+            "else" -> {
+                titleView?.text = "RoboTour calculating optimal route..."
+                descriptionView?.text = "RoboTour calculating optimal route..."
+                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+            }
         }
         //Starting the thread which is defined above to keep polling the server for changes
-        checkerThread.start()
+        //checkerThread.start()
+        speakOutButton(-1) // Speak "RoboTour is finding optimal route
     }
 
     /////
-    val checkerThread: Thread = object : Thread() {
+    private val checkerThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             val language = intent.getStringExtra("language")
-            while (!Thread.currentThread().isInterrupted) {
+            while (!isInterrupted) {
                 try {
                     Thread.sleep(1000) //1000ms = 1 sec
                     runOnUiThread(object : Runnable {
@@ -585,6 +656,14 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                                 for (i in 0..9) {
+                                    if (a[14] == 'N') {
+                                        runOnUiThread {
+                                            imageView?.setImageResource(R.drawable.toiletimage)
+                                            titleView?.text = toilet
+                                            descriptionView?.text = ""
+                                        }
+                                        break
+                                    }
                                     if (a[i] == 'A' && speaking != i) {
                                         /*This will mean that when the robot has arrived at the painting*/
                                         if (tts != null) {
@@ -642,8 +721,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         }
                                         break
                                     }
-
                                 }
+                                userTwoMode = a[16] == 'T' && a[17] == 'T'
+                                println("+++" + userTwoMode)/* This checks if the both users are online, if both are then we are in user two mode, otherwise immediate skip is allowed */
                                 if (userid == 1.toString()) {
                                     if (a[10].toInt() == 2 && skippable) {
                                         skippable = false
@@ -741,8 +821,26 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
+    private fun sendSpeed(speed: Int) {
+        //This function will send the speed to the server
+        when (speed) {
+            1 -> {
+                sendPUTNEW(13, "1")
+            }
+            2 -> {
+                sendPUTNEW(13, "2")
 
-    /////
+            }
+            3 -> {
+                sendPUTNEW(13, "3")
+
+            }
+            else -> {
+                toast("Sorry that's not a valid input")
+            }
+        }
+    }
+
     private fun speakOut(input: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
@@ -848,6 +946,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun exitDoor() {
         //This function will tell the robot to take the user to the exit
         if (isNetworkConnected()) {
+            sendPUTNEW(11, "F")
             sendPUTNEW(15, "T")
         } else {
             toast("Check your network connection, command not sent")
@@ -859,6 +958,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         Send the user back to MainActivity */
         alert(exitDesc) {
             positiveButton(positive) {
+                async {
+                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                    if (a == "1") {
+                        sendPUTNEW(12, "T")
+                    }
+                }
                 if (userid == "1") {
                     async {
                         sendPUTNEW(16, "F")
@@ -866,6 +971,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 } else if (userid == "2") {
                     async {
                         sendPUTNEW(17, "F")
+                    }
+                }
+                async {
+                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                    if (a[16] == 'T' && a[17] == 'T') {
+                        sendPUTNEW(12, "T")
                     }
                 }
                 checkerThread.interrupt()
@@ -879,12 +990,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun cancelGuideTotal() {
         if (isNetworkConnected()) {
-            sendPUTNEW(12, userid)
-            switchToMain()
+            switchToFinnished()
             if (userid == "1") {
                 async {
+                    sendPUTNEW(11, "F")
                     val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
-                    if (a[12] == '2') {
+                    if (a[12] == '2' || a[17] == 'F') {
                         sendPUTNEW(12, "T")
                         sendPUTNEW(16, "F")
                     } else {
@@ -895,7 +1006,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             } else if (userid == "2") {
                 async {
                     val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
-                    if (a[16] == '1') {
+                    if (a[12] == '1' || a[16] == 'F') {
                         sendPUTNEW(12, "T")
                         sendPUTNEW(17, "F")
                     } else {
@@ -908,11 +1019,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         } else {
             toast("Check your network connection, command not sent")
         }
-    }
-
-    private fun switchToMain() {
-        clearFindViewByIdCache()
-        startActivity<MainActivity>()
     }
 
     private fun rejectSkip() {
@@ -936,13 +1042,56 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun skipImmediately() {
         if (isNetworkConnected()) {
             /*This function is only when both users have agreed to skip the next item*/
             async {
-                sendPUTNEW(10, "Y")
+                sendPUTNEW(10, "T")
                 Thread.sleep(400)
                 skippable = true
+            }
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "English" -> {
+                    titleView?.text = "RoboTour calculating optimal route..."
+                    descriptionView?.text = "RoboTour calculating optimal route..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+                }
+                "German" -> {
+                    titleView?.text = "RoboTour berechnet optimale Route ..."
+                    descriptionView?.text = "RoboTour berechnet optimale Route ..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+                }
+                "Spanish" -> {
+                    titleView?.text = "RoboTour calcula la ruta óptima ..."
+                    descriptionView?.text = "RoboTour calcula la ruta óptima ..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+
+                }
+                "French" -> {
+                    titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
+                    descriptionView?.text = "RoboTour calcula la ruta óptima ..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+                }
+                "Chinese" -> {
+                    titleView?.text = "萝卜途正在计算最佳路线..."
+                    descriptionView?.text = "萝卜途正在计算最佳路线..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+
+                }
+                "other" -> {
+                    titleView?.text = "RoboTour calculating optimal route..."
+                    descriptionView?.text = "RoboTour calcula la ruta óptima ..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+
+                }
+                "else" -> {
+                    titleView?.text = "RoboTour calculating optimal route..."
+                    descriptionView?.text = "RoboTour calculating optimal route..."
+                    imageView?.setImageResource(R.drawable.robotourfornavigating)
+
+                }
             }
         } else {
             toast("Check your network connection, command not sent")
@@ -950,12 +1099,17 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun skip() {
-        if (isNetworkConnected()) {
-            async {
-                sendPUTNEW(10, userid)
+        println("+++++user mode" + userTwoMode)
+        if (userTwoMode) {
+            if (isNetworkConnected()) {
+                async {
+                    sendPUTNEW(10, userid)
+                }
+            } else {
+                toast("Check your network connection, command not sent")
             }
         } else {
-            toast("Check your network connection, command not sent")
+            skipImmediately()
         }
     }
 

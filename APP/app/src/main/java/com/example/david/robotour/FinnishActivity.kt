@@ -1,5 +1,6 @@
 package com.example.david.robotour
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -7,8 +8,10 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import org.jetbrains.anko.*
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.support.v4.content.res.ResourcesCompat
 import kotlinx.android.synthetic.*
+import java.io.File
 
 
 @Suppress("DEPRECATION")
@@ -19,12 +22,33 @@ class FinishActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         //Restart the app cleanly
-        val i = baseContext.packageManager
-                .getLaunchIntentForPackage(baseContext.packageName)
+        val i = baseContext.packageManager.getLaunchIntentForPackage(baseContext.packageName)
         i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(i)
     }
 
+    fun deleteCache(context: Context) {
+        try {
+            val dir = context.cacheDir
+            deleteDir(dir)
+        } catch (e: Exception) {
+        }
+    }
+
+    private fun deleteDir(dir: File): Boolean {
+        return when {
+            dir.isDirectory -> {
+                val children = dir.list()
+                children.indices
+                        .map { deleteDir(File(dir, children[it])) }
+                        .filterNot { it }
+                        .forEach { return false }
+                dir.delete()
+            }
+            dir.isFile -> dir.delete()
+            else -> false
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val language = intent.getStringExtra("language")
@@ -65,14 +89,11 @@ class FinishActivity : AppCompatActivity() {
             imageView(R.drawable.robotour_small) {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
                 onClick {
-                    val i = baseContext.packageManager
-                            .getLaunchIntentForPackage(baseContext.packageName)
-                    i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(i)
+
                 }
             }
             textView {
-                textSize = 34f
+                textSize = 24f
                 typeface = Typeface.DEFAULT_BOLD
                 padding = dip(5)
                 topPadding = dip(20)
@@ -86,10 +107,17 @@ class FinishActivity : AppCompatActivity() {
 
                 onClick {
                     //Restart the app cleanly
+                    deleteCache(applicationContext)
                     val i = baseContext.packageManager
                             .getLaunchIntentForPackage(baseContext.packageName)
                     i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     startActivity(i)
+                }
+            }
+            verticalLayout {
+                button {
+                    textSize = 20f
+                    background = ColorDrawable(Color.parseColor("#FFFFFF"))
                 }
             }
             button(closeApp) {

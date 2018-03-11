@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission." />
+    <uses-permission android:name="android.permission.CLEAR_APP_CACHE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -37,6 +37,7 @@
         </activity>
         <activity
             android:name=".PicturesActivity"
+            android:label="@string/title_activity_pictures"
             android:screenOrientation="portrait" />
         <activity
             android:name=".NavigatingActivity"
@@ -52,10 +53,22 @@
         <activity
             android:name=".AdminActivity"
             android:label="@string/title_activity_admin"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".FinishActivity"
             android:label="@string/title_activity_finnish"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ListenInActivity"
+            android:label="@string/title_activity_listen_in"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ChooseLevel"
+            android:label="@string/title_activity_choose_level"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

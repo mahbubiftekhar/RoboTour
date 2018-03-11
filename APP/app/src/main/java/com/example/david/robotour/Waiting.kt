@@ -100,17 +100,16 @@ class Waiting : AppCompatActivity() {
             while (!Thread.currentThread().isInterrupted) {
                 println("++++ t thread Waiting")
                 try {
+                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
                     if (user == 1) {
-                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user2.php").readText()
-                        if (a == "Y") {
-                            //If user 1 has made their selection and you are not user 1
+                        if (a[17] == 'Y') {
+                            //If user 1 has made their selection and you are user 2
                             switchToNavigate()
                         }
                     } else {
-                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
                         println("USERS ID IS 2")
-                        //If user 2 has made their selection and you are not user 2
-                        if (a == "Y") {
+                        //If user 2 has made their selection and you are user 1
+                        if (a[16] == 'Y') {
                             switchToNavigate()
                         }
                     }
@@ -166,6 +165,28 @@ class Waiting : AppCompatActivity() {
                         imageView?.setImageResource(allArtPieces[a].imageID)
 
                         descriptionView?.text = allArtPieces[a].name
+                        when (language) {
+                            "French" -> {
+                                descriptionView?.text = allArtPieces[a].nameFrench
+
+                            }
+                            "German" -> {
+                                descriptionView?.text = allArtPieces[a].nameGerman
+
+                            }
+                            "Spanish" -> {
+                                descriptionView?.text = allArtPieces[a].nameSpanish
+
+                            }
+                            "Chinese" -> {
+                                descriptionView?.text = allArtPieces[a].nameChinese
+
+                            }
+                            else -> {
+                                descriptionView?.text = allArtPieces[a].name
+                            }
+                        }
+
 
                     }
                     Thread.sleep(2000)

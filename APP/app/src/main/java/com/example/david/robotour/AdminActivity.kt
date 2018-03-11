@@ -19,7 +19,6 @@ import java.io.IOException
 import java.util.ArrayList
 import org.jetbrains.anko.*
 import java.io.InterruptedIOException
-import java.lang.Character.isDigit
 import java.net.URL
 
 
@@ -27,11 +26,8 @@ class AdminActivity : AppCompatActivity() {
 
     /*
     THE PURPOSE OF THIS ACTIVITY IS FOR DEBUGGING AND TESTING PURPOSES
-
     NOT FOR THE CLIENT TO BE SEEN
-
     M IFTEKHAR
-
     28/02/2018
      */
 
@@ -49,6 +45,16 @@ class AdminActivity : AppCompatActivity() {
         } catch (e: ClientProtocolException) {
         } catch (e: IOException) {
         }
+    }
+
+    public override fun onResume() {
+        updateTextThread.start()
+        super.onResume()
+    }
+
+    public override fun onStop() {
+        updateTextThread.start()
+        super.onStop()
     }
 
     private val updateTextThread: Thread = object : Thread() {
@@ -94,6 +100,9 @@ class AdminActivity : AppCompatActivity() {
             "F" -> true
             "T" -> true
             "N" -> true
+            "1" -> true
+            "2" -> true
+            "3" -> true
             "" -> true
             " " -> true
             else -> false
@@ -129,21 +138,26 @@ class AdminActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
-
         sendy.setOnClickListener {
             val destination = destination.text.toString()
-            val message = messageToSend.text.toString().toUpperCase()
-            if (destination(destination.toInt()) && messageValid(message)) {
+            var message = ""
+            try {
+                message = messageToSend.text.toString().toUpperCase()
+            } catch (e: NumberFormatException) {
+                toast("Error!! Please don't do that!")
+            }
+            if (destination(destination.toInt()) && messageValid(message) && message != "") {
                 vibrate()
                 async {
                     try {
                         sendPUTNEW(destination.toInt(), message)
                     } catch (e: Exception) {
                         toast("Error!! Please don't do that!")
-
+                    } catch (e: NumberFormatException) {
+                        toast("Error!! Please don't do that!")
                     }
                     runOnUiThread {
-                        toast("Sent $message to $destination successfully")
+                        toast("SENT $message TO $destination SUCCESSFULLY")
                     }
                 }
             } else {
@@ -208,27 +222,41 @@ class AdminActivity : AppCompatActivity() {
             }
             vibrate()
         }
-
+        RESET_PAINTINGS.setOnClickListener {
+            //Resets the paintings
+            for (i in 0..9) {
+                async {
+                    sendPUTNEW(i, "F")
+                }
+            }
+        }
+        CONTINUE.setOnClickListener {
+            //Tells RoboTour to continue
+            async {
+                sendPUTNEW(11, "F")
+            }
+            vibrate()
+        }
         SWITCH_USER.setOnClickListener {
             /*This will change the user, This is defaulted as 1, user two must be selected itself*/
             val a = loadInt("user")
-            when (a) {
-                0 -> {
-                    saveInt("user", 1)
-                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
-                    vibrate()
-                }
-                1 -> {
-                    saveInt("user", 2)
-                    Toast.makeText(applicationContext, "User 2 mode", Toast.LENGTH_LONG).show()
-                    vibrate()
-                }
-                else -> {
-                    saveInt("user", 1)
-                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
-                    vibrate()
-                }
-            }
+                    when (a) {
+                        0 -> {
+                            saveInt("user", 1)
+                            Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
+                            vibrate()
+                        }
+                        1 -> {
+                            saveInt("user", 2)
+                            Toast.makeText(applicationContext, "User 2 mode", Toast.LENGTH_LONG).show()
+                            vibrate()
+                        }
+                        else -> {
+                            saveInt("user", 1)
+                            Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
+                            vibrate()
+                        }
+                    }
         }
         async {
             //This languages the user thread to check for updates

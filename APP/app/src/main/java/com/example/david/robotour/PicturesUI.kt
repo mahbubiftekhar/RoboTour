@@ -2,6 +2,7 @@ package com.example.david.robotour
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
+import android.preference.PreferenceManager
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
@@ -14,6 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
 import java.io.IOException
+import java.net.URL
 import java.util.ArrayList
 
 @Suppress("DEPRECATION")
@@ -26,6 +28,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
     private var negative = ""
 
     private fun notifyUser() {
+        Toast.makeText(ctx, toastText, Toast.LENGTH_LONG).show()
         Toast.makeText(ctx, toastText, Toast.LENGTH_LONG).show()
     }
 
@@ -99,14 +102,26 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                                 positiveButton(positive) {
                                     async {
                                         sendList()
-                                        sendPUTNEW(16, "T")
-
+                                        if (loadInt("user").toString() == "1") {
+                                            sendPUTNEW(16, "T")
+                                        } else {
+                                            sendPUTNEW(17, "T")
+                                        }
                                     }
                                     async {
                                         val a = PicturesActivity()
                                         a.t.interrupt() //Stops the thread
                                     }
-                                    startActivity<Waiting>("language" to language)
+                                    async {
+                                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                                        uiThread {
+                                            if (a == "2") {
+                                                startActivity<Waiting>("language" to language)
+                                            } else {
+                                                startActivity<NavigatingActivity>("language" to language)
+                                            }
+                                        }
+                                    }
                                 }
                                 negativeButton(negative) {
                                     // navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))
@@ -125,6 +140,12 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
         allArtPieces
                 .filter { it.selected }
                 .forEach { sendPUTNEW(it.eV3ID, "T") }
+    }
+
+    private fun loadInt(key: String): Int {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
+        return sharedPreferences.getInt(key, 0)
     }
 
     private fun sendPUTNEW(identifier: Int, command: String) {
