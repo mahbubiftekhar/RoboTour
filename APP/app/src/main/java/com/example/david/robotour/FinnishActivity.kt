@@ -89,11 +89,7 @@ class FinishActivity : AppCompatActivity() {
             imageView(R.drawable.robotour_small) {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
                 onClick {
-                    deleteCache(applicationContext)
-                    val i = baseContext.packageManager
-                            .getLaunchIntentForPackage(baseContext.packageName)
-                    i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(i)
+
                 }
             }
             textView {

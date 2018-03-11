@@ -302,6 +302,7 @@ class ChooseLevel : AppCompatActivity() {
             }
         }
         verticalLayout {
+            background = ColorDrawable(resources.getColor(R.color.androidsBackground))
             imageView(R.drawable.robotour_small) {
                 background = ColorDrawable(resources.getColor(R.color.androidsBackground))
             }
@@ -313,6 +314,7 @@ class ChooseLevel : AppCompatActivity() {
                 gravity = Gravity.CENTER
                 text = message
                 setTextColor(resources.getColor(R.color.roboTourTeal))
+                background = ColorDrawable(resources.getColor(R.color.androidsBackground))
             }
             verticalLayout {
                 controlButton = button(controlRoboTour) {
@@ -332,7 +334,7 @@ class ChooseLevel : AppCompatActivity() {
             verticalLayout {
                 button {
                     textSize = 10f
-                    background = ColorDrawable(Color.parseColor("#FFFFFF"))
+                    background = ColorDrawable(resources.getColor(R.color.androidsBackground))
                 }
             }
             verticalLayout {
