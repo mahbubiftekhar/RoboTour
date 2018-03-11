@@ -44,8 +44,8 @@ class ChooseLevel : AppCompatActivity() {
     private var listenProgress = false
 
     override fun onBackPressed() {
+        val a = loadInt("user")
         async {
-            val a = loadInt("user")
             when (a) {
                 1 -> sendPUTNEW(16, "F")
                 2 -> sendPUTNEW(17, "F")

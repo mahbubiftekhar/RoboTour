@@ -584,30 +584,10 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             val count = allArtPieces.count { it.selected }
             if (count == 0) {
                 /*If the user has not made any selections, let them press back no questions asked*/
-                async {
-                    val a = loadInt("user")
-                    when (a) {
-                        1 -> sendPUTNEW(16, "F")
-                        2 -> sendPUTNEW(17, "F")
-                        else -> {
-                            //Do nothing
-                        }
-                    }
-                }
                 super.onBackPressed()
             } else {
                 alert("Are you sure you want to leave? Your selection will be lost") {
                     positiveButton {
-                        async {
-                            val a = loadInt("user")
-                            when (a) {
-                                1 -> sendPUTNEW(16, "F")
-                                2 -> sendPUTNEW(17, "F")
-                                else -> {
-                                    //Do nothing
-                                }
-                            }
-                        }
                         t.interrupt() //Stops the thread
                         async {
                             clearFindViewByIdCache()
@@ -626,28 +606,6 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun switchToMain() {
         startActivity<MainActivity>()
-    }
-
-    private fun loadInt(key: String): Int {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        return sharedPreferences.getInt(key, 0)
-    }
-
-    private fun sendPUTNEW(identifier: Int, command: String) {
-        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
-        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
-        * as security exception - just a heads up */
-        val httpclient = DefaultHttpClient()
-        val httPpost = HttpPost(url)
-        try {
-            val nameValuePairs = java.util.ArrayList<NameValuePair>(4)
-            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
-            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
-            httpclient.execute(httPpost)
-        } catch (e: ClientProtocolException) {
-        } catch (e: IOException) {
-        }
     }
 
     private fun askSpeechInput() {
