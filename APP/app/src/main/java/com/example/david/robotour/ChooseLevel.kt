@@ -75,9 +75,9 @@ class ChooseLevel : AppCompatActivity() {
     }
 
     override fun onResume() {
+        super.onResume()
         checkerThread.start()
         t.start() /*Start to run the thread*/
-        super.onResume()
     }
 
     override fun onDestroy() {

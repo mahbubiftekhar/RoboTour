@@ -142,9 +142,9 @@ class Waiting : AppCompatActivity() {
     }
 
     override fun onResume() {
+        super.onResume()
         pictureThread.start()
         t.start()
-        super.onResume()
     }
 
     private val pictureThread: Thread = object : Thread() {
