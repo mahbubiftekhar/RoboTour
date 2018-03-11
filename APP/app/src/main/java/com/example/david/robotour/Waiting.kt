@@ -151,7 +151,6 @@ class Waiting : AppCompatActivity() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
 
-        @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!isInterrupted) {
                 println("++++ picture thread Waiting")
@@ -186,16 +185,12 @@ class Waiting : AppCompatActivity() {
                                 descriptionView?.text = allArtPieces[a].name
                             }
                         }
-
-
                     }
-                    Thread.sleep(2000)
+                    Thread.sleep(1500)
                     a++
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedIOException) {
-                    Thread.currentThread().interrupt()
-                } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
                 }
             }
