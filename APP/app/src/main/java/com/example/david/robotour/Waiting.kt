@@ -133,19 +133,8 @@ class Waiting : AppCompatActivity() {
         t.interrupt()
     }
 
-    override fun onPause() {
-        pictureThread.interrupt()
-        t.interrupt()
-        pictureThread.interrupt()
-        t.interrupt()
-        super.onPause()
-    }
-
     override fun onResume() {
         super.onResume()
-        if (pictureThread.state == Thread.State.NEW) {
-            pictureThread.start()
-        }
         t.start()
     }
 

@@ -74,30 +74,18 @@ class ChooseLevel : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (checkerThread.state == Thread.State.NEW) {
-            checkerThread.start()
-        }
-        if (t.state == Thread.State.NEW) {
-            t.start()
-        }
-    }
-
     override fun onDestroy() {
         checkerThread.interrupt()
         t.interrupt()
         super.onDestroy()
     }
 
-    override fun onStop() {
+    override fun onResume() {
         if (checkerThread.state == Thread.State.NEW) {
-            checkerThread.interrupt()
+            checkerThread.start()
         }
-        if (t.state == Thread.State.NEW) {
-            t.interrupt()
-        }
-        super.onStop()
+        super.onResume()
+
     }
 
     private fun loadInt(key: String): Int {
@@ -204,6 +192,7 @@ class ChooseLevel : AppCompatActivity() {
                     Thread.currentThread().interrupt()
                 }
             }
+            Thread.currentThread().interrupt()
         }
     }
 

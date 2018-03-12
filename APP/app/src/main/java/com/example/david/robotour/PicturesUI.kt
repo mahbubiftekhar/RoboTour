@@ -110,12 +110,11 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                                     }
                                     async {
                                         val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-                                        uiThread {
-                                            if (a == "2") {
-                                                startActivity<Waiting>("language" to language)
-                                            } else {
-                                                startActivity<NavigatingActivity>("language" to language)
-                                            }
+                                        if (a == "2") {
+                                            startActivity<Waiting>("language" to language)
+                                        } else {
+                                            println("in print")
+                                            startActivity<NavigatingActivity>("language" to language)
                                         }
                                     }
                                 }

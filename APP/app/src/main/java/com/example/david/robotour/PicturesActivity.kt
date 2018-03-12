@@ -11,7 +11,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
-import android.preference.PreferenceManager
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
@@ -39,6 +38,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var language = ""
     private var tts: TextToSpeech? = null
     private var tts2: TextToSpeech? = null
+    private var tts3: TextToSpeech? = null
     private var search = ""
     private var cancel = ""
 
@@ -52,7 +52,11 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts2!!.stop()
             tts2!!.shutdown()
         }
-
+        if (tts3 != null) {
+            tts3!!.stop()
+            tts3!!.shutdown()
+        }
+        t.interrupt()
         super.onDestroy()
     }
 
@@ -66,7 +70,10 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts2!!.shutdown()
 
         }
-        t.interrupt()
+        if (tts3 != null) {
+            tts3!!.stop()
+            tts3!!.shutdown()
+        }
         super.onStop()
     }
 
@@ -94,6 +101,34 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
             longToast(text)
             tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+        }
+    }
+
+    private fun speakOutNoResults() {
+        //This will simply output in speech "Here are your recommendations"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "French" -> {
+                    text = "Désolé, je n'ai pas trouvé de peintures"
+                }
+                "Chinese" -> {
+                    text = "对不起，我找不到任何画作"
+                }
+                "Spanish" -> {
+                    text = "Lo siento, no pude encontrar ninguna pintura"
+                }
+                "German" -> {
+                    text = "Entschuldigung, ich konnte keine Bilder finden"
+                }
+                else -> {
+                    text = "Sorry, I couldn't find any paintings.Please Try Again."
+                    //Sorry, I didn't understand that. Please Try Again.
+                }
+            }
+            longToast(text)
+            tts3!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
 
@@ -180,10 +215,12 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         allArtPieces.clear()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true) // add back button to actionbar
         val language = intent.getStringExtra("language")
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
-        tts2 = TextToSpeech(this, null)
         tts = TextToSpeech(this, null)
+        tts2 = TextToSpeech(this, null)
+        tts3 = TextToSpeech(this, null)
         onInit(0)
 
         //Obtain language from SelectLanguageActivity
@@ -352,7 +389,6 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     override fun onInit(p0: Int) {
         if (p0 == TextToSpeech.SUCCESS) {
-            // set US English as language for tts
             val language = intent.getStringExtra("language")
             val result: Int
             when (language) {
@@ -380,7 +416,6 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         }
         if (p0 == TextToSpeech.SUCCESS) {
-            // set US English as language for tts
             val language = intent.getStringExtra("language")
             val result: Int
             when (language) {
@@ -406,6 +441,32 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         } else {
 
+        }
+        if (p0 == TextToSpeech.SUCCESS) {
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts3!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts3!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts3!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts3!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts3!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
         }
     }
 
@@ -449,10 +510,8 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         //This ensures that when the Pictures activity is minimized and reloaded up, the speech still works
         tts = TextToSpeech(this, null)
         tts2 = TextToSpeech(this, null)
+        tts3 = TextToSpeech(this, this)
         onInit(0)
-        if (t.state == Thread.State.NEW) {
-            t.start() //Restart the thread that highlights the start button green
-        }
         super.onResume()
     }
 
@@ -703,7 +762,6 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         cleanWords3[j] = cleanWords3[j].toLowerCase()
                     }
                     cleanWords3.removeAll(insignificantWords) //removes the insignificant words
-
                     //Find all common significant words
                     val commonWords1 = cleanWords1.intersect(cleanWords2)
                     val commonWords2 = cleanWords1.intersect(cleanWords3)
@@ -728,7 +786,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             shownArtPieces.add(artPiece)
         }
         if (queriedArtPieces.size == 0) {
-            //Do something if no results are found
+            speakOutNoResults()
         }
         queriedArtPieces.clear()
         adapter.notifyDataSetChanged()

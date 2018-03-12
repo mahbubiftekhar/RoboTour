@@ -47,20 +47,6 @@ class AdminActivity : AppCompatActivity() {
         }
     }
 
-    public override fun onResume() {
-        if (updateTextThread.state == Thread.State.NEW) {
-            updateTextThread.start()
-        }
-        super.onResume()
-    }
-
-    public override fun onStop() {
-        if (updateTextThread.state == Thread.State.NEW) {
-            updateTextThread.start()
-        }
-        super.onStop()
-    }
-
     private val updateTextThread: Thread = object : Thread() {
         /*This thread is used to update the header*/
         /*Will update the header automatically*/
@@ -80,6 +66,7 @@ class AdminActivity : AppCompatActivity() {
                     Thread.currentThread().interrupt()
                 }
             }
+            Thread.currentThread().interrupt()
         }
     }
 
@@ -282,6 +269,13 @@ class AdminActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(300)
         }
+    }
+
+    override fun onResume() {
+        if(updateTextThread.state == Thread.State.NEW){
+            updateTextThread.start()
+        }
+        super.onResume()
     }
 
     private fun saveInt(key: String, value: Int) {

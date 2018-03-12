@@ -16,7 +16,6 @@ import android.support.annotation.RequiresApi
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -66,6 +65,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var skippable = true
     private var tts: TextToSpeech? = null
     private var tts2: TextToSpeech? = null
+    private var tts3: TextToSpeech? = null
     private var currentPic = -1
     private var startRoboTour = ""
     private var toiletPopUpBool = true
@@ -89,6 +89,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts2!!.stop()
             tts2!!.shutdown()
         }
+        if (tts3 != null) {
+            tts3!!.stop()
+            tts3!!.shutdown()
+        }
         if (userid == "1") {
             async {
                 sendPUTNEW(16, "F")
@@ -111,7 +115,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts2!!.stop()
             tts2!!.shutdown()
         }
-        checkerThread.interrupt()
+        if (tts3 != null) {
+            tts3!!.stop()
+            tts3!!.shutdown()
+        }
         super.onStop()
     }
 
@@ -174,6 +181,34 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         } else {
 
         }
+        if (status == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts3!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts3!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts3!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts3!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts3!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+
+        }
 
     }
 
@@ -191,6 +226,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts2!!.stop()
             tts2!!.shutdown()
         }
+        if (tts3 != null) {
+            tts3!!.stop()
+            tts3!!.shutdown()
+        }
         super.onPause()
     }
 
@@ -198,6 +237,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         //This ensures that when the nav activity is minimized and reloaded up, the speech still works
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
+        tts3 = TextToSpeech(this, this)
         onInit(0)
         super.onResume()
         if (checkerThread.state == Thread.State.NEW) {
@@ -231,7 +271,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts2 = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
         vibrate()
-        //Obtain language from PicturesUI
+        async{
+            Thread.sleep(1500)
+            speakOutOnCreate()
+        }
         val language = intent.getStringExtra("language")
         when (language) {
             "English" -> {
@@ -392,7 +435,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     if (isNetworkConnected()) {
                                         alert(skipDesc) {
                                             positiveButton(positive) {
-                                                skip()
+                                                // skip()
                                             }
                                             negativeButton(negative) {
                                                 //Do nothing the user changed their minds
@@ -445,8 +488,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     if (isNetworkConnected()) {
                                         alert(cancelDesc) {
                                             positiveButton(positive) {
-                                                checkerThread.interrupt()
-                                                cancelGuideTotal()
+                                                // checkerThread.interrupt()
+                                                // cancelGuideTotal()
 
                                             }
                                             negativeButton(negative) {
@@ -538,7 +581,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         positiveButton(positive) {
                                             if (isNetworkConnected()) {
                                                 async {
-                                                    sendPUTNEW(14, "T")
+                                                    //  sendPUTNEW(14, "T")
                                                 }
                                             } else {
                                                 Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
@@ -559,7 +602,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         alert(exitDesc) {
                                             positiveButton(positive) {
                                                 async {
-                                                    exitDoor()
+                                                    // exitDoor()
                                                 }
                                                 async {
                                                     var a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
@@ -632,7 +675,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         //Starting the thread which is defined above to keep polling the server for changes
         //checkerThread.start()
-        speakOutButton(-1) // Speak "RoboTour is finding optimal route
     }
 
     /////
@@ -888,6 +930,32 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
                 tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
             }
+        }
+    }
+
+    private fun speakOutOnCreate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "French" -> {
+                    text = "RoboTour calcule l'itinéraire optimal"
+                }
+                "Chinese" -> {
+                    text = "萝卜途正在计算最佳路线"
+                }
+                "Spanish" -> {
+                    text = "RoboTour está calculando la ruta óptima"
+                }
+                "German" -> {
+                    text = "RoboTour berechnet die optimale Route"
+                }
+                else -> {
+                    text = "Ro-bow-Tour is calculating the optimal route"
+                    //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
+                }
+            }
+            tts3!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
 
