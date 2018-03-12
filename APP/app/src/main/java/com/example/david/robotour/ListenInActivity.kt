@@ -91,6 +91,8 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts2!!.stop()
             tts2!!.shutdown()
         }
+        checkerThread.interrupt()
+        pictureThread.interrupt()
         super.onStop()
     }
 
