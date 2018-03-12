@@ -108,12 +108,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        advertisements.clear()
-        advertisements.add(R.drawable.your_ad_here)
-        advertisements.add(R.drawable.new_exhibit)
-        advertisements.add(R.drawable.gift_shop)
-        pictureThread.start()
         super.onResume()
+        if (pictureThread.state == Thread.State.NEW) {
+            advertisements.clear()
+            advertisements.add(R.drawable.your_ad_here)
+            advertisements.add(R.drawable.new_exhibit)
+            advertisements.add(R.drawable.gift_shop)
+            pictureThread.start()
+        }
     }
 
     private fun sendPUTNEW(identifier: Int, command: String) {
@@ -141,7 +143,6 @@ class MainActivity : AppCompatActivity() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
 
-        @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!isInterrupted) {
                 println("+++ running here main activity")
@@ -159,8 +160,6 @@ class MainActivity : AppCompatActivity() {
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedIOException) {
-                    Thread.currentThread().interrupt()
-                } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
                 }
             }

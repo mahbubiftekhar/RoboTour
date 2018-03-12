@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
+import android.view.WindowManager
 import kotlinx.android.synthetic.main.activity_temp.*
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
@@ -26,6 +27,7 @@ class TempActivity : AppCompatActivity() {
     /*THIS IS A QUICK TEMP ACTIVITY FOR THE PURPOSE OF CLIENT DEMO ONE, THIS CAN ONLY BE ACCESSED FROM A LONG PRESS ON THE START BUTTON*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         setContentView(R.layout.activity_temp)
         supportActionBar?.hide() //hide actionbar
 

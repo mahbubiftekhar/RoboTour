@@ -142,16 +142,17 @@ class Waiting : AppCompatActivity() {
     }
 
     override fun onResume() {
-        pictureThread.start()
-        t.start()
         super.onResume()
+        if (pictureThread.state == Thread.State.NEW) {
+            pictureThread.start()
+        }
+        t.start()
     }
 
     private val pictureThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         var a = 0
 
-        @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!isInterrupted) {
                 println("++++ picture thread Waiting")
@@ -163,7 +164,6 @@ class Waiting : AppCompatActivity() {
                     //UI thread MUST be updates on the UI thread, other threads may not update the UI thread
                     runOnUiThread {
                         imageView?.setImageResource(allArtPieces[a].imageID)
-
                         descriptionView?.text = allArtPieces[a].name
                         when (language) {
                             "French" -> {
@@ -186,16 +186,12 @@ class Waiting : AppCompatActivity() {
                                 descriptionView?.text = allArtPieces[a].name
                             }
                         }
-
-
                     }
-                    Thread.sleep(2000)
+                    Thread.sleep(1500)
                     a++
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedIOException) {
-                    Thread.currentThread().interrupt()
-                } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
                 }
             }

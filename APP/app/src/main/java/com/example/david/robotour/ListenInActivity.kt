@@ -184,8 +184,12 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         advertisements.add(R.drawable.your_ad_here)
         advertisements.add(R.drawable.new_exhibit)
         advertisements.add(R.drawable.gift_shop)
-        pictureThread.start()
-        checkerThread.start()
+        if (pictureThread.state == Thread.State.NEW) {
+            pictureThread.start()
+        }
+        if (checkerThread.state == Thread.State.NEW) {
+            checkerThread.start()
+        }
         super.onResume()
     }
 
