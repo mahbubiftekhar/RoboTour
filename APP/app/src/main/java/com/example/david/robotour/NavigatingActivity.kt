@@ -199,7 +199,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts2 = TextToSpeech(this, this)
         onInit(0)
         super.onResume()
-        checkerThread.start()
+        if (checkerThread.state == Thread.State.NEW) {
+            checkerThread.start()
+        }
     }
 
     private fun switchToFinnished() {

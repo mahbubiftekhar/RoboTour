@@ -143,7 +143,9 @@ class Waiting : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        pictureThread.start()
+        if (pictureThread.state == Thread.State.NEW) {
+            pictureThread.start()
+        }
         t.start()
     }
 
@@ -162,7 +164,6 @@ class Waiting : AppCompatActivity() {
                     //UI thread MUST be updates on the UI thread, other threads may not update the UI thread
                     runOnUiThread {
                         imageView?.setImageResource(allArtPieces[a].imageID)
-
                         descriptionView?.text = allArtPieces[a].name
                         when (language) {
                             "French" -> {

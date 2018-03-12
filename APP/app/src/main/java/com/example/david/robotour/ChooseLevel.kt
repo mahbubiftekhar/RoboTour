@@ -12,6 +12,7 @@ import android.os.Build
 import android.preference.PreferenceManager
 import android.support.annotation.RequiresApi
 import android.support.v4.content.res.ResourcesCompat
+import android.view.WindowManager
 import android.widget.Button
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
@@ -36,7 +37,6 @@ class ChooseLevel : AppCompatActivity() {
     private var language: String = ""
     private var controlButton: Button? = null
     private var listenButton: Button? = null
-    private lateinit var t: Thread
     private var error_control = ""
     private var error_listen = ""
     private var userID = 0
@@ -58,6 +58,7 @@ class ChooseLevel : AppCompatActivity() {
         t.interrupt()
         super.onBackPressed()
     }
+
     private fun sendPUTNEW(identifier: Int, command: String) {
         val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
@@ -76,8 +77,12 @@ class ChooseLevel : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        checkerThread.start()
-        t.start() /*Start to run the thread*/
+        if (checkerThread.state == Thread.State.NEW) {
+            checkerThread.start()
+        }
+        if (t.state == Thread.State.NEW) {
+            t.start()
+        }
     }
 
     override fun onDestroy() {
@@ -87,8 +92,12 @@ class ChooseLevel : AppCompatActivity() {
     }
 
     override fun onStop() {
-        checkerThread.interrupt()
-        t.interrupt()
+        if (checkerThread.state == Thread.State.NEW) {
+            checkerThread.interrupt()
+        }
+        if (t.state == Thread.State.NEW) {
+            t.interrupt()
+        }
         super.onStop()
     }
 
@@ -97,6 +106,108 @@ class ChooseLevel : AppCompatActivity() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         return sharedPreferences.getInt(key, 0)
     }
+
+    private val t: Thread = object : Thread() {
+        /*This thread will check if the user has selected at least one picture, if they haven't then it will change the background
+        * colour of the start button to grey*/
+        @SuppressLint("PrivateResource")
+        override fun run() {
+            while (!Thread.currentThread().isInterrupted) {
+                try {
+                    //Control
+                    if (twoUsers) {
+                        if (!user1 && loadInt("user") == 1) {
+                            println("++++1")
+                            runOnUiThread {
+                                controlProgress = true
+                                controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                            }
+                        } else if (loadInt("user") == 2 && !user2) {
+                            println("++++2")
+                            runOnUiThread {
+                                controlProgress = true
+                                controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                            }
+                        } else {
+                            println("++++3")
+                            runOnUiThread {
+                                controlProgress = false
+                            }
+                        }
+                    } else {
+                        if (!user1 && loadInt("user") == 1) {
+                            println("++++4")
+                            runOnUiThread {
+                                controlProgress = true
+                                controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                            }
+                        } else {
+                            println("++++6")
+                            runOnUiThread {
+                                controlProgress = false
+                                controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
+                            }
+                        }
+                    }
+                    //Listen
+                    if (twoUsers) {
+                        if (user1 && user2) {
+                            println("++++7")
+                            //set to green
+                            runOnUiThread {
+                                listenProgress = true
+                                listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                            }
+                        } else if (userID == 1 && user1) {
+                            println("++++8")
+                            runOnUiThread {
+                                listenProgress = true
+                                listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                            }
+                        } else if (userID == 2 && user2) {
+                            println("++++9")
+                            runOnUiThread {
+                                listenProgress = true
+                                listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                            }
+                        } else {
+                            println("++++10")
+                            runOnUiThread {
+                                listenProgress = false
+                                listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
+                            }
+                        }
+                    } else {
+                        if (userID == 1 && !user1) {
+                            println("++++11")
+                            runOnUiThread {
+                                listenProgress = false
+                                listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
+                            }
+                        } else if (userID == 2 && !user2) {
+                            println("++++12")
+                            runOnUiThread {
+                                listenProgress = false
+                                listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
+                            }
+                        } else {
+                            println("++++13")
+                            runOnUiThread {
+                                listenProgress = true
+                                listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                            }
+                        }
+                    }
+                    Thread.sleep(110)
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedIOException) {
+                    Thread.currentThread().interrupt()
+                }
+            }
+        }
+    }
+
 
     private val checkerThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
@@ -107,145 +218,65 @@ class ChooseLevel : AppCompatActivity() {
                     async {
                         val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
                         val b = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-                        uiThread {
-                            if (a[16] == 'T') {
-                                user1 = true
-                            } else if (a[16] == 'O') {
-                                user1 = false
-                            }
-                            if (a[17] == 'T') {
-                                user2 = true
-                            } else if (a[17] == 'O') {
-                                user2 = false
-                            }
-                            if ("T" == b) {
+                        println("in here")
+                        if ("T" == b) {
+                            runOnUiThread {
                                 twoUsers = true
                             }
                         }
+                        when {
+                            a[16] == 'T' -> {
+                                runOnUiThread {
+                                    user1 = true
+                                }
+                            }
+                            a[16] == 'O' -> {
+                                runOnUiThread {
+                                    user1 = true
+                                }
+                            }
+                            else -> {
+                                runOnUiThread {
+                                    user1 = false
+                                }
+                            }
+                        }
+                        when {
+                            a[17] == 'T' -> {
+                                runOnUiThread {
+                                    user2 = true
+                                }
+                            }
+                            a[17] == 'O' -> {
+                                runOnUiThread {
+                                    user2 = true
+                                }
+                            }
+                            else -> {
+                                runOnUiThread {
+                                    user2 = false
+                                }
+                            }
+                        }
+                        println("&&&& user1: $user1, user2: $user2, twoUsers: $twoUsers")
                     }
+                    Thread.sleep(350)
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
-                } catch (e: Exception) {
-                    Thread.currentThread().interrupt()
                 }
-                Thread.currentThread().interrupt()
             }
-
+            Thread.currentThread().interrupt()
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         language = intent.getStringExtra("language")
         userID = loadInt("user")
-        t = object : Thread() {
-            /*This thread will check if the user has selected at least one picture, if they haven't then it will change the background
-            * colour of the start button to grey*/
-            @SuppressLint("PrivateResource")
-            override fun run() {
-                while (!Thread.currentThread().isInterrupted) {
-                    try {
-                        //Control
-                        if (twoUsers) {
-                            if (!user1 && loadInt("user") == 1) {
-                                println("++++1")
-                                runOnUiThread {
-                                    controlProgress = true
-                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
-                                }
-                            } else if (loadInt("user") == 2 && !user2) {
-                                println("++++2")
-                                runOnUiThread {
-                                    controlProgress = false
-                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
-                                }
-                            } else {
-                                println("++++3")
-                                runOnUiThread {
-                                    controlProgress = false
-                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
-                                }
-                            }
-                        } else {
-                            if (!user1 && loadInt("user") == 1) {
-                                println("++++4")
-                                runOnUiThread {
-                                    controlProgress = true
-                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
-                                }
-                            } else if (loadInt("user") == 2 && !user2) {
-                                println("++++5")
-                                runOnUiThread {
-                                    controlProgress = true
-                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
-                                }
-                            } else {
-                                println("++++6")
-                                runOnUiThread {
-                                    controlProgress = false
-                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
-                                }
-                            }
-                        }
-                        //Listen
-                        if (twoUsers) {
-                            if (user1 && user2) {
-                                println("++++7")
-                                //set to green
-                                runOnUiThread {
-                                    listenProgress = true
-                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
-                                }
-                            } else if (userID == 1 && !user1) {
-                                println("++++8")
-                                runOnUiThread {
-                                    listenProgress = true
-                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
-                                }
-                            } else if (userID == 2 && !user2) {
-                                println("++++9")
-                                runOnUiThread {
-                                    listenProgress = true
-                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
-                                }
-                            } else {
-                                println("++++10")
-                                runOnUiThread {
-                                    listenProgress = false
-                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
-                                }
-                            }
-                        } else {
-                            if (userID == 1 && !user1) {
-                                println("++++11")
-                                runOnUiThread {
-                                    listenProgress = false
-                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
-                                }
-                            } else if (userID == 2 && !user2) {
-                                println("++++12")
-                                runOnUiThread {
-                                    listenProgress = false
-                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
-                                }
-                            } else {
-                                println("++++13")
-                                runOnUiThread {
-                                    listenProgress = true
-                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
-                                }
-                            }
-                        }
-                        Thread.sleep(100)
-                    } catch (e: InterruptedException) {
-                        Thread.currentThread().interrupt()
-                    }
-                }
-            }
-        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         val message: String = when (language) {
             "French" -> "Voulez-vous le contrôle ou préférez-vous simplement suivre la tournée?"
             "German" -> "Möchten Sie die Kontrolle haben oder möchten Sie lieber der Tour folgen?"
@@ -319,7 +350,7 @@ class ChooseLevel : AppCompatActivity() {
             verticalLayout {
                 controlButton = button(controlRoboTour) {
                     textSize = 20f
-                    background = ColorDrawable(resources.getColor(R.color.androidsBackground))
+                    background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
                     onClick {
                         if (controlProgress) {
                             t.interrupt()
@@ -340,7 +371,7 @@ class ChooseLevel : AppCompatActivity() {
             verticalLayout {
                 listenButton = button(listenIn) {
                     textSize = 20f
-                    background = ColorDrawable(Color.parseColor("#505050"))
+                    background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
                     onClick {
                         if (listenProgress) {
                             t.interrupt()
@@ -357,6 +388,6 @@ class ChooseLevel : AppCompatActivity() {
                 }
             }
         }
-        t.start() /*Start to run the thread*/
     }
+
 }

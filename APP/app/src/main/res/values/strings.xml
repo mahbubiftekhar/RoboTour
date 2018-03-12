@@ -98,7 +98,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_waiting">Waiting</string>
     <string name="title_activity_admin">AdminActivity</string>
-    <string name="mesage">Mesage e.g. A, F, T, 1</string>
+    <string name="mesage">Message e.g. A, F, T, 1</string>
     <string name="user2_off">USER2 OFF</string>
     <string name="destination">Destination e.g. 13</string>
     <string name="send">SEND</string>
@@ -109,7 +109,7 @@
     <string name="switch_user">SWITCH_USER</string>
     <string name="user1_online">USER1 ONLINE</string>
     <string name="user2_online">USER2 ONLINE</string>
-    <string name="message">message</string>
+    <string name="message">Message e.g. A, F, T, 1</string>
     <string name="title_activity_finnish">FinnishActivity</string>
     <string name="title_activity_pictures2">PicturesActivity2</string>
     <string name="title_activity_pictures">PicturesActivity</string>

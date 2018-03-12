@@ -48,12 +48,16 @@ class AdminActivity : AppCompatActivity() {
     }
 
     public override fun onResume() {
-        updateTextThread.start()
+        if (updateTextThread.state == Thread.State.NEW) {
+            updateTextThread.start()
+        }
         super.onResume()
     }
 
     public override fun onStop() {
-        updateTextThread.start()
+        if (updateTextThread.state == Thread.State.NEW) {
+            updateTextThread.start()
+        }
         super.onStop()
     }
 
@@ -139,29 +143,35 @@ class AdminActivity : AppCompatActivity() {
         setContentView(R.layout.activity_admin)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         sendy.setOnClickListener {
-            val destination = destination.text.toString()
-            var message = ""
-            try {
-                message = messageToSend.text.toString().toUpperCase()
-            } catch (e: NumberFormatException) {
-                toast("Error!! Please don't do that!")
-            }
-            if (destination(destination.toInt()) && messageValid(message) && message != "") {
-                vibrate()
-                async {
-                    try {
-                        sendPUTNEW(destination.toInt(), message)
-                    } catch (e: Exception) {
-                        toast("Error!! Please don't do that!")
-                    } catch (e: NumberFormatException) {
-                        toast("Error!! Please don't do that!")
-                    }
-                    runOnUiThread {
-                        toast("SENT $message TO $destination SUCCESSFULLY")
-                    }
-                }
+            if (destination == null) {
+                toast("Don't do that! Destination cannot be null!!")
+            } else if (messageToSend.text == null) {
+                toast("Don't do that! message cannot be null!!")
             } else {
-                toast("Invalid input, try again, any issues consulate Mahbub")
+                val destination = destination.text.toString()
+                var message = ""
+                try {
+                    message = messageToSend.text.toString().toUpperCase()
+                } catch (e: NumberFormatException) {
+                    toast("Error!! Please don't do that!")
+                }
+                if (destination(destination.toInt()) && messageValid(message) && message != "") {
+                    vibrate()
+                    async {
+                        try {
+                            sendPUTNEW(destination.toInt(), message)
+                        } catch (e: Exception) {
+                            toast("Error!! Please don't do that!")
+                        } catch (e: NumberFormatException) {
+                            toast("Error!! Please don't do that!")
+                        }
+                        runOnUiThread {
+                            toast("SENT $message TO $destination SUCCESSFULLY")
+                        }
+                    }
+                } else {
+                    toast("Invalid input, try again, any issues consulate Mahbub")
+                }
             }
         }
         STOP_ROBOTOUR.setOnClickListener {
@@ -240,23 +250,23 @@ class AdminActivity : AppCompatActivity() {
         SWITCH_USER.setOnClickListener {
             /*This will change the user, This is defaulted as 1, user two must be selected itself*/
             val a = loadInt("user")
-                    when (a) {
-                        0 -> {
-                            saveInt("user", 1)
-                            Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
-                            vibrate()
-                        }
-                        1 -> {
-                            saveInt("user", 2)
-                            Toast.makeText(applicationContext, "User 2 mode", Toast.LENGTH_LONG).show()
-                            vibrate()
-                        }
-                        else -> {
-                            saveInt("user", 1)
-                            Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
-                            vibrate()
-                        }
-                    }
+            when (a) {
+                0 -> {
+                    saveInt("user", 1)
+                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
+                    vibrate()
+                }
+                1 -> {
+                    saveInt("user", 2)
+                    Toast.makeText(applicationContext, "User 2 mode", Toast.LENGTH_LONG).show()
+                    vibrate()
+                }
+                else -> {
+                    saveInt("user", 1)
+                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
+                    vibrate()
+                }
+            }
         }
         async {
             //This languages the user thread to check for updates
