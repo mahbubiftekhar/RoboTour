@@ -106,11 +106,11 @@ def initialising_map():
     motor_map = {
         '0': "W",
         '1': "W",
-        '2': "W",
-        '3': "W",
-        '4': "W",
-        '5': "N",
-        '6': "N",
+        '2': "E",
+        '3': "E",
+        '4': "E",
+        '5': "S",
+        '6': "S",
         '7': "N",
         '8': "N",
         '9': "E",
@@ -532,26 +532,25 @@ def go_around_obstacle(direction):
 """
 
 
-def go_around_obstacle(direction, get_back_enabled):
+def go_around_obstacle(direction, get_back_enabled, is_wall_detect_enable):
     print("GO AROUND OBSTACLE Direction: ", direction)
     set_distance = 11
     set_sharp_distance = 18
     is_sharp_before = False
     if direction == 'RIGHT':
         while not is_line_detected():
-
-            if is_wall_detected():
+            if is_wall_detected() and is_wall_detect_enable:
                 print('Detect wall!')
                 turn_back()
                 # Go back to line
                 get_back_enabled = False
-                go_around_obstacle('LEFT', get_back_enabled)
+                go_around_obstacle('LEFT', get_back_enabled, False)
                 while is_line_detected():
                     move_forward(100, 1000)
                     wait_for_motor()
                 print("Try to go around the other side")
-                go_around_obstacle('LEFT', True)
-                return
+                go_around_obstacle('LEFT', True, True)
+                break
                 # get_back_to_line('LEFT')
 
             if get_sonar_readings_front() < set_distance*10:
@@ -581,16 +580,15 @@ def go_around_obstacle(direction, get_back_enabled):
                 turn_back()
                 get_back_enabled = False
                 # Go back to line
-                go_around_obstacle('RIGHT', get_back_enabled)
+                go_around_obstacle('RIGHT', get_back_enabled, False)
                 # turn_left_ninety()
                 get_back_to_line('LEFT')
 
-                speak("Carson please remove the obstacle in front of me. Thank you.")
+                speak("Carson, please remove the obstacle in front of me. Thank you.")
                 while not is_no_front_obstacle_lel():
                     stop_wheel_motor()
-                    time.sleep(1)
 
-                return
+                break
 
             if get_sonar_readings_front() < set_distance*10:
                 turn_left_ninety()
@@ -610,13 +608,14 @@ def go_around_obstacle(direction, get_back_enabled):
                 else:
                     turn(100, 100, 1000)
                     is_sharp_before = False
-
+    print("Get back to line off rec direction " + direction+" is ", get_back_enabled)
     if get_back_enabled:
+        print("\n\n\n\nRun get back to line to direction: ", direction)
         get_back_to_line(direction)
 
 
 def get_back_to_line(turning_direction):
-    print("GET BACK TO LINE")
+    print("GET BACK TO LINE: "+turning_direction)
 
     if turning_direction == 'RIGHT':
         if is_left_line_detected():
@@ -743,7 +742,7 @@ def go_to_closest_painting(painting, path):
                 obstacle_turn = 'RIGHT'
                 get_ready_for_obstacle(obstacle_turn)  # step 1
                 print("Stop at: (Side) ", sonar_right.value())
-                go_around_obstacle(obstacle_turn,get_back_enabled=True)
+                go_around_obstacle(obstacle_turn, get_back_enabled=True, is_wall_detect_enable=True)
 
             elif is_branch_detected(curr_l, curr_r):
                 stop_wheel_motor()
@@ -846,8 +845,7 @@ def go_to_toilet():
                 obstacle_turn = 'RIGHT'
                 get_ready_for_obstacle(obstacle_turn)  # step 1
                 print("Stop at: (Side) ", sonar_right.value())
-                go_around_obstacle(obstacle_turn,get_back_enabled=True)
-                get_back_to_line(obstacle_turn)
+                go_around_obstacle(obstacle_turn, get_back_enabled=True, is_wall_detect_enable=True)
 
             elif is_branch_detected(curr_l, curr_r):
                 stop_wheel_motor()
@@ -942,8 +940,7 @@ def go_to_exit():
                 obstacle_turn = 'RIGHT'
                 get_ready_for_obstacle(obstacle_turn)  # step 1
                 print("Stop at: (Side) ", sonar_right.value())
-                go_around_obstacle(obstacle_turn, get_back_enabled=True)
-                get_back_to_line(obstacle_turn)
+                go_around_obstacle(obstacle_turn, get_back_enabled=True, is_wall_detect_enable=True)
 
             elif is_branch_detected(curr_l, curr_r):
                 stop_wheel_motor()
