@@ -49,6 +49,8 @@ class LineFollowing(Algorithm):
 
 		self.base_speed = 125
 
+		self.steer = 0
+
 	def set_gains(self, kp, ki, kd):
 		self.pid.kp = kp
 		self.pid.ki = ki
@@ -56,9 +58,9 @@ class LineFollowing(Algorithm):
 
 	def run(self):
 		current_value = self.robot.env.line_sens_val
-		steer = -self.pid.calculate(current_value)
+		self.steer = -self.pid.calculate(current_value)
 
-		steer_right = self.base_speed - steer
-		steer_left = self.base_speed + steer
+		steer_right = self.base_speed - self.steer
+		steer_left = self.base_speed + self.steer
 
 		self.robot.motor(steer_left, steer_right)
