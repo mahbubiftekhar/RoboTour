@@ -19,7 +19,7 @@ st_start = State("Start")
 # calibration mode
 st_calibrate_right = State("Calibrating")
 st_calibrate_left = State("Calibrating")
-st_calibrate_centre = State("Calibrating")
+st_calibrate_stop = State("Calibrating")
 
 # line following mode
 st_line_following = State("Line following")
@@ -31,20 +31,24 @@ def obstacle_detected(env):
 
 # define actions for calibration
 def calibrate_right():
-	robot.motor(100, -100)
+	robot.motor(200, 125)
 	robot.line_sensor.calibrate()
 
 def calibrate_left():
-	robot.motor(-100, 100)
+	robot.motor(0, 175)
 	robot.line_sensor.calibrate()
 
 sweep_time = 1750
 
 st_start.add_transition(Transition(st_calibrate_right))
 
-st_calibrate_right.add_transition(TransitionTimed(sweep_time, st_calibrate_left))
-st_calibrate_left.add_transition(TransitionTimed(2*sweep_time, st_calibrate_centre))
-st_calibrate_centre.add_transition(TransitionTimed(sweep_time, st_line_following))
+st_calibrate_right.add_transition(TransitionTimed(2*sweep_time, st_calibrate_left))
+st_calibrate_right.add_transition(Transition(st_calibrate_stop, obstacle_detected))
+
+st_calibrate_left.add_transition(TransitionTimed(sweep_time, st_calibrate_right))
+st_calibrate_left.add_transition(Transition(st_calibrate_stop, obstacle_detected))
+
+st_calibrate_stop.add_transition(TransitionTimed(3*sweep_time, st_line_following))
 
 st_line_following.add_transition(Transition(st_stop, obstacle_detected))
 
@@ -54,7 +58,7 @@ dsp = Dispatcher(fsm)
 
 dsp.link_action(st_calibrate_right, calibrate_right)
 dsp.link_action(st_calibrate_left, calibrate_left)
-dsp.link_action(st_calibrate_centre, calibrate_right)
+dsp.link_action(st_calibrate_stop, robot.stop)
 
 dsp.link_action(st_line_following, line_follower.run)
 
