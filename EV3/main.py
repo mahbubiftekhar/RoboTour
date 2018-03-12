@@ -99,6 +99,7 @@ def initialising_map():
         '13': {'3': 20, '12': 32, '9': 85},
         '14': {'4': 31.5, '5': 46, '8': 28},
         '15': {'2': 19.5, '8': 31.5, '9': 32}
+
     }
 
     global motor_map
@@ -184,10 +185,12 @@ def get_colour_left():
 
 
 def is_right_line_detected():  # Right Lego sensor
+    # print(getColourRight())
     return get_colour_right() > line_threshold
 
 
 def is_left_line_detected():
+    # print(getColourLeft())
     return get_colour_left() > line_threshold
 
 
@@ -213,6 +216,10 @@ def get_sonar_readings_right():
 
 def is_front_obstacle():
     return get_sonar_readings_front() < obstacle_detection_distance
+
+
+def is_no_front_obstacle_lel():
+    return get_sonar_readings_front() > obstacle_detection_distance * 1.5
 
 
 def is_left_side_obstacle():
@@ -470,26 +477,66 @@ def get_ready_for_obstacle(direction):  # 90 degree
     if direction == 'RIGHT':
         turn_right_ninety()
 
-        # Get out of the line
         while is_line_detected():
             move_forward(100, 100)
 
     else:  # All default will go through the Left side. IE
         turn_left_ninety()
 
-        # Get out of the line
         while is_line_detected():
             move_forward(100, 100)
 
 
+"""
+def go_around_obstacle(direction):
+    print("GO AROUND OBSTACLE")
+    set_distance = 11
+    if (direction == 'RIGHT'):
+        while(not is_line_detected()):
+            
+            if (is_wall_detected()):
+                turn_back()
+
+                go_around_obstacle('LEFT')
+                break;
+            
+            
+            print(get_sonar_readings_left())
+            if(get_sonar_readings_front() < set_distance*10):
+                turn_right_ninety()
+
+            elif (get_sonar_readings_left() < set_distance):
+                turn(100, 50, 1000)
+
+            else:
+                turn(50, 150, 1000)
+
+
+    else: # All default will go through the Left side. IE
+        while(not is_line_detected()):
+        
+            if (is_wall_detected()):
+                turn_back()
+                go_around_obstacle('RIGHT')
+                break;
+            
+            if(et_sonar_readings_front() < set_distance*10):
+                turnLeftNinety()
+                waitForMotor()
+            elif (get_sonar_readings_right() < set_distance):
+                turn(50, 100, 1000)
+            else:
+                turn(150, 50, 1000)
+
+
+"""
+
+
 def go_around_obstacle(direction, get_back_enabled):
-
     print("GO AROUND OBSTACLE Direction: ", direction)
-
     set_distance = 11
     set_sharp_distance = 18
     is_sharp_before = False
-
     if direction == 'RIGHT':
         while not is_line_detected():
 
@@ -500,7 +547,8 @@ def go_around_obstacle(direction, get_back_enabled):
                 get_back_enabled = False
                 go_around_obstacle('LEFT', get_back_enabled)
                 while is_line_detected():
-                    move_forward(100, 100)
+                    move_forward(100, 1000)
+                    wait_for_motor()
                 print("Try to go around the other side")
                 go_around_obstacle('LEFT', True)
                 return
@@ -512,17 +560,17 @@ def go_around_obstacle(direction, get_back_enabled):
             else:
                 left = get_sonar_readings_left()
                 if left < set_distance:
-                    turn(100, 50, 100)
+                    turn(100, 50, 1000)
                     is_sharp_before = False
                 elif left > set_distance:
                     if (not is_sharp_before) and left > set_sharp_distance:
                         print("Find a sharp!")
-                        turn(100, 100, 100)
+                        turn(100, 100, 1000)
                         is_sharp_before = True
                     else:
-                        turn(50, 150, 100)
+                        turn(50, 150, 1000)
                 else:
-                    turn(100, 100, 100)
+                    turn(100, 100, 1000)
                     is_sharp_before = False
 
     else:  # All default will go through the Left side. IE
@@ -538,7 +586,7 @@ def go_around_obstacle(direction, get_back_enabled):
                 get_back_to_line('LEFT')
 
                 speak("Carson please remove the obstacle in front of me. Thank you.")
-                while is_front_obstacle():
+                while not is_no_front_obstacle_lel():
                     stop_wheel_motor()
                     time.sleep(1)
 
@@ -550,17 +598,17 @@ def go_around_obstacle(direction, get_back_enabled):
             else:
                 right = get_sonar_readings_right()
                 if right < set_distance:
-                    turn(50, 100, 100)
+                    turn(50, 100, 1000)
                     is_sharp_before = False
                 elif right > set_distance:
                     if (not is_sharp_before) and right > set_sharp_distance:
                         print("Find a sharp!")
-                        turn(100, 100, 100)
+                        turn(100, 100, 1000)
                         is_sharp_before = True
                     else:
-                        turn(150, 50, 100)
+                        turn(150, 50, 1000)
                 else:
-                    turn(100, 100, 100)
+                    turn(100, 100, 1000)
                     is_sharp_before = False
 
     if get_back_enabled:
@@ -572,14 +620,12 @@ def get_back_to_line(turning_direction):
 
     if turning_direction == 'RIGHT':
         if is_left_line_detected():
-            # That means when it detect the line, it is not facing to the obstacle
             while not is_right_line_detected():
                 turn(0, 100, 100)
             while not is_left_line_detected():
                 turn(-100, 0, 100)
 
         elif is_right_line_detected():
-            # That means when it detect the line, it is facing to the obstacle
             while not is_left_line_detected():
                 turn(100, 0, 100)
             while not is_right_line_detected():
@@ -589,20 +635,51 @@ def get_back_to_line(turning_direction):
 
     else:
         if is_right_line_detected():
-            # That means when it detect the line, it is not facing to the obstacle
             while not is_left_line_detected():
-                turn(0, 100, 100)
-            while not is_right_line_detected():
-                turn(-100, 0, 100)
-
-        elif is_left_line_detected():
-            # That means when it detect the line, it is facing to the obstacle
-            while not is_right_line_detected():
                 turn(100, 0, 100)
-            while not is_left_line_detected():
+            while not is_right_line_detected():
                 turn(0, -100, 100)
 
+        elif is_left_line_detected():
+            while not is_right_line_detected():
+                turn(0, 100, 100)
+            while not is_left_line_detected():
+                turn(-100, 0, 100)
+
         turn_left_ninety()
+
+    '''
+    if turning_direction == 'RIGHT':
+        if is_left_line_detected():
+            # That means when it detect the line, it is not facing to the obstacle
+            pass
+        else:
+            # That means when it detect the line, it is facing to the obstacle
+            while not is_left_line_detected():
+                turn(150, -100, 100)
+
+        while is_left_line_detected():
+            turn(100, 100, 100)
+        while not is_left_line_detected():
+            turn(150, -100, 100)
+        print("Find line again!")
+    else:
+        if is_right_line_detected():
+            # That means when it detect the line, it is not facing to the obstacle
+            pass
+
+        else:
+            # That means when it detect the line, it is facing to the obstacle
+            while not is_right_line_detected():
+                turn(-100, 150, 100)
+
+        while is_right_line_detected():
+            turn(100, 100, 100)
+        while not is_right_line_detected():
+            turn(-100, 150, 100)
+
+        print("Find line again!")
+    '''
 
 
 def wait_for_user_to_get_ready():
@@ -635,6 +712,7 @@ def go_to_closest_painting(painting, path):
         # Follow line until reaching a painting OR a branch
         while True:
             # Sleeps if Stop
+
             while is_stop:
                 stop_wheel_motor()
 
@@ -665,7 +743,7 @@ def go_to_closest_painting(painting, path):
                 obstacle_turn = 'RIGHT'
                 get_ready_for_obstacle(obstacle_turn)  # step 1
                 print("Stop at: (Side) ", sonar_right.value())
-                go_around_obstacle(obstacle_turn, get_back_enabled=True)
+                go_around_obstacle(obstacle_turn,get_back_enabled=True)
 
             elif is_branch_detected(curr_l, curr_r):
                 stop_wheel_motor()
@@ -700,7 +778,6 @@ def go_to_closest_painting(painting, path):
                     server.update_status_false('Cancel')
                     global remainingPicturesToGo
                     remainingPicturesToGo = []
-
                 break
 
     if index == len(path):
@@ -769,7 +846,7 @@ def go_to_toilet():
                 obstacle_turn = 'RIGHT'
                 get_ready_for_obstacle(obstacle_turn)  # step 1
                 print("Stop at: (Side) ", sonar_right.value())
-                go_around_obstacle(obstacle_turn, get_back_enabled=True)
+                go_around_obstacle(obstacle_turn,get_back_enabled=True)
                 get_back_to_line(obstacle_turn)
 
             elif is_branch_detected(curr_l, curr_r):
@@ -803,7 +880,7 @@ def go_to_toilet():
                 break
 
     if index == len(path):
-        speak("This is the toilet!")
+        # speak("This is " + art_pieces_map[painting])
         point_to_painting(toilet_position)
         server.update_status_arrived('Toilet')  # tell the app the robot is arrived to this painting
         server.set_stop_true()
@@ -903,28 +980,29 @@ def server_check():
             is_stop = False
 
         global is_skip
-        if server.check_position('Skip') == 'T':
+        if server.check_position('Skip') == "T":
             is_skip = True
         else:
             is_skip = False
 
         global is_toilet
-        if server.check_position('Toilet') == 'T':
+        if server.check_position('Toilet') == "T":
             is_toilet = True
         else:
             is_toilet = False
 
         global is_exit
-        if server.check_position('Exit') == 'T':
+        if server.check_position('Exit') == "T":
             is_exit = True
         else:
             is_exit = False
 
         global is_cancel
-        if server.check_position('Cancel') == 'T':
+        if server.check_position('Cancel') == "T":
             is_cancel = True
         else:
             is_cancel = False
+
 
 # #################### MAIN #################################
 
@@ -939,7 +1017,7 @@ server = Server()
 server_check_thread = Thread(target=server_check)
 server_check_thread.daemon = True
 server_check_thread.start()
-print("Server start checking")
+
 
 ###########################################################
 
@@ -968,21 +1046,20 @@ try:
                 print("Robot's location is not the starting position of the shortest path")
                 exit()
 
-            print("Going to "+art_pieces_map[closest_painting])
+            print("Going to picture ", closest_painting)
             server.update_art_piece(closest_painting)    # tell the app the robot is going to this painting
             go_to_closest_painting(closest_painting, shortest_path)
 
-        # If no more painting selected
+        # If not skip do this
         if not robot_location == '10':
-            print("No more pictures to go.")
-            print("Going to exit.")
+            print("No more pictures to go. Go to exit.")
             go_to_exit()   # Go to exit
 
         align_orientation('N')
         server.update_status_arrived('Exit')
         server.set_stop_true()
-        server.reset_list_on_server()
         print("Finish program!")
+        server.reset_list_on_server()
         # terminate thread stop_thread
         # exit()
 
