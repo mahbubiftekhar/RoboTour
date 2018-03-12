@@ -104,7 +104,6 @@ class FinishActivity : AppCompatActivity() {
             button(restartApp) {
                 textSize = 20f
                 background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-
                 onClick {
                     //Restart the app cleanly
                     deleteCache(applicationContext)

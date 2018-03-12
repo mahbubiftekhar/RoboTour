@@ -1,7 +1,6 @@
 package com.example.david.robotour
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -37,8 +36,8 @@ class ChooseLevel : AppCompatActivity() {
     private var language: String = ""
     private var controlButton: Button? = null
     private var listenButton: Button? = null
-    private var error_control = ""
-    private var error_listen = ""
+    private var error_Control = ""
+    private var error_Listen = ""
     private var userID = 0
     private var controlProgress = false
     private var listenProgress = false
@@ -286,24 +285,24 @@ class ChooseLevel : AppCompatActivity() {
         }
         when (language) {
             "French" -> {
-                error_control = "RoboTour en tournée, veuillez patienter ou suivre le tour"
-                error_listen = "RoboTour n'est pas en tournée, veuillez sélectionner Control RoboTour"
+                error_Control = "RoboTour en tournée, veuillez patienter ou suivre le tour"
+                error_Listen = "RoboTour n'est pas en tournée, veuillez sélectionner Control RoboTour"
             }
             "German" -> {
-                error_control = "RoboTour auf Tour, bitte warten oder Tour folgen"
-                error_listen = "RoboTour ist nicht auf Tour, bitte wählen Sie RoboTour steuern"
+                error_Control = "RoboTour auf Tour, bitte warten oder Tour folgen"
+                error_Listen = "RoboTour ist nicht auf Tour, bitte wählen Sie RoboTour steuern"
             }
             "Spanish" -> {
-                error_control = "RoboTour de gira, por favor espere o siga el recorrido"
-                error_listen = "RoboTour no gira, seleccione Control RoboTour"
+                error_Control = "RoboTour de gira, por favor espere o siga el recorrido"
+                error_Listen = "RoboTour no gira, seleccione Control RoboTour"
             }
             "Chinese" -> {
-                error_control = "RoboTour巡演时，请等待或关注巡演"
-                error_listen = "RoboTour不参观，请选择Control RoboTour\n"
+                error_Control = "RoboTour巡演时，请等待或关注巡演"
+                error_Listen = "RoboTour不参观，请选择Control RoboTour\n"
             }
             else -> {
-                error_control = "RoboTour on tour, please wait or follow tour"
-                error_listen = "RoboTour not touring, please select Control RoboTour"
+                error_Control = "RoboTour on tour, please wait or follow tour"
+                error_Listen = "RoboTour not touring, please select Control RoboTour"
             }
 
         }
@@ -357,7 +356,7 @@ class ChooseLevel : AppCompatActivity() {
                             checkerThread.interrupt()
                             startActivity<PicturesActivity>("language" to language)
                         } else {
-                            toast(error_control)
+                            toast(error_Control)
                         }
                     }
                 }
@@ -378,7 +377,7 @@ class ChooseLevel : AppCompatActivity() {
                             checkerThread.interrupt()
                             startActivity<ListenInActivity>("language" to language)
                         } else {
-                            toast(error_listen)
+                            toast(error_Listen)
                         }
                     }
                 }

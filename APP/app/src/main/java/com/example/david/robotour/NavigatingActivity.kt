@@ -111,6 +111,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts2!!.stop()
             tts2!!.shutdown()
         }
+        checkerThread.interrupt()
         super.onStop()
     }
 
