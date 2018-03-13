@@ -184,6 +184,8 @@ class LineSensor():
 
 		self.last_poll = -1
 
+		self.last_value = 0
+		self.activated_sens = 0
 
 		self.raw_val = {}
 		self.prev_val = {}
@@ -222,17 +224,20 @@ class LineSensor():
 		weight = 10
 		
 		err = 0
-		activated_sens = 0
+		self.activated_sens = 0
 
 		for s in order:
 			#check if sensor on line
 			if self.detector[s].line_detected:
 				err += weight
-				activated_sens += 1
+				self.activated_sens += 1
 
 			weight += 10
 
-		if activated_sens > 0:
-			return err/activated_sens
-		else:
-			return 0
+		if self.activated_sens > 0:
+			self.last_value = err/self.activated_sens
+
+		return self.last_value
+
+	def no_line(self, env):
+		return self.activated_sens == 0

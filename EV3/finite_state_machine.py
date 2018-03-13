@@ -90,8 +90,8 @@ class Transition():
 
 class TransitionTimed(Transition):
     # override the constructor
-    def __init__(self, time_ms, next_state):
-        Transition.__init__(self, next_state)
+    def __init__(self, time_ms, next_state, priority=1):
+        Transition.__init__(self, next_state,priority=priority)
         self.transition_after = time_ms
 
     # we need to utilise the function that gets called when we enter
