@@ -903,7 +903,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 onInit(0)
                 speakOutrecommendations()
                 break
-            } else if (functions[0]) {
+            } else if (functions[2]) {
                 onInit(0)
                 speakOutPopular()
                 break
