@@ -104,10 +104,10 @@ def initialising_map():
 
     global motor_map
     motor_map = {
-        '0': "W",
+        '0': "E",
         '1': "W",
         '2': "E",
-        '3': "E",
+        '3': "W",
         '4': "E",
         '5': "S",
         '6': "S",
