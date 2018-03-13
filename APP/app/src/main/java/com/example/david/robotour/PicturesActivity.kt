@@ -41,6 +41,9 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var tts3: TextToSpeech? = null
     private var search = ""
     private var cancel = ""
+    private var areYouSure = ""
+    private var positive = ""
+    private var negative = ""
 
     public override fun onDestroy() {
         // Shutdown TTS
@@ -225,54 +228,70 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         //Obtain language from SelectLanguageActivity
         when (language) {
-            "English" -> supportActionBar?.title = "Select Picture"
+            "English" -> supportActionBar?.title = "Select pictures"
             "German" -> supportActionBar?.title = "Wähle ein Bild"
             "Spanish" -> supportActionBar?.title = "Seleccionar imagen"
             "French" -> supportActionBar?.title = "Sélectionnez une image"
             "Chinese" -> supportActionBar?.title = "选择图片"
-            "other" -> supportActionBar?.title = "Select Picture"
-            "else" -> supportActionBar?.title = "Select Picture"
+            "other" -> supportActionBar?.title = "Select pictures"
+            "else" -> supportActionBar?.title = "Select pictures"
         }
         when (language) {
             "English" -> {
                 title = "Please enter painting you wish to go to"
                 search = "Search"
                 cancel = "Cancel"
+                areYouSure = "Are you sure you want to leave? Your selections will be lost"
+                positive = "Yes exit"
+                negative = "Cancel"
             }
             "German" -> {
                 title = "Bitte geben Sie ein Gemälde ein, zu dem Sie gehen möchten"
                 search = "Suche"
                 cancel = "Stornieren"
+                areYouSure = "Bist du sicher dass du gehen willst? Ihre Auswahl wird verloren gehen"
+                positive = "Ja, verlassen"
+                negative = "CStornieren"
             }
             "Spanish" -> {
                 title = "Por favor, ingrese la pintura a la que desea ir"
                 search = "buscar"
                 cancel = "Cancelar"
-
+                areYouSure = "Estás seguro que quieres irte? Tus selecciones se perderán"
+                positive = "Sí salir"
+                negative = "Cancelar"
             }
             "French" -> {
                 title = "S'il vous plaît entrer la peinture que vous souhaitez aller à"
                 search = "chercher"
                 cancel = "Annuler"
-
+                areYouSure = "Êtes-vous sûr de vouloir quitter? Vos sélections seront perdues"
+                positive = "Oui sortie"
+                negative = "Annuler"
             }
             "Chinese" -> {
                 title = "请输入您想要去看的作品"
                 search = "搜索"
                 cancel = "取消"
-
+                areYouSure = "你确定要离开吗？您的选择将会丢失"
+                positive = "是退出"
+                negative = "取消"
             }
             "other" -> {
                 title = "Please enter painting you wish to go to"
                 search = "Search"
                 cancel = "Cancel"
-
+                positive = "Yes exit"
+                negative = "Cancel"
+                areYouSure = "Are you sure you want to leave? Your selections will be lost"
             }
             "else" -> {
                 title = "Please enter painting you wish to go to"
                 search = "Search"
+                positive = "Yes exit"
+                negative = "Cancel"
                 cancel = "Cancel"
-
+                areYouSure = "Are you sure you want to leave? Your selections will be lost"
             }
         }
 
@@ -359,7 +378,6 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         for (artPiece in allArtPieces) {
             shownArtPieces.add(artPiece)
         }
-        clearFindViewByIdCache()
         adapter = PicturesAdapter(shownArtPieces, language)      //update adapter
         val ui = PicturesUI(adapter, language, applicationContext)                //define Anko UI Layout to be used
         ui.setContentView(this)//Set Anko UI to this Activity
@@ -641,8 +659,8 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 /*If the user has not made any selections, let them press back no questions asked*/
                 super.onBackPressed()
             } else {
-                alert("Are you sure you want to leave? Your selection will be lost") {
-                    positiveButton {
+                alert(areYouSure) {
+                    positiveButton(positive) {
                         t.interrupt() //Stops the thread
                         async {
                             clearFindViewByIdCache()
@@ -651,7 +669,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         }
                         //super.onBackPressed() // Call super.onBackPressed
                     }
-                    negativeButton {
+                    negativeButton(negative) {
                         /*Do nothing*/
                     }
                 }.show()
