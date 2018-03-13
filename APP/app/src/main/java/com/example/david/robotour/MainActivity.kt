@@ -93,10 +93,8 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 onLongClick {
-
                     interuptPicturesThread()
                     switchToAdmin()
-
                     true
                 }
             }

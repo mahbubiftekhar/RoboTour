@@ -109,6 +109,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun speakOutNoResults() {
         //This will simply output in speech "Here are your recommendations"
+        println("in here once")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
             val language = intent.getStringExtra("language")
@@ -137,6 +138,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun speakOutrecommendations() {
         //This will simply output in speech "Here are your recommendations"
+        println("recommend in here")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
             val language = intent.getStringExtra("language")
@@ -490,31 +492,31 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun getNewest() {
         /*This will return the newest painting*/
+        onInit(0)
         val recommended = listOf(allArtPieces[0], allArtPieces[5], allArtPieces[8])
         recommended
                 .filterNot { queriedArtPieces.contains(it) }
                 .forEach { queriedArtPieces.add(it) }
-        onInit(0)
         speakOutnew()
     }
 
     private fun getRecommended() {
         /*This will return the recommended paintings*/
+        onInit(0)
         val recommended = listOf(allArtPieces[1], allArtPieces[3], allArtPieces[6])
         recommended
                 .filterNot { queriedArtPieces.contains(it) }
                 .forEach { queriedArtPieces.add(it) }
-        onInit(0)
         speakOutrecommendations()
     }
 
     private fun getPopular() {
         /*This will return the popular paintings*/
+        onInit(0)
         val recommended = listOf(allArtPieces[2], allArtPieces[4], allArtPieces[7])
         recommended
                 .filterNot { queriedArtPieces.contains(it) }
                 .forEach { queriedArtPieces.add(it) }
-        onInit(0)
         speakOutPopular()
     }
 

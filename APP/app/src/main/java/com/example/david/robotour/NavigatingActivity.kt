@@ -271,7 +271,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts2 = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
         vibrate()
-        async{
+        async {
             Thread.sleep(1500)
             speakOutOnCreate()
         }
@@ -434,12 +434,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 onClick {
                                     if (isNetworkConnected()) {
                                         alert(skipDesc) {
-                                            positiveButton(positive) {
-                                                // skip()
-                                            }
-                                            negativeButton(negative) {
-                                                //Do nothing the user changed their minds
-                                            }
+                                            /* positiveButton(positive) {
+                                                 skip()
+                                             }
+                                             negativeButton(negative) {
+                                                 //Do nothing the user changed their minds
+                                             } */
                                         }.show()
                                     } else {
                                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
@@ -487,15 +487,15 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 onClick {
                                     if (isNetworkConnected()) {
                                         alert(cancelDesc) {
-                                            positiveButton(positive) {
-                                                // checkerThread.interrupt()
-                                                // cancelGuideTotal()
+                                            /*positiveButton(positive) {
+                                                checkerThread.interrupt()
+                                                cancelGuideTotal()
 
                                             }
                                             negativeButton(negative) {
                                                 onBackPressed()
                                                 //Call on back pressed to take them back to the main activity
-                                            }
+                                            } */
                                         }.show()
                                     } else {
                                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
@@ -578,17 +578,17 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 width = matchParent
                                 onClick {
                                     alert(toiletDesc) {
-                                        positiveButton(positive) {
+                                       /* positiveButton(positive) {
                                             if (isNetworkConnected()) {
                                                 async {
-                                                    //  sendPUTNEW(14, "T")
+                                                    sendPUTNEW(14, "T")
                                                 }
                                             } else {
                                                 Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                             }
 
                                         }
-                                        negativeButton(negative) { }
+                                        negativeButton(negative) { } */
                                     }.show()
                                 }
                             }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
@@ -601,20 +601,20 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     if (isNetworkConnected()) {
                                         alert(exitDesc) {
                                             positiveButton(positive) {
-                                                async {
-                                                    // exitDoor()
-                                                }
-                                                async {
-                                                    var a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-                                                    if (a == "1") {
-                                                        sendPUTNEW(12, "T")
-                                                    }
-                                                    a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-                                                    if (a[16] == 'T' && a[17] == 'T') {
-                                                        sendPUTNEW(12, "T")
-                                                    }
+                                                /* async {
+                                                      exitDoor()
+                                                 }
+                                                 async {
+                                                     var a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                                                     if (a == "1") {
+                                                         sendPUTNEW(12, "T")
+                                                     }
+                                                     a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                                                     if (a[16] == 'T' && a[17] == 'T') {
+                                                         sendPUTNEW(12, "T")
+                                                     }
 
-                                                }
+                                                 } */
                                             }
                                             negativeButton(negative) { }
                                         }.show()
@@ -692,9 +692,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
                                 println("++++++++" + a)
                                 /*This updates the picture and text for the user*/
-                                val counter = (0..9).count { a[it] == 'F' }
+                                val counter = (0..16).count { a[it] == 'F' }
                                 println("+++counter: $counter")
-                                if (counter == 10) {
+                                if (counter == 17) {
                                     runOnUiThread {
                                         switchToFinnished()
                                         killThread = true

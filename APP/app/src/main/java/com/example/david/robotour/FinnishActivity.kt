@@ -126,7 +126,7 @@ class FinishActivity : AppCompatActivity() {
                     text = "Vielen Dank für die Verwendung von RoboTour"
                 }
                 else -> {
-                    text = "Thanks for using Ro-bow-Tour"
+                    text = "Thanks for using Robot Tour"
                     //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                 }
             }
