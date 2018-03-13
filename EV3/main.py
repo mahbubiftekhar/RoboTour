@@ -540,8 +540,8 @@ def go_around_obstacle(direction):
 
 def go_around_obstacle(direction, get_back_enabled, is_wall_detect_enable):
     print("GO AROUND OBSTACLE Direction: ", direction)
-    set_distance = 15
-    set_sharp_distance = 25
+    set_distance = 11
+    set_sharp_distance = 15
     is_sharp_before = False
     if direction == 'RIGHT':
         while not is_line_detected():
@@ -552,8 +552,8 @@ def go_around_obstacle(direction, get_back_enabled, is_wall_detect_enable):
                 get_back_enabled = False
                 go_around_obstacle('LEFT', get_back_enabled, False)
                 while is_line_detected():
-                    move_forward(100, 1000)
-                    wait_for_motor()
+                    move_forward(100, 500)
+
                 print("Try to go around the other side")
                 go_around_obstacle('LEFT', True, True)
                 break
@@ -565,7 +565,7 @@ def go_around_obstacle(direction, get_back_enabled, is_wall_detect_enable):
             else:
                 left = get_sonar_readings_left()
                 if left < set_distance:
-                    turn(100, 50, 1000)
+                    turn(100, 50, 500)
                     is_sharp_before = False
                 elif left > set_distance:
                     if (not is_sharp_before) and left > set_sharp_distance:
@@ -573,9 +573,9 @@ def go_around_obstacle(direction, get_back_enabled, is_wall_detect_enable):
                         turn(100, 100, 1000)
                         is_sharp_before = True
                     else:
-                        turn(50, 150, 1000)
+                        turn(50, 150, 500)
                 else:
-                    turn(100, 100, 1000)
+                    turn(100, 100, 500)
                     is_sharp_before = False
 
     else:  # All default will go through the Left side. IE
@@ -602,7 +602,7 @@ def go_around_obstacle(direction, get_back_enabled, is_wall_detect_enable):
             else:
                 right = get_sonar_readings_right()
                 if right < set_distance:
-                    turn(50, 100, 1000)
+                    turn(50, 100, 500)
                     is_sharp_before = False
                 elif right > set_distance:
                     if (not is_sharp_before) and right > set_sharp_distance:
@@ -610,9 +610,9 @@ def go_around_obstacle(direction, get_back_enabled, is_wall_detect_enable):
                         turn(100, 100, 1000)
                         is_sharp_before = True
                     else:
-                        turn(150, 50, 1000)
+                        turn(150, 50, 500)
                 else:
-                    turn(100, 100, 1000)
+                    turn(100, 100, 500)
                     is_sharp_before = False
     print("Get back to line off rec direction " + direction+" is ", get_back_enabled)
     if get_back_enabled:
