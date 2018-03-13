@@ -501,6 +501,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun getRecommended() {
+        println("In getRecommended")
         /*This will return the recommended paintings*/
         onInit(0)
         val recommended = listOf(allArtPieces[1], allArtPieces[3], allArtPieces[6])
