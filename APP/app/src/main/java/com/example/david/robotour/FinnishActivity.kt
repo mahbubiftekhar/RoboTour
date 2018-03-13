@@ -9,9 +9,12 @@ import android.view.Gravity
 import org.jetbrains.anko.*
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
+import android.speech.tts.TextToSpeech
 import android.support.v4.content.res.ResourcesCompat
 import kotlinx.android.synthetic.*
 import java.io.File
+import java.util.*
 
 
 @Suppress("DEPRECATION")
@@ -19,6 +22,62 @@ class FinishActivity : AppCompatActivity() {
     /*This activity will be shown to the user when they cancel or finish the tour */
     private lateinit var closeApp: String
     private lateinit var restartApp: String
+    private var tts: TextToSpeech? = null
+    private var speechText = ""
+
+    override fun onDestroy() {
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
+        }
+        super.onDestroy()
+    }
+    fun onInit(status: Int) {
+        println("status code: $status")
+        if (status == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+
+        }
+    }
+    override fun onStop() {
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
+        }
+        super.onStop()
+    }
+
+    override fun onPause() {
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
+        }
+        super.onPause()
+    }
 
     override fun onBackPressed() {
         //Restart the app cleanly
@@ -49,12 +108,42 @@ class FinishActivity : AppCompatActivity() {
             else -> false
         }
     }
-
+    private fun speakOutThanks() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "French" -> {
+                    text = "Merci d'utiliser RoboTour"
+                }
+                "Chinese" -> {
+                    text = "感谢您使用RoboTour"
+                }
+                "Spanish" -> {
+                    text = "Gracias por usar RoboTour"
+                }
+                "German" -> {
+                    text = "Vielen Dank für die Verwendung von RoboTour"
+                }
+                else -> {
+                    text = "Thanks for using Ro-bow-Tour"
+                    //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
+                }
+            }
+            tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         val language = intent.getStringExtra("language")
         val message: String
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
+        tts = TextToSpeech(this, null)
+        onInit(0)
+        async{
+            Thread.sleep(1500)
+            speakOutThanks()
+        }
         message = when (language) {
             "French" -> "Merci d'utiliser RoboTour.\nNous espérons que vous avez apprécié votre visite."
             "German" -> "Vielen Dank für die Verwendung von RoboTour.\nWir hoffen, Sie haben Ihre Tour genossen."
@@ -64,6 +153,7 @@ class FinishActivity : AppCompatActivity() {
         }
         when (language) {
             "French" -> {
+                speechText = "Thank you for using Ro-bow-tour"
                 restartApp = "START"
                 closeApp = "FERMER APP"
             }
