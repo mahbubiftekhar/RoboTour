@@ -524,6 +524,32 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         } else {
         }
+        if (p0 == TextToSpeech.SUCCESS) {
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts4!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts4!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts4!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts4!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts4!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+        }
     }
 
     private fun getNewest() {
