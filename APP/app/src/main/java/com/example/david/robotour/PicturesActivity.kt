@@ -854,24 +854,31 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                position 2 = recommendations
                position 3 = newest*/
             if (functions[0] && functions[1] && functions[2]) {
+                onInit(0)
                 speakToResult()
                 break
             } else if (functions[0] && functions[1]) {
+                onInit(0)
                 speakToResult()
                 break
             } else if (functions[0] && functions[2]) {
+                onInit(0)
                 speakToResult()
                 break
             } else if (functions[1] && functions[2]) {
+                onInit(0)
                 speakToResult()
                 break
             } else if (functions[0]) {
+                onInit(0)
                 speakOutnew()
                 break
             } else if (functions[1]) {
+                onInit(0)
                 speakOutrecommendations()
                 break
             } else if (functions[0]) {
+                onInit(0)
                 speakOutPopular()
                 break
             }
