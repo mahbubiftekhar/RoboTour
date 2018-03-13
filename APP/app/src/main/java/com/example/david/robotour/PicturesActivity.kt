@@ -39,6 +39,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var tts: TextToSpeech? = null
     private var tts2: TextToSpeech? = null
     private var tts3: TextToSpeech? = null
+    private var tts4: TextToSpeech? = null
     private var search = ""
     private var cancel = ""
     private var areYouSure = ""
@@ -59,6 +60,10 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts3!!.stop()
             tts3!!.shutdown()
         }
+        if (tts4 != null) {
+            tts4!!.stop()
+            tts4!!.shutdown()
+        }
         t.interrupt()
         super.onDestroy()
     }
@@ -71,11 +76,14 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (tts2 != null) {
             tts2!!.stop()
             tts2!!.shutdown()
-
         }
         if (tts3 != null) {
             tts3!!.stop()
             tts3!!.shutdown()
+        }
+        if (tts4 != null) {
+            tts4!!.stop()
+            tts4!!.shutdown()
         }
         super.onStop()
     }
@@ -104,6 +112,33 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
             longToast(text)
             tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+        }
+    }
+
+    private fun speakToResult() {
+        //This will simply output in speech "Here are your recommendations"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "French" -> {
+                    text = "Voici les résultats que j'ai trouvés"
+                }
+                "Chinese" -> {
+                    text = "这是我发现的结果"
+                }
+                "Spanish" -> {
+                    text = "Aquí están los resultados que he encontrado"
+                }
+                "German" -> {
+                    text = "Hier sind die Ergebnisse, die ich gefunden habe"
+                }
+                else -> {
+                    text = "Here are the results I have found"
+                }
+            }
+            longToast(text)
+            tts4!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
 
@@ -226,6 +261,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, null)
         tts2 = TextToSpeech(this, null)
         tts3 = TextToSpeech(this, null)
+        tts4 = TextToSpeech(this, null)
         onInit(0)
 
         //Obtain language from SelectLanguageActivity
@@ -492,33 +528,27 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun getNewest() {
         /*This will return the newest painting*/
-        onInit(0)
         val recommended = listOf(allArtPieces[0], allArtPieces[5], allArtPieces[8])
         recommended
                 .filterNot { queriedArtPieces.contains(it) }
                 .forEach { queriedArtPieces.add(it) }
-        speakOutnew()
     }
 
     private fun getRecommended() {
         println("In getRecommended")
         /*This will return the recommended paintings*/
-        onInit(0)
         val recommended = listOf(allArtPieces[1], allArtPieces[3], allArtPieces[6])
         recommended
                 .filterNot { queriedArtPieces.contains(it) }
                 .forEach { queriedArtPieces.add(it) }
-        speakOutrecommendations()
     }
 
     private fun getPopular() {
         /*This will return the popular paintings*/
-        onInit(0)
         val recommended = listOf(allArtPieces[2], allArtPieces[4], allArtPieces[7])
         recommended
                 .filterNot { queriedArtPieces.contains(it) }
                 .forEach { queriedArtPieces.add(it) }
-        speakOutPopular()
     }
 
     //Add mic & search icons in actionbar
@@ -790,17 +820,61 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     if ((commonWords1.isNotEmpty() || commonWords2.isNotEmpty()) && !queriedArtPieces.contains(artPiece)) queriedArtPieces.add(artPiece)
                 }
             }
+            val functions = mutableListOf(false, false, false)
+            /* Position 1 = newest
+               position 2 = recommendations
+               position 3 = newest*/
             recommendationWords
                     .filter { regEx.replace(test, "").contains(regEx.replace(it, ""), ignoreCase = true) }
                     .forEach {
                         when (it) {
-                            "new" -> getNewest()
-                            "newest" -> getNewest()
-                            "best" -> getRecommended()
-                            "recommend" -> getRecommended()
-                            "popular" -> getPopular()
+                            "new" -> {
+                                getNewest()
+                                functions[0] = true
+                            }
+                            "newest" -> {
+                                getNewest()
+                                functions[0] = true
+                            }
+                            "best" -> {
+                                getRecommended()
+                                functions[1] = true
+                            }
+                            "recommend" -> {
+                                getRecommended()
+                                functions[1] = true
+                            }
+                            "popular" -> {
+                                getPopular()
+                                functions[2] = true
+                            }
                         }
                     }
+            /* Position 1 = newest
+               position 2 = recommendations
+               position 3 = newest*/
+            if (functions[0] && functions[1] && functions[2]) {
+                speakToResult()
+                break
+            } else if (functions[0] && functions[1]) {
+                speakToResult()
+                break
+            } else if (functions[0] && functions[2]) {
+                speakToResult()
+                break
+            } else if (functions[1] && functions[2]) {
+                speakToResult()
+                break
+            } else if (functions[0]) {
+                speakOutnew()
+                break
+            } else if (functions[1]) {
+                speakOutrecommendations()
+                break
+            } else if (functions[0]) {
+                speakOutPopular()
+                break
+            }
         }
         shownArtPieces.clear()
         for (artPiece in queriedArtPieces) {
