@@ -249,10 +249,16 @@ def move_backward(speed, running_time):
 
 
 def turn_right():
+
     motor_right.run_timed(speed_sp=-150, time_sp=600)
     motor_left.run_timed(speed_sp=250, time_sp=800)
     motor_left.wait_until_not_moving()
     motor_right.wait_until_not_moving()
+
+    motor_right.run_timed(speed_sp=200, time_sp=150)
+    motor_left.run_timed(speed_sp=200, time_sp=150)
+    motor_right.wait_until_not_moving()
+    motor_left.wait_until_not_moving()
 
 
 def turn_left():
@@ -534,8 +540,8 @@ def go_around_obstacle(direction):
 
 def go_around_obstacle(direction, get_back_enabled, is_wall_detect_enable):
     print("GO AROUND OBSTACLE Direction: ", direction)
-    set_distance = 11
-    set_sharp_distance = 18
+    set_distance = 15
+    set_sharp_distance = 25
     is_sharp_before = False
     if direction == 'RIGHT':
         while not is_line_detected():
@@ -583,8 +589,8 @@ def go_around_obstacle(direction, get_back_enabled, is_wall_detect_enable):
                 go_around_obstacle('RIGHT', get_back_enabled, False)
                 # turn_left_ninety()
                 get_back_to_line('LEFT')
-
-                speak("Carson, please remove the obstacle in front of me. Thank you.")
+                if not is_no_front_obstacle_lel():
+                    speak("Carson, please remove the obstacle in front of me. Thank you.")
                 while not is_no_front_obstacle_lel():
                     stop_wheel_motor()
 
@@ -1028,6 +1034,7 @@ oldL = colour_sensor_left.value()
 try:
     while True:
         print("\n\n\nWaiting for users...")
+        speak("Please select the paintings you want to go.")
         # wait_for_user_to_get_ready()
         server.start_up_single()
         print("Users are ready!")
