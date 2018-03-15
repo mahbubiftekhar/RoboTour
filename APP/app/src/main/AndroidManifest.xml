@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.CLEAR_APP_CACHE"/>
+    <uses-permission android:name="android.permission.CLEAR_APP_CACHE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -70,6 +70,11 @@
             android:label="@string/title_activity_choose_level"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".UpdatedNavActivity"
+            android:label="@string/title_activity_updated_nav"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".SampleCarouselViewActivity" />
     </application>
 
 </manifest>

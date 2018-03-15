@@ -46,8 +46,12 @@ class ChooseLevel : AppCompatActivity() {
         val a = loadInt("user")
         async {
             when (a) {
-                1 -> sendPUTNEW(16, "F")
-                2 -> sendPUTNEW(17, "F")
+                1 -> {
+                    sendPUTNEW(16, "F")
+                }
+                2 -> {
+                    sendPUTNEW(17, "F")
+                }
                 else -> {
                     //Do nothing
                 }
@@ -84,8 +88,18 @@ class ChooseLevel : AppCompatActivity() {
         if (checkerThread.state == Thread.State.NEW) {
             checkerThread.start()
         }
+        if(t.state==Thread.State.NEW){
+            t.start()
+        }
         super.onResume()
+    }
 
+    private fun saveInt(key: String, value: Int) {
+        /* Function to save an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val editor = sharedPreferences.edit()
+        editor.putInt(key, value)
+        editor.apply()
     }
 
     private fun loadInt(key: String): Int {
@@ -103,26 +117,30 @@ class ChooseLevel : AppCompatActivity() {
                 try {
                     //Control
                     if (twoUsers) {
-                        if (!user1 && loadInt("user") == 1) {
-                            println("++++1")
-                            runOnUiThread {
-                                controlProgress = true
-                                controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                        when {
+                            loadInt("user") == 1 -> {
+                                println("++++1")
+                                runOnUiThread {
+                                    controlProgress = true
+                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                                }
                             }
-                        } else if (loadInt("user") == 2 && !user2) {
-                            println("++++2")
-                            runOnUiThread {
-                                controlProgress = true
-                                controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                            loadInt("user") == 2 -> {
+                                println("++++2")
+                                runOnUiThread {
+                                    controlProgress = true
+                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                                }
                             }
-                        } else {
-                            println("++++3")
-                            runOnUiThread {
-                                controlProgress = false
+                            else -> {
+                                println("++++3")
+                                runOnUiThread {
+                                    controlProgress = false
+                                }
                             }
                         }
                     } else {
-                        if (!user1 && loadInt("user") == 1) {
+                        if (loadInt("user") == 1) {
                             println("++++4")
                             runOnUiThread {
                                 controlProgress = true
@@ -145,18 +163,6 @@ class ChooseLevel : AppCompatActivity() {
                                 listenProgress = true
                                 listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
                             }
-                        } else if (userID == 1 && user1) {
-                            println("++++8")
-                            runOnUiThread {
-                                listenProgress = true
-                                listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
-                            }
-                        } else if (userID == 2 && user2) {
-                            println("++++9")
-                            runOnUiThread {
-                                listenProgress = true
-                                listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
-                            }
                         } else {
                             println("++++10")
                             runOnUiThread {
@@ -165,23 +171,20 @@ class ChooseLevel : AppCompatActivity() {
                             }
                         }
                     } else {
-                        if (userID == 1 && !user1) {
-                            println("++++11")
-                            runOnUiThread {
-                                listenProgress = false
-                                listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
+                        when {
+                            !user1 && !user2 -> {
+                                println("++++11")
+                                runOnUiThread {
+                                    listenProgress = true
+                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                                }
                             }
-                        } else if (userID == 2 && !user2) {
-                            println("++++12")
-                            runOnUiThread {
-                                listenProgress = false
-                                listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
-                            }
-                        } else {
-                            println("++++13")
-                            runOnUiThread {
-                                listenProgress = true
-                                listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                            else -> {
+                                println("++++13")
+                                runOnUiThread {
+                                    listenProgress = false
+                                    listenButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
+                                }
                             }
                         }
                     }
@@ -196,7 +199,6 @@ class ChooseLevel : AppCompatActivity() {
         }
     }
 
-
     private val checkerThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         @RequiresApi(Build.VERSION_CODES.O)
@@ -205,9 +207,32 @@ class ChooseLevel : AppCompatActivity() {
                 try {
                     async {
                         val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
-                        val b = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
                         println("in here")
-                        if ("T" == b) {
+                        when {
+                            a[16] == 'F' && (userID!=1 && userID!=2) -> {
+                                println("++ONE")
+                                userID = 1
+                                async {
+                                    sendPUTNEW(16, "O")
+                                }
+                                saveInt("user", 1)
+                            }
+                            a[17] == 'F' && (userID!=1 && userID!=2)-> {
+                                println("++TWO")
+                                userID = 2
+                                async {
+                                    sendPUTNEW(17, "O")
+                                }
+                                saveInt("user", 1)
+                            }
+                            (userID!=1 && userID!=2) -> {
+                                println("++THREE")
+                                //The user can only follow the robot
+                                userID = -1
+                                saveInt("user", -1)
+                            }
+                        }
+                        if ('T' == a[17]) {
                             runOnUiThread {
                                 twoUsers = true
                             }

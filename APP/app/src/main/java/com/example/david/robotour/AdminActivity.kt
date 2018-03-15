@@ -236,7 +236,7 @@ class AdminActivity : AppCompatActivity() {
         }
         SWITCH_USER.setOnClickListener {
             /*This will change the user, This is defaulted as 1, user two must be selected itself*/
-            val a = loadInt("user")
+           /* val a = loadInt("user")
             when (a) {
                 0 -> {
                     saveInt("user", 1)
@@ -253,7 +253,9 @@ class AdminActivity : AppCompatActivity() {
                     Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
                     vibrate()
                 }
-            }
+            } */
+            vibrate()
+            toast("Function deprecated")
         }
         async {
             //This languages the user thread to check for updates

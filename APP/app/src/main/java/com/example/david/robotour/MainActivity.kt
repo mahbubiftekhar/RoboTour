@@ -9,9 +9,7 @@ import android.support.v4.content.res.ResourcesCompat
 import org.jetbrains.anko.*
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.os.Build
 import android.preference.PreferenceManager
-import android.support.annotation.RequiresApi
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.ImageView
@@ -25,7 +23,6 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import java.io.IOException
 import java.io.InterruptedIOException
-import java.nio.channels.InterruptedByTimeoutException
 
 
 @Suppress("DEPRECATION")
@@ -68,6 +65,9 @@ class MainActivity : AppCompatActivity() {
         verticalLayout {
             imageView(R.drawable.robotour_small) {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
+                onClick{
+
+                }
             }
             button("START") {
                 textSize = 32f
