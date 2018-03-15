@@ -119,7 +119,13 @@ class ChooseLevel : AppCompatActivity() {
                         val b = a[16]
                         val c = a[17]
                         println("a[16]: $b , a[17]: $c")
+                        if ('T' == a[10]) {
+                            runOnUiThread {
+                                twoUsers = true
+                            }
+                        }
                         when {
+
                             a[16] == 'F' && userID == -1 -> {
                                 println("+++++++ONE")
                                 runOnUiThread { userID = 1 }
@@ -128,7 +134,7 @@ class ChooseLevel : AppCompatActivity() {
                                 }
                                 runOnUiThread { saveInt("user", 1) }
                             }
-                            a[17] == 'F' && userID == -1 -> {
+                            a[17] == 'F' && userID == -1 && twoUsers-> {
                                 println("+++++++++TWO")
                                 runOnUiThread { userID = 2 }
                                 async {
@@ -138,11 +144,7 @@ class ChooseLevel : AppCompatActivity() {
                             }
                         }
                         println("++++userid: $userID")
-                        if ('T' == a[10]) {
-                            runOnUiThread {
-                                twoUsers = true
-                            }
-                        }
+
                         //Server must be extended for this functionality
                         //controlProgress = a[19]=='T'
 
