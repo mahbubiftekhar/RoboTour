@@ -50,12 +50,6 @@ class MainActivity : AppCompatActivity() {
         return networkInfo != null && networkInfo.isConnected
     }
 
-    private fun loadInt(key: String): Int {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        return sharedPreferences.getInt(key, 0)
-    }
-
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,16 +71,6 @@ class MainActivity : AppCompatActivity() {
                         continueThread = false
                         interuptPicturesThread()
                         pictureThread.interrupt()
-                        async {
-                            val a = loadInt("user")
-                            when (a) {
-                                1 -> sendPUTNEW(16, "O")
-                                2 -> sendPUTNEW(17, "O")
-                                else -> {
-                                    //Do nothing
-                                }
-                            }
-                        }
                         startActivity<SelectLanguageActivity>()
                     } else {
                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
