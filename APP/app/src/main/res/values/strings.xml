@@ -119,4 +119,8 @@
     <string name="start_robotour">START ROBOTOUR</string>
     <string name="STOPROBOTOUR">STOP ROBOTOUR</string>
     <string name="title_activity_updated_nav">UpdatedNavActivity</string>
+    <string name="listen_off">LISTEN OFF</string>
+    <string name="listen_on">LISTEN ON</string>
+    <string name="two_user_mode_off">TWO USER MODE OFF</string>
+    <string name="two_user_mode_on">TWO USER MODE ON</string>
 </resources>

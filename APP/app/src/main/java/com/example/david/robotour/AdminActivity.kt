@@ -4,10 +4,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.WindowManager
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_admin.*
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
@@ -121,6 +119,8 @@ class AdminActivity : AppCompatActivity() {
             15 -> true
             16 -> true
             17 -> true
+            18 -> true
+            19 -> true
             else -> false
         }
     }
@@ -181,7 +181,7 @@ class AdminActivity : AppCompatActivity() {
 
         RESET_EVERYTHING.setOnClickListener {
             //Resets all from 0 .. 17
-            for (i in 0..17) {
+            for (i in 0..19) {
                 async {
                     sendPUTNEW(i, "F")
                 }
@@ -234,33 +234,35 @@ class AdminActivity : AppCompatActivity() {
             }
             vibrate()
         }
-        SWITCH_USER.setOnClickListener {
-            /*This will change the user, This is defaulted as 1, user two must be selected itself*/
-           /* val a = loadInt("user")
-            when (a) {
-                0 -> {
-                    saveInt("user", 1)
-                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
-                    vibrate()
-                }
-                1 -> {
-                    saveInt("user", 2)
-                    Toast.makeText(applicationContext, "User 2 mode", Toast.LENGTH_LONG).show()
-                    vibrate()
-                }
-                else -> {
-                    saveInt("user", 1)
-                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
-                    vibrate()
-                }
-            } */
+        CONTROLON.setOnClickListener {
+            async {
+                sendPUTNEW(19, "T")
+            }
+            vibrate()
+        }
+        CONTROLOFF.setOnClickListener{
+            async {
+                sendPUTNEW(19, "F")
+            }
+            vibrate()
+        }
+        USER2_MODE_ON.setOnClickListener{
+            async {
+                sendPUTNEW(18, "T")
+            }
             vibrate()
             toast("Function deprecated")
         }
-        async {
-            //This languages the user thread to check for updates
-            updateTextThread.run()
+        USER2_MODE_OFF.setOnClickListener{
+            async {
+                sendPUTNEW(18, "F")
+            }
+            vibrate()
+            toast("Function deprecated")
         }
+        //This languages the user thread to check for updates
+        updateTextThread.start()
+
     }
 
     private fun vibrate() {
@@ -274,23 +276,9 @@ class AdminActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        if(updateTextThread.state == Thread.State.NEW){
+        if (updateTextThread.state == Thread.State.NEW) {
             updateTextThread.start()
         }
         super.onResume()
-    }
-
-    private fun saveInt(key: String, value: Int) {
-        /* Function to save an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val editor = sharedPreferences.edit()
-        editor.putInt(key, value)
-        editor.apply()
-    }
-
-    private fun loadInt(key: String): Int {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        return sharedPreferences.getInt(key, 0)
     }
 }
