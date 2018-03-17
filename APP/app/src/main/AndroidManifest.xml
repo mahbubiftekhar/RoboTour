@@ -71,10 +71,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".UpdatedNavActivity"
-            android:label="@string/title_activity_updated_nav"
+            android:name=".RecycleActivity"
+            android:label="@string/title_activity_recycle"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RecyclerActivity"
+            android:label="@string/title_activity_recycler"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".SampleCarouselViewActivity" />
     </application>
 
 </manifest>

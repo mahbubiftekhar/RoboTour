@@ -16,10 +16,8 @@ import android.support.annotation.RequiresApi
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import kotlinx.android.synthetic.*
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
@@ -72,6 +70,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var speaking = -1
     private var killThread = false
     private var userTwoMode = false
+    private val listPaintings = ArrayList<View>()
+
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -388,301 +388,383 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         relativeLayout {
-            floatingActionButton {
-                //UI
-                imageResource = R.drawable.ic_volume_up_black_24dp
-                //ColorStateList usually requires a list of states but this works for a single color
-                backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
-                lparams { alignParentRight(); topMargin = dip(100); rightMargin = dip(5) }
+            val nextPaintings = textView {
+                id = View.generateViewId()
+                text = "Next Art Pieces:"
+                textSize = 16f
+                typeface = Typeface.DEFAULT_BOLD
+                padding = dip(2)
+            }.lparams { alignParentTop() }
+            val hSV = horizontalScrollView {
+                id = View.generateViewId()
+                linearLayout {
+                    for (i in allArtPieces) { //change to sortedChosenArtPieces
+                        listPaintings.add(
+                                imageButton {
+                                    backgroundColor = Color.TRANSPARENT
+                                    image = resources.getDrawable(i.imageID)
+                                    horizontalPadding = dip(5)
+                                    onClick {
+                                        //visibility = View.GONE // How to make image disappear
+                                        //Add alert here
+                                    }
+                                }
+                        )
+                    }
+                }
+            }.lparams { below(nextPaintings) }
 
-                //Text-to-speech
-                onClick {
-                    speakOutButton(currentPic)
-                }
-            }
-            verticalLayout {
-                lparams { width = matchParent }
-                titleView = textView {
-                    textSize = 32f
-                    typeface = Typeface.DEFAULT_BOLD
-                    padding = dip(5)
-                    gravity = Gravity.CENTER_HORIZONTAL
-                }
-                //get image the pictures.php file that is true
-                imageView = imageView {
-                    backgroundColor = Color.TRANSPARENT //Removes gray border
-                    gravity = Gravity.CENTER_HORIZONTAL
-                }.lparams {
-                    bottomMargin = dip(10)
-                    topMargin = dip(10)
-                }
-                descriptionView = textView {
-                    text = ""
-                    textSize = 16f
-                    typeface = Typeface.DEFAULT
-                    padding = dip(10)
-                }
+            linearLayout {
+                orientation = LinearLayout.VERTICAL
                 relativeLayout {
+                    floatingActionButton {
+                        //UI
+                        imageResource = R.drawable.ic_volume_up_black_24dp
+                        //ColorStateList usually requires a list of states but this works for a single color
+                        backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
+                        lparams { alignParentRight(); topMargin = dip(100); rightMargin = dip(20) }
+
+                        //Text-to-speech
+                        onClick {
+                            speakOutButton(currentPic)
+                        }
+                    }
+                    floatingActionButton {
+                        //UI
+                        imageResource = R.drawable.ic_chat_black_24dp
+                        //ColorStateList usually requires a list of states but this works for a single color
+                        backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
+                        lparams { alignParentLeft(); topMargin = dip(100); leftMargin = dip(20) }
+
+                        //Text-to-speech
+                        onClick {
+                            alert {
+                                textView {
+                                    text = "Hello"
+                                }
+                                /*customView {
+                                    verticalLayout {
+                                        textView {
+                                            text = "ETA: <10s"
+                                            textSize = 16f
+                                        }
+                                        textView {
+                                            text = "Extra Text "
+                                        }
+                                    }
+                                }*/
+                            }
+                        }
+                    }
                     tableLayout {
-                        isStretchAllColumns = true
-                        tableRow {
-                            button(skip) {
-                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                                textSize = btnTextSize
-                                height = dip(btnHgt)
-                                width = wrapContent
-                                onClick {
-                                    if (isNetworkConnected()) {
-                                        alert(skipDesc) {
-                                            positiveButton(positive) {
-                                                skip()
-                                            }
-                                            negativeButton(negative) {
-                                                //Do nothing the user changed their minds
-                                            }
-                                        }.show()
-                                    } else {
-                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                    }
-                                }
-                            }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                            stopButton = button(stop) {
-                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                                textSize = btnTextSize
-                                height = dip(btnHgt)
-                                width = wrapContent
-                                onClick {
-                                    if (isNetworkConnected()) {
-                                        alertStBtn = if (toggleStBtn) {
-                                            startDesc
-                                        } else {
-                                            stopDesc
-                                        }
-                                        if (isNetworkConnected()) {
-                                            if (!toggleStBtn) {
-                                                text = stop
-                                                async {
-                                                    stopRoboTour() /*This function will call for RoboTour to be stopped*/
-                                                }
-                                            } else {
-                                                text = start
-                                                async {
-                                                    startRoboTour()
-                                                }
-                                            }
-                                            toggleStBtn = !toggleStBtn
-                                        } else {
-                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                        }
-                                    }
-                                }
-                            }.lparams { rightMargin = 2 }
-                        }.lparams { bottomMargin = dip(8) }
-                        tableRow {
-                            button(cancelTour) {
-                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                                textSize = btnTextSize
-                                height = dip(btnHgt)
-                                width = matchParent
-                                onClick {
-                                    if (isNetworkConnected()) {
-                                        alert(cancelDesc) {
-                                            positiveButton(positive) {
-                                                val a = loadInt("user")
-                                                async {
-                                                    when (a) {
-                                                        1 -> sendPUTNEW(16, "F")
-                                                        2 -> sendPUTNEW(17, "F")
-                                                        else -> {
-                                                            //Do nothing
-                                                        }
-                                                    }
-                                                }
-                                                checkerThread.interrupt()
-                                                cancelGuideTotal()
-
-                                            }
-                                            negativeButton(negative) {
-                                                onBackPressed()
-                                                //Call on back pressed to take them back to the main activity
-                                            }
-                                        }.show()
-                                    } else {
-                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                    }
-                                }
-                            }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                            button(changeSpeed) {
-                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                                textSize = btnTextSize
-                                height = dip(btnHgt)
-                                width = matchParent
-                                onClick {
-                                    alert {
-                                        customView {
-                                            verticalLayout {
-                                                listView {
-                                                    val options: List<String>
-                                                    val selectSpeed: String
-                                                    when (language) {
-                                                        "English" -> {
-                                                            options = listOf("Slow", "Normal", "Fast")
-                                                            selectSpeed = "Select speed"
-                                                        }
-                                                        "French" -> {
-                                                            options = listOf("lent", "Ordinaire", "vite")
-                                                            selectSpeed = "Sélectionnez la vitesse"
-                                                        }
-                                                        "Chinese" -> {
-                                                            options = listOf("慢", "正常", "快")
-                                                            selectSpeed = "选择速度"
-                                                        }
-                                                        "Spanish" -> {
-                                                            options = listOf("lento", "Normal", "rápido")
-                                                            selectSpeed = "Seleccionar velocidad"
-                                                        }
-                                                        "German" -> {
-                                                            options = listOf("Langsam", "Normal", "Schnell")
-                                                            selectSpeed = "Wählen Sie Geschwindigkeit"
-                                                        }
-                                                        else -> {
-                                                            options = listOf("Slow", "Normal", "Fast")
-                                                            selectSpeed = "Select speed"
-                                                        }
-                                                    }
-                                                    selector(selectSpeed, options) { j ->
-                                                        when (j) {
-                                                            0 -> {
-                                                                async {
-                                                                    sendSpeed(1)
-                                                                }
-                                                                toast(options[0])
-
-                                                            }
-                                                            1 -> {
-                                                                async {
-                                                                    sendSpeed(2)
-                                                                }
-                                                                toast(options[1])
-                                                            }
-                                                            else -> {
-                                                                async {
-                                                                    sendSpeed(3)
-                                                                }
-                                                                toast(options[2])
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }.lparams { rightMargin = 2 }
-                        }.lparams { bottomMargin = dip(8) }
-                        tableRow {
-                            button(toilet) {
-                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                                textSize = btnTextSize
-                                height = dip(btnHgt)
-                                width = matchParent
-                                onClick {
-                                    alert(toiletDesc) {
-                                        positiveButton(positive) {
+                        orientation = LinearLayout.VERTICAL
+                        lparams { width = matchParent }
+                        titleView = textView {
+                            textSize = 32f
+                            typeface = Typeface.DEFAULT_BOLD
+                            padding = dip(5)
+                            gravity = Gravity.CENTER_HORIZONTAL
+                        }
+                        verticalLayout {
+                            orientation = LinearLayout.HORIZONTAL
+                            imageView = imageView {
+                                backgroundColor = Color.TRANSPARENT //Removes gray border
+                                gravity = Gravity.CENTER_HORIZONTAL
+                            }.lparams {
+                                bottomMargin = dip(10)
+                                topMargin = dip(10)
+                            }
+                        }
+                    }
+                    verticalLayout {
+                        /*lparams { width = matchParent }
+                        titleView = textView {
+                            textSize = 32f
+                            typeface = Typeface.DEFAULT_BOLD
+                            padding = dip(5)
+                            gravity = Gravity.CENTER_HORIZONTAL
+                        }
+                        //get image the pictures.php file that is true
+                        imageView = imageView {
+                            backgroundColor = Color.TRANSPARENT //Removes gray border
+                            gravity = Gravity.CENTER_HORIZONTAL
+                        }.lparams {
+                            bottomMargin = dip(10)
+                            topMargin = dip(10)
+                        }
+                        descriptionView = textView {
+                            text = ""
+                            textSize = 16f
+                            typeface = Typeface.DEFAULT
+                            padding = dip(10)
+                        }*/
+                        relativeLayout {
+                            tableLayout {
+                                isStretchAllColumns = true
+                                tableRow {
+                                    button(skip) {
+                                        background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                        textSize = btnTextSize
+                                        height = dip(btnHgt)
+                                        width = wrapContent
+                                        onClick {
                                             if (isNetworkConnected()) {
-                                                async {
-                                                    sendPUTNEW(14, "T")
-                                                }
+                                                alert(skipDesc) {
+                                                    positiveButton(positive) {
+                                                        skip()
+                                                    }
+                                                    negativeButton(negative) {
+                                                        //Do nothing the user changed their minds
+                                                    }
+                                                }.show()
                                             } else {
                                                 Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                             }
-
                                         }
-                                        negativeButton(negative) { }
-                                    }.show()
-                                }
-                            }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
-                            button(exit) {
-                                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
-                                textSize = btnTextSize
-                                height = dip(btnHgt)
-                                width = matchParent
-                                onClick {
-                                    if (isNetworkConnected()) {
-                                        alert(exitDesc) {
-                                            positiveButton(positive) {
-                                                async {
-                                                    exitDoor()
+                                    }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
+                                    stopButton = button(stop) {
+                                        background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                        textSize = btnTextSize
+                                        height = dip(btnHgt)
+                                        width = wrapContent
+                                        onClick {
+                                            if (isNetworkConnected()) {
+                                                alertStBtn = if (toggleStBtn) {
+                                                    startDesc
+                                                } else {
+                                                    stopDesc
                                                 }
-                                                async {
-                                                    var a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-                                                    if (a == "1") {
-                                                        sendPUTNEW(12, "T")
+                                                if (isNetworkConnected()) {
+                                                    if (!toggleStBtn) {
+                                                        text = stop
+                                                        async {
+                                                            stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                                        }
+                                                    } else {
+                                                        text = start
+                                                        async {
+                                                            startRoboTour()
+                                                        }
                                                     }
-                                                    a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-                                                    if (a[16] == 'T' && a[17] == 'T') {
-                                                        sendPUTNEW(12, "T")
-                                                    }
-
+                                                    toggleStBtn = !toggleStBtn
+                                                } else {
+                                                    Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                 }
                                             }
-                                            negativeButton(negative) { }
-                                        }.show()
-                                    } else {
-                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                        }
+                                    }.lparams { rightMargin = 2 }
+                                }.lparams { bottomMargin = dip(8) }
+                                tableRow {
+                                    button(cancelTour) {
+                                        background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                        textSize = btnTextSize
+                                        height = dip(btnHgt)
+                                        width = matchParent
+                                        onClick {
+                                            if (isNetworkConnected()) {
+                                                alert(cancelDesc) {
+                                                    positiveButton(positive) {
+                                                        val a = loadInt("user")
+                                                        async {
+                                                            when (a) {
+                                                                1 -> sendPUTNEW(16, "F")
+                                                                2 -> sendPUTNEW(17, "F")
+                                                                else -> {
+                                                                    //Do nothing
+                                                                }
+                                                            }
+                                                        }
+                                                        checkerThread.interrupt()
+                                                        cancelGuideTotal()
 
-                                    }
+                                                    }
+                                                    negativeButton(negative) {
+                                                        onBackPressed()
+                                                        //Call on back pressed to take them back to the main activity
+                                                    }
+                                                }.show()
+                                            } else {
+                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                            }
+                                        }
+                                    }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
+                                    button(changeSpeed) {
+                                        background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                        textSize = btnTextSize
+                                        height = dip(btnHgt)
+                                        width = matchParent
+                                        onClick {
+                                            alert {
+                                                customView {
+                                                    verticalLayout {
+                                                        listView {
+                                                            val options: List<String>
+                                                            val selectSpeed: String
+                                                            when (language) {
+                                                                "English" -> {
+                                                                    options = listOf("Slow", "Normal", "Fast")
+                                                                    selectSpeed = "Select speed"
+                                                                }
+                                                                "French" -> {
+                                                                    options = listOf("lent", "Ordinaire", "vite")
+                                                                    selectSpeed = "Sélectionnez la vitesse"
+                                                                }
+                                                                "Chinese" -> {
+                                                                    options = listOf("慢", "正常", "快")
+                                                                    selectSpeed = "选择速度"
+                                                                }
+                                                                "Spanish" -> {
+                                                                    options = listOf("lento", "Normal", "rápido")
+                                                                    selectSpeed = "Seleccionar velocidad"
+                                                                }
+                                                                "German" -> {
+                                                                    options = listOf("Langsam", "Normal", "Schnell")
+                                                                    selectSpeed = "Wählen Sie Geschwindigkeit"
+                                                                }
+                                                                else -> {
+                                                                    options = listOf("Slow", "Normal", "Fast")
+                                                                    selectSpeed = "Select speed"
+                                                                }
+                                                            }
+                                                            selector(selectSpeed, options) { j ->
+                                                                when (j) {
+                                                                    0 -> {
+                                                                        async {
+                                                                            sendSpeed(1)
+                                                                        }
+                                                                        toast(options[0])
 
-                                }
-                            }.lparams { rightMargin = 2 }
-                        }.lparams { bottomMargin = dip(15) }
-                    }.lparams { alignParentBottom() }
+                                                                    }
+                                                                    1 -> {
+                                                                        async {
+                                                                            sendSpeed(2)
+                                                                        }
+                                                                        toast(options[1])
+                                                                    }
+                                                                    else -> {
+                                                                        async {
+                                                                            sendSpeed(3)
+                                                                        }
+                                                                        toast(options[2])
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }.lparams { rightMargin = 2 }
+                                }.lparams { bottomMargin = dip(8) }
+                                tableRow {
+                                    button(toilet) {
+                                        background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                        textSize = btnTextSize
+                                        height = dip(btnHgt)
+                                        width = matchParent
+                                        onClick {
+                                            alert(toiletDesc) {
+                                                positiveButton(positive) {
+                                                    if (isNetworkConnected()) {
+                                                        async {
+                                                            sendPUTNEW(14, "T")
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                    }
+
+                                                }
+                                                negativeButton(negative) { }
+                                            }.show()
+                                        }
+                                    }.lparams { leftMargin = dip(2); rightMargin = dip(6) }
+                                    button(exit) {
+                                        background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                                        textSize = btnTextSize
+                                        height = dip(btnHgt)
+                                        width = matchParent
+                                        onClick {
+                                            if (isNetworkConnected()) {
+                                                alert(exitDesc) {
+                                                    positiveButton(positive) {
+                                                        async {
+                                                            exitDoor()
+                                                        }
+                                                        async {
+                                                            var a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                                                            if (a == "1") {
+                                                                sendPUTNEW(12, "T")
+                                                            }
+                                                            a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
+                                                            if (a[16] == 'T' && a[17] == 'T') {
+                                                                sendPUTNEW(12, "T")
+                                                            }
+
+                                                        }
+                                                    }
+                                                    negativeButton(negative) { }
+                                                }.show()
+                                            } else {
+                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+
+                                            }
+
+                                        }
+                                    }.lparams { rightMargin = 2 }
+                                }.lparams { bottomMargin = dip(15) }
+                            }.lparams { alignParentBottom() }
+                        }
+
+                    }
                 }
+                when (language) {
+                    "English" -> {
+                        titleView?.text = "RoboTour calculating optimal route..."
+                        descriptionView?.text = "RoboTour calculating optimal route..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+                    }
+                    "German" -> {
+                        titleView?.text = "RoboTour berechnet optimale Route ..."
+                        descriptionView?.text = "RoboTour berechnet optimale Route ..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
 
+                    }
+                    "Spanish" -> {
+                        titleView?.text = "RoboTour calcula la ruta óptima ..."
+                        descriptionView?.text = "RoboTour calcula la ruta óptima ..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+                    }
+                    "French" -> {
+                        titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
+                        descriptionView?.text = "RoboTour calculant l'itinéraire optimal ..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+                    }
+                    "Chinese" -> {
+                        titleView?.text = "萝卜途正在计算最佳路线..."
+                        descriptionView?.text = "萝卜途正在计算最佳路线..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+                    }
+                    "other" -> {
+                        titleView?.text = "RoboTour calculating optimal route..."
+                        descriptionView?.text = "RoboTour calculating optimal route..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+                    }
+                    "else" -> {
+                        titleView?.text = "RoboTour calculating optimal route..."
+                        descriptionView?.text = "RoboTour calculating optimal route..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+                    }
+                }
+            }.lparams {
+                below(hSV)
             }
+
         }
-        when (language) {
-            "English" -> {
-                titleView?.text = "RoboTour calculating optimal route..."
-                descriptionView?.text = "RoboTour calculating optimal route..."
-                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
-            }
-            "German" -> {
-                titleView?.text = "RoboTour berechnet optimale Route ..."
-                descriptionView?.text = "RoboTour berechnet optimale Route ..."
-                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
 
-            }
-            "Spanish" -> {
-                titleView?.text = "RoboTour calcula la ruta óptima ..."
-                descriptionView?.text = "RoboTour calcula la ruta óptima ..."
-                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
-
-            }
-            "French" -> {
-                titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
-                descriptionView?.text = "RoboTour calculant l'itinéraire optimal ..."
-                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
-
-            }
-            "Chinese" -> {
-                titleView?.text = "萝卜途正在计算最佳路线..."
-                descriptionView?.text = "萝卜途正在计算最佳路线..."
-                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
-
-            }
-            "other" -> {
-                titleView?.text = "RoboTour calculating optimal route..."
-                descriptionView?.text = "RoboTour calculating optimal route..."
-                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
-
-            }
-            "else" -> {
-                titleView?.text = "RoboTour calculating optimal route..."
-                descriptionView?.text = "RoboTour calculating optimal route..."
-                imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
-            }
-        }
         //Starting the thread which is defined above to keep polling the server for changes
         //checkerThread.start()
     }
@@ -699,7 +781,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     runOnUiThread(object : Runnable {
                         override fun run() {
                             async {
-                                val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                                val a = URL("https://proparoxytone-icing.000webhostapp.com/receiverPhone.php").readText()
                                 println("++++++++" + a)
                                 /*This updates the picture and text for the user*/
                                 val counter = (0..16).count { a[it] == 'F' }
@@ -1065,7 +1147,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     }
                 }
                 async {
-                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                    val a = URL("https://proparoxytone-icing.000webhostapp.com/receiverPhone.php").readText()
                     if (a[16] == 'T' && a[17] == 'T') {
                         sendPUTNEW(12, "T")
                     }
@@ -1085,7 +1167,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             if (userid == "1") {
                 async {
                     sendPUTNEW(11, "F")
-                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                    val a = URL("https://proparoxytone-icing.000webhostapp.com/receiverPhone.php").readText()
                     if (a[12] == '2' || a[17] == 'F') {
                         sendPUTNEW(12, "T")
                         sendPUTNEW(16, "F")
@@ -1096,7 +1178,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
             } else if (userid == "2") {
                 async {
-                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                    val a = URL("https://proparoxytone-icing.000webhostapp.com/receiverPhone.php").readText()
                     if (a[12] == '1' || a[16] == 'F') {
                         sendPUTNEW(12, "T")
                         sendPUTNEW(17, "F")
@@ -1225,7 +1307,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun sendPUTNEW(identifier: Int, command: String) {
-        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
+        val url = "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()

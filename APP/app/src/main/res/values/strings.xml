@@ -123,4 +123,6 @@
     <string name="listen_on">LISTEN ON</string>
     <string name="two_user_mode_off">TWO USER MODE OFF</string>
     <string name="two_user_mode_on">TWO USER MODE ON</string>
+    <string name="title_activity_recycle">RecycleActivity</string>
+    <string name="title_activity_recycler">RecyclerActivity</string>
 </resources>
