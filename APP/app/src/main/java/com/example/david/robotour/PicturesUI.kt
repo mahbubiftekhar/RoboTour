@@ -144,7 +144,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
     }
 
     private fun sendPUTNEW(identifier: Int, command: String) {
-        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
+        val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
