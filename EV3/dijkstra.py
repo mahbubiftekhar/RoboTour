@@ -16,7 +16,8 @@ def dijkstra(graph, src, dest, visited=[], distances={}, predecessors={}):
         while pred != None:
             path.append(pred)
             pred = predecessors.get(pred, None)
-        print('shortest path: ' + str(path[::-1]) + " cost=" + str(distances[dest]))
+        # Debug
+        # print('shortest path: ' + str(path[::-1]) + " cost=" + str(distances[dest]))
         return (path[::-1], distances[dest])
     else:
         # if it is the initial  run, initializes the cost

@@ -8,7 +8,7 @@ class SensorHub():
 
 	def __init__(self):
 		self.baud = 9600
-		self.serial_port = serial.Serial(port='/dev/ttyACM0',\
+		self.serial_port = serial.Serial(port='/dev/ttyACM1',\
 										 baudrate=self.baud)
 		self.n_sonars = 4
 		self.sonar_maxrange = 255

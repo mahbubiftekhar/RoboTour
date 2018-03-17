@@ -45,11 +45,11 @@ class Server():
     # Helper function that does a http post request
     def http_post(self, position, message):
         data = bytes(urllib.parse.urlencode({"command" + str(position): message}).encode())
-        urllib.request.urlopen("http://homepages.inf.ed.ac.uk/s1553593/receiver.php", data)
+        urllib.request.urlopen("http://proparoxytone-icing.000webhostapp.com/receiver.php", data)
 
     # Helper function that does HTTP get request
     def http_get(self):
-        f = urllib.request.urlopen("http://homepages.inf.ed.ac.uk/s1553593/receiver.php")  # open url
+        f = urllib.request.urlopen("http://proparoxytone-icing.000webhostapp.com/receiver.php")  # open url
         myfile = f.read()  # read url contents
         self.command = myfile.decode("utf-8")  # convert bytearray to string
         return self.command
