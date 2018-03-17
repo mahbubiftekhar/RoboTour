@@ -410,6 +410,38 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         onClick {
                                             //visibility = View.GONE // How to make image disappear
                                             //Add alert here
+                                            alert {
+                                                customView {
+                                                    linearLayout {
+                                                        orientation = LinearLayout.VERTICAL
+                                                        textView {
+                                                            text = i.name
+                                                            textSize = 32f
+                                                            typeface = Typeface.DEFAULT_BOLD
+                                                            padding = dip(3)
+                                                            gravity = Gravity.CENTER_HORIZONTAL
+                                                        }
+                                                        textView {
+                                                            text = "ETA: <10s" //The position the paining is on the list times 10s
+                                                            textSize = 20f
+                                                            padding = dip(2)
+                                                        }
+                                                        textView {
+                                                            text = "Lots of text here describing the painting. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                                                            textSize = 16f
+                                                            padding = dip(2)
+                                                        }
+                                                        button {
+                                                            text = "Cancel Painting"
+                                                            onClick {
+                                                                //Remove Painting From List
+                                                                listPaintings[i.eV3ID].visibility = View.GONE
+                                                                dismiss()
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }.show()
                                         }
                                     }
                             )
@@ -439,9 +471,34 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
                             lparams { alignParentLeft(); topMargin = dip(100); leftMargin = dip(20) }
 
-                            //Text-to-speech
+                            //Alert
                             onClick {
-
+                                alert {
+                                    customView {
+                                        linearLayout {
+                                            orientation = LinearLayout.VERTICAL
+                                            textView {
+                                                text = "Add Painting Title Here"
+                                                textSize = 32f
+                                                typeface = Typeface.DEFAULT_BOLD
+                                                padding = dip(3)
+                                                gravity = Gravity.CENTER_HORIZONTAL
+                                            }
+                                            textView {
+                                                text = "ETA: <10s"
+                                                textSize = 20f
+                                                padding = dip(2)
+                                                leftPadding = dip(4)
+                                            }
+                                            textView {
+                                                text = "Lots of text here describing the painting. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                                                textSize = 16f
+                                                padding = dip(2)
+                                                leftPadding = dip(4)
+                                            }
+                                        }
+                                    }
+                                }.show()
                             }
                         }
                         tableLayout {
@@ -1320,4 +1377,5 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         } catch (e: IOException) {
         }
     }
+
 }
