@@ -173,8 +173,8 @@ colour_sensor_left = ev3.ColorSensor(ev3.INPUT_4)
 colour_sensor_left.mode = 'COL-REFLECT'
 colour_sensor_right.mode = 'COL-REFLECT'
 
-line_threshold = 57
-wall_threshold = 8
+white_threshold = 57
+black_threshold = 10
 
 
 if motor_pointer.connected & sonar_front.connected & motor_left.connected & motor_right.connected:
@@ -208,26 +208,30 @@ def get_colour_left():
     return colour_sensor_left.value()
 
 
-def is_right_line_detected():  # Right Lego sensor
-    # print(getColourRight())
-    return get_colour_right() > line_threshold
+def is_right_white_line_detected():  # Right Lego sensor
+    # print('right: ', get_colour_right())
+    return get_colour_right() > white_threshold
 
 
-def is_left_line_detected():
-    # print(getColourLeft())
-    return get_colour_left() > line_threshold
+def is_left_white_line_detected():
+    # print('left: ', get_colour_left())
+    return get_colour_left() > white_threshold
 
 
-def is_line_detected():
-    return is_left_line_detected() or is_right_line_detected()
+def is_white_line_detected():
+    return is_left_white_line_detected() or is_right_white_line_detected()
+
+
+def is_not_white_line_detected():
+    return (not is_left_white_line_detected()) or (not is_right_white_line_detected())
 
 
 def is_left_black_line_detected():
-    return get_colour_left() < wall_threshold
+    return get_colour_left() < black_threshold
 
 
 def is_right_black_line_detected():
-    return get_colour_right() < wall_threshold
+    return get_colour_right() < black_threshold
 
 
 def is_black_line_detected():
@@ -263,7 +267,7 @@ def is_right_side_obstacle():
 
 
 def is_branch_detected(left, right):
-    return left > 60 and right > 60
+    return (left > 60 and right > 60) or (left < 10 and right > 60)
 
 
 def is_painting_detected():
@@ -328,6 +332,18 @@ def turn_left_ninety():  # -90
     wait_for_motor()
 
 
+def turn_right_degree(degree):  # 90
+    motor_left.run_timed(speed_sp=175, time_sp=degree*1000/90)
+    motor_right.run_timed(speed_sp=-175, time_sp=degree*1000/90)
+    wait_for_motor()
+
+
+def turn_left_degree(degree):  # -90
+    motor_left.run_timed(speed_sp=-175, time_sp=degree*1000/90)
+    motor_right.run_timed(speed_sp=175, time_sp=degree*1000/90)
+    wait_for_motor()
+
+
 def stop_wheel_motor():
     motor_left.stop(stop_action="hold")
     motor_right.stop(stop_action="hold")
@@ -352,9 +368,14 @@ def turn_pointer_45(direction):  # Turn 45
         time.sleep(0.5)
 
 
-def turn_pointer_180():
-    motor_pointer.run_timed(speed_sp=-414, time_sp=2000)
-    time.sleep(2)
+def turn_pointer_180(direction):
+    if direction == "CW":
+        motor_pointer.run_timed(speed_sp=-414, time_sp=2000)
+        time.sleep(2)
+
+    if direction == "ACW":
+        motor_pointer.run_timed(speed_sp=414, time_sp=2000)
+        time.sleep(2)
 
 
 def turn_and_reset_pointer(direction):
@@ -377,7 +398,7 @@ def point_to_painting(picture_id):
         global robot_pointer
         robot_pointer = 'E'
     elif is_orientation_back(motor_map[picture_id]):
-        turn_pointer_180()
+        turn_pointer_180('CW')
         global robot_pointer
         robot_pointer = 'S'
     else:
@@ -386,7 +407,7 @@ def point_to_painting(picture_id):
 
 def turn_back_pointer():
     if robot_pointer == 'S':
-        turn_pointer_180()
+        turn_pointer_180('ACW')
     elif robot_pointer == 'W':
         turn_pointer_45("CW")
     elif robot_pointer == 'E':
@@ -542,13 +563,13 @@ def get_ready_for_obstacle(direction):  # 90 degree
     if direction == 'RIGHT':
         turn_right_ninety()
 
-        while is_line_detected():
+        while is_white_line_detected():
             move_forward(100, 100)
 
     else:  # All default will go through the Left side. IE
         turn_left_ninety()
 
-        while is_line_detected():
+        while is_white_line_detected():
             move_forward(100, 100)
 
 
@@ -557,30 +578,31 @@ def go_around_obstacle(direction, get_back_enabled, location_to_go, next_locatio
     set_distance = 11
     set_sharp_distance = 15
     is_sharp_before = False
+    is_black_detected = False
     if direction == 'RIGHT':
-        while not is_line_detected():
+        while not is_white_line_detected():
 
-            if is_black_line_detected():
+            if is_black_line_detected() and not is_black_detected:
+                is_black_detected = True
                 stop_wheel_motor()
                 if is_right_black_line_detected():
                     while not is_left_black_line_detected():
-                        turn(0, 100, 100)
+                        turn(100, 0, 100)
+
                 elif is_left_black_line_detected():
                     while not is_right_black_line_detected():
-                        turn(100, 0, 100)
-                stop_wheel_motor()
+                        turn(0, 100, 100)
+
+                time.sleep(0.5)
 
                 if ((location_to_go, next_location_to_go) in orientation_map) \
                         and (robot_orientation == orientation_map[(location_to_go, next_location_to_go)][0]):
                     # Go forward, count branch
+                    get_back_enabled = True
                     global branch_skip
                     branch_skip = True
                     while is_black_line_detected():
                         move_forward(100, 100)
-                    global robot_location
-                    robot_location = location_to_go
-                    global robot_orientation
-                    robot_orientation = orientation_map[(location_to_go, next_location_to_go)][-1]
                 else:
                     # Need to turn, follow black line
                     get_back_enabled = False
@@ -611,31 +633,29 @@ def go_around_obstacle(direction, get_back_enabled, location_to_go, next_locatio
                     is_sharp_before = False
 
     else:  # All default will go through the Left side. IE
-        while not is_line_detected():
+        while not is_white_line_detected():
 
-            if is_black_line_detected():
+            if is_black_line_detected() and not is_black_detected:
+                is_black_detected = True
                 stop_wheel_motor()
                 if is_right_black_line_detected():
                     while not is_left_black_line_detected():
-                        turn(0, 100, 100)
+                        turn(100, 0, 100)
                 elif is_left_black_line_detected():
                     while not is_right_black_line_detected():
-                        turn(100, 0, 100)
-                stop_wheel_motor()
+                        turn(0, 100, 100)
+
+                time.sleep(0.5)
 
                 if ((location_to_go, next_location_to_go) in orientation_map) \
                         and (robot_orientation == orientation_map[(location_to_go, next_location_to_go)][0]):
                     # Go forward, count branch
+                    get_back_enabled = True
                     print("count branch")
                     global branch_skip
                     branch_skip = True
                     while is_black_line_detected():
                         move_forward(100, 100)
-                    global robot_location
-                    robot_location = location_to_go
-                    global robot_orientation
-                    robot_orientation = orientation_map[(location_to_go, next_location_to_go)][-1]
-
                 else:
                     print("turn")
                     # Need to turn, follow black line
@@ -666,6 +686,7 @@ def go_around_obstacle(direction, get_back_enabled, location_to_go, next_locatio
                     turn(100, 100, 500)
                     is_sharp_before = False
 
+    stop_wheel_motor()
     if get_back_enabled:
         get_back_to_line(direction)
 
@@ -675,7 +696,7 @@ def follow_black_line():
     errorSumR = 0
     oldR = colour_sensor_right.value()
     oldL = colour_sensor_left.value()
-    while not is_right_line_detected():
+    while not is_right_white_line_detected():
         # Sleeps if Stop
         while is_stop or is_front_obstacle():
             stop_wheel_motor()
@@ -704,31 +725,40 @@ def follow_black_line():
 
 def get_back_to_line(turning_direction):
     print("GET BACK TO LINE: "+turning_direction)
-    stop_wheel_motor()
-    if turning_direction == 'RIGHT':
-        if is_left_line_detected():
-            # Not facing the obstacle
-            while not is_right_line_detected():
-                turn(0, 100, 100)
 
-        elif is_right_line_detected():
-            while not is_left_line_detected():
+    if turning_direction == 'RIGHT':
+        if is_right_white_line_detected():
+            while not is_left_white_line_detected():
+                print("Looking for white on left sensor")
                 turn(100, 0, 100)
 
-        turn_right_ninety()
+        elif is_left_white_line_detected():
+            while not is_right_white_line_detected():
+                print("Looking for white on right sensor")
+                turn(0, 100, 100)
+
+        time.sleep(0.5)
+
+        turn_right_degree(65)
+
+        time.sleep(0.5)
 
     else:
-        if is_right_line_detected():
-            # not facing
-            while not is_left_line_detected():
+        if is_right_white_line_detected():
+            while not is_left_white_line_detected():
+                print("Looking for white on left sensor")
                 turn(100, 0, 100)
 
-        elif is_left_line_detected():
-            while not is_right_line_detected():
+        elif is_left_white_line_detected():
+            while not is_right_white_line_detected():
+                print("Looking for white on right sensor")
                 turn(0, 100, 100)
 
-        turn_left_ninety()
-    stop_wheel_motor()
+        time.sleep(0.5)
+
+        turn_left_degree(65)
+
+        time.sleep(0.5)
 
 
 def wait_for_user_to_get_ready():
@@ -796,6 +826,8 @@ def go_to_closest_painting(toilet, exits, cancel):
         print("Going to " + location)
         align_orientation(orientation_map[(robot_location, location)])
         # Follow line until reaching a painting OR a branch
+        motor_right.position = 0
+        # motor_left.position = 0
         while True:
             # Sleeps if Stop
             while is_stop:
@@ -821,27 +853,32 @@ def go_to_closest_painting(toilet, exits, cancel):
             oldR = curr_r
             global oldL
             oldL = curr_l
+            # print(motor_right.position)
 
             if is_front_obstacle():
-                if (robot_location, location) in obstacle_map:
+                stop_wheel_motor()
+                print('Distance: ', motor_right.position)
+                if (robot_location, location) in obstacle_map and motor_right.position > 100:
                     next_location = 'None'
                     if index < len(path)-1:
                         next_location = path[index+1]
                     stop_wheel_motor()
-                    print("Stop at: (Front) ", sonar_front.value())
                     obstacle_turn = obstacle_map[(robot_location, location)]
                     get_ready_for_obstacle(obstacle_turn)  # step 1
-                    print("Stop at: (Side) ", sonar_right.value())
 
                     global branch_skip
                     branch_skip = False
                     go_around_obstacle(obstacle_turn, get_back_enabled=True,
                                        location_to_go=location, next_location_to_go=next_location)
                     if branch_skip:
+                        speak('I have skip a branch!')
                         index = index+1
-                        global robot_orientation
-                        orientation = orientation_map[(location, next_location)]
-                        robot_orientation = orientation[-1]
+                        global robot_location
+                        robot_location = location
+                        # global robot_orientation
+                        # orientation = orientation_map[(location, next_location)]
+                        # robot_orientation = orientation[-1]
+                        break
                 else:
                     stop_wheel_motor()
                     speak("Carson, please remove the obstacle in front of me.")
@@ -852,8 +889,9 @@ def go_to_closest_painting(toilet, exits, cancel):
             elif is_branch_detected(curr_l, curr_r):
                 stop_wheel_motor()
                 print("Find a branch")
+                # speak('Branch!')
                 global robot_location
-                robot_location = path[index]
+                robot_location = location
                 print("Current location is ", robot_location)
                 index = index + 1
 
