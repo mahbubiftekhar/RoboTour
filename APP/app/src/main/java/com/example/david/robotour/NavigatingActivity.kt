@@ -73,11 +73,14 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var killThread = false
     private var userTwoMode = false
     private val listPaintings = ArrayList<ImageButton>()
-    var alertTitle = ""
-    var alertETA = ""
-    var alertDescription = ""
-    val map = mutableMapOf<Int, Int>()
-
+    private var alertTitle = ""
+    private var alertETA = ""
+    private var alertDescription = ""
+    private var cancelRequest = false
+    private val map = mutableMapOf<Int, Int>()
+    private var otherUseCancel = "Other user wishes to cancel, allow cancel?"
+    private var cancelRequestSent = ""
+    private var cancelPainting = ""
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -300,6 +303,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "SPEED"
                 startRoboTour = "Press START when you are ready for RoboTour to resume"
+                otherUseCancel = "Other user wishes to cancel, allow cancel?"
+                cancelRequestSent = "Cancel request sent"
+                cancelPainting = "Cancel painting?"
             }
             "French" -> {
                 startRoboTour = "Appuyez sur Start lorsque vous êtes prêt à reprendre RoboTour"
@@ -318,6 +324,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toilet = "W.C."
                 toiletDesc = "Voulez-vous aller aux toilettes?"
                 changeSpeed = "Changer Vitesse"
+                otherUseCancel = "D'autres utilisateurs souhaitent annuler, autoriser l'annulation?"
+                cancelRequestSent = "Annuler la demande envoyée"
+                cancelPainting = "Annuler la peinture"
             }
             "Chinese" -> {
                 startRoboTour = "当您准备好跟随萝卜途时，请按开始。"
@@ -336,6 +345,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toilet = "带我去厕所"
                 toiletDesc = "确定要去厕所吗？"
                 changeSpeed = "改变速度"
+                otherUseCancel = "其他用户希望取消，允许取消？"
+                cancelRequestSent = "取消请求已发送"
+                cancelPainting = "取消绘画"
             }
             "Spanish" -> {
                 positive = "Sí"
@@ -354,6 +366,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toilet = "Baño"
                 toiletDesc = "¿Quieres ir al baño?"
                 changeSpeed = "Cambiar Velocidad"
+                otherUseCancel = "Otro usuario desea cancelar, ¿permite cancelar?"
+                cancelRequestSent = "Cancelar solicitud enviada"
+                cancelPainting = "Cancelar pintura"
             }
             "German" -> {
                 startRoboTour = "Drücken Sie Start, wenn Sie bereit sind für die Fortsetzung von RoboTour"
@@ -373,6 +388,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toiletDesc = "Wollen sie zum W.C. gehen?"
                 changeSpeed = "Geschwindig keit ändern"
                 btnTextSize = 20f
+                otherUseCancel = "Andere Benutzer möchten stornieren, Abbrechen zulassen?"
+                cancelRequestSent = "Anfrage abbrechen gesendet"
+                cancelPainting = "Gemälde abbrechenC"
             }
             else -> {
                 startRoboTour = "Press start when you are ready for RoboTour to resume"
@@ -391,6 +409,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toilet = "W.C."
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "SPEED"
+                otherUseCancel = "Other user wishes to cancel, allow cancel?"
+                cancelRequestSent = "Cancel request sent"
+                cancelPainting = "Cancel painting?"
             }
         }
         relativeLayout {
@@ -775,11 +796,13 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
             }
         }
+        for(i in 0..9){
+            listPaintings[i].visibility = View.GONE
+        }
         //Starting the thread which is defined above to keep polling the server for changes
         //checkerThread.start()
         val sortedNums: MutableCollection<Int> = arrayListOf(1, 5, 7)
         updateScrollViewPictures(sortedNums)
-
     }
 
     /////
@@ -798,6 +821,17 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 println("++++++++" + a)
                                 /*This updates the picture and text for the user*/
                                 val paintings = a.substring(0, 9)
+                                if(userid==1.toString() && !cancelRequest && a[20] =='W'){
+                                       runOnUiThread{
+
+                                    }
+                                }else if(userid==2.toString() && !cancelRequest && a[20] == 'Q'){
+                                        runOnUiThread{
+
+                                        }
+                                } else {
+                                    cancelRequest = false
+                                }
                                 runOnUiThread { updateScrollView(paintings) }
                                 val counter = (0..16).count { a[it] == 'F' }
                                 if (counter == 17) {
@@ -956,7 +990,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                             }
-                            Thread.sleep(300)
+                            Thread.sleep(600)
                         }
                     }
                     )
@@ -1340,7 +1374,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun sendPUTNEW(identifier: Int, command: String) {
-        val url = "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"
+        val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
@@ -1354,7 +1388,21 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         } catch (e: IOException) {
         }
     }
-
+    private fun requestCancel(paintingID: Int){
+        /*
+        * Q == USER1
+        * W == USER2
+        * */
+        if(userid==1.toString()){
+            async{
+                sendPUTNEW(20,paintingID.toString())
+            }
+        }else if(userid==2.toString()) {
+            async{
+                sendPUTNEW(20, paintingID.toString())
+            }
+        }
+    }
     private fun updateScrollViewPictures(sortedNums: MutableCollection<Int>) {
         val numSelectedPaintings = sortedNums.size
         (numSelectedPaintings..10)
@@ -1389,8 +1437,29 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     @SuppressLint("SetTextI18n")
     private fun paintingAlertUpdate(paintIndex: Int) {
         alertETA = "ETA: <10s"
-        alertDescription = "Lots of text here describing the painting. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-        alertTitle = allArtPieces[paintIndex].name
+        val language = intent.getStringExtra("language")
+        when (language) {
+            "French" -> {
+                alertTitle = allArtPieces[paintIndex].nameFrench
+                alertDescription = allArtPieces[paintIndex].English_Desc
+            }
+            "Chinese" -> {
+                alertTitle = allArtPieces[paintIndex].nameChinese
+                alertDescription = allArtPieces[paintIndex].Chinese_Desc
+            }
+            "Spanish" -> {
+                alertTitle = allArtPieces[paintIndex].nameSpanish
+                alertDescription = allArtPieces[paintIndex].Spanish_Desc
+            }
+            "German" -> {
+                alertTitle = allArtPieces[paintIndex].nameGerman
+                alertDescription = allArtPieces[paintIndex].German_Desc
+            }
+            else -> {
+                alertTitle = allArtPieces[paintIndex].name
+                alertDescription = allArtPieces[paintIndex].English_Desc
+            }
+        }
         alert {
             customView {
                 linearLayout {
@@ -1413,10 +1482,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         padding = dip(2)
                     }
                     button {
-                        text = "Cancel painting"
+                        text = cancelPainting
                         onClick {
                             //Remove Painting From List
-                            listPaintings[map[paintIndex]!!].visibility = View.GONE
+                            requestCancel(paintIndex)
+                            //listPaintings[map[paintIndex]!!].visibility = View.GONE
+                            toast(cancelRequestSent)
                             dismiss()
                         }
                     }
