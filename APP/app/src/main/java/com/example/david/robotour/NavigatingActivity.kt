@@ -33,7 +33,9 @@ import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.URL
 import java.nio.channels.InterruptedByTimeoutException
+import java.text.FieldPosition
 import java.util.*
+import kotlin.collections.ArrayList
 
 @Suppress("DEPRECATION")
 class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
@@ -73,7 +75,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var speaking = -1
     private var killThread = false
     private var userTwoMode = false
-    private val listPaintings = ArrayList<View>()
+    private val listPaintings = ArrayList<ImageButton>()
+    var alertTitle = ""
+    var alertETA = ""
+    var alertDescription = ""
+    val map = mutableMapOf<Int, Int>()
 
 
     private fun loadInt(key: String): Int {
@@ -403,47 +409,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     linearLayout {
                         for (i in allArtPieces) { //change to sortedChosenArtPieces
                             listPaintings.add(
-                                    imageButton {
-                                        backgroundColor = Color.TRANSPARENT
-                                        image = resources.getDrawable(i.imageID)
-                                        horizontalPadding = dip(5)
-                                        onClick {
-                                            //visibility = View.GONE // How to make image disappear
-                                            //Add alert here
-                                            alert {
-                                                customView {
-                                                    linearLayout {
-                                                        orientation = LinearLayout.VERTICAL
-                                                        textView {
-                                                            text = i.name
-                                                            textSize = 32f
-                                                            typeface = Typeface.DEFAULT_BOLD
-                                                            padding = dip(3)
-                                                            gravity = Gravity.CENTER_HORIZONTAL
-                                                        }
-                                                        textView {
-                                                            text = "ETA: <10s" //The position the paining is on the list times 10s
-                                                            textSize = 20f
-                                                            padding = dip(2)
-                                                        }
-                                                        textView {
-                                                            text = "Lots of text here describing the painting. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                                                            textSize = 16f
-                                                            padding = dip(2)
-                                                        }
-                                                        button {
-                                                            text = "Cancel Painting"
-                                                            onClick {
-                                                                //Remove Painting From List
-                                                                listPaintings[i.eV3ID].visibility = View.GONE
-                                                                dismiss()
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }.show()
-                                        }
-                                    }
+                                imageButton {
+                                    backgroundColor = Color.TRANSPARENT
+                                    image = resources.getDrawable(i.imageID)
+                                    horizontalPadding = dip(5)
+                                }
                             )
                         }
                     }
@@ -461,7 +431,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                             //Text-to-speech
                             onClick {
-                                speakOutButton(currentPic)
+                                //speakOutButton(currentPic)
+
+                                val sortedNums = listOf<Int>(1,2,3,4,5)
+
+                                updateScrollViewPictures(sortedNums)
                             }
                         }
                         floatingActionButton {
@@ -811,6 +785,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         //Starting the thread which is defined above to keep polling the server for changes
         //checkerThread.start()
+        val sortedNums = listOf<Int>(1,3,2,7,0)
+
+        updateScrollViewPictures(sortedNums)
+
     }
 
     /////
@@ -1202,7 +1180,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }.show()
     }
 
-
     private fun cancelGuideTotal() {
         if (isNetworkConnected()) {
             switchToFinnished()
@@ -1378,4 +1355,73 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
+    private fun updateScrollViewPictures(sortedNums : List<Int>) {
+        val numSelectedPaintings = sortedNums.size
+        for (i in numSelectedPaintings..10) {
+            if (i < 10) {
+                listPaintings[i].visibility = View.GONE
+            }
+        }
+        for (i in 0..numSelectedPaintings-1) {
+            listPaintings[i].visibility = View.VISIBLE
+        }
+        var listIndex = 0
+        for (i in sortedNums) {
+            when (i) {
+                0 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.birthofvenus))
+                1 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.creationofadam))
+                2 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.david))
+                3 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.girlwithpearlearring))
+                4 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.monalisa))
+                5 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.napoleoncrossingthealps))
+                6 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.starrynight))
+                7 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.thelastsupper))
+                8 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.tsunami))
+                9 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.waterlillies))
+            }
+            map.put(i, listIndex)
+            listPaintings[listIndex].setOnClickListener {
+                paintingAlertUpdate(i)
+            }
+            listIndex++
+        }
+    }
+
+    private fun paintingAlertUpdate(paintIndex : Int) {
+        alertETA = "ETA: <10s"
+        alertDescription = "Lots of text here describing the painting. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        alertTitle = allArtPieces[paintIndex].name
+        alert {
+            customView {
+                linearLayout {
+                    orientation = LinearLayout.VERTICAL
+                    textView {
+                        text = alertTitle
+                        textSize = 32f
+                        typeface = Typeface.DEFAULT_BOLD
+                        padding = dip(3)
+                        gravity = Gravity.CENTER_HORIZONTAL
+                    }
+                    textView {
+                        text = alertETA //The position the paining is on the list times 10s
+                        textSize = 20f
+                        padding = dip(2)
+                    }
+                    textView {
+                        text = alertDescription
+                        textSize = 16f
+                        padding = dip(2)
+                    }
+                    button {
+                        text = "Cancel Painting"
+                        onClick {
+                            //Remove Painting From List
+                            listPaintings[map[paintIndex]!!].visibility = View.GONE
+                            dismiss()
+                        }
+                    }
+                }
+            }
+        }.show()
+    }
 }
