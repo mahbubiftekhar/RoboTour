@@ -14,9 +14,7 @@ import android.preference.PreferenceManager
 import android.speech.tts.TextToSpeech
 import android.support.annotation.RequiresApi
 import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.text.InputType
 import android.view.Gravity
 import android.view.View
 import android.widget.*
@@ -33,7 +31,6 @@ import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.URL
 import java.nio.channels.InterruptedByTimeoutException
-import java.text.FieldPosition
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -301,7 +298,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 exitDesc = "Do you want to go to the exit?"
                 toilet = "Toilet"
                 toiletDesc = "Do you want to go to the toilet?"
-                changeSpeed = "Change speed"
+                changeSpeed = "SPEED"
                 startRoboTour = "Press START when you are ready for RoboTour to resume"
             }
             "French" -> {
@@ -393,178 +390,174 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 exitDesc = "Do you want to go to the exit?"
                 toilet = "W.C."
                 toiletDesc = "Do you want to go to the toilet?"
-                changeSpeed = "Change speed"
+                changeSpeed = "SPEED"
             }
         }
         relativeLayout {
-                val nextPaintings = textView {
-                    id = View.generateViewId()
-                    text = "Next Art Pieces:"
-                    textSize = 16f
-                    typeface = Typeface.DEFAULT_BOLD
-                    padding = dip(2)
-                }.lparams { alignParentTop() }
-                val hSV = horizontalScrollView {
-                    id = View.generateViewId()
-                    linearLayout {
-                        for (i in allArtPieces) { //change to sortedChosenArtPieces
-                            listPaintings.add(
+            val nextPaintings = textView {
+                id = View.generateViewId()
+               // text = "Next Art Pieces:"
+                textSize = 16f
+                typeface = Typeface.DEFAULT_BOLD
+                padding = dip(2)
+            }.lparams { alignParentTop() }
+            val hSV = horizontalScrollView {
+                id = View.generateViewId()
+                linearLayout {
+                    for (i in allArtPieces) { //change to sortedChosenArtPieces
+                        listPaintings.add(
                                 imageButton {
                                     backgroundColor = Color.TRANSPARENT
                                     image = resources.getDrawable(i.imageID)
                                     horizontalPadding = dip(5)
                                 }
-                            )
-                        }
+                        )
                     }
-                }.lparams { below(nextPaintings) }
+                }
+            }.lparams { below(nextPaintings) }
 
             tableLayout2 = linearLayout {
-                    orientation = LinearLayout.VERTICAL
-                    relativeLayout {
-                        floatingActionButton {
-                            //UI
-                            imageResource = R.drawable.ic_volume_up_black_24dp
-                            //ColorStateList usually requires a list of states but this works for a single color
-                            backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
-                            lparams { alignParentRight(); topMargin = dip(100); rightMargin = dip(20) }
+                orientation = LinearLayout.VERTICAL
+                relativeLayout {
+                    floatingActionButton {
+                        //UI
+                        imageResource = R.drawable.ic_volume_up_black_24dp
+                        //ColorStateList usually requires a list of states but this works for a single color
+                        backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
+                        lparams { alignParentRight(); topMargin = dip(100); rightMargin = dip(20) }
 
+                        onClick {
                             //Text-to-speech
-                            onClick {
-                                //speakOutButton(currentPic)
-
-                                val sortedNums = listOf<Int>(1,2,3,4,5)
-
-                                updateScrollViewPictures(sortedNums)
-                            }
+                            speakOutButton(currentPic)
                         }
-                        floatingActionButton {
-                            //UI
-                            imageResource = R.drawable.ic_chat_black_24dp
-                            //ColorStateList usually requires a list of states but this works for a single color
-                            backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
-                            lparams { alignParentLeft(); topMargin = dip(100); leftMargin = dip(20) }
+                    }
+                    floatingActionButton {
+                        //UI
+                        imageResource = R.drawable.ic_chat_black_24dp
+                        //ColorStateList usually requires a list of states but this works for a single color
+                        backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
+                        lparams { alignParentLeft(); topMargin = dip(100); leftMargin = dip(20) }
 
-                            //Alert
-                            onClick {
-                                alert {
-                                    customView {
-                                        linearLayout {
-                                            orientation = LinearLayout.VERTICAL
-                                            textView {
-                                                text = "Add Painting Title Here"
-                                                textSize = 32f
-                                                typeface = Typeface.DEFAULT_BOLD
-                                                padding = dip(3)
-                                                gravity = Gravity.CENTER_HORIZONTAL
-                                            }
-                                            textView {
-                                                text = "ETA: <10s"
-                                                textSize = 20f
-                                                padding = dip(2)
-                                                leftPadding = dip(4)
-                                            }
-                                            textView {
-                                                text = "Lots of text here describing the painting. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                                                textSize = 16f
-                                                padding = dip(2)
-                                                leftPadding = dip(4)
-                                            }
+                        //Alert
+                        onClick {
+                            alert {
+                                customView {
+                                    linearLayout {
+                                        orientation = LinearLayout.VERTICAL
+                                        textView {
+                                            text = "Add Painting Title Here"
+                                            textSize = 32f
+                                            typeface = Typeface.DEFAULT_BOLD
+                                            padding = dip(3)
+                                            gravity = Gravity.CENTER_HORIZONTAL
+                                        }
+                                        textView {
+                                            text = "ETA: <10s"
+                                            textSize = 20f
+                                            padding = dip(2)
+                                            leftPadding = dip(4)
+                                        }
+                                        textView {
+                                            text = "Lots of text here describing the painting. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                                            textSize = 16f
+                                            padding = dip(2)
+                                            leftPadding = dip(4)
                                         }
                                     }
-                                }.show()
-                            }
-                        }
-                        tableLayout {
-                            orientation = LinearLayout.VERTICAL
-                            lparams { width = matchParent }
-                            titleView = textView {
-                                textSize = 32f
-                                typeface = Typeface.DEFAULT_BOLD
-                                padding = dip(5)
-                                gravity = Gravity.CENTER_HORIZONTAL
-                            }
-                            verticalLayout {
-                                orientation = LinearLayout.HORIZONTAL
-                                imageView = imageView {
-                                    backgroundColor = Color.TRANSPARENT //Removes gray border
-                                    gravity = Gravity.CENTER_HORIZONTAL
-                                }.lparams {
-                                    bottomMargin = dip(10)
-                                    topMargin = dip(10)
                                 }
-                            }
+                            }.show()
                         }
-                        verticalLayout {
-                            /*lparams { width = matchParent }
+                    }
+                    tableLayout {
+                        orientation = LinearLayout.VERTICAL
+                        lparams { width = matchParent }
                         titleView = textView {
                             textSize = 32f
                             typeface = Typeface.DEFAULT_BOLD
                             padding = dip(5)
                             gravity = Gravity.CENTER_HORIZONTAL
                         }
-                        //get image the pictures.php file that is true
-                        imageView = imageView {
-                            backgroundColor = Color.TRANSPARENT //Removes gray border
-                            gravity = Gravity.CENTER_HORIZONTAL
-                        }.lparams {
-                            bottomMargin = dip(10)
-                            topMargin = dip(10)
-                        }
-                        descriptionView = textView {
-                            text = ""
-                            textSize = 16f
-                            typeface = Typeface.DEFAULT
-                            padding = dip(10)
-                        }*/
-
+                        verticalLayout {
+                            orientation = LinearLayout.HORIZONTAL
+                            imageView = imageView {
+                                backgroundColor = Color.TRANSPARENT //Removes gray border
+                                gravity = Gravity.CENTER_HORIZONTAL
+                            }.lparams {
+                                bottomMargin = dip(10)
+                                topMargin = dip(10)
+                            }
                         }
                     }
-                    when (language) {
-                        "English" -> {
-                            titleView?.text = "RoboTour calculating optimal route..."
-                            descriptionView?.text = "RoboTour calculating optimal route..."
-                            imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
-                        }
-                        "German" -> {
-                            titleView?.text = "RoboTour berechnet optimale Route ..."
-                            descriptionView?.text = "RoboTour berechnet optimale Route ..."
-                            imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
-
-                        }
-                        "Spanish" -> {
-                            titleView?.text = "RoboTour calcula la ruta óptima ..."
-                            descriptionView?.text = "RoboTour calcula la ruta óptima ..."
-                            imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
-
-                        }
-                        "French" -> {
-                            titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
-                            descriptionView?.text = "RoboTour calculant l'itinéraire optimal ..."
-                            imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
-
-                        }
-                        "Chinese" -> {
-                            titleView?.text = "萝卜途正在计算最佳路线..."
-                            descriptionView?.text = "萝卜途正在计算最佳路线..."
-                            imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
-
-                        }
-                        "other" -> {
-                            titleView?.text = "RoboTour calculating optimal route..."
-                            descriptionView?.text = "RoboTour calculating optimal route..."
-                            imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
-
-                        }
-                        "else" -> {
-                            titleView?.text = "RoboTour calculating optimal route..."
-                            descriptionView?.text = "RoboTour calculating optimal route..."
-                            imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
-                        }
+                    verticalLayout {
+                        /*lparams { width = matchParent }
+                    titleView = textView {
+                        textSize = 32f
+                        typeface = Typeface.DEFAULT_BOLD
+                        padding = dip(5)
+                        gravity = Gravity.CENTER_HORIZONTAL
                     }
-                }.lparams {
-                    below(hSV)
+                    //get image the pictures.php file that is true
+                    imageView = imageView {
+                        backgroundColor = Color.TRANSPARENT //Removes gray border
+                        gravity = Gravity.CENTER_HORIZONTAL
+                    }.lparams {
+                        bottomMargin = dip(10)
+                        topMargin = dip(10)
+                    }
+                    descriptionView = textView {
+                        text = ""
+                        textSize = 16f
+                        typeface = Typeface.DEFAULT
+                        padding = dip(10)
+                    }*/
+
+                    }
                 }
+                when (language) {
+                    "English" -> {
+                        titleView?.text = "RoboTour calculating optimal route..."
+                        descriptionView?.text = "RoboTour calculating optimal route..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+                    }
+                    "German" -> {
+                        titleView?.text = "RoboTour berechnet optimale Route ..."
+                        descriptionView?.text = "RoboTour berechnet optimale Route ..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+                    }
+                    "Spanish" -> {
+                        titleView?.text = "RoboTour calcula la ruta óptima ..."
+                        descriptionView?.text = "RoboTour calcula la ruta óptima ..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+                    }
+                    "French" -> {
+                        titleView?.text = "RoboTour calculant l'itinéraire optimal ..."
+                        descriptionView?.text = "RoboTour calculant l'itinéraire optimal ..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+                    }
+                    "Chinese" -> {
+                        titleView?.text = "萝卜途正在计算最佳路线..."
+                        descriptionView?.text = "萝卜途正在计算最佳路线..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+                    }
+                    "other" -> {
+                        titleView?.text = "RoboTour calculating optimal route..."
+                        descriptionView?.text = "RoboTour calculating optimal route..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+
+                    }
+                    "else" -> {
+                        titleView?.text = "RoboTour calculating optimal route..."
+                        descriptionView?.text = "RoboTour calculating optimal route..."
+                        imageView?.setBackgroundColor(resources.getColor(android.R.color.transparent))
+                    }
+                }
+            }.lparams {
+                below(hSV)
+            }
             relativeLayout {
                 tableLayout {
                     isStretchAllColumns = true
@@ -765,7 +758,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 if (a[16] == 'T' && a[17] == 'T') {
                                                     sendPUTNEW(12, "T")
                                                 }
-
                                             }
                                         }
                                         negativeButton(negative) { }
@@ -785,8 +777,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         //Starting the thread which is defined above to keep polling the server for changes
         //checkerThread.start()
-        val sortedNums = listOf<Int>(1,3,2,7,0)
-
+        val sortedNums: MutableCollection<Int> = arrayListOf(1, 5, 7)
         updateScrollViewPictures(sortedNums)
 
     }
@@ -803,11 +794,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     runOnUiThread(object : Runnable {
                         override fun run() {
                             async {
-                                val a = URL("https://proparoxytone-icing.000webhostapp.com/receiverPhone.php").readText()
+                                val a = URL("https://proparoxytone-icing.000webhostapp.com/receiver.php").readText()
                                 println("++++++++" + a)
                                 /*This updates the picture and text for the user*/
+                                val paintings = a.substring(0, 9)
+                                runOnUiThread { updateScrollView(paintings) }
                                 val counter = (0..16).count { a[it] == 'F' }
-                                println("+++counter: $counter")
                                 if (counter == 17) {
                                     runOnUiThread {
                                         switchToFinnished()
@@ -996,6 +988,28 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toast("Sorry that's not a valid input")
             }
         }
+    }
+
+    private fun sortString(input: String): MutableMap<Int, Int> {
+        val context: MutableMap<Int, Int> = mutableMapOf()
+        val input2 = input.toCharArray()
+        for (a in 0 until input2.size) {
+            if (input2[a] == 'T' || input2[a] == 'F' || input2[a] == 'A' || input2[a] == 'N') {
+            } else {
+                try {
+                    context.put(input2[a].toString().toInt(), a)
+                } catch (e: java.lang.NumberFormatException) {
+
+                }
+            }
+        }
+        return context.toSortedMap()
+    }
+
+    private fun updateScrollView(paintings: String) {
+        val output = sortString(paintings)
+        val sortedChosenArtPieces = output.values
+        updateScrollViewPictures(sortedChosenArtPieces)
     }
 
     private fun speakOut(input: Int) {
@@ -1234,20 +1248,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    private fun updateScroller(input:String){
-        var input_asArray = input.toCharArray()
-        val arrayNew = arrayOf(100,100,100,100,100,100,100,100,100,100)
-        var smallestNumber = 100
-        var smallestNumberPosition = 100
-        for(i in 0..9){
-            for(i in 0..9){
-
-            }
-        }
-
-    }
-
-
     @SuppressLint("SetTextI18n")
     private fun skipImmediately() {
         if (isNetworkConnected()) {
@@ -1355,22 +1355,22 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    private fun updateScrollViewPictures(sortedNums : List<Int>) {
+    private fun updateScrollViewPictures(sortedNums: MutableCollection<Int>) {
         val numSelectedPaintings = sortedNums.size
-        for (i in numSelectedPaintings..10) {
-            if (i < 10) {
-                listPaintings[i].visibility = View.GONE
-            }
-        }
-        for (i in 0..numSelectedPaintings-1) {
+        (numSelectedPaintings..10)
+                .filter { it < 10 }
+                .forEach { listPaintings[it].visibility = View.GONE }
+        for (i in 0 until numSelectedPaintings) {
             listPaintings[i].visibility = View.VISIBLE
         }
-        var listIndex = 0
-        for (i in sortedNums) {
+        sortedNums.withIndex().forEach { (listIndex, i) ->
             when (i) {
                 0 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.birthofvenus))
                 1 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.creationofadam))
-                2 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.david))
+                2 -> {
+                    println("+++++ getting in here updateScrollView")
+                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.david))
+                }
                 3 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.girlwithpearlearring))
                 4 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.monalisa))
                 5 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.napoleoncrossingthealps))
@@ -1383,11 +1383,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             listPaintings[listIndex].setOnClickListener {
                 paintingAlertUpdate(i)
             }
-            listIndex++
         }
     }
 
-    private fun paintingAlertUpdate(paintIndex : Int) {
+    @SuppressLint("SetTextI18n")
+    private fun paintingAlertUpdate(paintIndex: Int) {
         alertETA = "ETA: <10s"
         alertDescription = "Lots of text here describing the painting. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         alertTitle = allArtPieces[paintIndex].name
@@ -1413,7 +1413,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         padding = dip(2)
                     }
                     button {
-                        text = "Cancel Painting"
+                        text = "Cancel painting"
                         onClick {
                             //Remove Painting From List
                             listPaintings[map[paintIndex]!!].visibility = View.GONE

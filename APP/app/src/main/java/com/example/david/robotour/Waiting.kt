@@ -25,6 +25,7 @@ class Waiting : AppCompatActivity() {
     private var message = ""
     private var imageView: ImageView? = null
     private var descriptionView: TextView? = null
+    private val url = "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -100,7 +101,7 @@ class Waiting : AppCompatActivity() {
             while (!Thread.currentThread().isInterrupted) {
                 println("++++ t thread Waiting")
                 try {
-                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                    val a = URL(url).readText()
                     if (user == 1) {
                         if (a[17] == 'Y') {
                             //If user 1 has made their selection and you are user 2

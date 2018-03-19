@@ -29,8 +29,8 @@ class AdminActivity : AppCompatActivity() {
     28/02/2018
      */
 
+    val url = "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"
     private fun sendPUTNEW(identifier: Int, command: String) {
-        val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
@@ -52,7 +52,7 @@ class AdminActivity : AppCompatActivity() {
             while (!isInterrupted) {
                 try {
                     async {
-                        val a = URL("https://proparoxytone-icing.000webhostapp.com/receiver.php").readText()
+                        val a = URL(url).readText()
                         runOnUiThread {
                             setActionBar(a)
                         }

@@ -38,6 +38,8 @@ class ChooseLevel : AppCompatActivity() {
     private var userID = 0
     private var controlProgress = false
     private var listenProgress = false
+    private val url = "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"
+
 
     override fun onBackPressed() {
         val a = loadInt("user")
@@ -60,7 +62,6 @@ class ChooseLevel : AppCompatActivity() {
     }
 
     private fun sendPUTNEW(identifier: Int, command: String) {
-        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
@@ -114,7 +115,7 @@ class ChooseLevel : AppCompatActivity() {
             while (!Thread.currentThread().isInterrupted) try {
                 Thread.sleep(200)
                 async {
-                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                    val a = URL(url).readText()
                     uiThread{
                         val b = a[16]
                         val c = a[17]

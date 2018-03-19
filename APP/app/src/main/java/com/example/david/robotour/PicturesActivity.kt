@@ -45,7 +45,6 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var areYouSure = ""
     private var positive = ""
     private var negative = ""
-
     public override fun onDestroy() {
         // Shutdown TTS
         if (tts != null) {

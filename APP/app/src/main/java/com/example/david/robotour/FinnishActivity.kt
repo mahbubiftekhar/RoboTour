@@ -24,6 +24,7 @@ class FinishActivity : AppCompatActivity() {
     private lateinit var restartApp: String
     private var tts: TextToSpeech? = null
     private var speechText = ""
+    private val url = "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"
 
     override fun onDestroy() {
         if (tts != null) {

@@ -56,6 +56,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var killThread = false
     private var userTwoMode = false
     private var advertisements = ArrayList<Int>()
+    private val url = "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"
 
     val allArtPieces = ArrayList<ArtPiece>()
 
@@ -538,7 +539,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     runOnUiThread(object : Runnable {
                         override fun run() {
                             async {
-                                val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                                val a = URL(url).readText()
                                 /*This updates the picture and text for the user*/
                                 val counter = (0..9).count { a[it] == 'F' }
                                 if (counter == 10) {
