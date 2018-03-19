@@ -417,7 +417,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         relativeLayout {
             val nextPaintings = textView {
                 id = View.generateViewId()
-               // text = "Next Art Pieces:"
+                // text = "Next Art Pieces:"
                 textSize = 16f
                 typeface = Typeface.DEFAULT_BOLD
                 padding = dip(2)
@@ -796,7 +796,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
             }
         }
-        for(i in 0..9){
+        for (i in 0..9) {
             listPaintings[i].visibility = View.GONE
         }
         //Starting the thread which is defined above to keep polling the server for changes
@@ -821,15 +821,44 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 println("++++++++" + a)
                                 /*This updates the picture and text for the user*/
                                 val paintings = a.substring(0, 9)
-                                if(userid==1.toString() && !cancelRequest && a[20] =='W'){
-                                       runOnUiThread{
+                                if (userid == 1.toString() && !cancelRequest && a[20] == 'W') {
+                                    runOnUiThread {
+                                        alert(cancelRequestSent) {
+                                            cancellable(false)
+                                            setFinishOnTouchOutside(false)
+                                            positiveButton(positive) {
+                                                async {
+                                                    sendPUTNEW(a[20].toInt(), "F")
+                                                    sendPUTNEW(20, "F")
+                                                }
+                                            }
+                                            negativeButton(negative) {
+                                                async {
+                                                    sendPUTNEW(20, "F")
+                                                }
+                                            }
+                                        }.show()
 
                                     }
-                                }else if(userid==2.toString() && !cancelRequest && a[20] == 'Q'){
-                                        runOnUiThread{
-
-                                        }
-                                } else {
+                                } else if (userid == 2.toString() && !cancelRequest && a[20] == 'Q') {
+                                    runOnUiThread {
+                                        alert(cancelRequestSent) {
+                                            cancellable(false)
+                                            setFinishOnTouchOutside(false)
+                                            positiveButton(positive) {
+                                                async {
+                                                    sendPUTNEW(a[20].toInt(), "F")
+                                                    sendPUTNEW(20, "F")
+                                                }
+                                            }
+                                            negativeButton(negative) {
+                                                async {
+                                                    sendPUTNEW(20, "F")
+                                                }
+                                            }
+                                        }.show()
+                                    }
+                                } else if (a[20] == 'F') {
                                     cancelRequest = false
                                 }
                                 runOnUiThread { updateScrollView(paintings) }
@@ -970,6 +999,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 if (isNetworkConnected()) {
                                                     async {
                                                         sendPUTNEW(11, "F")
+                                                        sendPUTNEW(14, "F")
+
                                                     }
                                                 } else {
                                                     Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
@@ -977,6 +1008,14 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             }
                                         }.show()
                                     }
+                                } else if (a[14] == 'F' && toiletPopUpBool) {
+                                    //If the other user selects, the pop up for the other use will be removed
+                                    runOnUiThread {
+                                        toiletPopUpBool = true
+                                        toiletPopUp.dismiss()
+                                    }
+                                } else {
+                                    //Do nothing
                                 }
                                 if (a[11] == 'T') {
                                     runOnUiThread {
@@ -1388,21 +1427,23 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         } catch (e: IOException) {
         }
     }
-    private fun requestCancel(paintingID: Int){
+
+    private fun requestCancel(paintingID: Int) {
         /*
         * Q == USER1
         * W == USER2
         * */
-        if(userid==1.toString()){
-            async{
-                sendPUTNEW(20,paintingID.toString())
+        if (userid == 1.toString()) {
+            async {
+                sendPUTNEW(20, paintingID.toString())
             }
-        }else if(userid==2.toString()) {
-            async{
+        } else if (userid == 2.toString()) {
+            async {
                 sendPUTNEW(20, paintingID.toString())
             }
         }
     }
+
     private fun updateScrollViewPictures(sortedNums: MutableCollection<Int>) {
         val numSelectedPaintings = sortedNums.size
         (numSelectedPaintings..10)
@@ -1432,6 +1473,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 paintingAlertUpdate(i)
             }
         }
+    }
+
+    private fun getETA() {
+        /*This function will get the ETA*/
     }
 
     @SuppressLint("SetTextI18n")
