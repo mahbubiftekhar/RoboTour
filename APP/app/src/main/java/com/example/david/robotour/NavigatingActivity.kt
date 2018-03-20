@@ -428,14 +428,17 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             val hSV = horizontalScrollView {
                 id = View.generateViewId()
                 linearLayout {
-                    for (i in allArtPieces) { //change to sortedChosenArtPieces
-                        listPaintings.add(
-                                imageButton {
-                                    backgroundColor = Color.TRANSPARENT
-                                    image = resources.getDrawable(i.imageID)
-                                    horizontalPadding = dip(5)
-                                }
-                        )
+                    allArtPieces.mapTo(
+                            //change to sortedChosenArtPieces
+                            listPaintings) {
+                        imageButton {
+                            backgroundColor = Color.TRANSPARENT
+                            image = resources.getDrawable(it.imageID)
+                            horizontalPadding = dip(5)
+                        }
+                    }
+                    for (i in 0..9) {
+                        listPaintings[i].visibility = View.GONE
                     }
                 }
             }.lparams { below(nextPaintings) }
