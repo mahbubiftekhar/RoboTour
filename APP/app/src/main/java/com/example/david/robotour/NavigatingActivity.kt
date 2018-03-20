@@ -82,6 +82,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var otherUseCancel = "Other user wishes to cancel, allow cancel?"
     private var cancelRequestSent = ""
     private var cancelPainting = ""
+    private var artPieceTitle = ""
+    private var artPieceDescription = ""
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -459,7 +461,35 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         //ColorStateList usually requires a list of states but this works for a single color
                         backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
                         lparams { alignParentLeft(); topMargin = dip(100); leftMargin = dip(20) }
+                        val language = intent.getStringExtra("language")
+                        if (currentPic == -1) {
+                            artPieceTitle = ""
+                            artPieceDescription = ""
+                        } else {
+                            when (language) {
+                                "French" -> {
+                                    artPieceTitle = allArtPieces[currentPic].nameFrench
+                                    artPieceDescription = allArtPieces[currentPic].French_Desc
+                                }
+                                "Chinese" -> {
+                                    artPieceTitle = allArtPieces[currentPic].nameChinese
+                                    artPieceDescription = allArtPieces[currentPic].Chinese_Desc
+                                }
+                                "Spanish" -> {
+                                    artPieceTitle = allArtPieces[currentPic].nameSpanish
+                                    artPieceDescription = allArtPieces[currentPic].Spanish_Desc
+                                }
+                                "German" -> {
+                                    artPieceTitle = allArtPieces[currentPic].nameGerman
+                                    artPieceDescription = allArtPieces[currentPic].German_Desc
+                                }
+                                else -> {
+                                    artPieceTitle = allArtPieces[currentPic].name
+                                    artPieceDescription = allArtPieces[currentPic].English_Desc
+                                }
+                            }
 
+                        }
                         //Alert
                         onClick {
                             alert {
@@ -467,7 +497,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     linearLayout {
                                         orientation = LinearLayout.VERTICAL
                                         textView {
-                                            text = "Add Painting Title Here"
+                                            text = artPieceTitle
                                             textSize = 32f
                                             typeface = Typeface.DEFAULT_BOLD
                                             padding = dip(3)
@@ -480,7 +510,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             leftPadding = dip(4)
                                         }
                                         textView {
-                                            text = "Lots of text here describing the painting. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                                            text = artPieceDescription
                                             textSize = 16f
                                             padding = dip(2)
                                             leftPadding = dip(4)
@@ -1475,8 +1505,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    private fun getETA() {
+    private fun getETA(): String {
         /*This function will get the ETA*/
+        return "ETA 10SECONDS"
     }
 
     @SuppressLint("SetTextI18n")
@@ -1505,6 +1536,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 alertDescription = allArtPieces[paintIndex].English_Desc
             }
         }
+
         alert {
             customView {
                 linearLayout {
@@ -1515,25 +1547,26 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         typeface = Typeface.DEFAULT_BOLD
                         padding = dip(3)
                         gravity = Gravity.CENTER_HORIZONTAL
-                    }
-                    textView {
-                        text = alertETA //The position the paining is on the list times 10s
-                        textSize = 20f
-                        padding = dip(2)
-                    }
-                    textView {
-                        text = alertDescription
-                        textSize = 16f
-                        padding = dip(2)
-                    }
-                    button {
-                        text = cancelPainting
-                        onClick {
-                            //Remove Painting From List
-                            requestCancel(paintIndex)
-                            //listPaintings[map[paintIndex]!!].visibility = View.GONE
-                            toast(cancelRequestSent)
-                            dismiss()
+
+                        textView {
+                            text = alertETA //The position the paining is on the list times 10s
+                            textSize = 20f
+                            padding = dip(2)
+                        }
+                        textView {
+                            text = alertDescription
+                            textSize = 16f
+                            padding = dip(2)
+                        }
+                        button {
+                            text = cancelPainting
+                            onClick {
+                                //Remove Painting From List
+                                requestCancel(paintIndex)
+                                //listPaintings[map[paintIndex]!!].visibility = View.GONE
+                                toast(cancelRequestSent)
+                                dismiss()
+                            }
                         }
                     }
                 }
