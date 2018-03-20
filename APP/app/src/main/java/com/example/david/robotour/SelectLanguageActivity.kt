@@ -20,7 +20,7 @@ class SelectLanguageActivity : AppCompatActivity() {
     data class Language(val name: String, val imageID: Int)
 
     private val languages = ArrayList<Language>()
-    private val url = "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"
+    private val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
 
     override fun onBackPressed() {
         async {
@@ -80,7 +80,7 @@ class SelectLanguageActivity : AppCompatActivity() {
                             imageButton(languages[i + j].imageID) {
                                 backgroundColor = Color.TRANSPARENT
                                 onClick {
-                                    startActivity<PicturesActivity>("language" to languages[i + j].name)
+                                    startActivity<ChooseLevel>("language" to languages[i + j].name)
                                 }
                             }.lparams { topMargin = dip(15); leftMargin = dip(20 + (j + 1) * 10) }
                         }

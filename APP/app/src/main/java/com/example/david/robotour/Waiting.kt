@@ -25,7 +25,7 @@ class Waiting : AppCompatActivity() {
     private var message = ""
     private var imageView: ImageView? = null
     private var descriptionView: TextView? = null
-    private val url = "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"
+    private val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/

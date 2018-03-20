@@ -36,6 +36,7 @@ import kotlin.collections.ArrayList
 
 @Suppress("DEPRECATION")
 class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
+    private val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
     private val btnHgt = 55
     private var btnTextSize = 24f
     private var toggleStBtn = true
@@ -305,7 +306,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 startRoboTour = "Press START when you are ready for RoboTour to resume"
                 otherUseCancel = "Other user wishes to cancel, allow cancel?"
                 cancelRequestSent = "Cancel request sent"
-                cancelPainting = "Cancel painting?"
+                cancelPainting = "Cancel painting"
             }
             "French" -> {
                 startRoboTour = "Appuyez sur Start lorsque vous êtes prêt à reprendre RoboTour"
@@ -411,7 +412,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 changeSpeed = "SPEED"
                 otherUseCancel = "Other user wishes to cancel, allow cancel?"
                 cancelRequestSent = "Cancel request sent"
-                cancelPainting = "Cancel painting?"
+                cancelPainting = "Cancel painting"
             }
         }
         relativeLayout {
@@ -770,16 +771,15 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             async {
                                                 exitDoor()
                                             }
-                                            async {
-                                                var a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-                                                if (a == "1") {
+                                            /*async {
+                                                val ab = URL(url).readText()
+                                                if (ab[18] == 'T') {
                                                     sendPUTNEW(12, "T")
                                                 }
-                                                a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-                                                if (a[16] == 'T' && a[17] == 'T') {
+                                                if (ab[16] == 'T' && ab[17] == 'T') {
                                                     sendPUTNEW(12, "T")
                                                 }
-                                            }
+                                            }*/
                                         }
                                         negativeButton(negative) { }
                                     }.show()
@@ -817,7 +817,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     runOnUiThread(object : Runnable {
                         override fun run() {
                             async {
-                                val a = URL("https://proparoxytone-icing.000webhostapp.com/receiver.php").readText()
+                                val a = URL(url).readText()
                                 println("++++++++" + a)
                                 /*This updates the picture and text for the user*/
                                 val paintings = a.substring(0, 9)
@@ -1012,7 +1012,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     //If the other user selects, the pop up for the other use will be removed
                                     runOnUiThread {
                                         toiletPopUpBool = true
-                                        toiletPopUp.dismiss()
                                     }
                                 } else {
                                     //Do nothing
@@ -1239,9 +1238,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         alert(exitDesc) {
             positiveButton(positive) {
                 async {
-                    val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-                    if (a == "1") {
+                    val aB = URL(url).readText()
+                    if (aB[18] == 'F') {
+                        //If single user tell roboTour to cancel
                         sendPUTNEW(12, "T")
+                        sendPUTNEW(userid.toInt(), "F")
                     }
                 }
                 if (userid == "1") {
@@ -1254,7 +1255,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     }
                 }
                 async {
-                    val a = URL("https://proparoxytone-icing.000webhostapp.com/receiverPhone.php").readText()
+                    val a = URL(url).readText()
                     if (a[16] == 'T' && a[17] == 'T') {
                         sendPUTNEW(12, "T")
                     }
@@ -1273,7 +1274,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             if (userid == "1") {
                 async {
                     sendPUTNEW(11, "F")
-                    val a = URL("https://proparoxytone-icing.000webhostapp.com/receiverPhone.php").readText()
+                    val a = URL(url).readText()
                     if (a[12] == '2' || a[17] == 'F') {
                         sendPUTNEW(12, "T")
                         sendPUTNEW(16, "F")
@@ -1284,7 +1285,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
             } else if (userid == "2") {
                 async {
-                    val a = URL("https://proparoxytone-icing.000webhostapp.com/receiverPhone.php").readText()
+                    val a = URL(url).readText()
                     if (a[12] == '1' || a[16] == 'F') {
                         sendPUTNEW(12, "T")
                         sendPUTNEW(17, "F")
@@ -1413,7 +1414,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun sendPUTNEW(identifier: Int, command: String) {
-        val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()

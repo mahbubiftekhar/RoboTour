@@ -38,7 +38,7 @@ class ChooseLevel : AppCompatActivity() {
     private var userID = 0
     private var controlProgress = false
     private var listenProgress = false
-    private val url = "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"
+    private val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
 
 
     override fun onBackPressed() {
@@ -120,7 +120,7 @@ class ChooseLevel : AppCompatActivity() {
                         val b = a[16]
                         val c = a[17]
                         println("a[16]: $b , a[17]: $c")
-                        if ('T' == a[10]) {
+                        if ('T' == a[18]) {
                             runOnUiThread {
                                 twoUsers = true
                             }
