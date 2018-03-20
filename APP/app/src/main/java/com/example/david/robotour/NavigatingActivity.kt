@@ -463,8 +463,24 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         lparams { alignParentLeft(); topMargin = dip(100); leftMargin = dip(20) }
                         val language = intent.getStringExtra("language")
                         if (currentPic == -1) {
-                            artPieceTitle = ""
-                            artPieceDescription = ""
+                            when (language) {
+                                "French" -> {
+                                    artPieceDescription = "RoboTour calcule l'itinéraire optimal"
+                                    artPieceTitle = "RoboTour calcule l'itinéraire optimal"
+                                }
+                                "Chinese" -> {
+                                    artPieceDescription = "萝卜途正在计算最佳路线"
+                                    artPieceTitle = "萝卜途正在计算最佳路线"
+                                }
+                                "Spanish" -> {
+                                    artPieceDescription = "RoboTour está calculando la ruta óptima"
+                                    artPieceTitle = "RoboTour está calculando la ruta óptima"
+                                }
+                                "German" -> {
+                                    artPieceDescription = "RoboTour berechnet die optimale Route"
+                                    artPieceTitle = "RoboTour berechnet die optimale Route"
+                                }
+                            }
                         } else {
                             when (language) {
                                 "French" -> {

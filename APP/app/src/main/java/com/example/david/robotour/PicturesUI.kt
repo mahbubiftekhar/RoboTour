@@ -108,14 +108,6 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                                         }
                                     }
                                     startActivity<NavigatingActivity>("language" to language)
-                                    /*async {
-                                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/user1.php").readText()
-                                        if (a == "2") {
-                                            startActivity<Waiting>("language" to language)
-                                        } else {
-                                            println("in print")
-                                        }
-                                    }*/
                                 }
                                 negativeButton(negative) {
                                     // navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))
