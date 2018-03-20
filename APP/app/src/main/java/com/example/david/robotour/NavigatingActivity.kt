@@ -82,6 +82,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var cancelRequestSent = ""
     private var cancelPainting = ""
     private var artPieceTitle = ""
+    private var url = ""
     private var artPieceDescription = ""
 
     private fun loadInt(key: String): Int {
@@ -272,12 +273,19 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     }
 
+    private fun loadString(key: String): String {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        return sharedPreferences.getString(key, "https://proparoxytone-icing.000webhostapp.com/receiver.php")
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         userid = loadInt("user").toString()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
+        url = loadString("url")
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar

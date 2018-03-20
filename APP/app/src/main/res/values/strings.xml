@@ -125,4 +125,5 @@
     <string name="two_user_mode_on">TWO USER MODE ON</string>
     <string name="title_activity_recycle">RecycleActivity</string>
     <string name="title_activity_recycler">RecyclerActivity</string>
+    <string name="switch_url">SWITCH URL</string>
 </resources>

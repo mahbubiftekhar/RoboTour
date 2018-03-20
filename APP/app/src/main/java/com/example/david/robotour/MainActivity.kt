@@ -26,10 +26,12 @@ import java.io.InterruptedIOException
 
 
 @Suppress("DEPRECATION")
+var url = ""
 class MainActivity : AppCompatActivity() {
     private var advertisements = ArrayList<Int>()
     private var imageView: ImageView? = null
     private var continueThread = true
+    private var url = ""
 
     override fun onBackPressed() {
         clearFindViewByIdCache()
@@ -50,10 +52,17 @@ class MainActivity : AppCompatActivity() {
         return networkInfo != null && networkInfo.isConnected
     }
 
+    private fun loadString(key: String): String {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        return sharedPreferences.getString(key, "https://proparoxytone-icing.000webhostapp.com/receiver.php")
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
+        url = loadString("url")
         //window.decorView.setBackgroundColor(Color.parseColor("#24E8EA"))
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         verticalLayout {

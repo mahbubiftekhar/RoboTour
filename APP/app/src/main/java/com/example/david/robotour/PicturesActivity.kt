@@ -11,6 +11,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
+import android.preference.PreferenceManager
 import android.text.InputType.TYPE_CLASS_TEXT
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
@@ -85,6 +86,12 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts4!!.shutdown()
         }
         super.onStop()
+    }
+
+    private fun loadString(key: String): String {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        return sharedPreferences.getString(key, "https://proparoxytone-icing.000webhostapp.com/receiver.php")
     }
 
     private fun speakOutnew() {
@@ -254,6 +261,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         allArtPieces.clear()
+        url = loadString("url")
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // add back button to actionbar
         val language = intent.getStringExtra("language")
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings

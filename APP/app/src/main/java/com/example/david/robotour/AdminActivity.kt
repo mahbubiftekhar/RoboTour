@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.WindowManager
 import kotlinx.android.synthetic.main.activity_admin.*
@@ -162,6 +163,7 @@ class AdminActivity : AppCompatActivity() {
                 }
             }
         }
+
         STOP_ROBOTOUR.setOnClickListener {
             /*Sets Robot stop to true*/
             async {
@@ -179,7 +181,17 @@ class AdminActivity : AppCompatActivity() {
             }
             vibrate()
         }
-
+        SWITCH_URL.setOnClickListener{
+            val url1 = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
+            val url2 = "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"
+            if(loadString("url")==url1){
+                saveString("url",url2)
+                toast("set as receiverPhone")
+            } else {
+                saveString("url",url1)
+                toast("set as receiver")
+            }
+        }
         RESET_EVERYTHING.setOnClickListener {
             //Resets all from 0 .. 17
             for (i in 0..20) {
@@ -281,5 +293,18 @@ class AdminActivity : AppCompatActivity() {
             updateTextThread.start()
         }
         super.onResume()
+    }
+
+    private fun saveString(key: String, value: String) {
+        /* Function to save an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val editor = sharedPreferences.edit()
+        editor.putString(key, value)
+        editor.apply()
+    }
+    private fun loadString(key: String): String {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        return sharedPreferences.getString(key, "https://proparoxytone-icing.000webhostapp.com/receiver.php")
     }
 }

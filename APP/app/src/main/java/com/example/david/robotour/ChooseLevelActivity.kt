@@ -21,9 +21,8 @@ import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.URL
 import java.util.ArrayList
-val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
 @Suppress("DEPRECATION")
-class ChooseLevel : AppCompatActivity() {
+class ChooseLevelActivity : AppCompatActivity() {
     /*This activity will be shown to the user when they cancel or finish the tour */
     private lateinit var listenIn: String
     private lateinit var controlRoboTour: String
@@ -38,7 +37,7 @@ class ChooseLevel : AppCompatActivity() {
     private var userID = 0
     private var controlProgress = false
     private var listenProgress = false
-
+    private var url = ""
 
     override fun onBackPressed() {
         val a = loadInt("user")
@@ -203,11 +202,18 @@ class ChooseLevel : AppCompatActivity() {
         }
     }
 
+    private fun loadString(key: String): String {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        return sharedPreferences.getString(key, "https://proparoxytone-icing.000webhostapp.com/receiver.php")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         language = intent.getStringExtra("language")
         saveInt("user", -1)
         userID = loadInt("user")
         println("first instance $userID")
+        url = loadString("url")
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         val message: String = when (language) {
             "French" -> "Voulez-vous le contrôle ou préférez-vous simplement suivre la tournée?"
