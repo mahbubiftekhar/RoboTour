@@ -214,6 +214,9 @@ class ChooseLevelActivity : AppCompatActivity() {
         userID = loadInt("user")
         println("first instance $userID")
         url = loadString("url")
+        if(url=="https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"){
+            toast("Warning, in receiverPhone mode")
+        }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         val message: String = when (language) {
             "French" -> "Voulez-vous le contrôle ou préférez-vous simplement suivre la tournée?"

@@ -29,8 +29,6 @@ class AdminActivity : AppCompatActivity() {
     M IFTEKHAR
     28/02/2018
      */
-
-    val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
     private fun sendPUTNEW(identifier: Int, command: String) {
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */

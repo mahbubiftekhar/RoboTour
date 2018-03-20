@@ -63,6 +63,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
         url = loadString("url")
+        if(url=="https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"){
+            toast("Warning, in receiverPhone mode")
+        }
         //window.decorView.setBackgroundColor(Color.parseColor("#24E8EA"))
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         verticalLayout {

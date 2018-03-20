@@ -286,6 +286,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
         url = loadString("url")
+        if(url=="https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"){
+            toast("Warning, in receiverPhone mode")
+        }
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
