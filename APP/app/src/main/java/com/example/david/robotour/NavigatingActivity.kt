@@ -1029,9 +1029,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 if (isNetworkConnected()) {
                                                     async {
                                                         sendPUTNEW(11, "F")
-                                                        sendPUTNEW(14, "F")
-
-                                                    }
+                                                        sendPUTNEW(14, "F") }
                                                 } else {
                                                     Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                 }
@@ -1042,6 +1040,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     //If the other user selects, the pop up for the other use will be removed
                                     runOnUiThread {
                                         toiletPopUpBool = true
+                                        toiletPopUp.dismiss()
                                     }
                                 } else {
                                     //Do nothing
