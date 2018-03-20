@@ -36,7 +36,7 @@ import kotlin.collections.ArrayList
 
 @Suppress("DEPRECATION")
 class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
-    private val url = "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"
+    private val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
     private val btnHgt = 55
     private var btnTextSize = 24f
     private var toggleStBtn = true
@@ -435,10 +435,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             backgroundColor = Color.TRANSPARENT
                             image = resources.getDrawable(it.imageID)
                             horizontalPadding = dip(5)
+                            visibility = View.GONE
                         }
-                    }
-                    for (i in 0..9) {
-                        listPaintings[i].visibility = View.GONE
                     }
                 }
             }.lparams { below(nextPaintings) }
@@ -829,11 +827,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
             }
         }
-        for (i in 0..9) {
-            listPaintings[i].visibility = View.GONE
-        }
         //Starting the thread which is defined above to keep polling the server for changes
-        //checkerThread.start()
         val sortedNums: MutableCollection<Int> = arrayListOf(1, 5, 7)
         updateScrollViewPictures(sortedNums)
     }
