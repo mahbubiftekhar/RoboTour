@@ -36,7 +36,6 @@ import kotlin.collections.ArrayList
 
 @Suppress("DEPRECATION")
 class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
-    private val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
     private val btnHgt = 55
     private var btnTextSize = 24f
     private var toggleStBtn = true

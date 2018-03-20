@@ -21,7 +21,7 @@ import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.URL
 import java.util.ArrayList
-
+val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
 @Suppress("DEPRECATION")
 class ChooseLevel : AppCompatActivity() {
     /*This activity will be shown to the user when they cancel or finish the tour */
@@ -38,7 +38,6 @@ class ChooseLevel : AppCompatActivity() {
     private var userID = 0
     private var controlProgress = false
     private var listenProgress = false
-    private val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
 
 
     override fun onBackPressed() {
@@ -313,6 +312,10 @@ class ChooseLevel : AppCompatActivity() {
                         } else {
                             toast(error_Listen)
                         }
+                    }
+                    onLongClick {
+                        startActivity<ListenInActivity>("language" to language)
+                        true
                     }
                 }
                 onLongClick {

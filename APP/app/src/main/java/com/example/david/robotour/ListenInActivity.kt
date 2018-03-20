@@ -56,7 +56,6 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var killThread = false
     private var userTwoMode = false
     private var advertisements = ArrayList<Int>()
-    private val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
 
     val allArtPieces = ArrayList<ArtPiece>()
 

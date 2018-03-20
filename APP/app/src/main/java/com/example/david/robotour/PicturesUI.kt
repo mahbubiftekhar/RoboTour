@@ -25,7 +25,6 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
     private var toastText = ""
     private var positive = ""
     private var negative = ""
-    private val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
 
     private fun notifyUser() {
         Toast.makeText(ctx, toastText, Toast.LENGTH_LONG).show()

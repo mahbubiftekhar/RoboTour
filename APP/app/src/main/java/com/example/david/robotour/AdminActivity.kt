@@ -35,8 +35,7 @@ class AdminActivity : AppCompatActivity() {
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
         val httPpost = HttpPost(url)
-        try {
-            val nameValuePairs = ArrayList<NameValuePair>(4)
+        try { val nameValuePairs = ArrayList<NameValuePair>(4)
             nameValuePairs.add(BasicNameValuePair("command$identifier", command))
             httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
             httpclient.execute(httPpost)

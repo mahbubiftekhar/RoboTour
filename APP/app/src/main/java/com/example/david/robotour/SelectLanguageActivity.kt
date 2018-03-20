@@ -20,7 +20,6 @@ class SelectLanguageActivity : AppCompatActivity() {
     data class Language(val name: String, val imageID: Int)
 
     private val languages = ArrayList<Language>()
-    private val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
 
     override fun onBackPressed() {
         async {
