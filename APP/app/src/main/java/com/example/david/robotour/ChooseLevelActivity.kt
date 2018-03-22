@@ -248,7 +248,6 @@ class ChooseLevelActivity : AppCompatActivity() {
             }
 
         }
-
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
         when (language) {

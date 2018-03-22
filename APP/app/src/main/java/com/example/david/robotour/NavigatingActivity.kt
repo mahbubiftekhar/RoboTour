@@ -472,7 +472,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         //ColorStateList usually requires a list of states but this works for a single color
                         backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
                         lparams { alignParentLeft(); topMargin = dip(100); leftMargin = dip(20) }
-                        val language = intent.getStringExtra("language")
                         if (currentPic == -1) {
                             when (language) {
                                 "French" -> {
@@ -1059,11 +1058,15 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             }
                                         }.show()
                                     }
-                                } else if (a[14] == 'F' && toiletPopUpBool) {
+                                } else if (a[14] == 'F' && !toiletPopUpBool) {
                                     //If the other user selects, the pop up for the other use will be removed
                                     runOnUiThread {
                                         toiletPopUpBool = true
-                                       // toiletPopUp.dismiss()
+                                        try{
+                                            toiletPopUp.dismiss()
+                                        } catch(e:Exception){
+
+                                        }
                                     }
                                 } else {
                                     //Do nothing
