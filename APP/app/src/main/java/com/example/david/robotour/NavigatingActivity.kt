@@ -1542,23 +1542,23 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         when (language) {
             "French" -> {
                 alertTitle = allArtPieces[paintIndex].nameFrench
-                alertDescription = allArtPieces[paintIndex].English_Desc
+                alertDescription = allArtPieces[paintIndex].LongEnglish
             }
             "Chinese" -> {
                 alertTitle = allArtPieces[paintIndex].nameChinese
-                alertDescription = allArtPieces[paintIndex].Chinese_Desc
+                alertDescription = allArtPieces[paintIndex].LongChinese
             }
             "Spanish" -> {
                 alertTitle = allArtPieces[paintIndex].nameSpanish
-                alertDescription = allArtPieces[paintIndex].Spanish_Desc
+                alertDescription = allArtPieces[paintIndex].LongSpanish
             }
             "German" -> {
                 alertTitle = allArtPieces[paintIndex].nameGerman
-                alertDescription = allArtPieces[paintIndex].German_Desc
+                alertDescription = allArtPieces[paintIndex].LongGerman
             }
             else -> {
                 alertTitle = allArtPieces[paintIndex].name
-                alertDescription = allArtPieces[paintIndex].English_Desc
+                alertDescription = allArtPieces[paintIndex].LongEnglish
             }
         }
 
