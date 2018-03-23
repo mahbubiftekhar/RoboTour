@@ -1530,14 +1530,18 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    private fun getETA(): String {
+    private fun getETA(paintingIndex: Int): String {
         /*This function will get the ETA*/
-        return "ETA 10SECONDS"
+        (0..map.size)
+                .filter { map[it] == paintingIndex }
+                .map { map[it] }
+                .forEach { return "ETA $it minute" }
+        return "ETA Unknown"
     }
 
     @SuppressLint("SetTextI18n")
     private fun paintingAlertUpdate(paintIndex: Int) {
-        alertETA = "ETA: <10s"
+        alertETA = getETA(paintIndex)
         val language = intent.getStringExtra("language")
         when (language) {
             "French" -> {
