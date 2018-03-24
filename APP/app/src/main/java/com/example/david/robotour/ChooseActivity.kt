@@ -21,6 +21,11 @@ import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.URL
 import java.util.ArrayList
+import android.widget.TextView
+import kotlinx.android.synthetic.main.activity_choose_level.*
+import kotlinx.android.synthetic.main.activity_choose_level.view.*
+
+
 @Suppress("DEPRECATION")
 class ChooseActivity : AppCompatActivity() {
     /*This activity will be shown to the user when they cancel or finish the tour */
@@ -272,61 +277,31 @@ class ChooseActivity : AppCompatActivity() {
                 listenIn = "Follow the tour"
             }
         }
-        verticalLayout {
-            background = ColorDrawable(resources.getColor(R.color.androidsBackground))
-            imageView(R.drawable.robotour_small) {
-                background = ColorDrawable(resources.getColor(R.color.androidsBackground))
-            }
-            textView {
-                textSize = 24f
-                typeface = Typeface.DEFAULT_BOLD
-                padding = dip(5)
-                topPadding = dip(20)
-                gravity = Gravity.CENTER
-                text = message
-                setTextColor(resources.getColor(R.color.roboTourTeal))
-                background = ColorDrawable(resources.getColor(R.color.androidsBackground))
-            }
-            linearLayout {
-                controlButton = button(controlRoboTour) {
-                    textSize = 20f
-                    background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
-                    onClick {
-                        if (controlProgress) {
-                            t.interrupt()
-                            // checkerThread.interrupt()
-                            startActivity<PicturesActivity>("language" to language)
-                        } else {
-                            toast(error_Control)
-                        }
-                    }
-                }
-                listenButton = button(listenIn) {
-                    textSize = 20f
-                    background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
-                    onClick {
-                        if (listenProgress) {
-                            t.interrupt()
-                            //checkerThread.interrupt()
-                            startActivity<ListenInActivity>("language" to language)
-                        } else {
-                            toast(error_Listen)
-                        }
-                    }
-                    onLongClick {
-                        startActivity<ListenInActivity>("language" to language)
-                        true
-                    }
-                }
+        setContentView(R.layout.activity_choose_level)
+        val textView: TextView = findViewById(R.id.texttodisplay)
+        val controlButton: Button = findViewById(R.id.controlbutton)
+        val listenButton: Button = findViewById(R.id.listenbutton)
+        textView.text = message
+        controlButton.text = controlRoboTour
+        listenButton.text = listenIn
 
+        listenbutton.setOnClickListener{
+            if (listenProgress) {
+                t.interrupt()
+                //checkerThread.interrupt()
+                startActivity<ListenInActivity>("language" to language)
+            } else {
+                toast(error_Listen)
             }
-            verticalLayout {
-                button {
-                    textSize = 10f
-                    background = ColorDrawable(resources.getColor(R.color.androidsBackground))
-                }
+        }
+        controlbutton.setOnClickListener{
+            if (controlProgress) {
+                t.interrupt()
+                // checkerThread.interrupt()
+                startActivity<PicturesActivity>("language" to language)
+            } else {
+                toast(error_Control)
             }
         }
     }
-
 }

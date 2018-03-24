@@ -371,7 +371,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }.show()
     }
 
-    fun deleteCache(context: Context) {
+    private fun deleteCache(context: Context) {
         try {
             val dir = context.cacheDir
             deleteDir(dir)
@@ -1074,6 +1074,14 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             imageView?.setImageResource(R.drawable.toiletimage)
                                             titleView?.text = toilet
                                             descriptionView?.text = ""
+                                        }
+                                        break
+                                    }
+                                    if(a[15] == 'T'){
+                                        runOnUiThread{
+                                            //user wants to go to the toilet
+                                            imageView?.setImageResource(R.drawable.exit)
+                                            titleView?.text = exit
                                         }
                                         break
                                     }

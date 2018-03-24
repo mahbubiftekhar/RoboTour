@@ -1,9 +1,12 @@
 package com.example.david.robotour
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -11,6 +14,7 @@ import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.speech.tts.TextToSpeech
 import android.support.annotation.RequiresApi
+import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
@@ -18,6 +22,7 @@ import android.widget.*
 import kotlinx.android.synthetic.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.floatingActionButton
+import java.io.File
 import java.io.InterruptedIOException
 import java.net.URL
 import java.nio.channels.InterruptedByTimeoutException
@@ -50,6 +55,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var tts: TextToSpeech? = null
     private var tts2: TextToSpeech? = null
     private var tts3: TextToSpeech? = null
+    private var tts4: TextToSpeech? = null
     private var currentPic = -1
     private var startRoboTour = ""
     private var speaking = -1
@@ -66,6 +72,9 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var artPieceTitle = ""
     private var artPieceDescription = ""
     private var url = ""
+    private var speechText = ""
+    private var closeApp = ""
+    private var restartApp = ""
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -87,6 +96,10 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts3!!.stop()
             tts3!!.shutdown()
         }
+        if (tts4 != null) {
+            tts4!!.stop()
+            tts4!!.shutdown()
+        }
         checkerThread.interrupt()
         super.onDestroy()
     }
@@ -97,12 +110,17 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts!!.shutdown()
         }
         if (tts2 != null) {
+
             tts2!!.stop()
             tts2!!.shutdown()
         }
         if (tts3 != null) {
             tts3!!.stop()
             tts3!!.shutdown()
+        }
+        if (tts4 != null) {
+            tts4!!.stop()
+            tts4!!.shutdown()
         }
         super.onStop()
     }
@@ -172,6 +190,32 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             val result: Int
             when (language) {
                 "French" -> {
+                    result = tts4!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts4!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts4!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts4!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts4!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else { }
+        if (status == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
                     result = tts3!!.setLanguage(Locale.FRENCH)
                 }
                 "Chinese" -> {
@@ -215,6 +259,10 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts3!!.stop()
             tts3!!.shutdown()
         }
+        if (tts4 != null) {
+            tts4!!.stop()
+            tts4!!.shutdown()
+        }
         super.onPause()
     }
 
@@ -223,6 +271,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         tts3 = TextToSpeech(this, this)
+        tts4 = TextToSpeech(this, this)
         onInit(0)
         super.onResume()
         if (checkerThread.state == Thread.State.NEW) {
@@ -233,8 +282,107 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun switchToFinnished() {
         checkerThread.interrupt()
         clearFindViewByIdCache()
-        startActivity<FinishActivity>("language" to intent.getStringExtra("language"))
+        val message: String
+        val language = intent.getStringExtra("language")
+        message = when (language) {
+            "French" -> "Merci d'utiliser RoboTour.\nNous espérons que vous avez apprécié votre visite."
+            "German" -> "Vielen Dank für die Verwendung von RoboTour.\nWir hoffen, Sie haben Ihre Tour genossen."
+            "Spanish" -> "Gracias por usar RoboTour.\nEsperamos que hayas disfrutado tu recorrido."
+            "Chinese" -> "感谢您使用萝卜途\n希望您喜欢这次旅程"
+            else -> "Thank you for using RoboTour.\nWe hope you enjoyed your tour."
+        }
+        when (language) {
+            "French" -> {
+                speechText = "Thank you for using Ro-bow-tour"
+                restartApp = "START AGAIN"
+                closeApp = "FERMER APP"
+            }
+            "German" -> {
+                restartApp = "ANFANG"
+                closeApp = "SCHLIEßE APP"
+            }
+            "Spanish" -> {
+                restartApp = "COMIENZO"
+                closeApp = "CERRAR APP"
+            }
+            "Chinese" -> {
+                restartApp = "重新开始"
+                closeApp = "关闭"
+            }
+            else -> {
+                restartApp = "START AGAIN"
+                closeApp = "CLOSE APP"
+            }
+        }
+        speakOutThanks()
+        alert(message) {
+            cancellable(false)
+            setFinishOnTouchOutside(false)
+            positiveButton(restartApp) {
+                deleteCache(applicationContext)
+                val i = baseContext.packageManager
+                        .getLaunchIntentForPackage(baseContext.packageName)
+                i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(i)
+            }
+            negativeButton(closeApp) {
+                //Kill the app
+                clearFindViewByIdCache()
+                val closeTheApp = Intent(Intent.ACTION_MAIN)
+                closeTheApp.addCategory(Intent.CATEGORY_HOME)
+                closeTheApp.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(closeTheApp)
+            }
+        }.show()
+    }
 
+    private fun deleteCache(context: Context) {
+        try {
+            val dir = context.cacheDir
+            deleteDir(dir)
+        } catch (e: Exception) {
+        }
+    }
+
+    private fun speakOutThanks() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "French" -> {
+                    text = "Merci d'utiliser RoboTour"
+                }
+                "Chinese" -> {
+                    text = "感谢您使用RoboTour"
+                }
+                "Spanish" -> {
+                    text = "Gracias por usar RoboTour"
+                }
+                "German" -> {
+                    text = "Vielen Dank für die Verwendung von RoboTour"
+                }
+                else -> {
+                    text = "Thanks for using Robot Tour"
+                    //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
+                }
+            }
+            tts4!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+        }
+    }
+
+    private fun deleteDir(dir: File): Boolean {
+        return when {
+            dir.isDirectory -> {
+                val children = dir.list()
+                children.indices
+                        .map { deleteDir(File(dir, children[it])) }
+                        .filterNot { it }
+                        .forEach { return false }
+                dir.delete()
+            }
+            dir.isFile -> dir.delete()
+            else -> false
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
