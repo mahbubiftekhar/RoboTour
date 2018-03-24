@@ -22,7 +22,7 @@ import java.io.InterruptedIOException
 import java.net.URL
 import java.util.ArrayList
 @Suppress("DEPRECATION")
-class ChooseLevelActivity : AppCompatActivity() {
+class ChooseActivity : AppCompatActivity() {
     /*This activity will be shown to the user when they cancel or finish the tour */
     private lateinit var listenIn: String
     private lateinit var controlRoboTour: String
@@ -287,7 +287,7 @@ class ChooseLevelActivity : AppCompatActivity() {
                 setTextColor(resources.getColor(R.color.roboTourTeal))
                 background = ColorDrawable(resources.getColor(R.color.androidsBackground))
             }
-            verticalLayout {
+            linearLayout {
                 controlButton = button(controlRoboTour) {
                     textSize = 20f
                     background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
@@ -301,14 +301,6 @@ class ChooseLevelActivity : AppCompatActivity() {
                         }
                     }
                 }
-            }
-            verticalLayout {
-                button {
-                    textSize = 10f
-                    background = ColorDrawable(resources.getColor(R.color.androidsBackground))
-                }
-            }
-            verticalLayout {
                 listenButton = button(listenIn) {
                     textSize = 20f
                     background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
@@ -326,9 +318,12 @@ class ChooseLevelActivity : AppCompatActivity() {
                         true
                     }
                 }
-                onLongClick {
-                    startActivity<FinishActivity>("language" to intent.getStringExtra("language"))
-                    true
+
+            }
+            verticalLayout {
+                button {
+                    textSize = 10f
+                    background = ColorDrawable(resources.getColor(R.color.androidsBackground))
                 }
             }
         }

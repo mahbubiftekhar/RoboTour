@@ -2,6 +2,7 @@ package com.example.david.robotour
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
@@ -27,6 +28,7 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.floatingActionButton
+import java.io.File
 import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.URL
@@ -83,7 +85,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var cancelPainting = ""
     private var artPieceTitle = ""
     private var url = ""
+    private var tts4: TextToSpeech? = null
     private var artPieceDescription = ""
+    private lateinit var closeApp: String
+    private lateinit var restartApp: String
+    private var speechText = ""
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -104,6 +110,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (tts3 != null) {
             tts3!!.stop()
             tts3!!.shutdown()
+        }
+        if (tts4 != null) {
+            tts4!!.stop()
+            tts4!!.shutdown()
         }
         if (userid == "1") {
             async {
@@ -131,6 +141,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts3!!.stop()
             tts3!!.shutdown()
         }
+        if (tts4 != null) {
+            tts4!!.stop()
+            tts4!!.shutdown()
+        }
+
         super.onStop()
     }
 
@@ -157,6 +172,34 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
                 else -> {
                     result = tts!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+
+        }
+        if (status == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts4!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts4!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts4!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts4!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts4!!.setLanguage(Locale.UK)
                 }
             }
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -242,6 +285,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts3!!.stop()
             tts3!!.shutdown()
         }
+        if (tts4 != null) {
+            tts4!!.stop()
+            tts4!!.shutdown()
+        }
         super.onPause()
     }
 
@@ -250,6 +297,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         tts3 = TextToSpeech(this, this)
+        tts4 = TextToSpeech(this, this)
         onInit(0)
         super.onResume()
         if (checkerThread.state == Thread.State.NEW) {
@@ -267,10 +315,109 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 sendPUTNEW(17, "F")
             }
         }
-        checkerThread.interrupt()
-        clearFindViewByIdCache()
-        startActivity<FinishActivity>("language" to intent.getStringExtra("language"))
 
+        checkerThread.interrupt()
+        val message: String
+        val language = intent.getStringExtra("language")
+        message = when (language) {
+            "French" -> "Merci d'utiliser RoboTour.\nNous espérons que vous avez apprécié votre visite."
+            "German" -> "Vielen Dank für die Verwendung von RoboTour.\nWir hoffen, Sie haben Ihre Tour genossen."
+            "Spanish" -> "Gracias por usar RoboTour.\nEsperamos que hayas disfrutado tu recorrido."
+            "Chinese" -> "感谢您使用萝卜途\n希望您喜欢这次旅程"
+            else -> "Thank you for using RoboTour.\nWe hope you enjoyed your tour."
+        }
+        when (language) {
+            "French" -> {
+                speechText = "Thank you for using Ro-bow-tour"
+                restartApp = "START AGAIN"
+                closeApp = "FERMER APP"
+            }
+            "German" -> {
+                restartApp = "ANFANG"
+                closeApp = "SCHLIEßE APP"
+            }
+            "Spanish" -> {
+                restartApp = "COMIENZO"
+                closeApp = "CERRAR APP"
+            }
+            "Chinese" -> {
+                restartApp = "重新开始"
+                closeApp = "关闭"
+            }
+            else -> {
+                restartApp = "START AGAIN"
+                closeApp = "CLOSE APP"
+            }
+        }
+        speakOutThanks()
+        alert(message) {
+            cancellable(false)
+            setFinishOnTouchOutside(false)
+            positiveButton(restartApp) {
+                deleteCache(applicationContext)
+                val i = baseContext.packageManager
+                        .getLaunchIntentForPackage(baseContext.packageName)
+                i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(i)
+            }
+            negativeButton(closeApp) {
+                //Kill the app
+                clearFindViewByIdCache()
+                val closeTheApp = Intent(Intent.ACTION_MAIN)
+                closeTheApp.addCategory(Intent.CATEGORY_HOME)
+                closeTheApp.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(closeTheApp)
+            }
+        }.show()
+    }
+
+    fun deleteCache(context: Context) {
+        try {
+            val dir = context.cacheDir
+            deleteDir(dir)
+        } catch (e: Exception) {
+        }
+    }
+
+    private fun speakOutThanks() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "French" -> {
+                    text = "Merci d'utiliser RoboTour"
+                }
+                "Chinese" -> {
+                    text = "感谢您使用RoboTour"
+                }
+                "Spanish" -> {
+                    text = "Gracias por usar RoboTour"
+                }
+                "German" -> {
+                    text = "Vielen Dank für die Verwendung von RoboTour"
+                }
+                else -> {
+                    text = "Thanks for using Robot Tour"
+                    //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
+                }
+            }
+            tts4!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+        }
+    }
+
+    private fun deleteDir(dir: File): Boolean {
+        return when {
+            dir.isDirectory -> {
+                val children = dir.list()
+                children.indices
+                        .map { deleteDir(File(dir, children[it])) }
+                        .filterNot { it }
+                        .forEach { return false }
+                dir.delete()
+            }
+            dir.isFile -> dir.delete()
+            else -> false
+        }
     }
 
     private fun loadString(key: String): String {
@@ -286,7 +433,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
         url = loadString("url")
-        if(url=="https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"){
+        if (url == "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php") {
             toast("Warning, in receiverPhone mode")
         }
         tts = TextToSpeech(this, this)
@@ -1051,7 +1198,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 if (isNetworkConnected()) {
                                                     async {
                                                         sendPUTNEW(11, "F")
-                                                        sendPUTNEW(14, "F") }
+                                                        sendPUTNEW(14, "F")
+                                                    }
                                                 } else {
                                                     Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                 }
@@ -1062,9 +1210,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     //If the other user selects, the pop up for the other use will be removed
                                     runOnUiThread {
                                         toiletPopUpBool = true
-                                        try{
+                                        try {
                                             toiletPopUp.dismiss()
-                                        } catch(e:Exception){
+                                        } catch (e: Exception) {
 
                                         }
                                     }
