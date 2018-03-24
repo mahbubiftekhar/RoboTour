@@ -286,6 +286,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
         url = loadString("url")
+        if(url=="https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"){
+            toast("Warning, in receiverPhone mode")
+        }
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
@@ -469,7 +472,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         //ColorStateList usually requires a list of states but this works for a single color
                         backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
                         lparams { alignParentLeft(); topMargin = dip(100); leftMargin = dip(20) }
-                        val language = intent.getStringExtra("language")
                         if (currentPic == -1) {
                             when (language) {
                                 "French" -> {
@@ -1056,11 +1058,15 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             }
                                         }.show()
                                     }
-                                } else if (a[14] == 'F' && toiletPopUpBool) {
+                                } else if (a[14] == 'F' && !toiletPopUpBool) {
                                     //If the other user selects, the pop up for the other use will be removed
                                     runOnUiThread {
                                         toiletPopUpBool = true
-                                       // toiletPopUp.dismiss()
+                                        try{
+                                            toiletPopUp.dismiss()
+                                        } catch(e:Exception){
+
+                                        }
                                     }
                                 } else {
                                     //Do nothing
@@ -1524,35 +1530,39 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    private fun getETA(): String {
+    private fun getETA(paintingIndex: Int): String {
         /*This function will get the ETA*/
-        return "ETA 10SECONDS"
+        (0..map.size)
+                .filter { map[it] == paintingIndex }
+                .map { map[it] }
+                .forEach { return "ETA $it minute" }
+        return "ETA Unknown"
     }
 
     @SuppressLint("SetTextI18n")
     private fun paintingAlertUpdate(paintIndex: Int) {
-        alertETA = "ETA: <10s"
+        alertETA = getETA(paintIndex)
         val language = intent.getStringExtra("language")
         when (language) {
             "French" -> {
                 alertTitle = allArtPieces[paintIndex].nameFrench
-                alertDescription = allArtPieces[paintIndex].English_Desc
+                alertDescription = allArtPieces[paintIndex].LongEnglish
             }
             "Chinese" -> {
                 alertTitle = allArtPieces[paintIndex].nameChinese
-                alertDescription = allArtPieces[paintIndex].Chinese_Desc
+                alertDescription = allArtPieces[paintIndex].LongChinese
             }
             "Spanish" -> {
                 alertTitle = allArtPieces[paintIndex].nameSpanish
-                alertDescription = allArtPieces[paintIndex].Spanish_Desc
+                alertDescription = allArtPieces[paintIndex].LongSpanish
             }
             "German" -> {
                 alertTitle = allArtPieces[paintIndex].nameGerman
-                alertDescription = allArtPieces[paintIndex].German_Desc
+                alertDescription = allArtPieces[paintIndex].LongGerman
             }
             else -> {
                 alertTitle = allArtPieces[paintIndex].name
-                alertDescription = allArtPieces[paintIndex].English_Desc
+                alertDescription = allArtPieces[paintIndex].LongEnglish
             }
         }
 

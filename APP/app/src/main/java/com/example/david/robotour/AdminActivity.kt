@@ -29,13 +29,11 @@ class AdminActivity : AppCompatActivity() {
     M IFTEKHAR
     28/02/2018
      */
-
-    val url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
     private fun sendPUTNEW(identifier: Int, command: String) {
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
-        val httPpost = HttpPost(url)
+        val httPpost = HttpPost("https://proparoxytone-icing.000webhostapp.com/receiver.php")
         try { val nameValuePairs = ArrayList<NameValuePair>(4)
             nameValuePairs.add(BasicNameValuePair("command$identifier", command))
             httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
@@ -52,12 +50,12 @@ class AdminActivity : AppCompatActivity() {
             while (!isInterrupted) {
                 try {
                     async {
-                        val a = URL(url).readText()
+                        val a = URL("https://proparoxytone-icing.000webhostapp.com/receiver.php").readText()
                         runOnUiThread {
                             setActionBar(a)
                         }
                     }
-                    Thread.sleep(100)
+                    Thread.sleep(1000)
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedIOException) {
@@ -92,6 +90,8 @@ class AdminActivity : AppCompatActivity() {
             "1" -> true
             "2" -> true
             "3" -> true
+            "4" -> true
+            "5" -> true
             "" -> true
             " " -> true
             else -> false
