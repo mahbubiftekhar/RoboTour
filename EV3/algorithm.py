@@ -1,5 +1,6 @@
 
-
+from finite_state_machine import *
+from dispatcher import Dispatcher
 
 class Algorithm():
 
@@ -64,3 +65,48 @@ class LineFollowing(Algorithm):
 		steer_left = self.base_speed + self.steer
 
 		self.robot.motor(steer_left, steer_right)
+
+
+
+
+class Calibration(Algorithm):
+	def __init__(self, robot):
+		Algorithm.__init__(self, robot)
+
+		self.calibraton_time = 8000
+		sweep_time = self.calibration_time/4
+
+		self.st_calibrate_right = State("Calibrating")
+		self.st_calibrate_left = State("Calibrating")
+		self.st_calibrate_centre = State("Calibrating")
+
+		self.st_done = State("Done")
+
+		self.st_calibrate_right.add_transition(TransitionTimed(sweep_time,  self.st_calibrate_left))
+		self.st_calibrate_left.add_transition(TransitionTimed(2*sweep_time, self.st_calibrate_centre))
+		self.st_calibrate_centre.add_transition(TransitionTimed(sweep_time, self.st_done))
+
+		self.fsm = FSM(self.st_calibrate_right)
+		self.dsp = Dispatcher(self.fsm)
+
+		self.dsp.link_action(self.st_calibrate_right, self.calibrate_right)
+		self.dsp.link_action(self.st_calibrate_left,  self.calibrate_left)
+		self.dsp.link_action(self.st_calibrate_centre, self.st_calibrate_centre)
+
+
+
+	def calibrate_right(self):
+		self.robot.motor(100, -100)
+		self.robot.line_sensor.calibrate()
+
+	def calibrate_left(self):
+		self.robot.motor(-100, 100)
+		self.robot.line_sensor.calibrate()
+
+	def run(self):
+		self.fsm.tick(self.env)
+		self.dsp.dispatch()
+
+	def done(self, env):
+		return self.fsm.current_state == self.st_done
+

@@ -5,10 +5,19 @@ class Environment():
 	def __init__(self):
 
 		self.line_sens_val = 0
+		
 		self.dist_front = 0
+		self.dist_right = 0
+		self.dist_left  = 0
+
+		self.rot_right = 0
+		self.rot_left  = 0
+
 
 		self.clock_ms = 0
 		self.clock_start = 0
+
+
 
 	def init(self):
 		self.clock_init()

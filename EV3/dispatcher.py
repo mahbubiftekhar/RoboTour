@@ -26,8 +26,11 @@ class Dispatcher():
 
 				return action
 		else:
-			print("State does not have linked action") 
+			print("State does not have linked action")
+			return None
 
 	def dispatch(self):
 		action = self.determine_action()
-		action()
+		if action is not None:
+			action()
+

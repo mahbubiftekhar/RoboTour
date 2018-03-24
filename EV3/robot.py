@@ -52,12 +52,39 @@ class Robot():
 		self.env.line_sens_val = self.line_sensor.value_simple()
 		self.env.dist_front = self.sonarF.value() 
 
+		self.env.dist_right = self.sonarR.value()
+		self.env.dist_left  = self.sonarL.value()
+
+		self.env.rot_right = self.motorR.position
+		self.env.rot_left = self.motorL.position
+
+
 		self.env.update()
 
 
 	def motor(self, pL, pR):
 		self.motorL.run_forever(speed_sp = pL) 
 		self.motorR.run_forever(speed_sp = pR)
+
+	def rotate(self, degrees, speed):
+		delta = degrees * self.model.wheel_to_rotation_ratio
+		
+		# rotate right
+		if degrees > 0:
+			delta_l =  delta
+			delta_r = -delta
+		# rotate left
+		else:
+			delta_l = -delta
+			delta_r =  delta
+
+		self.motorL.run_to_rel_pos(speed_sp = speed, position_sp = delta_l)
+		self.motorR.run_to_rel_pos(speed_sp = speed, position_sp = delta_r)
+
+
+	# check if any motors are doing something
+	def done_movement(self):
+		return self.motorL.is_running or self.motorR.is_running
 
 	def stop(self):
 		self.motorL.stop()
