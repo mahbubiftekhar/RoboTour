@@ -1,12 +1,9 @@
 package com.example.david.robotour
 
 import android.annotation.SuppressLint
-import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
 import org.jetbrains.anko.*
-import android.graphics.drawable.ColorDrawable
 import android.preference.PreferenceManager
 import android.support.v4.content.res.ResourcesCompat
 import android.view.WindowManager
@@ -23,7 +20,6 @@ import java.net.URL
 import java.util.ArrayList
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_choose_level.*
-import kotlinx.android.synthetic.main.activity_choose_level.view.*
 
 
 @Suppress("DEPRECATION")
@@ -35,14 +31,14 @@ class ChooseActivity : AppCompatActivity() {
     private var user2 = false
     private var twoUsers = false
     private var language: String = ""
-    private var controlButton: Button? = null
-    private var listenButton: Button? = null
     private var error_Control = ""
     private var error_Listen = ""
     private var userID = 0
     private var controlProgress = false
     private var listenProgress = false
     private var url = ""
+    private lateinit var listenButton: Button
+    private lateinit var controlButton:Button
 
     override fun onBackPressed() {
         val a = loadInt("user")
@@ -146,12 +142,17 @@ class ChooseActivity : AppCompatActivity() {
                                 }
                                 runOnUiThread { saveInt("user", 2) }
                             }
+                            a[21] == 'T' -> {
+                                listenProgress = true
+                                listenButton.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                            }
+                            a[21] == 'F' -> {
+                                listenProgress = false
+                                listenButton.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
+                            }
+
                         }
                         println("++++userid: $userID")
-
-                        //Server must be extended for this functionality
-                        //controlProgress = a[19]=='T'
-
                         println("&&&& user1: $user1, user2: $user2, twoUsers: $twoUsers")
                         if (twoUsers) {
                             when (userID) {
@@ -159,14 +160,14 @@ class ChooseActivity : AppCompatActivity() {
                                     println("++++1")
                                     runOnUiThread {
                                         controlProgress = true
-                                        controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                                        controlButton.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
                                     }
                                 }
                                 2 -> {
                                     println("++++2")
                                     runOnUiThread {
                                         controlProgress = true
-                                        controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                                        controlButton.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
                                     }
                                 }
                                 else -> {
@@ -184,15 +185,16 @@ class ChooseActivity : AppCompatActivity() {
                                 println("++++4")
                                 runOnUiThread {
                                     controlProgress = true
-                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                                    controlButton.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
                                 }
                             } else if(userID==2 || userID==-1) {
                                 println("++++6")
                                 runOnUiThread {
                                     controlProgress = false
-                                    controlButton?.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
+                                    controlButton.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
                                 }
                             }
+
                         }
                     }
                 }
@@ -279,8 +281,8 @@ class ChooseActivity : AppCompatActivity() {
         }
         setContentView(R.layout.activity_choose_level)
         val textView: TextView = findViewById(R.id.texttodisplay)
-        val controlButton: Button = findViewById(R.id.controlbutton)
-        val listenButton: Button = findViewById(R.id.listenbutton)
+        controlButton = findViewById(R.id.controlbutton)
+        listenButton = findViewById(R.id.listenbutton)
         textView.text = message
         controlButton.text = controlRoboTour
         listenButton.text = listenIn

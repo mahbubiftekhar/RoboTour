@@ -178,7 +178,7 @@ class AdminActivity : AppCompatActivity() {
         AUX_RESET.setOnClickListener {
             /*Resets all the AUX, This means that the stuff from stuff such as skip etc will be reset, this
             excludes the user data */
-            for (i in 10..20) {
+            for (i in 10..22) {
                 async {
                     sendPUTNEW(i, "F")
                 }
@@ -198,7 +198,7 @@ class AdminActivity : AppCompatActivity() {
         }
         RESET_EVERYTHING.setOnClickListener {
             //Resets all from 0 .. 17
-            for (i in 0..20) {
+            for (i in 0..22) {
                 async {
                     sendPUTNEW(i, "F")
                 }

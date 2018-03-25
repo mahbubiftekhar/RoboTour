@@ -19,6 +19,7 @@ var url = ""
 class MainActivity : AppCompatActivity() {
     private var continueThread = true
     private var url = ""
+    private var count = 0
 
     override fun onBackPressed() {
         clearFindViewByIdCache()
@@ -53,15 +54,18 @@ class MainActivity : AppCompatActivity() {
         if (url == "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php") {
             toast("Warning, in receiverPhone mode")
         }
-        //window.decorView.setBackgroundColor(Color.parseColor("#24E8EA"))
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         verticalLayout {
             imageView(R.drawable.robotour_small) {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
-                onClick {
-
+                onLongClick {
+                    count++
+                    true
                 }
-            }.paddingBottom
+            }
+            textView{
+                padding = 50
+            }
             button("START") {
                 textSize = 32f
                 background = ResourcesCompat.getDrawable(resources, R.drawable.rb2, null)
@@ -74,7 +78,9 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 onLongClick {
-                    switchToAdmin()
+                    if(count>0){
+                        switchToAdmin()
+                    }
                     true
                 }
             }

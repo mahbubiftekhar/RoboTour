@@ -126,4 +126,6 @@
     <string name="title_activity_recycle">RecycleActivity</string>
     <string name="title_activity_recycler">RecyclerActivity</string>
     <string name="switch_url">SWITCH URL</string>
+    <string name="todo">TODO</string>
+    <string name="robotour">RoboTour</string>
 </resources>

@@ -14,7 +14,8 @@
             android:layout_width="match_parent"
             android:id="@+id/imageofrobotour"
             android:layout_height="150dp"
-            android:background="@drawable/robotour_small" />
+            android:background="@drawable/robotour_small"
+            android:contentDescription="@string/robotour" />
         <TextView
             android:paddingTop="30dp"
             android:id="@+id/texttodisplay"
@@ -37,16 +38,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:height="200dp"
-                android:background="@drawable/buttonxml"
+                android:background="@drawable/buttonsgreyed"
                 android:paddingEnd="10dp"
                 />
             <Button
                 android:id="@+id/listenbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/buttonsgreyed"
                 android:layout_weight="1"
                 android:height="200dp"
-                android:background="@drawable/buttonxml"
                  />
         </LinearLayout>
     </RelativeLayout>

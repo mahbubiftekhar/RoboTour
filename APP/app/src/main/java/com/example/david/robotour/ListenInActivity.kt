@@ -7,6 +7,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -56,11 +57,15 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var tts2: TextToSpeech? = null
     private var tts3: TextToSpeech? = null
     private var tts4: TextToSpeech? = null
+    private var tts6: TextToSpeech? = null
+    private var tts5: TextToSpeech? = null
     private var currentPic = -1
     private var startRoboTour = ""
     private var speaking = -1
     private var killThread = false
     private var userTwoMode = false
+    private var toiletPopUpBool = true
+    private var exitPop = true
     private val listPaintings = ArrayList<ImageButton>()
     private var alertTitle = ""
     private var alertETA = ""
@@ -122,6 +127,14 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts4!!.stop()
             tts4!!.shutdown()
         }
+        if (tts5 != null) {
+            tts5!!.stop()
+            tts5!!.shutdown()
+        }
+        if (tts6 != null) {
+            tts6!!.stop()
+            tts6!!.shutdown()
+        }
         super.onStop()
     }
 
@@ -148,6 +161,62 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
                 else -> {
                     result = tts!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+
+        }
+        if (status == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts5!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts5!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts5!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts5!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts5!!.setLanguage(Locale.UK)
+                }
+            }
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+            }
+        } else {
+
+        }
+        if (status == TextToSpeech.SUCCESS) {
+            // set US English as language for tts
+            val language = intent.getStringExtra("language")
+            val result: Int
+            when (language) {
+                "French" -> {
+                    result = tts6!!.setLanguage(Locale.FRENCH)
+                }
+                "Chinese" -> {
+                    result = tts6!!.setLanguage(Locale.CHINESE)
+                }
+                "Spanish" -> {
+                    val spanish = Locale("es", "ES")
+                    result = tts6!!.setLanguage(spanish)
+                }
+                "German" -> {
+                    result = tts6!!.setLanguage(Locale.GERMAN)
+                }
+                else -> {
+                    result = tts6!!.setLanguage(Locale.UK)
                 }
             }
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -263,6 +332,14 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts4!!.stop()
             tts4!!.shutdown()
         }
+        if (tts5 != null) {
+            tts5!!.stop()
+            tts5!!.shutdown()
+        }
+        if (tts6 != null) {
+            tts6!!.stop()
+            tts6!!.shutdown()
+        }
         super.onPause()
     }
 
@@ -272,6 +349,8 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts2 = TextToSpeech(this, this)
         tts3 = TextToSpeech(this, this)
         tts4 = TextToSpeech(this, this)
+        tts6 = TextToSpeech(this, this)
+        tts5 = TextToSpeech(this, this)
         onInit(0)
         super.onResume()
         if (checkerThread.state == Thread.State.NEW) {
@@ -877,7 +956,57 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         updateScrollViewPictures(sortedNums)
     }
 
-    /////
+    private fun speakOutToilet() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "French" -> {
+                    text = "Nous sommes arrivés aux toilettes"
+                }
+                "Chinese" -> {
+                    text = "我们已经到了厕所"
+                }
+                "Spanish" -> {
+                    text = "Hemos llegado al baño"
+                }
+                "German" -> {
+                    text = "Wir sind auf der Toilette angekommen"
+                }
+                else -> {
+                    text = "We have arrived at the toilet"
+                    //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
+                }
+            }
+            tts6!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+        }
+    }
+    private fun speakOutExit() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val text: String
+            val language = intent.getStringExtra("language")
+            when (language) {
+                "French" -> {
+                    text = "Nous sommes arrivés à la sortie"
+                }
+                "Chinese" -> {
+                    text = "我们已经到达出口"
+                }
+                "Spanish" -> {
+                    text = "Hemos llegado a la salida"
+                }
+                "German" -> {
+                    text = "Wir sind am Ausgang angekommen"
+                }
+                else -> {
+                    text = "We have arrived at the exit"
+                    //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
+                }
+            }
+            tts5!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+        }
+    }
+
     private val checkerThread: Thread = object : Thread() {
         /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
         @RequiresApi(Build.VERSION_CODES.O)
@@ -902,6 +1031,23 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                                 for (i in 0..9) {
+                                    if (a[14] == 'N' || a[14] == 'T') {
+                                        runOnUiThread {
+                                            //User going to the toilet
+                                            imageView?.setImageResource(R.drawable.toiletimage)
+                                            titleView?.text = toilet
+                                            descriptionView?.text = ""
+                                        }
+                                        break
+                                    }
+                                    if(a[14] == 'A'){
+                                            speakOutToilet()
+                                        break
+                                    }
+                                    if(a[15] == 'A'){
+                                            speakOutExit()
+                                        break
+                                    }
                                     if (a[14] == 'N') {
                                         runOnUiThread {
                                             imageView?.setImageResource(R.drawable.toiletimage)
@@ -941,7 +1087,6 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         speakOut(i)
                                         break
                                     }
-
                                     //Updates title
                                     if (a[i] == 'N') {
                                         runOnUiThread {

@@ -19,7 +19,7 @@ import java.io.InterruptedIOException
 import java.net.URL
 import java.nio.channels.InterruptedByTimeoutException
 
-class Waiting : AppCompatActivity() {
+class WaitingActivity : AppCompatActivity() {
     private var user = 1
     private var language = ""
     private var message = ""
@@ -39,7 +39,7 @@ class Waiting : AppCompatActivity() {
         user = loadInt("user") //Set the user number
 
         message = when (language) {
-            "English" -> "Waiting for other user..."
+            "English" -> "WaitingActivity for other user..."
             "German" -> "Bitte Warten Sie Auf den Anderen User..."
             "French" -> "Veuillez Attendre l'Autre Utilisateur..."
             "Spanish" -> "Por Favor Espere al Otro Usuario..."
@@ -98,7 +98,7 @@ class Waiting : AppCompatActivity() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!Thread.currentThread().isInterrupted) {
-                println("++++ t thread Waiting")
+                println("++++ t thread WaitingActivity")
                 try {
                     val a = URL(url).readText()
                     if (user == 1) {
@@ -146,7 +146,7 @@ class Waiting : AppCompatActivity() {
 
         override fun run() {
             while (!isInterrupted) {
-                println("++++ picture thread Waiting")
+                println("++++ picture thread WaitingActivity")
                 if (a > 9) {
                     //Reset A to avoid null pointers
                     a = 0
