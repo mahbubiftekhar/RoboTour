@@ -20,6 +20,13 @@ import android.view.inputmethod.InputMethodManager
 import com.google.cloud.translate.Translate
 import com.google.cloud.translate.TranslateOptions
 import kotlinx.android.synthetic.*
+import org.apache.http.NameValuePair
+import org.apache.http.client.ClientProtocolException
+import org.apache.http.client.entity.UrlEncodedFormEntity
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.message.BasicNameValuePair
+import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -36,7 +43,6 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var searchedForPainting = false //true if we've searched for a painting
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
     lateinit var t: Thread
-    private var language = ""
     private var tts: TextToSpeech? = null
     private var tts2: TextToSpeech? = null
     private var tts3: TextToSpeech? = null
@@ -46,6 +52,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var areYouSure = ""
     private var positive = ""
     private var negative = ""
+    private var superlanguage = ""
     public override fun onDestroy() {
         // Shutdown TTS
         if (tts != null) {
@@ -86,12 +93,6 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts4!!.shutdown()
         }
         super.onStop()
-    }
-
-    private fun loadString(key: String): String {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        return sharedPreferences.getString(key, "https://proparoxytone-icing.000webhostapp.com/receiver.php")
     }
 
     private fun speakOutnew() {
@@ -261,9 +262,9 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         allArtPieces.clear()
-        url = loadString("url")
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // add back button to actionbar
         val language = intent.getStringExtra("language")
+        superlanguage = language
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         tts = TextToSpeech(this, null)
         tts2 = TextToSpeech(this, null)
@@ -272,6 +273,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         onInit(0)
 
         //Obtain language from SelectLanguageActivity
+        println(">>>the language $language")
         when (language) {
             "English" -> supportActionBar?.title = "Select pictures"
             "German" -> supportActionBar?.title = "Wähle ein Bild"
@@ -687,7 +689,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 alert {
                     //Force Keyboard to open
                     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    when (language) {
+                    when (superlanguage) {
                         "English" -> {
                             title = "Please enter painting you wish to go to"
                             search = "Search"
@@ -737,7 +739,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         positiveButton(search) {
                             //Hide keyboard
                             imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0) //translateText
-                            if (language == "English") {
+                            if (superlanguage == "English") {
                                 //No translation needed hence we skip it
                                 afterAsync(input.text.toString())
                             } else {
@@ -764,7 +766,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }.show()
             }
             R.id.mic_button -> {
-                askSpeechInput()
+                askSpeechInput(superlanguage)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -800,7 +802,9 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             val count = allArtPieces.count { it.selected }
             if (count == 0) {
                 /*If the user has not made any selections, let them press back no questions asked*/
-                super.onBackPressed()
+                clearFindViewByIdCache()
+                allArtPieces.clear()
+                switchToMain()
             } else {
                 alert(areYouSure) {
                     positiveButton(positive) {
@@ -820,45 +824,88 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
+    private fun loadInt(key: String): Int {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        return sharedPreferences.getInt(key, -1)
+    }
+
+    private fun sendPUTNEW(identifier: Int, command: String) {
+        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
+        * as security exception - just a heads up */
+        val httpclient = DefaultHttpClient()
+        val httPpost = HttpPost(url)
+        try {
+            val nameValuePairs = java.util.ArrayList<NameValuePair>(4)
+            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
+            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+            httpclient.execute(httPpost)
+        } catch (e: ClientProtocolException) {
+        } catch (e: IOException) {
+        }
+    }
+
     private fun switchToMain() {
+        val a = loadInt("user")
+        clearFindViewByIdCache()
+        async {
+            when (a) {
+                1 -> {
+                    sendPUTNEW(16, "F")
+                }
+                2 -> {
+                    sendPUTNEW(17, "F")
+                }
+                else -> {
+                    //Do nothing
+                }
+            }
+        }
         startActivity<MainActivity>()
     }
 
-    private fun askSpeechInput() {
+    private fun askSpeechInput(language:String) {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        println(">>>>the language in askSpeehcInput: $language")
         when (language) {
             "English" -> {
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What are piecs are you looking for??")
+                println(">>>>>1")
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "What are piecs are you looking for?")
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, Locale.getDefault())
                 intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, Locale.getDefault())
             }
             "German" -> {
+                println(">>>>>2")
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "de-DE")
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "de-DE")
                 intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "de-DE")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Nach Welchen Kunstwerken Suchst Du?")
             }
             "Spanish" -> {
+                println(">>>>>3")
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES")
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "es-ES")
                 intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "es-ES")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "¿Qué Piezas de Arte Estás Buscando?")
             }
             "French" -> {
+                println(">>>>>4")
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "fr-FR")
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "fr-FR")
                 intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "fr-FR")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Quelles Pièces d'Art Recherchez-vous?")
             }
             "Chinese" -> {
+                println(">>>>>5")
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "cmn-Hans-CN")
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "cmn-Hans-CN")
                 intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "cmn-Hans-CN")
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "你在找什么艺术品？")
             }
-            "else" -> {
+            else -> {
+                println(">>>>>6")
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, Locale.getDefault())
                 intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, Locale.getDefault())
@@ -880,7 +927,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             val test = result[i]
             val regEx = Regex("[^A-Za-z0-9 ]")
             val recommendationWords = mutableListOf("new", "newest", "best", "recommend", "popular") // new & newest, and best & recommend are the same request
-            if (language == "English") {
+            if (superlanguage == "English") {
                 allArtPieces
                         .filter {
                             //if substring either way return true (ignoring case & special chars) i.e "Mona" & "MonaLisa" return true
@@ -1012,15 +1059,15 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     REQ_CODE_SPEECH_INPUT -> {
                         if (resultCode == RESULT_OK) {
                             var result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-                            if (language == "English") {
+                            if (superlanguage == "English") {
                                 afterAsyncSpeech(result)
                                 //If the language is english, continue no problemo
                             } else {
                                 //If language is not english or other, we  run the translator
                                 async {
-                                    println("+++ Original Text: " + result)
+                                    println(">>> Original Text: " + result)
                                     result = translate(result) as ArrayList<String>?
-                                    println("+++ Translation: " + result)
+                                    println(">>> Translation: " + result)
                                     uiThread {
                                         afterAsyncSpeech(result)
                                     }

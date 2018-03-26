@@ -33,7 +33,7 @@ class AdminActivity : AppCompatActivity() {
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
-        val httPpost = HttpPost("https://proparoxytone-icing.000webhostapp.com/receiver.php")
+        val httPpost = HttpPost(url)
         try { val nameValuePairs = ArrayList<NameValuePair>(4)
             nameValuePairs.add(BasicNameValuePair("command$identifier", command))
             httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
@@ -50,7 +50,7 @@ class AdminActivity : AppCompatActivity() {
             while (!isInterrupted) {
                 try {
                     async {
-                        val a = URL("https://proparoxytone-icing.000webhostapp.com/receiver.php").readText()
+                        val a = URL(url).readText()
                         runOnUiThread {
                             setActionBar(a)
                         }
@@ -186,15 +186,7 @@ class AdminActivity : AppCompatActivity() {
             vibrate()
         }
         SWITCH_URL.setOnClickListener{
-            val url1 = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
-            val url2 = "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"
-            if(loadString("url")==url1){
-                saveString("url",url2)
-                toast("set as receiverPhone")
-            } else {
-                saveString("url",url1)
-                toast("set as receiver")
-            }
+           toast("function deprecated - speak to Mahbub")
         }
         RESET_EVERYTHING.setOnClickListener {
             //Resets all from 0 .. 17
@@ -297,18 +289,5 @@ class AdminActivity : AppCompatActivity() {
             updateTextThread.start()
         }
         super.onResume()
-    }
-
-    private fun saveString(key: String, value: String) {
-        /* Function to save an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val editor = sharedPreferences.edit()
-        editor.putString(key, value)
-        editor.apply()
-    }
-    private fun loadString(key: String): String {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        return sharedPreferences.getString(key, "https://proparoxytone-icing.000webhostapp.com/receiver.php")
     }
 }

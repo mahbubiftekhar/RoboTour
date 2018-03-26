@@ -6,8 +6,6 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.ColorDrawable
-import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -15,7 +13,6 @@ import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.speech.tts.TextToSpeech
 import android.support.annotation.RequiresApi
-import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
@@ -60,12 +57,11 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var tts6: TextToSpeech? = null
     private var tts5: TextToSpeech? = null
     private var currentPic = -1
+    private var imageView2: ImageView? = null
     private var startRoboTour = ""
     private var speaking = -1
     private var killThread = false
     private var userTwoMode = false
-    private var toiletPopUpBool = true
-    private var exitPop = true
     private val listPaintings = ArrayList<ImageButton>()
     private var alertTitle = ""
     private var alertETA = ""
@@ -76,10 +72,10 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var cancelPainting = ""
     private var artPieceTitle = ""
     private var artPieceDescription = ""
-    private var url = ""
     private var speechText = ""
     private var closeApp = ""
     private var restartApp = ""
+    private var advertisements = ArrayList<Int>()
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -105,11 +101,13 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts4!!.stop()
             tts4!!.shutdown()
         }
+        pictureThread.interrupt()
         checkerThread.interrupt()
         super.onDestroy()
     }
 
     public override fun onStop() {
+        //Shutdown TTS
         if (tts != null) {
             tts!!.stop()
             tts!!.shutdown()
@@ -352,9 +350,47 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts6 = TextToSpeech(this, this)
         tts5 = TextToSpeech(this, this)
         onInit(0)
+        advertisements.clear()
+        advertisements.add(R.drawable.your_ad_here)
+        advertisements.add(R.drawable.new_exhibit)
+        advertisements.add(R.drawable.gift_shop)
         super.onResume()
         if (checkerThread.state == Thread.State.NEW) {
             checkerThread.start()
+        }
+        if (pictureThread.state == Thread.State.NEW) {
+            pictureThread.start()
+        }
+    }
+
+    private val pictureThread: Thread = object : Thread() {
+        /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
+        var a = 0
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun run() {
+            while (!isInterrupted) {
+                println("+++ running here main activity")
+                if (a > (advertisements.size - 1)) {
+                    //Reset A to avoid null pointers
+                    a = 0
+                }
+                try {
+                    //UI thread MUST be updates on the UI thread, other threads may not update the UI thread
+                    runOnUiThread {
+                        imageView2?.setImageResource(advertisements[a])
+                    }
+                    Thread.sleep(3000)
+                    a++
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedIOException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedByTimeoutException) {
+                    Thread.currentThread().interrupt()
+                }
+            }
+            Thread.currentThread().interrupt()
         }
     }
 
@@ -398,19 +434,12 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             cancellable(false)
             setFinishOnTouchOutside(false)
             positiveButton(restartApp) {
+                clearFindViewByIdCache()
                 deleteCache(applicationContext)
                 val i = baseContext.packageManager
                         .getLaunchIntentForPackage(baseContext.packageName)
                 i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(i)
-            }
-            negativeButton(closeApp) {
-                //Kill the app
-                clearFindViewByIdCache()
-                val closeTheApp = Intent(Intent.ACTION_MAIN)
-                closeTheApp.addCategory(Intent.CATEGORY_HOME)
-                closeTheApp.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                startActivity(closeTheApp)
             }
         }.show()
     }
@@ -635,6 +664,29 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         val language = intent.getStringExtra("language")
         when (language) {
+            "French" -> {
+                speechText = "Thank you for using Ro-bow-tour"
+                restartApp = "START AGAIN"
+                closeApp = "FERMER APP"
+            }
+            "German" -> {
+                restartApp = "ANFANG"
+                closeApp = "SCHLIEßE APP"
+            }
+            "Spanish" -> {
+                restartApp = "COMIENZO"
+                closeApp = "CERRAR APP"
+            }
+            "Chinese" -> {
+                restartApp = "重新开始"
+                closeApp = "关闭"
+            }
+            else -> {
+                restartApp = "START AGAIN"
+                closeApp = "CLOSE APP"
+            }
+        }
+        when (language) {
             "English" -> {
                 positive = "Yes"
                 negative = "No"
@@ -647,7 +699,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 cancelTour = "Cancel tour"
                 cancelDesc = "Are you sure you want to cancel the tour?"
                 exit = "Exit"
-                exitDesc = "Do you want to go to the exit?"
+                exitDesc = "Do you want to go to the exit"
                 toilet = "Toilet"
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "SPEED"
@@ -776,14 +828,13 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 linearLayout {
                     val aasd = allArtPieces.size
                     println(">>>>> all art pieces: $aasd")
-                    for (i in allArtPieces) { //change to sortedChosenArtPieces
-                        listPaintings.add(
-                                imageButton {
-                                    backgroundColor = Color.TRANSPARENT
-                                    image = resources.getDrawable(i.imageID)
-                                    horizontalPadding = dip(5)
-                                }
-                        )
+                    allArtPieces.mapTo(//change to sortedChosenArtPieces
+                            listPaintings) {
+                        imageButton {
+                            backgroundColor = Color.TRANSPARENT
+                            image = resources.getDrawable(it.imageID)
+                            horizontalPadding = dip(5)
+                        }
                     }
                 }
             }.lparams { below(nextPaintings) }
@@ -900,9 +951,14 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 bottomMargin = dip(10)
                                 topMargin = dip(10)
                             }
+
                         }
                     }
                     verticalLayout {
+                        imageView2 = imageView {
+                            backgroundColor = Color.TRANSPARENT //Removes gray border
+                            gravity = Gravity.CENTER_HORIZONTAL
+                        }
                     }
                 }
                 when (language) {
@@ -951,9 +1007,6 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 below(hSV)
             }
         }
-        //Starting the thread which is defined above to keep polling the server for changes
-        val sortedNums: MutableCollection<Int> = arrayListOf(1, 5, 7)
-        updateScrollViewPictures(sortedNums)
     }
 
     private fun speakOutToilet() {
@@ -1278,7 +1331,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onBackPressed() {
         /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
         Send the user back to MainActivity */
-        alert(exitDesc) {
+        alert(closeApp) {
             positiveButton(positive) {
                 checkerThread.interrupt()
                 clearFindViewByIdCache()

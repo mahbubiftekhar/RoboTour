@@ -88,7 +88,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var cancelRequestSent = ""
     private var cancelPainting = ""
     private var artPieceTitle = ""
-    private var url = ""
     private var tts4: TextToSpeech? = null
     private var artPieceDescription = ""
     private lateinit var closeApp: String
@@ -466,21 +465,13 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 cancellable(false)
                 setFinishOnTouchOutside(false)
                 positiveButton {
+                    clearFindViewByIdCache()
                     deleteCache(applicationContext)
                     val i = baseContext.packageManager
                             .getLaunchIntentForPackage(baseContext.packageName)
                     i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     startActivity(i)
                 }
-                /*Not Needed - Closing the app using app buttons is bad practice
-                negativeButton(closeApp) {
-                    //Kill the app
-                    clearFindViewByIdCache()
-                    val closeTheApp = Intent(Intent.ACTION_MAIN)
-                    closeTheApp.addCategory(Intent.CATEGORY_HOME)
-                    closeTheApp.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    startActivity(closeTheApp)
-                }*/
             }.show()
 
     }
@@ -586,19 +577,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    private fun loadString(key: String): String {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        return sharedPreferences.getString(key, "https://proparoxytone-icing.000webhostapp.com/receiver.php")
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         userid = loadInt("user").toString()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
-        url = loadString("url")
         if (url == "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php") {
             toast("Warning, in receiverPhone mode")
         }
@@ -612,6 +596,29 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         val language = intent.getStringExtra("language")
         when (language) {
+            "French" -> {
+                speechText = "Thank you for using Ro-bow-tour"
+                restartApp = "START AGAIN"
+                closeApp = "FERMER APP"
+            }
+            "German" -> {
+                restartApp = "ANFANG"
+                closeApp = "SCHLIEßE APP"
+            }
+            "Spanish" -> {
+                restartApp = "COMIENZO"
+                closeApp = "CERRAR APP"
+            }
+            "Chinese" -> {
+                restartApp = "重新开始"
+                closeApp = "关闭"
+            }
+            else -> {
+                restartApp = "START AGAIN"
+                closeApp = "CLOSE APP"
+            }
+        }
+        when (language) {
             "English" -> {
                 positive = "Yes"
                 negative = "No"
@@ -624,7 +631,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 cancelTour = "Cancel tour"
                 cancelDesc = "Are you sure you want to cancel the tour?"
                 exit = "Exit"
-                exitDesc = "Do you want to cancel the tour?"
+                exitDesc = "Do you want to go to the exit"
                 toilet = "Toilet"
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "SPEED"
@@ -646,6 +653,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 cancelTour = "Annuler Visite"
                 cancelDesc = "Êtes-vous sûr de vouloir annuler la visite?"
                 exit = "Sortie"
+                closeApp = "Do you want to close the app"
                 exitDesc = "Voulez-vous aller à la sortie?"
                 toilet = "W.C."
                 toiletDesc = "Voulez-vous aller aux toilettes?"
@@ -1238,9 +1246,27 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     if (a[14] == 'N' || a[14] == 'T') {
                                         runOnUiThread {
                                             //User going to the toilet
-                                            imageView?.setImageResource(R.drawable.toiletimage)
+                                            imageView?.setImageResource(R.drawable.toilet)
                                             titleView?.text = toilet
                                             descriptionView?.text = ""
+                                        }
+                                        break
+                                    }
+                                    if (a[14] == 'N' || a[14] == 'T') {
+                                        runOnUiThread {
+                                            //User going to the toilet
+                                            imageView?.setImageResource(R.drawable.toilet)
+                                            titleView?.text = toilet
+                                            descriptionView?.text = toilet
+                                        }
+                                        break
+                                    }
+                                    if (a[15] == 'N' || a[15] == 'T') {
+                                        runOnUiThread {
+                                            //User going to the toilet
+                                            imageView?.setImageResource(R.drawable.exit)
+                                            titleView?.text = exit
+                                            descriptionView?.text = exit
                                         }
                                         break
                                     }
@@ -1652,7 +1678,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onBackPressed() {
         /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
         Send the user back to MainActivity */
-        alert(exitDesc) {
+        alert(closeApp) {
             positiveButton(positive) {
                 async {
                     val aB = URL(url).readText()
@@ -1671,6 +1697,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         sendPUTNEW(17, "F")
                     }
                 }
+                Thread.sleep(30)
                 async {
                     val a = URL(url).readText()
                     if (a[16] == 'T' && a[17] == 'T') {

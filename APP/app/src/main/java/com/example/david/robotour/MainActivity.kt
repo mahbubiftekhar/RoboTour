@@ -18,7 +18,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.*
 
 @Suppress("DEPRECATION")
-var url = ""
+var url = "http://www.mahbubiftekhar.co.uk/receiver.php"
 class MainActivity : AppCompatActivity() {
     private var continueThread = true
     private var url = ""
@@ -43,17 +43,10 @@ class MainActivity : AppCompatActivity() {
         return networkInfo != null && networkInfo.isConnected
     }
 
-    private fun loadString(key: String): String {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        return sharedPreferences.getString(key, "https://proparoxytone-icing.000webhostapp.com/receiver.php")
-    }
-
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
-        url = loadString("url")
         if (url == "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php") {
             toast("Warning, in receiverPhone mode")
         }

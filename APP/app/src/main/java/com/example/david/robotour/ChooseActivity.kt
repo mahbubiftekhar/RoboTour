@@ -10,12 +10,12 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import org.jetbrains.anko.*
 import android.preference.PreferenceManager
-import android.support.v4.content.res.ResourcesCompat
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
+import kotlinx.android.synthetic.*
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -26,8 +26,6 @@ import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.URL
 import java.util.ArrayList
-import android.widget.TextView
-import kotlinx.android.synthetic.main.activity_choose_level.*
 import org.jetbrains.anko.design.floatingActionButton
 
 
@@ -45,7 +43,6 @@ class ChooseActivity : AppCompatActivity() {
     private var userID = 0
     private var controlProgress = false
     private var listenProgress = false
-    private var url = ""
     private lateinit var listenButton: Button
     private lateinit var controlButton:Button
 
@@ -124,6 +121,7 @@ class ChooseActivity : AppCompatActivity() {
                 Thread.sleep(200)
                 async {
                     val a = URL(url).readText()
+                    println("+++++ $a")
                     uiThread{
                         val b = a[16]
                         val c = a[17]
@@ -224,29 +222,15 @@ class ChooseActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadString(key: String): String {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        return sharedPreferences.getString(key, "https://proparoxytone-icing.000webhostapp.com/receiver.php")
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         language = intent.getStringExtra("language")
         saveInt("user", -1)
         userID = loadInt("user")
         println("first instance $userID")
-        url = loadString("url")
-        if(url=="https://proparoxytone-icing.000webhostapp.com/receiverPhone.php"){
-            toast("Warning, in receiverPhone mode")
+        if(url=="http://www.mahbubiftekhar.co.uk/receiver2.php"){
+            toast("Warning, in receiver2 mode")
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
-        val message: String = when (language) {
-            "French" -> "Voulez-vous le contrôle ou préférez-vous simplement suivre la tournée?"
-            "German" -> "Möchten Sie die Kontrolle haben oder möchten Sie lieber der Tour folgen?"
-            "Spanish" -> "¿Quieres control o prefieres simplemente seguir el recorrido?"
-            "Chinese" -> "你想要控制吗，还是只想跟着游览？"
-            else -> "Do you want control or would you prefer to just follow the tour?"
-        }
         when (language) {
             "French" -> {
                 error_Control = "RoboTour en tournée, veuillez patienter ou suivre le tour"
@@ -345,6 +329,7 @@ class ChooseActivity : AppCompatActivity() {
                     onClick {
                         if (controlProgress) {
                             t.interrupt()
+                            clearFindViewByIdCache()
                             startActivity<PicturesActivity>("language" to language)
                         } else {
                             toast(error_Control)
