@@ -1248,16 +1248,16 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             //User going to the toilet
                                             imageView?.setImageResource(R.drawable.toilet)
                                             titleView?.text = toilet
-                                            descriptionView?.text = ""
+                                            descriptionView?.text = toilet
                                         }
                                         break
                                     }
-                                    if (a[14] == 'N' || a[14] == 'T') {
+                                    if (a[15] == 'N' || a[15] == 'T') {
                                         runOnUiThread {
                                             //User going to the toilet
-                                            imageView?.setImageResource(R.drawable.toilet)
-                                            titleView?.text = toilet
-                                            descriptionView?.text = toilet
+                                            imageView?.setImageResource(R.drawable.exit)
+                                            titleView?.text = exit
+                                            descriptionView?.text = exit
                                         }
                                         break
                                     }
