@@ -1,13 +1,21 @@
 package com.example.david.robotour
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import org.jetbrains.anko.*
 import android.preference.PreferenceManager
 import android.support.v4.content.res.ResourcesCompat
+import android.view.Gravity
+import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.LinearLayout
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -20,6 +28,7 @@ import java.net.URL
 import java.util.ArrayList
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_choose_level.*
+import org.jetbrains.anko.design.floatingActionButton
 
 
 @Suppress("DEPRECATION")
@@ -144,11 +153,13 @@ class ChooseActivity : AppCompatActivity() {
                             }
                             a[21] == 'T' -> {
                                 listenProgress = true
-                                listenButton.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                                listenButton.background = roundBackground()
+                                listenButton.setTextColor(Color.BLACK)
                             }
                             a[21] == 'F' -> {
                                 listenProgress = false
-                                listenButton.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
+                                listenButton.background = roundBackgroundUnclickable()
+                                listenButton.setTextColor(resources.getColor(R.color.greyedOutText))
                             }
 
                         }
@@ -160,14 +171,16 @@ class ChooseActivity : AppCompatActivity() {
                                     println("++++1")
                                     runOnUiThread {
                                         controlProgress = true
-                                        controlButton.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                                        controlButton.background = roundBackground()
+                                        controlButton.setTextColor(Color.BLACK)
                                     }
                                 }
                                 2 -> {
                                     println("++++2")
                                     runOnUiThread {
                                         controlProgress = true
-                                        controlButton.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                                        controlButton.background = roundBackground()
+                                        controlButton.setTextColor(Color.BLACK)
                                     }
                                 }
                                 else -> {
@@ -185,13 +198,15 @@ class ChooseActivity : AppCompatActivity() {
                                 println("++++4")
                                 runOnUiThread {
                                     controlProgress = true
-                                    controlButton.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml2, null)
+                                    controlButton.background = roundBackground()
+                                    controlButton.setTextColor(Color.BLACK)
                                 }
                             } else if(userID==2 || userID==-1) {
                                 println("++++6")
                                 runOnUiThread {
                                     controlProgress = false
-                                    controlButton.background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
+                                    controlButton.background = roundBackgroundUnclickable()
+                                    controlButton.setTextColor(resources.getColor(R.color.greyedOutText))
                                 }
                             }
 
@@ -256,54 +271,124 @@ class ChooseActivity : AppCompatActivity() {
 
         }
         super.onCreate(savedInstanceState)
-        supportActionBar?.hide() //hide actionbar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true) // add back button to actionbar
         when (language) {
             "French" -> {
-                controlRoboTour = "Contrôler RoboTour"
-                listenIn = "Suivez la visite"
+                controlRoboTour = "Contrôler\nRoboTour"
+                listenIn = "Suivre\nune Visite"
+                supportActionBar?.title = "Contrôler Ou Suivre un Tour"
             }
             "German" -> {
-                controlRoboTour = "Steuern Sie die RoboTour"
-                listenIn = "Steuern Sie die RoboTour"
+                controlRoboTour = "RoboTour\nSteuern"
+                listenIn = "Tour\nFolgen"
+                supportActionBar?.title = "Eine Tour Steuern Oder Folgen"
             }
             "Spanish" -> {
-                controlRoboTour = "Controlar RoboTour"
-                listenIn = "Sigue la gira"
+                controlRoboTour = "Controlar\nRoboTour"
+                listenIn = "Seguir\nuna Gira"
+                supportActionBar?.title = "Controlar O Seguir una Gira"
             }
             "Chinese" -> {
-                controlRoboTour = "控制RoboTour"
+                controlRoboTour = "控制\nRoboTour"
                 listenIn = "按照旅程"
+                supportActionBar?.title = "控制或跟随游览"
             }
             else -> {
-                controlRoboTour = "Control RoboTour"
-                listenIn = "Follow the tour"
+                controlRoboTour = "Control\nRoboTour"
+                listenIn = "Follow\na Tour"
+                supportActionBar?.title = "Control Or Follow a Tour"
             }
         }
-        setContentView(R.layout.activity_choose_level)
-        val textView: TextView = findViewById(R.id.texttodisplay)
-        controlButton = findViewById(R.id.controlbutton)
-        listenButton = findViewById(R.id.listenbutton)
-        textView.text = message
-        controlButton.text = controlRoboTour
-        listenButton.text = listenIn
-
-        listenbutton.setOnClickListener{
-            if (listenProgress) {
-                t.interrupt()
-                //checkerThread.interrupt()
-                startActivity<ListenInActivity>("language" to language)
-            } else {
-                toast(error_Listen)
+        relativeLayout {
+            floatingActionButton {
+                //UI
+                imageResource = R.drawable.icon_q_mark
+                //ColorStateList usually requires a list of states but this works for a single color
+                backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
+                lparams { alignParentRight(); rightMargin = dip(10); centerVertically()  }
+                onClick {
+                    alert {
+                        customView {
+                            linearLayout {
+                                orientation = LinearLayout.VERTICAL
+                                horizontalPadding = dip(4)
+                                textView {
+                                    text = "Help"
+                                    textSize = 30f
+                                    typeface = Typeface.DEFAULT_BOLD
+                                    verticalPadding = dip(7)
+                                    lparams { gravity = Gravity.CENTER_HORIZONTAL; }
+                                }
+                                textView {
+                                    text = "Control RoboTour allows you to select the paintings you want RoboTour to go to, and allows you to control RoboTour during the tour.\nIf the button is grey, this means that no robot is available right now to control."
+                                    textSize = 16f
+                                    verticalPadding = dip(5)
+                                }
+                                textView {
+                                    text = "Follow A Tour allows you to listen into an existing tour in your native language.\nIf the button is grey, this means that there is no active tour right now."
+                                    textSize = 16f
+                                    verticalPadding = dip(5)
+                                }
+                            }
+                        }
+                    }.show()
+                }
             }
-        }
-        controlbutton.setOnClickListener{
-            if (controlProgress) {
-                t.interrupt()
-                // checkerThread.interrupt()
-                startActivity<PicturesActivity>("language" to language)
-            } else {
-                toast(error_Control)
-            }
+            verticalLayout {
+                background = ColorDrawable(resources.getColor(R.color.androidsBackground))
+                controlButton = button(controlRoboTour) {
+                    textSize = 20f
+                    textColor = resources.getColor(R.color.greyedOutText)
+                    //background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
+                    background = roundBackgroundUnclickable()
+                    lparams {height = dip(200); width = dip(200); gravity = Gravity.CENTER_HORIZONTAL; verticalMargin = dip(30)}
+                    onClick {
+                        if (controlProgress) {
+                            t.interrupt()
+                            startActivity<PicturesActivity>("language" to language)
+                        } else {
+                            toast(error_Control)
+                        }
+                    }
+                }
+                listenButton = button(listenIn) {
+                    textSize = 20f
+                    textColor = resources.getColor(R.color.greyedOutText)
+                    background = roundBackgroundUnclickable()
+                    lparams {height = dip(200); width = dip(200); gravity = Gravity.CENTER_HORIZONTAL; verticalMargin = dip(10)}
+                    onClick {
+                        if (listenProgress) {
+                            t.interrupt()
+                            startActivity<ListenInActivity>("language" to language)
+                        } else {
+                            toast(error_Listen)
+                        }
+                    }
+                }
+            }.lparams { height = matchParent; width = matchParent ; gravity = Gravity.CENTER_HORIZONTAL }
         }
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+        //Back button moves back to MainActivity
+            android.R.id.home -> {
+                onBackPressed()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun roundBackground() = GradientDrawable().apply {
+        shape = GradientDrawable.OVAL
+        setColor(resources.getColor(R.color.roboTourTeal))
+        setStroke(2, Color.BLACK)
+    }
+
+    private fun roundBackgroundUnclickable() = GradientDrawable().apply {
+        shape = GradientDrawable.OVAL
+        setColor(resources.getColor(R.color.greyedOut))
+        setStroke(2, Color.BLACK)
+    }
+
 }

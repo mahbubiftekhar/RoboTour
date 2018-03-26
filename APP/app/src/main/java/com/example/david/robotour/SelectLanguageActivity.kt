@@ -79,7 +79,7 @@ class SelectLanguageActivity : AppCompatActivity() {
                             imageButton(languages[i + j].imageID) {
                                 backgroundColor = Color.TRANSPARENT
                                 onClick {
-                                    startActivity<ChooseActivityUI>("language" to languages[i + j].name)
+                                    startActivity<ChooseActivity>("language" to languages[i + j].name)
                                 }
                             }.lparams { topMargin = dip(15); leftMargin = dip(20 + (j + 1) * 10) }
                         }
