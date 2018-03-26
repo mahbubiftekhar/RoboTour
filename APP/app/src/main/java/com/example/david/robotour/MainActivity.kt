@@ -8,8 +8,11 @@ import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import org.jetbrains.anko.*
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.GradientDrawable
 import android.net.ConnectivityManager
 import android.preference.PreferenceManager
+import android.view.Gravity
 import android.view.WindowManager
 import android.widget.Toast
 import kotlinx.android.synthetic.*
@@ -56,19 +59,20 @@ class MainActivity : AppCompatActivity() {
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         verticalLayout {
-            imageView(R.drawable.robotour_small) {
+            imageView(R.drawable.robotour_img2) {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
                 onLongClick {
                     count++
                     true
                 }
-            }
-            textView{
-                padding = 50
+                horizontalPadding = dip(20)
+                verticalPadding = dip(25)
             }
             button("START") {
                 textSize = 32f
-                background = ResourcesCompat.getDrawable(resources, R.drawable.rb2, null)
+                //background = ResourcesCompat.getDrawable(resources, R.drawable.rb2, null) Using XML
+                background = buttonBg() // Using kotlin - better ;)
+                lparams { width = matchParent; horizontalMargin = dip(5); topMargin = dip(5) }
                 onClick {
                     if (isNetworkConnected()) {
                         continueThread = false
@@ -85,5 +89,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun buttonBg() = GradientDrawable().apply {
+        shape = GradientDrawable.RECTANGLE
+        cornerRadius = 100f
+        setColor(resources.getColor(R.color.roboTourTeal))
+        setStroke(2, Color.BLACK)
     }
 }

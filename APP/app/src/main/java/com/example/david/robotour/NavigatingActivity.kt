@@ -406,13 +406,21 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
             checkerThread.interrupt()
             val message: String
+            val message2: String
             val language = intent.getStringExtra("language")
             message = when (language) {
-                "French" -> "Merci d'utiliser RoboTour.\nNous espérons que vous avez apprécié votre visite."
-                "German" -> "Vielen Dank für die Verwendung von RoboTour.\nWir hoffen, Sie haben Ihre Tour genossen."
-                "Spanish" -> "Gracias por usar RoboTour.\nEsperamos que hayas disfrutado tu recorrido."
-                "Chinese" -> "感谢您使用萝卜途\n希望您喜欢这次旅程"
-                else -> "Thank you for using RoboTour.\nWe hope you enjoyed your tour."
+                "French" -> "Merci d'utiliser RoboTour."
+                "German" -> "Vielen Dank für die Verwendung von RoboTour."
+                "Spanish" -> "Gracias por usar RoboTour."
+                "Chinese" -> "感谢您使用萝卜途"
+                else -> "Thank you for using RoboTour."
+            }
+            message2 = when (language) {
+                "French" -> "Nous espérons que vous avez apprécié votre visite."
+                "German" -> "Wir hoffen, Sie haben Ihre Tour genossen."
+                "Spanish" -> "Esperamos que hayas disfrutado tu recorrido."
+                "Chinese" -> "希望您喜欢这次旅程"
+                else -> "We hope you enjoyed your tour."
             }
             when (language) {
                 "French" -> {
@@ -438,16 +446,33 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
             }
             speakOutThanks()
-            alert(message) {
+            alert {
+                customView {
+                    linearLayout {
+                        leftPadding = dip(4)
+                        orientation = LinearLayout.VERTICAL
+                        textView {
+                            text = message
+                            textSize = 22f
+                            typeface = Typeface.DEFAULT_BOLD
+                            verticalPadding = dip(10)
+                        }
+                        textView {
+                            text = message2
+                            textSize = 18f
+                        }
+                    }
+                }
                 cancellable(false)
                 setFinishOnTouchOutside(false)
-                positiveButton(restartApp) {
+                positiveButton {
                     deleteCache(applicationContext)
                     val i = baseContext.packageManager
                             .getLaunchIntentForPackage(baseContext.packageName)
                     i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     startActivity(i)
                 }
+                /*Not Needed - Closing the app using app buttons is bad practice
                 negativeButton(closeApp) {
                     //Kill the app
                     clearFindViewByIdCache()
@@ -455,7 +480,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     closeTheApp.addCategory(Intent.CATEGORY_HOME)
                     closeTheApp.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                     startActivity(closeTheApp)
-                }
+                }*/
             }.show()
 
     }

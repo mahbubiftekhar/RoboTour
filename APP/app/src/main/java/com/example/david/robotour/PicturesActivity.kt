@@ -513,7 +513,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     try {
                         val count = allArtPieces.count { it.selected }
                         if (count > 0) {
-                            runOnUiThread { ui.navigateButton.background = ColorDrawable(Color.parseColor("#24E8EA")) }
+                            runOnUiThread { ui.navigateButton.background = ColorDrawable(Color.parseColor("#00C9FF")) }
                         } else {
                             runOnUiThread { ui.navigateButton.background = ColorDrawable(Color.parseColor("#505050")) }
                         }

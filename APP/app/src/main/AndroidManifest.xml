@@ -45,21 +45,10 @@
             android:screenOrientation="portrait"
         </activity>
         <activity
-            android:name=".WaitingActivity"
-            android:label="@string/title_activity_waiting"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".TempActivity" />
-        <activity
             android:name=".AdminActivity"
             android:label="@string/title_activity_admin"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".FinishActivity"
-            android:label="@string/title_activity_finnish"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ListenInActivity"
             android:label="@string/title_activity_listen_in"
@@ -70,14 +59,7 @@
             android:label="@string/title_activity_choose_level"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".RecycleActivity"
-            android:label="@string/title_activity_recycle"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".RecyclerActivity"
-            android:label="@string/title_activity_recycler"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".ChooseActivityUI"></activity>
     </application>
 
 </manifest>
