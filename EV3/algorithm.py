@@ -40,6 +40,10 @@ class PIDController:
 			+ self.i*self.ki \
 			+ self.d*self.kd
 
+	def reset(self):
+		self.last_error = 0
+		self.i = 0
+
 class LineFollowing(Algorithm):
 
 	def __init__(self, robot):
@@ -109,4 +113,101 @@ class Calibration(Algorithm):
 
 	def done(self, env):
 		return self.fsm.current_state == self.st_done
+
+
+
+class ObstacleAvoidance(Algorithm):
+	def __init__():
+		Algorithm.__init__(self, robot)
+
+		self.base_speed = 100
+		self.rotation_speed = 145
+		self.recentre_speed = 90
+		self.follow_distance = 200
+		
+		self.pid = PIDController(0.25, 0.001, 0.13)
+		self.pid_set_value = self.follow_distance
+
+
+
+		self.st_init = State("Init ObstacleAvoidance")
+		self.st_turn = State("Turn")
+		self.st_follow_around = State("Wall following")
+		self.st_recentre = State("Reinitialising")
+		self.st_done = State("Done")
+
+		self.st_init.add_transition(Transition(self.st_turn))
+		self.st_turn.add_transition(Transition(self.st_follow_around, self.robot.done_movement))
+		self.st_follow_around.add_transition(Transition(self.st_recentre, self.recentered))
+		self.st_recentre.add_transition(Transition(self.st_done))
+
+		self.fsm = FSM(self.st_init)
+		self.dsp = Dispatcher(self.fsm)
+	
+		self.dsp.link_action(self.st_init, self.initialise)
+		# use as a one-shot action
+		self.st_turn.on_activate(self.turn_away)
+		self.dsp.link_action(self.st_follow_around, self.follow_wall)
+		self.dsp.link_action(self.st_recentre, self.recentre)
+		self.dsp.link_action(self.st_done, self.robot.stop)
+
+	def initialise(self):
+		self.robot.stop()
+		self.avoidance_direction = self.env.avoidance_direction
+		self.pid.reset()
+
+
+	def turn_away(self):
+
+		if self.avoidance_direction == 'left':
+			angle = -90
+		else:
+			angle =  90
+
+		self.robot.rotate(angle, speed=self.rotation_speed)
+
+
+	def follow_wall(self):
+
+		if self.avoidance_direction == 'left':
+			# following towards left, follow wall with ride side
+			steer = self.pid.calculate(self.env.dist_right)
+			steer_left = self.base_speed  - steer
+			steer_right = self.base_speed + steer
+		else:
+			# following towards right, follow wall with left side
+			steer = self.pid.calculate(self.env.dist_left)
+			steer_left = self.base_speed  + steer
+			steer_right = self.base_speed - steer
+
+		self.robot.motor(steer_left, steer_right)
+
+
+	def recentre(self):
+		if self.avoidance_direction == 'left':
+			self.robot.motor(-self.recentre_speed,  self.recentre_speed)
+		else:
+			self.robot.motor( self.recentre_speed, -self.recentre_speed)
+
+	def back_on_line(self):
+		return self.env.colour_left  > self.env.line_thershold or \
+			   self.env.colour_right > self.env.line_thershold
+
+	def recentered(self):
+		return abs(self.env.line_sens_val - 35) < 15
+
+
+
+
+
+
+	def run(self):
+		self.fsm.tick(self.env)
+		self.dsp.dispatch()	
+
+	def done(self, env):
+		return self.fsm.current_state == self.st_done
+
+		
+
 

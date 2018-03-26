@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 from finite_state_machine import *
 from dispatcher import Dispatcher
-from algorithm import LineFollowing, Calibration
+from algorithm import LineFollowing, Calibration, ObstacleAvoidance
 from robot import Robot
 from telemetry import *
 
@@ -13,6 +13,7 @@ line_follower = LineFollowing(robot)
 line_follower.set_gains(2.5, 0, 1.5)
 
 calibration = Calibration(robot)
+obstacle_avoidance = ObstacleAvoidance(robot)
 
 ## FSM SETUP ##
 
@@ -53,7 +54,7 @@ sweep_time = 1750
 
 st_start.add_transition(Transition(st_calibration))
 
-st_calibration.add_transition(Transition(st_idle, calibration.done)
+st_calibration.add_transition(Transition(st_idle, calibration.done))
 
 st_idle.add_transition(Transition(st_wait, obstacle_detected))
 

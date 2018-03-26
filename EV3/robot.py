@@ -50,13 +50,16 @@ class Robot():
 	def update_env(self):
 
 		self.env.line_sens_val = self.line_sensor.value_simple()
+		self.env.colour_left   = self.colourSensorL.value()
+		self.env.colour_right  = self.colourSensorR.value()
+
 		self.env.dist_front = self.sonarF.value() 
 
-		self.env.dist_right = self.sonarR.value()
-		self.env.dist_left  = self.sonarL.value()
+		self.env.dist_right = self.sonarR.value() * 10
+		self.env.dist_left  = self.sonarL.value() * 10
 
 		self.env.rot_right = self.motorR.position
-		self.env.rot_left = self.motorL.position
+		self.env.rot_left  = self.motorL.position
 
 
 		self.env.update()
@@ -67,6 +70,7 @@ class Robot():
 		self.motorR.run_forever(speed_sp = pR)
 
 	def rotate(self, degrees, speed):
+		# calculate by how much the wheels need to rotate
 		delta = degrees * self.model.wheel_to_rotation_ratio
 		
 		# rotate right
