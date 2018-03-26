@@ -26,6 +26,7 @@ class Environment():
 		self.last_rot_right = 0
 		self.last_rot_left = 0
 
+		self.avoidance_direction = 'left'
 
 
 	def init(self):

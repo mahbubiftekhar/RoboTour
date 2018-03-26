@@ -26,7 +26,7 @@ st_idle = State("Idle")
 st_route_planning = State("Calculating route")
 
 # robot waiting for input - distance sensor
-
+st_wait = State("Waiting")
 
 
 # line following mode

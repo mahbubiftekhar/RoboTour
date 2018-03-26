@@ -77,15 +77,17 @@ class Calibration(Algorithm):
 	def __init__(self, robot):
 		Algorithm.__init__(self, robot)
 
-		self.calibraton_time = 8000
+		self.calibration_time = 8000
 		sweep_time = self.calibration_time/4
 
+		self.st_start = State("Start")
 		self.st_calibrate_right = State("Calibrating")
 		self.st_calibrate_left = State("Calibrating")
 		self.st_calibrate_centre = State("Calibrating")
 
 		self.st_done = State("Done")
 
+		self.st_start.add_transition(Transition(self.st_calibrate_right))
 		self.st_calibrate_right.add_transition(TransitionTimed(sweep_time,  self.st_calibrate_left))
 		self.st_calibrate_left.add_transition(TransitionTimed(2*sweep_time, self.st_calibrate_centre))
 		self.st_calibrate_centre.add_transition(TransitionTimed(sweep_time, self.st_done))
@@ -117,7 +119,7 @@ class Calibration(Algorithm):
 
 
 class ObstacleAvoidance(Algorithm):
-	def __init__():
+	def __init__(self, robot):
 		Algorithm.__init__(self, robot)
 
 		self.base_speed = 100
