@@ -17,7 +17,7 @@ class DataLogger():
 		if timer is None:
 			self.timestamp = DataChannel("timestamp", time.perf_counter)
 		else:
-			self.timestamp = DataChannel("timestamp", timer)
+			self.timestamp = DataChannel("time", timer)
 
 		self.initiated = False
 

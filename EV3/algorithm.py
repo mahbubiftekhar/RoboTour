@@ -92,12 +92,13 @@ class Calibration(Algorithm):
 		self.st_calibrate_left.add_transition(TransitionTimed(2*sweep_time, self.st_calibrate_centre))
 		self.st_calibrate_centre.add_transition(TransitionTimed(sweep_time, self.st_done))
 
-		self.fsm = FSM(self.st_calibrate_right)
+		self.fsm = FSM(self.st_start)
 		self.dsp = Dispatcher(self.fsm)
 
 		self.dsp.link_action(self.st_calibrate_right, self.calibrate_right)
 		self.dsp.link_action(self.st_calibrate_left,  self.calibrate_left)
-		self.dsp.link_action(self.st_calibrate_centre, self.st_calibrate_centre)
+		self.dsp.link_action(self.st_calibrate_centre, self.calibrate_right)
+		self.dsp.link_action(self.st_done, self.robot.stop)
 
 
 
@@ -111,6 +112,7 @@ class Calibration(Algorithm):
 
 	def run(self):
 		self.fsm.tick(self.env)
+		print(self.fsm.get_state())
 		self.dsp.dispatch()
 
 	def done(self, env):

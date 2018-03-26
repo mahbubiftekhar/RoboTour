@@ -35,6 +35,8 @@ st_line_lost = State("Lost line")
 
 st_at_painting = State("At painting")
 
+st_obstacle_avoidance = State("Obstacle Avoidance")
+
 st_stop = State("Stop")
 
 # define obstacle detection trigger
@@ -66,17 +68,21 @@ st_wait.add_transition(Transition(st_wait, obstacle_detected))
 st_wait.add_transition(TransitionTimed(5000, st_stop))
 
 st_line_following.add_transition(Transition(st_line_lost, robot.line_sensor.no_line))
-st_line_following.add_transition(Transition(st_wait, obstacle_detected))
+st_line_following.add_transition(Transition(st_obstacle_avoidance, obstacle_detected))
 
 st_line_lost.set_default(st_line_following)
 st_line_lost.add_transition(Transition(st_line_lost, robot.line_sensor.no_line))
-st_line_lost.add_transition(Transition(st_wait, obstacle_detected))
+st_line_lost.add_transition(Transition(st_obstacle_avoidance, obstacle_detected))
 
+
+st_obstacle_avoidance.add_transition(st_line_following, obstacle_avoidance.done)
 
 fsm = FSM(st_start)
 dsp = Dispatcher(fsm)
 
 dsp.link_action(st_calibration, calibration.run)
+dsp.link_action(st_obstacle_avoidance, obstacle_avoidance.run)
+
 
 dsp.link_action(st_idle, robot.stop)
 dsp.link_action(st_wait, robot.stop)
@@ -111,6 +117,9 @@ def steer_hook():
 def polling_hook():
 	return robot.hub.last_poll_time
 
+def loop_time_hook():
+	return robot.env.loop_time
+
 
 
 
@@ -141,6 +150,7 @@ logger.init()
 while fsm.current_state != st_stop:
 	# sense
 	robot.update_env()
+	print(fsm.get_state())
 	
 	# plan
 	fsm.tick(robot.env)
@@ -150,6 +160,6 @@ while fsm.current_state != st_stop:
 
 	logger.log()
 
-	print(robot.env.line_sens_val, robot.env.dist_front, robot.line_sensor.no_line(None))
+	# print(robot.env.line_sens_val, robot.env.dist_front, robot.line_sensor.no_line(None))
 
 robot.stop()

@@ -27,6 +27,7 @@ class Environment():
 		self.last_rot_left = 0
 
 		self.avoidance_direction = 'left'
+		self.loop_time = 0
 
 
 	def init(self):
@@ -35,7 +36,10 @@ class Environment():
 	def update(self):
 		self.last_rot_left = self.rot_left
 		self.last_rot_right = self.rot_right
+		
+		self.loop_time = self.clock_ms
 		self.clock_update()
+		self.loop_time -= self.clock_ms
 
 	def clock_init(self):
 		self.clock_start = time.perf_counter() * 1000
