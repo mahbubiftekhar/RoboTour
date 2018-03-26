@@ -5,14 +5,10 @@ import android.content.Context
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.content.res.ResourcesCompat
 import org.jetbrains.anko.*
 import android.content.Intent
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.net.ConnectivityManager
-import android.preference.PreferenceManager
-import android.view.Gravity
 import android.view.WindowManager
 import android.widget.Toast
 import kotlinx.android.synthetic.*
@@ -47,15 +43,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
-        if (url == "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php") {
-            toast("Warning, in receiverPhone mode")
-        }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         verticalLayout {
             imageView(R.drawable.robotour_img2) {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
                 onLongClick {
-                    count++
+                    switchToAdmin()
                     true
                 }
                 horizontalPadding = dip(20)
@@ -75,9 +68,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 onLongClick {
-                    if(count>0){
-                        switchToAdmin()
-                    }
+                    //switchToAdmin()
                     true
                 }
             }

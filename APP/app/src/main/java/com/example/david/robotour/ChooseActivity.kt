@@ -43,8 +43,11 @@ class ChooseActivity : AppCompatActivity() {
     private var userID = 0
     private var controlProgress = false
     private var listenProgress = false
+    private var help = ""
+    private var controlExplanation = ""
+    private var listenExplanation = ""
     private lateinit var listenButton: Button
-    private lateinit var controlButton:Button
+    private lateinit var controlButton: Button
 
     override fun onBackPressed() {
         val a = loadInt("user")
@@ -243,6 +246,7 @@ class ChooseActivity : AppCompatActivity() {
             "Spanish" -> {
                 error_Control = "RoboTour de gira, por favor espere o siga el recorrido"
                 error_Listen = "RoboTour no gira, seleccione Control RoboTour"
+
             }
             "Chinese" -> {
                 error_Control = "RoboTour巡演时，请等待或关注巡演"
@@ -261,26 +265,41 @@ class ChooseActivity : AppCompatActivity() {
                 controlRoboTour = "Contrôler\nRoboTour"
                 listenIn = "Suivre\nune Visite"
                 supportActionBar?.title = "Contrôler Ou Suivre un Tour"
+                help = "Aidez-moi"
+                controlExplanation = "Contrôle RoboTour vous permet de sélectionner les peintures que RoboTour doit visiter et vous permet de contrôler RoboTour pendant la visite. \\ NSi le bouton est gris, cela signifie qu'aucun robot n'est disponible pour contrôler\n"
+                listenExplanation = "Suivre une visite vous permet d'écouter une tournée existante dans votre langue maternelle. \\ NSi le bouton est gris, cela signifie qu'il n'y a pas de tour actif en ce moment\n"
             }
             "German" -> {
                 controlRoboTour = "RoboTour\nSteuern"
                 listenIn = "Tour\nFolgen"
                 supportActionBar?.title = "Eine Tour Steuern Oder Folgen"
+                help = "Hilfe"
+                controlExplanation = "Mit Control RoboTour können Sie die Bilder auswählen, zu denen RoboTour gehen soll, und RoboTour während der Tour steuern. Wenn die Schaltfläche grau ist, bedeutet dies, dass zur Zeit kein Roboter zur Steuerung verfügbar ist\n"
+                listenExplanation = "Folgen Eine Tour ermöglicht es Ihnen, eine bestehende Tour in Ihrer Muttersprache anzuhören. \\ NWenn die Schaltfläche grau ist, bedeutet dies, dass momentan keine aktive Tour verfügbar ist\n"
             }
             "Spanish" -> {
                 controlRoboTour = "Controlar\nRoboTour"
                 listenIn = "Seguir\nuna Gira"
                 supportActionBar?.title = "Controlar O Seguir una Gira"
+                help = "Ayuda"
+                controlExplanation = "Control RoboTour le permite seleccionar las pinturas a las que desea que vaya RoboTour, y le permite controlar RoboTour durante el recorrido. \\ NSi el botón es gris, significa que no hay ningún robot disponible ahora para controlar\n"
+                listenExplanation = "Seguir un viaje te permite escuchar un recorrido existente en tu idioma nativo. \\ NSi el botón es gris, significa que no hay un recorrido activo en este momento\n"
             }
             "Chinese" -> {
                 controlRoboTour = "控制\nRoboTour"
                 listenIn = "按照旅程"
                 supportActionBar?.title = "控制或跟随游览"
+                help = "帮帮我"
+                controlExplanation = "控制RoboTour允许您选择您想要RoboTour去的画作，并允许您在巡视过程中控制RoboTour。\\ n如果按钮是灰色的，这意味着现在没有机器人可用来控制\n"
+                listenExplanation = "按照A Tour，您可以使用您的母语倾听现有的旅程。\\ n如果按钮为灰色，则表示现在没有活动的旅程\n"
             }
             else -> {
                 controlRoboTour = "Control\nRoboTour"
                 listenIn = "Follow\na Tour"
                 supportActionBar?.title = "Control Or Follow a Tour"
+                help = "Help"
+                controlExplanation = "Control RoboTour allows you to select the paintings you want RoboTour to go to, and allows you to control RoboTour during the tour.\nIf the button is grey, this means that no robot is available right now to control."
+                listenExplanation = "Follow A Tour allows you to listen into an existing tour in your native language.\nIf the button is grey, this means that there is no active tour right now."
             }
         }
         relativeLayout {
@@ -297,19 +316,19 @@ class ChooseActivity : AppCompatActivity() {
                                 orientation = LinearLayout.VERTICAL
                                 horizontalPadding = dip(4)
                                 textView {
-                                    text = "Help"
+                                    text = help
                                     textSize = 30f
                                     typeface = Typeface.DEFAULT_BOLD
                                     verticalPadding = dip(7)
                                     lparams { gravity = Gravity.CENTER_HORIZONTAL; }
                                 }
                                 textView {
-                                    text = "Control RoboTour allows you to select the paintings you want RoboTour to go to, and allows you to control RoboTour during the tour.\nIf the button is grey, this means that no robot is available right now to control."
+                                    text = controlExplanation
                                     textSize = 16f
                                     verticalPadding = dip(5)
                                 }
                                 textView {
-                                    text = "Follow A Tour allows you to listen into an existing tour in your native language.\nIf the button is grey, this means that there is no active tour right now."
+                                    text=listenExplanation
                                     textSize = 16f
                                     verticalPadding = dip(5)
                                 }
