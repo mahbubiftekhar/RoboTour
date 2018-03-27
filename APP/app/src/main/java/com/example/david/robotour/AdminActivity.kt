@@ -195,7 +195,7 @@ class AdminActivity : AppCompatActivity() {
                     sendPUTNEW(i, "F")
                 }
             }
-            vibrate()
+            //vibrate()
         }
         USER1_ONLINE.setOnClickListener {
             //Set user one as online

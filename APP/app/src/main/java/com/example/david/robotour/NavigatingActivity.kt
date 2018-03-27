@@ -589,7 +589,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
-        vibrate()
+        //vibrate()
         async {
             Thread.sleep(1500)
             speakOutOnCreate()
@@ -628,7 +628,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 stopDesc = "Are you sure you want to stop RoboTour?"
                 start = "CONTINUE"
                 startDesc = "Do you want to start RoboTour?"
-                cancelTour = "Cancel tour"
+                cancelTour = "Cancel"
                 cancelDesc = "Are you sure you want to cancel the tour?"
                 exit = "Exit"
                 exitDesc = "Do you want to go to the exit"
@@ -964,6 +964,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         button(skip) {
                             background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                             textSize = btnTextSize
+                            verticalPadding = dip(0)
                             height = dip(btnHgt)
                             width = wrapContent
                             onClick {
@@ -984,6 +985,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         stopButton = button(stop) {
                             background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                             textSize = btnTextSize
+                            verticalPadding = dip(0)
                             height = dip(btnHgt)
                             width = wrapContent
                             onClick {
@@ -1017,6 +1019,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         button(cancelTour) {
                             background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                             textSize = btnTextSize
+                            verticalPadding = dip(0)
                             height = dip(btnHgt)
                             width = matchParent
                             onClick {
@@ -1049,6 +1052,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         button(changeSpeed) {
                             background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                             textSize = btnTextSize
+                            verticalPadding = dip(0)
                             height = dip(btnHgt)
                             width = matchParent
                             onClick {
@@ -1118,6 +1122,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         button(toilet) {
                             background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                             textSize = btnTextSize
+                            verticalPadding = dip(0)
                             height = dip(btnHgt)
                             width = matchParent
                             onClick {
@@ -1139,6 +1144,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         button(exit) {
                             background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                             textSize = btnTextSize
+                            verticalPadding = dip(0)
                             height = dip(btnHgt)
                             width = matchParent
                             onClick {
