@@ -959,7 +959,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             backgroundColor = Color.TRANSPARENT //Removes gray border
                             gravity = Gravity.CENTER_HORIZONTAL
                         }
-                    }
+                    }.lparams { alignParentBottom() }
                 }
                 when (language) {
                     "English" -> {
