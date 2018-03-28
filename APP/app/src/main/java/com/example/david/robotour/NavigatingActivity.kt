@@ -1100,10 +1100,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                     sendPUTNEW(17, "F")
                                                 }
                                             }
-                                            Thread.sleep(30)
                                             async {
+                                                Thread.sleep(230)
                                                 val a = URL(url).readText()
-                                                if (a[16] == 'T' && a[17] == 'T') {
+                                                if (a[16] == 'F' && a[17] == 'F') {
                                                     sendPUTNEW(12, "T")
                                                 }
                                             }
@@ -1226,15 +1226,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             async {
                                                 exitDoor()
                                             }
-                                            /*async {
-                                                val ab = URL(url).readText()
-                                                if (ab[18] == 'T') {
-                                                    sendPUTNEW(12, "T")
-                                                }
-                                                if (ab[16] == 'T' && ab[17] == 'T') {
-                                                    sendPUTNEW(12, "T")
-                                                }
-                                            }*/
                                         }
                                         negativeButton(negative) { }
                                     }.show()
@@ -1818,10 +1809,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         sendPUTNEW(17, "F")
                     }
                 }
-                Thread.sleep(30)
                 async {
+                    Thread.sleep(300)
                     val a = URL(url).readText()
-                    if (a[16] == 'T' && a[17] == 'T') {
+                    if (a[16] == 'F' && a[17] == 'F') {
                         sendPUTNEW(12, "T")
                     }
                 }
