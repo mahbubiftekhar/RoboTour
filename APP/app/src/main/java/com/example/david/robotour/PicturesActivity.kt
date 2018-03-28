@@ -864,7 +864,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         startActivity<MainActivity>()
     }
 
-    private fun askSpeechInput(language:String) {
+    private fun askSpeechInput(language: String) {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         println(">>>>the language in askSpeehcInput: $language")

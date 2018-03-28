@@ -125,7 +125,7 @@ class ChooseActivity : AppCompatActivity() {
                 async {
                     val a = URL(url).readText()
                     println("+++++ $a")
-                    uiThread{
+                    uiThread {
                         val b = a[16]
                         val c = a[17]
                         println("a[16]: $b , a[17]: $c")
@@ -144,7 +144,7 @@ class ChooseActivity : AppCompatActivity() {
                                 }
                                 runOnUiThread { saveInt("user", 1) }
                             }
-                            a[17] == 'F' && userID == -1 && twoUsers-> {
+                            a[17] == 'F' && userID == -1 && twoUsers -> {
                                 println("+++++++++TWO")
                                 runOnUiThread { userID = 2 }
                                 async {
@@ -202,7 +202,7 @@ class ChooseActivity : AppCompatActivity() {
                                     controlButton.background = roundBackground()
                                     controlButton.setTextColor(Color.BLACK)
                                 }
-                            } else if(userID==2 || userID==-1) {
+                            } else if (userID == 2 || userID == -1) {
                                 println("++++6")
                                 runOnUiThread {
                                     controlProgress = false
@@ -230,7 +230,7 @@ class ChooseActivity : AppCompatActivity() {
         saveInt("user", -1)
         userID = loadInt("user")
         println("first instance $userID")
-        if(url=="http://www.mahbubiftekhar.co.uk/receiver2.php"){
+        if (url == "http://www.mahbubiftekhar.co.uk/receiver2.php") {
             toast("Warning, in receiver2 mode")
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
@@ -308,7 +308,7 @@ class ChooseActivity : AppCompatActivity() {
                 imageResource = R.drawable.icon_q_mark
                 //ColorStateList usually requires a list of states but this works for a single color
                 backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
-                lparams { alignParentRight(); rightMargin = dip(10); centerVertically()  }
+                lparams { alignParentRight(); rightMargin = dip(10); centerVertically() }
                 onClick {
                     alert {
                         customView {
@@ -328,7 +328,7 @@ class ChooseActivity : AppCompatActivity() {
                                     verticalPadding = dip(5)
                                 }
                                 textView {
-                                    text=listenExplanation
+                                    text = listenExplanation
                                     textSize = 16f
                                     verticalPadding = dip(5)
                                 }
@@ -344,7 +344,7 @@ class ChooseActivity : AppCompatActivity() {
                     textColor = resources.getColor(R.color.greyedOutText)
                     //background = ResourcesCompat.getDrawable(resources, R.drawable.buttonsgreyed, null)
                     background = roundBackgroundUnclickable()
-                    lparams {height = dip(200); width = dip(200); gravity = Gravity.CENTER_HORIZONTAL; verticalMargin = dip(30)}
+                    lparams { height = dip(200); width = dip(200); gravity = Gravity.CENTER_HORIZONTAL; verticalMargin = dip(30) }
                     onClick {
                         if (controlProgress) {
                             t.interrupt()
@@ -359,7 +359,7 @@ class ChooseActivity : AppCompatActivity() {
                     textSize = 20f
                     textColor = resources.getColor(R.color.greyedOutText)
                     background = roundBackgroundUnclickable()
-                    lparams {height = dip(200); width = dip(200); gravity = Gravity.CENTER_HORIZONTAL; verticalMargin = dip(10)}
+                    lparams { height = dip(200); width = dip(200); gravity = Gravity.CENTER_HORIZONTAL; verticalMargin = dip(10) }
                     onClick {
                         if (listenProgress) {
                             t.interrupt()
@@ -369,7 +369,7 @@ class ChooseActivity : AppCompatActivity() {
                         }
                     }
                 }
-            }.lparams { height = matchParent; width = matchParent ; gravity = Gravity.CENTER_HORIZONTAL }
+            }.lparams { height = matchParent; width = matchParent; gravity = Gravity.CENTER_HORIZONTAL }
         }
     }
 

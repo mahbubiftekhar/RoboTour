@@ -135,7 +135,7 @@ class WaitingActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if(t.state == Thread.State.NEW) {
+        if (t.state == Thread.State.NEW) {
             t.start()
         }
     }

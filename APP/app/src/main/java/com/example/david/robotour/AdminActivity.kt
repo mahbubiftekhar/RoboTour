@@ -34,7 +34,8 @@ class AdminActivity : AppCompatActivity() {
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
         val httPpost = HttpPost(url)
-        try { val nameValuePairs = ArrayList<NameValuePair>(4)
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
             nameValuePairs.add(BasicNameValuePair("command$identifier", command))
             httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
             httpclient.execute(httPpost)
@@ -95,8 +96,8 @@ class AdminActivity : AppCompatActivity() {
             "6" -> true
             "7" -> true
             "8" -> true
-            "9"-> true
-            "10"->true
+            "9" -> true
+            "10" -> true
             " " -> true
             else -> false
         }
@@ -185,8 +186,8 @@ class AdminActivity : AppCompatActivity() {
             }
             vibrate()
         }
-        SWITCH_URL.setOnClickListener{
-           toast("function deprecated - speak to Mahbub")
+        SWITCH_URL.setOnClickListener {
+            toast("function deprecated - speak to Mahbub")
         }
         RESET_EVERYTHING.setOnClickListener {
             //Resets all from 0 .. 17
@@ -249,20 +250,20 @@ class AdminActivity : AppCompatActivity() {
             }
             vibrate()
         }
-        CONTROLOFF.setOnClickListener{
+        CONTROLOFF.setOnClickListener {
             async {
                 sendPUTNEW(19, "F")
             }
             vibrate()
         }
-        USER2_MODE_ON.setOnClickListener{
+        USER2_MODE_ON.setOnClickListener {
             async {
                 sendPUTNEW(18, "T")
             }
             vibrate()
             toast("Function deprecated")
         }
-        USER2_MODE_OFF.setOnClickListener{
+        USER2_MODE_OFF.setOnClickListener {
             async {
                 sendPUTNEW(18, "F")
             }

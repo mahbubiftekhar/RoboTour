@@ -1484,7 +1484,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             setFinishOnTouchOutside(false)
                                         }.show()
                                     }
-                                } else if(a[20] == 'F' && !obstaclePopUp){
+                                } else if (a[20] == 'F' && !obstaclePopUp) {
                                     obstaclePopUp = true
                                     try {
                                         obstacleAlert.dismiss()

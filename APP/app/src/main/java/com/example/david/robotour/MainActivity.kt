@@ -15,10 +15,10 @@ import kotlinx.android.synthetic.*
 
 @Suppress("DEPRECATION")
 var url = "http://www.mahbubiftekhar.co.uk/receiver.php"
+
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
     private var continueThread = true
-    private var url = ""
-    private var count = 0
 
     override fun onBackPressed() {
         clearFindViewByIdCache()

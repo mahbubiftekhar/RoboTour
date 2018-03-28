@@ -70,7 +70,7 @@ class SelectLanguageActivity : AppCompatActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
 
         //UI
-        linearLayout{
+        linearLayout {
             tableLayout {
                 //Loop through List
                 for (i in 0..4 step 2) {
