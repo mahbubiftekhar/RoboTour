@@ -102,11 +102,11 @@
     <string name="user2_off">USER2 OFF</string>
     <string name="destination">Destination e.g. 13</string>
     <string name="send">SEND</string>
-    <string name="user1_off">USER1 OFF</string>.
+    <string name="user1_off">USER1 OFF</string>
     <string name="stop_robotour">STOP ROBOTOUR</string>
     <string name="aux_reset">AUX RESET</string>
     <string name="reset_everything">RESET EVERYTHING</string>
-    <string name="switch_user">SWITCH_USER</string>
+    <string name="switch_user">DEPRECATED</string>
     <string name="user1_online">USER1 ONLINE</string>
     <string name="user2_online">USER2 ONLINE</string>
     <string name="message">Message e.g. A, F, T, 1</string>
@@ -118,4 +118,14 @@
     <string name="reset_paintings">RESET PAINTINGS</string>
     <string name="start_robotour">START ROBOTOUR</string>
     <string name="STOPROBOTOUR">STOP ROBOTOUR</string>
+    <string name="title_activity_updated_nav">UpdatedNavActivity</string>
+    <string name="listen_off">LISTEN OFF</string>
+    <string name="listen_on">LISTEN ON</string>
+    <string name="two_user_mode_off">TWO USER MODE OFF</string>
+    <string name="two_user_mode_on">TWO USER MODE ON</string>
+    <string name="title_activity_recycle">RecycleActivity</string>
+    <string name="title_activity_recycler">RecyclerActivity</string>
+    <string name="switch_url">SWITCH URL</string>
+    <string name="todo">TODO</string>
+    <string name="robotour">RoboTour</string>
 </resources>

@@ -78,12 +78,20 @@
                 tools:ignore="ButtonStyle,NestedWeights" />
 
             <Button
-                android:id="@+id/SWITCH_USER"
+                android:id="@+id/CONTROLON"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
-                android:text="@string/switch_user"
+                android:text="@string/listen_off"
+                tools:ignore="ButtonStyle" />
+            <Button
+                android:id="@+id/CONTROLOFF"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/listen_on"
                 tools:ignore="ButtonStyle" />
         </LinearLayout>
 
@@ -109,6 +117,39 @@
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
                 android:text="@string/user2_online"
+                tools:ignore="ButtonStyle" />
+            <Button
+                android:id="@+id/SWITCH_URL"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/switch_url"
+                tools:ignore="ButtonStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/USER2_MODE_OFF"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/two_user_mode_off"
+                tools:ignore="ButtonStyle,NestedWeights" />
+
+            <Button
+                android:id="@+id/USER2_MODE_ON"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/two_user_mode_on"
                 tools:ignore="ButtonStyle" />
         </LinearLayout>
 

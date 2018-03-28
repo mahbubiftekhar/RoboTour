@@ -7,7 +7,6 @@ import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.WindowManager
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_admin.*
 import org.apache.http.NameValuePair
 import org.apache.http.client.ClientProtocolException
@@ -30,35 +29,18 @@ class AdminActivity : AppCompatActivity() {
     M IFTEKHAR
     28/02/2018
      */
-
     private fun sendPUTNEW(identifier: Int, command: String) {
-        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
         val httPpost = HttpPost(url)
-        try {
-            val nameValuePairs = ArrayList<NameValuePair>(4)
+        try { val nameValuePairs = ArrayList<NameValuePair>(4)
             nameValuePairs.add(BasicNameValuePair("command$identifier", command))
             httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
             httpclient.execute(httPpost)
         } catch (e: ClientProtocolException) {
         } catch (e: IOException) {
         }
-    }
-
-    public override fun onResume() {
-        if (updateTextThread.state == Thread.State.NEW) {
-            updateTextThread.start()
-        }
-        super.onResume()
-    }
-
-    public override fun onStop() {
-        if (updateTextThread.state == Thread.State.NEW) {
-            updateTextThread.start()
-        }
-        super.onStop()
     }
 
     private val updateTextThread: Thread = object : Thread() {
@@ -68,18 +50,19 @@ class AdminActivity : AppCompatActivity() {
             while (!isInterrupted) {
                 try {
                     async {
-                        val a = URL("http://homepages.inf.ed.ac.uk/s1553593/receiver.php").readText()
+                        val a = URL(url).readText()
                         runOnUiThread {
                             setActionBar(a)
                         }
                     }
-                    Thread.sleep(100)
+                    Thread.sleep(1000)
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
                 }
             }
+            Thread.currentThread().interrupt()
         }
     }
 
@@ -107,7 +90,13 @@ class AdminActivity : AppCompatActivity() {
             "1" -> true
             "2" -> true
             "3" -> true
-            "" -> true
+            "4" -> true
+            "5" -> true
+            "6" -> true
+            "7" -> true
+            "8" -> true
+            "9"-> true
+            "10"->true
             " " -> true
             else -> false
         }
@@ -134,6 +123,10 @@ class AdminActivity : AppCompatActivity() {
             15 -> true
             16 -> true
             17 -> true
+            18 -> true
+            19 -> true
+            20 -> true
+            21 -> true
             else -> false
         }
     }
@@ -174,6 +167,7 @@ class AdminActivity : AppCompatActivity() {
                 }
             }
         }
+
         STOP_ROBOTOUR.setOnClickListener {
             /*Sets Robot stop to true*/
             async {
@@ -184,17 +178,19 @@ class AdminActivity : AppCompatActivity() {
         AUX_RESET.setOnClickListener {
             /*Resets all the AUX, This means that the stuff from stuff such as skip etc will be reset, this
             excludes the user data */
-            for (i in 10..15) {
+            for (i in 10..22) {
                 async {
                     sendPUTNEW(i, "F")
                 }
             }
             vibrate()
         }
-
+        SWITCH_URL.setOnClickListener{
+           toast("function deprecated - speak to Mahbub")
+        }
         RESET_EVERYTHING.setOnClickListener {
             //Resets all from 0 .. 17
-            for (i in 0..17) {
+            for (i in 0..22) {
                 async {
                     sendPUTNEW(i, "F")
                 }
@@ -247,31 +243,35 @@ class AdminActivity : AppCompatActivity() {
             }
             vibrate()
         }
-        SWITCH_USER.setOnClickListener {
-            /*This will change the user, This is defaulted as 1, user two must be selected itself*/
-            val a = loadInt("user")
-            when (a) {
-                0 -> {
-                    saveInt("user", 1)
-                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
-                    vibrate()
-                }
-                1 -> {
-                    saveInt("user", 2)
-                    Toast.makeText(applicationContext, "User 2 mode", Toast.LENGTH_LONG).show()
-                    vibrate()
-                }
-                else -> {
-                    saveInt("user", 1)
-                    Toast.makeText(applicationContext, "User 1 mode", Toast.LENGTH_LONG).show()
-                    vibrate()
-                }
+        CONTROLON.setOnClickListener {
+            async {
+                sendPUTNEW(19, "T")
             }
+            vibrate()
         }
-        async {
-            //This languages the user thread to check for updates
-            updateTextThread.run()
+        CONTROLOFF.setOnClickListener{
+            async {
+                sendPUTNEW(19, "F")
+            }
+            vibrate()
         }
+        USER2_MODE_ON.setOnClickListener{
+            async {
+                sendPUTNEW(18, "T")
+            }
+            vibrate()
+            toast("Function deprecated")
+        }
+        USER2_MODE_OFF.setOnClickListener{
+            async {
+                sendPUTNEW(18, "F")
+            }
+            vibrate()
+            toast("Function deprecated")
+        }
+        //This languages the user thread to check for updates
+        updateTextThread.start()
+
     }
 
     private fun vibrate() {
@@ -284,17 +284,10 @@ class AdminActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveInt(key: String, value: Int) {
-        /* Function to save an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val editor = sharedPreferences.edit()
-        editor.putInt(key, value)
-        editor.apply()
-    }
-
-    private fun loadInt(key: String): Int {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        return sharedPreferences.getInt(key, 0)
+    override fun onResume() {
+        if (updateTextThread.state == Thread.State.NEW) {
+            updateTextThread.start()
+        }
+        super.onResume()
     }
 }
