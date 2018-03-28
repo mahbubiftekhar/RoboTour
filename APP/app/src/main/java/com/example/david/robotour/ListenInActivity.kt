@@ -959,7 +959,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             backgroundColor = Color.TRANSPARENT //Removes gray border
                             gravity = Gravity.CENTER_HORIZONTAL
                         }
-                    }
+                    }.lparams { alignParentBottom() }
                 }
                 when (language) {
                     "English" -> {
@@ -1094,11 +1094,11 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         break
                                     }
                                     if(a[14] == 'A'){
-                                            speakOutToilet()
+                                        speakOutToilet()
                                         break
                                     }
                                     if(a[15] == 'A'){
-                                            speakOutExit()
+                                        speakOutExit()
                                         break
                                     }
                                     if (a[14] == 'N') {
