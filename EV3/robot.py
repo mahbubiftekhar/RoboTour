@@ -87,8 +87,8 @@ class Robot():
 
 
 	# check if any motors are doing something
-	def done_movement(self):
-		return self.motorL.is_running or self.motorR.is_running
+	def done_movement(self, env):
+		return not (self.motorL.is_running or self.motorR.is_running)
 
 	def stop(self):
 		self.motorL.stop()

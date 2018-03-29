@@ -4,6 +4,7 @@ class FSM():
 
     def __init__(self, initial_state):
 
+        self.initial_state = initial_state
         self.current_state = initial_state
 
     def tick(self, env):
@@ -14,7 +15,9 @@ class FSM():
             # notify the object
             next_state.activate(env)
             self.current_state = next_state
-    
+    def reset(self):
+        self.current_state = self.initial_state
+
     def get_state(self):
         return self.current_state.name
 
@@ -64,7 +67,7 @@ class State():
             t.arm(env)
         
         if self.activate_fun is not None:
-            self.activate_fun(env)
+            self.activate_fun()
 
 
 class Transition():

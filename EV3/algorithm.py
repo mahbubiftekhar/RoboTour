@@ -2,6 +2,7 @@
 from finite_state_machine import *
 from dispatcher import Dispatcher
 
+
 class Algorithm():
 
 	def __init__(self, robot):
@@ -68,6 +69,7 @@ class LineFollowing(Algorithm):
 		steer_right = self.base_speed - self.steer
 		steer_left = self.base_speed + self.steer
 
+		print(current_value)
 		self.robot.motor(steer_left, steer_right)
 
 
@@ -81,9 +83,9 @@ class Calibration(Algorithm):
 		sweep_time = self.calibration_time/4
 
 		self.st_start = State("Start")
-		self.st_calibrate_right = State("Calibrating")
-		self.st_calibrate_left = State("Calibrating")
-		self.st_calibrate_centre = State("Calibrating")
+		self.st_calibrate_right = State("right")
+		self.st_calibrate_left = State("left")
+		self.st_calibrate_centre = State("recentre")
 
 		self.st_done = State("Done")
 
@@ -125,27 +127,29 @@ class ObstacleAvoidance(Algorithm):
 		Algorithm.__init__(self, robot)
 
 		self.base_speed = 100
-		self.rotation_speed = 145
+		self.rotation_speed = 125
 		self.recentre_speed = 90
-		self.follow_distance = 200
+		self.follow_distance = 250
 		
-		self.pid = PIDController(0.25, 0.001, 0.13)
+		self.pid = PIDController(0.025, 0.0001, 0.013)
 		self.pid_set_value = self.follow_distance
 
 
 
+		self.st_start = State("Start")
 		self.st_init = State("Init ObstacleAvoidance")
 		self.st_turn = State("Turn")
 		self.st_follow_around = State("Wall following")
 		self.st_recentre = State("Reinitialising")
 		self.st_done = State("Done")
 
+		self.st_start.add_transition(Transition(self.st_init))
 		self.st_init.add_transition(Transition(self.st_turn))
 		self.st_turn.add_transition(Transition(self.st_follow_around, self.robot.done_movement))
 		self.st_follow_around.add_transition(Transition(self.st_recentre, self.recentered))
 		self.st_recentre.add_transition(Transition(self.st_done))
 
-		self.fsm = FSM(self.st_init)
+		self.fsm = FSM(self.st_start)
 		self.dsp = Dispatcher(self.fsm)
 	
 		self.dsp.link_action(self.st_init, self.initialise)
@@ -155,6 +159,9 @@ class ObstacleAvoidance(Algorithm):
 		self.dsp.link_action(self.st_recentre, self.recentre)
 		self.dsp.link_action(self.st_done, self.robot.stop)
 
+	def reset(self):
+		self.fsm.reset()
+
 	def initialise(self):
 		self.robot.stop()
 		self.avoidance_direction = self.env.avoidance_direction
@@ -162,6 +169,7 @@ class ObstacleAvoidance(Algorithm):
 
 
 	def turn_away(self):
+		
 
 		if self.avoidance_direction == 'left':
 			angle = -90
@@ -176,13 +184,13 @@ class ObstacleAvoidance(Algorithm):
 		if self.avoidance_direction == 'left':
 			# following towards left, follow wall with ride side
 			steer = self.pid.calculate(self.env.dist_right)
-			steer_left = self.base_speed  - steer
-			steer_right = self.base_speed + steer
+			steer_left = self.base_speed  + steer
+			steer_right = self.base_speed - steer
 		else:
 			# following towards right, follow wall with left side
 			steer = self.pid.calculate(self.env.dist_left)
-			steer_left = self.base_speed  + steer
-			steer_right = self.base_speed - steer
+			steer_left = self.base_speed  - steer
+			steer_right = self.base_speed + steer
 
 		self.robot.motor(steer_left, steer_right)
 
@@ -193,12 +201,12 @@ class ObstacleAvoidance(Algorithm):
 		else:
 			self.robot.motor( self.recentre_speed, -self.recentre_speed)
 
-	def back_on_line(self):
+	def back_on_line(self, env):
 		return self.env.colour_left  > self.env.line_thershold or \
 			   self.env.colour_right > self.env.line_thershold
 
-	def recentered(self):
-		return abs(self.env.line_sens_val - 35) < 15
+	def recentered(self, env):
+		return abs(self.env.line_sens_val - 35) < 5
 
 
 
@@ -207,6 +215,7 @@ class ObstacleAvoidance(Algorithm):
 
 	def run(self):
 		self.fsm.tick(self.env)
+		print(self.fsm.get_state())
 		self.dsp.dispatch()	
 
 	def done(self, env):

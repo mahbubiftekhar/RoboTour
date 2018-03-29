@@ -75,7 +75,9 @@ st_line_lost.add_transition(Transition(st_line_lost, robot.line_sensor.no_line))
 st_line_lost.add_transition(Transition(st_obstacle_avoidance, obstacle_detected))
 
 
-st_obstacle_avoidance.add_transition(st_line_following, obstacle_avoidance.done)
+st_obstacle_avoidance.add_transition(Transition(st_line_following, obstacle_avoidance.done))
+st_obstacle_avoidance.on_activate(obstacle_avoidance.reset)
+
 
 fsm = FSM(st_start)
 dsp = Dispatcher(fsm)
@@ -124,7 +126,7 @@ def loop_time_hook():
 
 
 # instantiate the logger object
-logger = DataLogger("fsm_line_following", folder='./logs/', timer=timer_hook)
+logger = DataLogger("integration_test", folder='../logs/', timer=timer_hook)
 
 # add channels for sensor values
 for s in robot.line_sensor.detector_names:
@@ -138,22 +140,28 @@ for s in robot.line_sensor.detector_names:
 
 # add channels for combined value and steer
 logger.add_channel(DataChannel("line_sensor", line_sensor_hook))
-logger.add_channel(DataChannel("steer", steer_hook))
+# logger.add_channel(DataChannel("steer", steer_hook))
 logger.add_channel(DataChannel("poll_time", polling_hook))
+logger.add_channel(DataChannel("loop_time", loop_time_hook))
 
 logger.init()
 
 ####### 
 
+for i in range(10):
+	robot.hub.poll()
+
+assert robot.hub.connected
+robot.update_env()
 
 
 while fsm.current_state != st_stop:
 	# sense
 	robot.update_env()
-	print(fsm.get_state())
 	
 	# plan
 	fsm.tick(robot.env)
+	print(fsm.get_state(),end=' ')
 	
 	# act
 	dsp.dispatch()
