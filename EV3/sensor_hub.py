@@ -14,16 +14,22 @@ class SensorHub():
 		self.n_sonars = 4
 		self.sonar_maxrange = 255
 
-		self.tries_limit = 100
+		self.tries_limit = 10
 
 		# time to receive response from the hub
-		self.response_timeout = 10 #ms
+		self.response_timeout = 40 #ms
 		# time to have the entire frame transmitted
 		self.frame_timeout = 20
 
 		self.__DEBUG__ = False
 
+
+		# the order at which the bytes will come to the sensor
+		self.sensors = ['l0', 'l1', 'l2', 'l3', 'l4', 'l5',\
+						's0', 's1']
 		self.sensor_values = {}
+
+		self.bytes_per_frame = len(self.sensors)
 
 		self.last_poll = 0
 		self.last_poll_time = 0
@@ -69,10 +75,8 @@ class SensorHub():
 			
 			tries += 1
 
-		frame = self.get_frame()
+		self.get_frame()
 		end = time.perf_counter()
-
-		self.extract_from_frame(frame)
 		
 		poll_time = (end-start)*1000
 		self.debug_print("Response received in {:.2f}ms".format(poll_time))
@@ -87,10 +91,9 @@ class SensorHub():
 
 		dt = 0.001
 
-		start = time.perf_counter()
-
 		self.debug_print("Sending request")
 
+		start = time.perf_counter()
 		self.serial_port.write(b'r\n')
 
 		# while no response receieved
@@ -113,8 +116,6 @@ class SensorHub():
 
 	# method for receiving the full data frame over serial
 	def get_frame(self):
-		# frame buffer
-		out = bytearray()
 
 		# for timeout purposes
 		waiting = 0
@@ -122,6 +123,7 @@ class SensorHub():
 		cycles = 0
 
 		read_wait = 0
+		byte_count = 0
 
 		# record starting time
 		start = time.perf_counter()
@@ -131,15 +133,16 @@ class SensorHub():
 			if self.serial_port.inWaiting() > 0:
 
 				read_wait -= time.perf_counter()
-				c = self.serial_port.read(1)[0]
+				# convert the incoming byte to 
+				val = int(self.serial_port.read(1)[0])
 				read_wait += time.perf_counter()
-				out.append(c)
-				# end of frame designated by endline character
-				if(out[-1] == 10): #ASCII for \n
+
+				self.sensor_values[self.sensors[byte_count]] = val
+				byte_count += 1
+
+				if(byte_count == self.bytes_per_frame):
 					self.debug_print("Frame received in {} cycles ({:.2f}ms)".format(cycles, waiting*1000))
 					self.debug_print("Total read time: {}ms".format(read_wait*1000))
-					# remove newline and last comma
-					out = out[:-2]
 					break
 			else:
 				# if there is nothing received and we've waited long enough
@@ -149,8 +152,6 @@ class SensorHub():
 				# wait 10us
 				time.sleep(dt)
 				cycles += 1
-
-		return out.decode('ascii') if len(out) != 0 else None
 
 	# THE PROBLEM IS ABOVE !!!
 
