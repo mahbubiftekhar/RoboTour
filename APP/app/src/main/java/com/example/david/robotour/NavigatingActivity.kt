@@ -99,6 +99,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var toiletSpeech = true
     private var exitSpeech = true
     private var obstaclePopUp = true
+    private var twoUserMode = false
+    private var finnishing = false
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -107,6 +109,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     public override fun onDestroy() {
+        checkerThread.interrupt()
         // Shutdown TTS
         if (tts != null) {
             tts!!.stop()
@@ -183,7 +186,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     @RequiresApi(Build.VERSION_CODES.DONUT)
     override fun onInit(status: Int) {
-        println("status code: $status")
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tt
             val language = intent.getStringExtra("language")
@@ -433,6 +435,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun switchToFinnished() {
+        checkerThread.interrupt()
         runOnUiThread {
             if (userid == "1") {
                 async {
@@ -514,7 +517,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 startActivity(i)
             }
         }.show()
-
     }
 
     private fun deleteCache(context: Context) {
@@ -630,6 +632,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         tts4 = TextToSpeech(this, this)
+        async {
+            val twoUserOrNot = URL(url).readText()[18]
+            uiThread {
+                twoUserMode = twoUserOrNot == 'T'
+            }
+        }
         supportActionBar?.hide() //hide actionbar
         vibrate()
         async {
@@ -848,57 +856,56 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         }
                     }
                     floatingActionButton {
-                        //UI
+                        //Alert
                         imageResource = R.drawable.ic_chat_black_24dp
-                        //ColorStateList usually requires a list of states but this works for a single color
                         backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
                         lparams { alignParentLeft(); topMargin = dip(100); leftMargin = dip(20) }
-                        if (currentPic == -1) {
-                            when (language) {
-                                "French" -> {
-                                    artPieceDescription = "RoboTour calcule l'itinéraire optimal"
-                                    artPieceTitle = "RoboTour calcule l'itinéraire optimal"
-                                }
-                                "Chinese" -> {
-                                    artPieceDescription = "萝卜途正在计算最佳路线"
-                                    artPieceTitle = "萝卜途正在计算最佳路线"
-                                }
-                                "Spanish" -> {
-                                    artPieceDescription = "RoboTour está calculando la ruta óptima"
-                                    artPieceTitle = "RoboTour está calculando la ruta óptima"
-                                }
-                                "German" -> {
-                                    artPieceDescription = "RoboTour berechnet die optimale Route"
-                                    artPieceTitle = "RoboTour berechnet die optimale Route"
-                                }
-                            }
-                        } else {
-                            when (language) {
-                                "French" -> {
-                                    artPieceTitle = allArtPieces[currentPic].nameFrench
-                                    artPieceDescription = allArtPieces[currentPic].French_Desc
-                                }
-                                "Chinese" -> {
-                                    artPieceTitle = allArtPieces[currentPic].nameChinese
-                                    artPieceDescription = allArtPieces[currentPic].Chinese_Desc
-                                }
-                                "Spanish" -> {
-                                    artPieceTitle = allArtPieces[currentPic].nameSpanish
-                                    artPieceDescription = allArtPieces[currentPic].Spanish_Desc
-                                }
-                                "German" -> {
-                                    artPieceTitle = allArtPieces[currentPic].nameGerman
-                                    artPieceDescription = allArtPieces[currentPic].German_Desc
-                                }
-                                else -> {
-                                    artPieceTitle = allArtPieces[currentPic].name
-                                    artPieceDescription = allArtPieces[currentPic].English_Desc
-                                }
-                            }
-
-                        }
-                        //Alert
                         onClick {
+                            //UI
+                            //ColorStateList usually requires a list of states but this works for a single color
+                            if (!(currentPic in 0..9)) {
+                                when (language) {
+                                    "French" -> {
+                                        artPieceDescription = "RoboTour calcule l'itinéraire optimal"
+                                        artPieceTitle = "RoboTour calcule l'itinéraire optimal"
+                                    }
+                                    "Chinese" -> {
+                                        artPieceDescription = "萝卜途正在计算最佳路线"
+                                        artPieceTitle = "萝卜途正在计算最佳路线"
+                                    }
+                                    "Spanish" -> {
+                                        artPieceDescription = "RoboTour está calculando la ruta óptima"
+                                        artPieceTitle = "RoboTour está calculando la ruta óptima"
+                                    }
+                                    "German" -> {
+                                        artPieceDescription = "RoboTour berechnet die optimale Route"
+                                        artPieceTitle = "RoboTour berechnet die optimale Route"
+                                    }
+                                }
+                            } else {
+                                when (language) {
+                                    "French" -> {
+                                        artPieceTitle = allArtPieces[currentPic].nameFrench
+                                        artPieceDescription = allArtPieces[currentPic].LongFrench
+                                    }
+                                    "Chinese" -> {
+                                        artPieceTitle = allArtPieces[currentPic].nameChinese
+                                        artPieceDescription = allArtPieces[currentPic].LongChinese
+                                    }
+                                    "Spanish" -> {
+                                        artPieceTitle = allArtPieces[currentPic].nameSpanish
+                                        artPieceDescription = allArtPieces[currentPic].LongSpanish
+                                    }
+                                    "German" -> {
+                                        artPieceTitle = allArtPieces[currentPic].nameGerman
+                                        artPieceDescription = allArtPieces[currentPic].LongGerman
+                                    }
+                                    else -> {
+                                        artPieceTitle = allArtPieces[currentPic].name
+                                        artPieceDescription = allArtPieces[currentPic].LongEnglish
+                                    }
+                                }
+                            }
                             alert {
                                 customView {
                                     linearLayout {
@@ -1242,119 +1249,76 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
             }
         }
-        //Starting the thread which is defined above to keep polling the server for changes
-        val sortedNums: MutableCollection<Int> = arrayListOf(1, 5, 7)
-        updateScrollViewPictures(sortedNums)
     }
 
     /////
     private val checkerThread: Thread = object : Thread() {
-        /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
+        /*This thread will update the pictures,
+        this feature can be sold as an advertisement opportunity as well*/
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             val language = intent.getStringExtra("language")
             while (!isInterrupted) {
                 try {
-                    Thread.sleep(1000) //1000ms = 1 sec
                     runOnUiThread(object : Runnable {
                         override fun run() {
                             async {
                                 val a = URL(url).readText()
-                                println("++++++++" + a)
                                 /*This updates the picture and text for the user*/
                                 val paintings = a.substring(0, 9)
-                                if (userid == 1.toString() && !cancelRequest && a[20] == 'W') {
-                                    runOnUiThread {
-                                        alert(cancelRequestSent) {
-                                            cancellable(false)
-                                            setFinishOnTouchOutside(false)
-                                            positiveButton(positive) {
-                                                async {
-                                                    sendPUTNEW(a[20].toInt(), "F")
-                                                    sendPUTNEW(20, "F")
-                                                }
-                                            }
-                                            negativeButton(negative) {
-                                                async {
-                                                    sendPUTNEW(20, "F")
-                                                }
-                                            }
-                                        }.show()
-
-                                    }
-                                } else if (userid == 2.toString() && !cancelRequest && a[20] == 'Q') {
-                                    runOnUiThread {
-                                        alert(cancelRequestSent) {
-                                            cancellable(false)
-                                            setFinishOnTouchOutside(false)
-                                            positiveButton(positive) {
-                                                async {
-                                                    sendPUTNEW(a[20].toInt(), "F")
-                                                    sendPUTNEW(20, "F")
-                                                }
-                                            }
-                                            negativeButton(negative) {
-                                                async {
-                                                    sendPUTNEW(20, "F")
-                                                }
-                                            }
-                                        }.show()
-                                    }
-                                } else if (a[20] == 'F') {
-                                    cancelRequest = false
-                                }
                                 runOnUiThread { updateScrollView(paintings) }
                                 val counter = (0..16).count { a[it] == 'F' }
-                                if (counter == 17) {
+                                if (counter == 17 && finnishing) {
+                                    finnishing = false
                                     runOnUiThread {
                                         switchToFinnished()
                                         killThread = true
                                     }
                                 }
+                                if (a[14] == 'N' || a[14] == 'T') {
+                                    runOnUiThread {
+                                        //User going to the toilet
+                                        imageView?.setImageResource(R.drawable.toilet)
+                                        titleView?.text = toilet
+                                        descriptionView?.text = toilet
+                                    }
+                                }
+                                if (a[15] == 'N' || a[15] == 'T') {
+                                    println(">>>>5")
+                                    runOnUiThread {
+                                        //User going to the toilet
+                                        imageView?.setImageResource(R.drawable.exit)
+                                        titleView?.text = exit
+                                        descriptionView?.text = exit
+                                    }
+                                }
+                                if (a[15] == 'N' || a[15] == 'T') {
+                                    println(">>>>1")
+                                    runOnUiThread {
+                                        //User going to the toilet
+                                        imageView?.setImageResource(R.drawable.exit)
+                                        titleView?.text = exit
+                                        descriptionView?.text = exit
+                                    }
+                                }
+                                if (a[14] == 'A' && toiletSpeech) {
+                                    println(">>>>2")
+                                    toiletSpeech = false
+                                    speakOutToilet()
+                                }
+                                if (a[15] == 'A' && exitSpeech) {
+                                    exitSpeech = false
+                                    speakOutExit()
+                                }
+                                if (a[14] == 'F') {
+                                    toiletSpeech = true
+                                }
+                                if (a[15] == 'F') {
+                                    exitSpeech = true
+                                }
                                 for (i in 0..9) {
-                                    if (a[14] == 'N' || a[14] == 'T') {
-                                        runOnUiThread {
-                                            //User going to the toilet
-                                            imageView?.setImageResource(R.drawable.toilet)
-                                            titleView?.text = toilet
-                                            descriptionView?.text = toilet
-                                        }
-                                        break
-                                    }
-                                    if (a[15] == 'N' || a[15] == 'T') {
-                                        runOnUiThread {
-                                            //User going to the toilet
-                                            imageView?.setImageResource(R.drawable.exit)
-                                            titleView?.text = exit
-                                            descriptionView?.text = exit
-                                        }
-                                        break
-                                    }
-                                    if (a[15] == 'N' || a[15] == 'T') {
-                                        runOnUiThread {
-                                            //User going to the toilet
-                                            imageView?.setImageResource(R.drawable.exit)
-                                            titleView?.text = exit
-                                            descriptionView?.text = exit
-                                        }
-                                        break
-                                    }
-                                    if (a[14] == 'A' && toiletSpeech) {
-                                        toiletSpeech = false
-                                        speakOutToilet()
-                                        break
-                                    }
-                                    if (a[15] == 'A' && exitSpeech) {
-                                        exitSpeech = false
-                                        speakOutExit()
-                                        break
-                                    }
-                                    if (a[14] == 'F') {
-                                        toiletSpeech = true
-                                    }
-                                    if (a[15] == 'F') {
-                                        exitSpeech = true
-                                    }
+                                    println(">>>> in the for loop")
+
                                     if (a[i] == 'A' && speaking != i) {
                                         /*This will mean that when the robot has arrived at the painting*/
                                         if (tts != null) {
@@ -1466,6 +1430,55 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         }
                                     }
                                 }
+                                if (userid == 1.toString() && !cancelRequest && a[23] == 'W') {
+                                    runOnUiThread {
+                                        println(">>>>> in here aya")
+                                        cancelRequest = true
+                                        alert(cancelRequestSent) {
+                                            cancellable(false)
+                                            setFinishOnTouchOutside(false)
+                                            positiveButton(positive) {
+                                                async {
+                                                    sendPUTNEW(a[20].toInt(), "F")
+                                                    sendPUTNEW(23, "F")
+                                                    cancelRequest = false
+                                                }
+                                            }
+                                            negativeButton(negative) {
+                                                async {
+                                                    sendPUTNEW(23, "F")
+                                                    cancelRequest = false
+                                                }
+                                            }
+                                        }.show()
+                                    }
+                                } else if (userid == 2.toString() && !cancelRequest && a[23] == 'Q') {
+                                    runOnUiThread {
+                                        println(">>>>> in here ahas")
+                                        cancelRequest = true
+                                        alert(cancelRequestSent) {
+                                            cancellable(false)
+                                            setFinishOnTouchOutside(false)
+                                            positiveButton(positive) {
+                                                async {
+                                                    sendPUTNEW(a[20].toInt(), "F")
+                                                    sendPUTNEW(23, "F")
+                                                    cancelRequest = false
+                                                }
+                                            }
+                                            negativeButton(negative) {
+                                                async {
+                                                    sendPUTNEW(23, "F")
+                                                    cancelRequest = false
+                                                }
+                                            }
+                                        }.show()
+                                    }
+                                } else if (a[23] == 'F') {
+                                    println(">>>>>>>> in else if")
+                                    cancelRequest = false
+                                }
+
                                 if (a[20] == 'T' && obstaclePopUp) {
                                     obstaclePopUp = false
                                     speakOutObstacle()
@@ -1557,7 +1570,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                             }
-                            Thread.sleep(600)
                         }
                     }
                     )
@@ -1567,6 +1579,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
+                }
+                try{
+                    Thread.sleep(1500)
+                } catch(e:InterruptedException){
+
                 }
             }
             Thread.currentThread().interrupt()
@@ -1716,7 +1733,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
             val language = intent.getStringExtra("language")
-            if (input != -1) {
+            if (input in 0..9) {
                 when (language) {
                     "French" -> {
                         text = allArtPieces[input].French_Desc
@@ -1735,7 +1752,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     }
                 }
                 tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
-            } else {
+            } else if (input == -1) {
                 when (language) {
                     "French" -> {
                         text = "Calcule l'itinéraire optimal"
@@ -1958,13 +1975,17 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         * Q == USER1
         * W == USER2
         * */
-        if (userid == 1.toString()) {
-            async {
-                sendPUTNEW(20, paintingID.toString())
+        when {
+            !twoUserMode -> async {
+                sendPUTNEW(paintingID, "F")
             }
-        } else if (userid == 2.toString()) {
-            async {
+            userid == 1.toString() -> async {
                 sendPUTNEW(20, paintingID.toString())
+                sendPUTNEW(23, "W")
+            }
+            userid == 2.toString() -> async {
+                sendPUTNEW(20, paintingID.toString())
+                sendPUTNEW(23, "Q")
             }
         }
     }
@@ -1982,13 +2003,20 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 0 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.birthofvenus))
                 1 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.creationofadam))
                 2 -> {
-                    println("+++++ getting in here updateScrollView")
                     listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.david))
                 }
-                3 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.girlwithpearlearring))
-                4 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.monalisa))
-                5 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.napoleoncrossingthealps))
-                6 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.starrynight))
+                3 -> {
+                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.girlwithpearlearring))
+                }
+                4 -> {
+                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.monalisa))
+                }
+                5 -> {
+                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.napoleoncrossingthealps))
+                }
+                6 -> {
+                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.starrynight))
+                }
                 7 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.thelastsupper))
                 8 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.tsunami))
                 9 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.waterlillies))
@@ -2063,7 +2091,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             //Remove Painting From List
                             requestCancel(paintIndex)
                             //listPaintings[map[paintIndex]!!].visibility = View.GONE
-                            toast(cancelRequestSent)
+                            if (twoUserMode) {
+                                toast(cancelRequestSent)
+                            }
                             dismiss()
                         }
                     }

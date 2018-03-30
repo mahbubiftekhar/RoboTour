@@ -9,6 +9,7 @@ import org.jetbrains.anko.*
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.net.ConnectivityManager
+import android.preference.PreferenceManager
 import android.view.WindowManager
 import android.widget.Toast
 import kotlinx.android.synthetic.*
@@ -39,10 +40,21 @@ class MainActivity : AppCompatActivity() {
         return networkInfo != null && networkInfo.isConnected
     }
 
+    private fun saveInt(key: String, value: Int) {
+        /* Function to save an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val editor = sharedPreferences.edit()
+        editor.putInt(key, value)
+        editor.apply()
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
+        async{
+            saveInt("user", 1)
+        }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         verticalLayout {
             imageView(R.drawable.robotour_img2) {

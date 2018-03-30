@@ -55,7 +55,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ChooseActivity"
+            android:name=".ControlSelectionActivity"
             android:label="@string/title_activity_choose_level"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />

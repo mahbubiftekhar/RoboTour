@@ -4,7 +4,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.WindowManager
 import kotlinx.android.synthetic.main.activity_admin.*
@@ -179,7 +178,7 @@ class AdminActivity : AppCompatActivity() {
         AUX_RESET.setOnClickListener {
             /*Resets all the AUX, This means that the stuff from stuff such as skip etc will be reset, this
             excludes the user data */
-            for (i in 10..22) {
+            for (i in 10..24) {
                 async {
                     sendPUTNEW(i, "F")
                 }
@@ -191,7 +190,7 @@ class AdminActivity : AppCompatActivity() {
         }
         RESET_EVERYTHING.setOnClickListener {
             //Resets all from 0 .. 17
-            for (i in 0..22) {
+            for (i in 0..24) {
                 async {
                     sendPUTNEW(i, "F")
                 }
