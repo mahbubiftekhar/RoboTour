@@ -138,6 +138,9 @@ class WaitingActivity : AppCompatActivity() {
         if (t.state == Thread.State.NEW) {
             t.start()
         }
+        if (pictureThread.state == Thread.State.NEW) {
+            pictureThread.start()
+        }
     }
 
     private val pictureThread: Thread = object : Thread() {
@@ -145,7 +148,6 @@ class WaitingActivity : AppCompatActivity() {
         var a = 0
 
         override fun run() {
-            /*
             while (!isInterrupted) {
                 println("++++ picture thread WaitingActivity")
                 if (a > 9) {
@@ -186,7 +188,7 @@ class WaitingActivity : AppCompatActivity() {
                 } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
                 }
-            }*/
+            }
             Thread.currentThread().interrupt()
         }
     }

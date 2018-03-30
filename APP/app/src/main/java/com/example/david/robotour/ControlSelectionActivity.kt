@@ -8,8 +8,10 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
+import android.view.Gravity
 import android.view.Gravity.CENTER
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.*
 import org.apache.http.NameValuePair
@@ -29,6 +31,9 @@ class ControlSelectionActivity : AppCompatActivity() {
     private var message = ""
     private var waitingForListen = false
     private var text2: TextView? = null
+    private var imageView: ImageView? = null
+    private var descriptionView: TextView? = null
+
 
     private fun saveInt(key: String, value: Int) {
         /* Function to save an SharedPreference value which holds an Int*/
@@ -70,6 +75,23 @@ class ControlSelectionActivity : AppCompatActivity() {
             "Chinese" -> "寻找最近的RoboTour\n"
             else -> "Finding closest RoboTour"
         }
+        when(language){
+            "German" -> {
+
+            }
+            "French"-> {
+
+            }
+            "Spanish"->{
+
+            }
+            "Chinese"->{
+
+            }
+            else -> {
+
+            }
+        }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         verticalLayout {
             webView {
@@ -85,29 +107,39 @@ class ControlSelectionActivity : AppCompatActivity() {
                 gravity = CENTER
                 text = message
             }
+            imageView = imageView {
+                backgroundColor = Color.TRANSPARENT //Removes gray border
+                gravity = Gravity.CENTER_HORIZONTAL
+            }.lparams {
+                topMargin = dip(20)
+            }
+            descriptionView = textView {
+                text = ""
+                textSize = 20f
+                typeface = Typeface.DEFAULT
+                this.gravity = CENTER
+                padding = dip(10)
+            }
             background = ColorDrawable(Color.parseColor("#EEEEEE"))
         }
 
         async {
             val a = URL(url).readText()
             if (a[24] == 'T') {
-                println(">>>>>0")
                 switchBackToMain()
             } else if (a[16] == 'F') {
-                println(">>>>>1")
                 sendPUTNEW(16, "T")
                 saveInt("user", 1)
                 Thread.sleep(4000)
                 switchToPictures()
             } else if (a[17] == 'F') {
-                println(">>>>>2")
                 sendPUTNEW(17, "T")
                 saveInt("user", 2)
                 Thread.sleep(4000)
                 switchToPictures()
             } else {
-                println(">>>>>3")
                 Thread.sleep(4000)
+                waitingForListen = true
                 if (t.state == Thread.State.NEW) {
                     t.start()
                 }
@@ -117,7 +149,6 @@ class ControlSelectionActivity : AppCompatActivity() {
 
 
     private fun updatetext2() {
-
         when (language) {
             "German" -> {
                 text2?.text = "RoboTour nicht verfügbar, bitte warten Sie, um der Tour zu folgen\n"
@@ -136,43 +167,90 @@ class ControlSelectionActivity : AppCompatActivity() {
             }
         }
     }
+    private val pictureThread: Thread = object : Thread() {
+        /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
+        var a = 0
+
+        override fun run() {
+            while (!isInterrupted) {
+                println("++++ picture thread WaitingActivity")
+                if (a > 9) {
+                    //Reset A to avoid null pointers
+                    a = 0
+                }
+                try {
+                    //UI thread MUST be updates on the UI thread, other threads may not update the UI thread
+                    runOnUiThread {
+                        imageView?.setImageResource(allArtPieces[a].imageID)
+                        descriptionView?.text = allArtPieces[a].name
+                        when (language) {
+                            "French" -> {
+                                descriptionView?.text = allArtPieces[a].nameFrench
+
+                            }
+                            "German" -> {
+                                descriptionView?.text = allArtPieces[a].nameGerman
+
+                            }
+                            "Spanish" -> {
+                                descriptionView?.text = allArtPieces[a].nameSpanish
+
+                            }
+                            "Chinese" -> {
+                                descriptionView?.text = allArtPieces[a].nameChinese
+
+                            }
+                            else -> {
+                                descriptionView?.text = allArtPieces[a].name
+                            }
+                        }
+                    }
+                    Thread.sleep(1500)
+                    a++
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedIOException) {
+                    Thread.currentThread().interrupt()
+                }
+            }
+            Thread.currentThread().interrupt()
+        }
+    }
+
+    override fun onResume() {
+        if (pictureThread.state == Thread.State.NEW) {
+            pictureThread.start()
+        }
+        super.onResume()
+    }
 
     private fun switchBackToMain() {
         clearFindViewByIdCache()
-        toast("error occred")
+        toast("error occured")
+        waitingForListen = false
+        pictureThread.interrupt()
+        t.interrupt()
         startActivity<MainActivity>("language" to language) // now we can switch the activity
     }
 
     private fun switchToPictures() {
         clearFindViewByIdCache()
+        pictureThread.interrupt()
+        t.interrupt()
         startActivity<PicturesActivity>("language" to language) // now we can switch the activity
     }
 
     private fun switchToListen() {
         clearFindViewByIdCache()
+        pictureThread.interrupt()
+        t.interrupt()
         startActivity<ListenInActivity>("language" to language) // now we can switch the activity
     }
 
     override fun onBackPressed() {
         /*Overridden onBackPressed*/
         if (waitingForListen) {
-            val a = loadInt("user")
-            async {
-                when (a) {
-                    1 -> {
-                        sendPUTNEW(24, "F")
-                        sendPUTNEW(16, "F")
-                    }
-                    2 -> {
-                        sendPUTNEW(24, "F")
-                        sendPUTNEW(17, "F")
-                    }
-                    else -> {
-                        //Do nothing
-                    }
-                }
-            }
-            super.onBackPressed()
+            switchBackToMain()
         } else {
             toast("please wait")
         }

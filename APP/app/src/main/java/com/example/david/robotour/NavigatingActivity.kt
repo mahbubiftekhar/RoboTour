@@ -101,6 +101,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var obstaclePopUp = true
     private var twoUserMode = false
     private var finnishing = false
+    private var otherusercancel = ""
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -650,22 +651,27 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 speechText = "Thank you for using Ro-bow-tour"
                 restartApp = "START AGAIN"
                 closeApp = "FERMER APP"
+                otherusercancel = "D'autres utilisateurs souhaitent à cette peinture:\n"
             }
             "German" -> {
                 restartApp = "ANFANG"
                 closeApp = "SCHLIEßE APP"
+                otherusercancel = "Andere Benutzerwünsche zu diesem Bild:\n"
             }
             "Spanish" -> {
                 restartApp = "COMIENZO"
                 closeApp = "CERRAR APP"
+                otherusercancel = "Otro usuario desea esta pintura:\n"
             }
             "Chinese" -> {
                 restartApp = "重新开始"
                 closeApp = "关闭"
+                otherusercancel = "其他用户希望这幅画：\n"
             }
             else -> {
                 restartApp = "START AGAIN"
                 closeApp = "CLOSE APP"
+                otherusercancel = "Other user wishes to this painting: \n "
             }
         }
         when (language) {
@@ -1284,7 +1290,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                                 if (a[15] == 'N' || a[15] == 'T') {
-                                    println(">>>>5")
                                     runOnUiThread {
                                         //User going to the toilet
                                         imageView?.setImageResource(R.drawable.exit)
@@ -1293,7 +1298,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                                 if (a[15] == 'N' || a[15] == 'T') {
-                                    println(">>>>1")
                                     runOnUiThread {
                                         //User going to the toilet
                                         imageView?.setImageResource(R.drawable.exit)
@@ -1430,11 +1434,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         }
                                     }
                                 }
-                                if (userid == 1.toString() && !cancelRequest && a[23] == 'W') {
+                                if (userid == 1.toString() && !cancelRequest && a[23] == 'Q') {
                                     runOnUiThread {
                                         println(">>>>> in here aya")
                                         cancelRequest = true
-                                        alert(cancelRequestSent) {
+                                        alert(otherusercancel+ allArtPieces[a[20].toInt()]) {
                                             cancellable(false)
                                             setFinishOnTouchOutside(false)
                                             positiveButton(positive) {
@@ -1452,11 +1456,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             }
                                         }.show()
                                     }
-                                } else if (userid == 2.toString() && !cancelRequest && a[23] == 'Q') {
+                                } else if (userid == 2.toString() && !cancelRequest && a[23] == 'W') {
                                     runOnUiThread {
                                         println(">>>>> in here ahas")
                                         cancelRequest = true
-                                        alert(cancelRequestSent) {
+                                        alert(otherusercancel+ allArtPieces[a[20].toInt()]) {
                                             cancellable(false)
                                             setFinishOnTouchOutside(false)
                                             positiveButton(positive) {
@@ -1475,7 +1479,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         }.show()
                                     }
                                 } else if (a[23] == 'F') {
-                                    println(">>>>>>>> in else if")
                                     cancelRequest = false
                                 }
 

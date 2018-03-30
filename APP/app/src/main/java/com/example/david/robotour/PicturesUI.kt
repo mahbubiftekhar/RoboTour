@@ -15,6 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
 import java.io.IOException
+import java.net.URL
 import java.util.ArrayList
 
 @Suppress("DEPRECATION")
@@ -106,8 +107,18 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                                         } else {
                                             sendPUTNEW(17, "T")
                                         }
+                                        val a = URL(url).readText()
+                                        uiThread {
+                                            if (a[18] == 'T' && a[16] == 'T' && a[16] == 'T') {
+                                                //two user mode and both users ready
+                                                startActivity<NavigatingActivity>("language" to language)
+                                            } else if (a[18] == 'T') {
+                                                startActivity<WaitingActivity>("language" to language)
+                                            } else {
+                                                startActivity<NavigatingActivity>("language" to language)
+                                            }
+                                        }
                                     }
-                                    startActivity<NavigatingActivity>("language" to language)
                                 }
                                 negativeButton(negative) {
                                     // navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))
