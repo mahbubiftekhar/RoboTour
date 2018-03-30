@@ -50,6 +50,10 @@ class Robot():
 	def update_env(self):
 
 		self.env.line_sens_val = self.line_sensor.value_simple()
+		
+		for n in self.line_sensor.detector:
+			self.env.sees_line[n] = self.line_sensor.detector[n].line_detected
+
 		self.env.colour_left   = self.colourSensorL.value()
 		self.env.colour_right  = self.colourSensorR.value()
 
@@ -60,6 +64,7 @@ class Robot():
 
 		self.env.rot_right = self.motorR.position
 		self.env.rot_left  = self.motorL.position
+
 
 
 		self.env.update()

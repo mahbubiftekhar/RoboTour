@@ -4,6 +4,7 @@ from dispatcher import Dispatcher
 from algorithm import LineFollowing
 from robot import Robot
 from telemetry import *
+from transitions import OnBranch 
 
 # instantiate main robot class
 robot = Robot()
@@ -29,6 +30,8 @@ st_wait = State("Waiting")
 st_line_following = State("Line following")
 st_line_lost = State("Lost line")
 
+st_branch = State("Branch detected")
+
 st_stop = State("Stop")
 
 # define obstacle detection trigger
@@ -53,6 +56,9 @@ def seek_line():
 	line_follower.run()
 	line_follower.base_speed = tmp
 
+def branch_routine():
+	robot.motor(-100,100)
+
 
 sweep_time = 1750
 
@@ -73,6 +79,9 @@ st_wait.add_transition(TransitionTimed(5000, st_stop))
 
 st_line_following.add_transition(Transition(st_line_lost, robot.line_sensor.no_line))
 st_line_following.add_transition(Transition(st_wait, obstacle_detected))
+st_line_following.add_transition(OnBranch(st_branch))
+
+st_branch.add_transition(TransitionTimed(500, st_line_following))
 
 st_line_lost.set_default(st_line_following)
 st_line_lost.add_transition(Transition(st_line_lost, robot.line_sensor.no_line))
@@ -91,6 +100,8 @@ dsp.link_action(st_wait, robot.stop)
 
 dsp.link_action(st_line_following, line_follower.run)
 dsp.link_action(st_line_lost, seek_line)
+
+dsp.link_action(st_branch, branch_routine)
 
 dsp.link_action(st_stop, robot.stop)
 
@@ -119,6 +130,12 @@ def steer_hook():
 def polling_hook():
 	return robot.hub.last_poll_time
 
+def rot_right_hook():
+	return robot.env.rot_right
+
+def rot_left_hook():
+	return robot.env.rot_left
+
 
 # instantiate the logger object
 logger = DataLogger("fsm_line_following", folder='./logs/', timer=timer_hook)
@@ -136,6 +153,8 @@ for s in robot.line_sensor.detector_names:
 # add channels for combined value and steer
 logger.add_channel(DataChannel("line_sensor", line_sensor_hook))
 logger.add_channel(DataChannel("steer", steer_hook))
+logger.add_channel(DataChannel("right_wheel", rot_right_hook))
+logger.add_channel(DataChannel("left_wheel", rot_left_hook))
 logger.add_channel(DataChannel("poll_time", polling_hook))
 
 logger.init()

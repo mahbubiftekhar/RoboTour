@@ -29,6 +29,8 @@ class Environment():
 		self.avoidance_direction = 'left'
 		self.loop_time = 0
 
+		self.sees_line = {}
+
 
 	def init(self):
 		self.clock_init()
