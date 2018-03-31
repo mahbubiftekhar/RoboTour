@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="com.example.david.robotour.TempActivity">
+    android:fitsSystemWindows="true">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -150,6 +149,14 @@
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
                 android:text="@string/two_user_mode_on"
+                tools:ignore="ButtonStyle" />
+            <Button
+                android:id="@+id/RandomCarousel"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/random_carousel"
                 tools:ignore="ButtonStyle" />
         </LinearLayout>
 

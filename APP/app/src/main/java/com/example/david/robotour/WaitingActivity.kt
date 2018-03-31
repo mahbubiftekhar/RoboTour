@@ -1,5 +1,6 @@
 package com.example.david.robotour
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
@@ -103,12 +104,14 @@ class WaitingActivity : AppCompatActivity() {
             }
         }
     }
-    private fun startThread(){
+
+    private fun startThread() {
         if (t.state == Thread.State.NEW) {
             t.start()
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateText() {
         when (language) {
             "German" -> {
@@ -170,24 +173,24 @@ class WaitingActivity : AppCompatActivity() {
         }
     }
 
-        private fun interruptAllThreads() {
-            //This function interrupts all the threads
+    private fun interruptAllThreads() {
+        //This function interrupts all the threads
+        pictureThread.interrupt()
+        t.interrupt()
+        pictureThread.interrupt()
+        t.interrupt()
+    }
+
+    override fun onDestroy() {
+        t.interrupt()
+        if (pictureThread.state == Thread.State.RUNNABLE) {
             pictureThread.interrupt()
-            t.interrupt()
-            pictureThread.interrupt()
-            t.interrupt()
         }
-
-        override fun onDestroy() {
-            t.interrupt()
-            if (pictureThread.state == Thread.State.RUNNABLE) {
-                pictureThread.interrupt()
-            }
-            super.onDestroy()
-        }
+        super.onDestroy()
+    }
 
 
-        override fun onResume() {
+    override fun onResume() {
         super.onResume()
         if (pictureThread.state == Thread.State.NEW) {
             pictureThread.start()

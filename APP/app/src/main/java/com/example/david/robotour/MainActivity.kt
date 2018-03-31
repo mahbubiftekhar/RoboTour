@@ -13,11 +13,6 @@ import android.preference.PreferenceManager
 import android.view.WindowManager
 import android.widget.Toast
 import kotlinx.android.synthetic.*
-import android.text.method.TextKeyListener.clear
-import android.R.id.edit
-import android.content.SharedPreferences
-
-
 
 @Suppress("DEPRECATION")
 var url = "http://www.mahbubiftekhar.co.uk/receiver.php"
@@ -57,28 +52,25 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
-        async{
+        async {
             saveInt("user", 1)
         }
         val a = loadInt("urlnum")
-        //background = ResourcesCompat.getDrawable(resources, R.drawable.rb2, null) Using XML
-        // Using kotlin - better ;)
-        //Removes gray border
 
         when (a) {
             1 -> {
                 url = "http://www.mahbubiftekhar.co.uk/receiver.php"
-                saveInt("urlnum",1)
+                saveInt("urlnum", 1)
             }
             2 -> {
                 url = "http://www.mahbubiftekhar.co.uk/receiver2.php"
                 toast("WARNING!!!: receiver2 1&1")
-                saveInt("urlnum",2)
+                saveInt("urlnum", 2)
             }
             3 -> {
                 url = "http://homepages.inf.ed.ac.uk/s1539308/receiver.php"
                 toast("WARNING!!!: homepages receiver")
-                saveInt("urlnum",3)
+                saveInt("urlnum", 3)
             }
         //This will keep the screen on, overriding users settings
         }

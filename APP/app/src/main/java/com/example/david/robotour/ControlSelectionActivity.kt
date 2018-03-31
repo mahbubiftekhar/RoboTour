@@ -34,7 +34,6 @@ class ControlSelectionActivity : AppCompatActivity() {
     private var imageView: ImageView? = null
     private var descriptionView: TextView? = null
 
-
     private fun saveInt(key: String, value: Int) {
         /* Function to save an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)

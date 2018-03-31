@@ -176,6 +176,14 @@ class AdminActivity : AppCompatActivity() {
             }
         }
 
+        RandomCarousel.setOnClickListener {
+            async {
+                for (i in 0..9) {
+                    sendPUTNEW(i, i.toString())
+                }
+            }
+        }
+
         STOP_ROBOTOUR.setOnClickListener {
             /*Sets Robot stop to true*/
             async {
@@ -197,27 +205,27 @@ class AdminActivity : AppCompatActivity() {
             println(">>>>before")
             when (loadInt("urlnum")) {
                 1 -> {
-                    saveInt("urlnum",2)
+                    saveInt("urlnum", 2)
                     toast("receiver2 set, app will restart")
-                    async{
+                    async {
                         clearFindViewByIdCache()
                         Thread.sleep(3000)
                         restartApp()
                     }
                 }
                 2 -> {
-                    saveInt("urlnum",3)
+                    saveInt("urlnum", 3)
                     toast("homepages set, app will restart")
-                    async{
+                    async {
                         clearFindViewByIdCache()
                         Thread.sleep(3000)
                         restartApp()
                     }
                 }
                 3 -> {
-                    saveInt("urlnum",1)
+                    saveInt("urlnum", 1)
                     toast("normal receiver set, app will restart")
-                    async{
+                    async {
                         clearFindViewByIdCache()
                         Thread.sleep(3000)
                         restartApp()
@@ -308,7 +316,8 @@ class AdminActivity : AppCompatActivity() {
         updateTextThread.start()
 
     }
-    private fun restartApp (){
+
+    private fun restartApp() {
         val i = baseContext.packageManager
                 .getLaunchIntentForPackage(baseContext.packageName)
         i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

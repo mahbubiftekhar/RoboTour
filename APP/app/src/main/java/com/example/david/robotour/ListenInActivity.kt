@@ -499,7 +499,6 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         userid = loadInt("user").toString()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_navigating)
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
@@ -508,7 +507,6 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             Thread.sleep(1500)
             speakOutOnCreate()
         }
-
         allArtPieces.run {
             add(PicturesActivity.ArtPiece(name = "The Birth of Venus",
                     artist = "Sandro Botticelli", nameChinese = "维纳斯的诞生", nameGerman = "Die Geburt der Venus", nameSpanish = "El nacimiento de Venus", nameFrench = "La naissance de Vénus",

@@ -15,7 +15,6 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
 import java.io.IOException
-import java.net.URL
 import java.util.ArrayList
 
 @Suppress("DEPRECATION")
