@@ -44,7 +44,9 @@ st_stop = State("Stop")
 
 # define obstacle detection trigger
 def obstacle_detected(env):
-	return env.dist_front < 300
+	return env.dist_front < 200
+
+
 
 def seek_line():
 	tmp = line_follower.base_speed
@@ -63,11 +65,33 @@ def branch_routine():
 		robot.motor(175,0)
 	elif robot.env.next_turn == 'forward':
 		line_follower.run()
+	elif robot.env.next_turn == 'back':
+		# Michal in this part the robot needs to turn 180 degrees,there should be a better way than calling motor()
+		robot.motor(250,-250)
+	elif robot.env.next_turn == 'stop':
+		robot.stop()
 	else:
 		pass  # arrvided, turn pointer
 
 def determine_next_turn():
-	robot.env.next_turn = robot.env.turns_list.pop()
+
+	print(robot.env.positions_list)
+	if not robot.env.positions_list:
+		robot.env.next_turn = 'stop'
+	else:
+		robot.env.next_position = robot.env.positions_list.pop()
+		robot.env.next_orientation = robot.env.orientation_map[(robot.env.position, robot.env.next_position)]
+		convert_to_direction()
+		print(robot.env.turns_list)
+		robot.env.next_turn = robot.env.turns_list.pop()
+
+		if (robot.env.position, robot.env. next_position) in robot.env.obstacle_map:
+
+			robot.env.avoidance_direction = robot.env.obstacle_map[(robot.env.position, robot.env.next_position)]
+		else:
+			robot.env.avoidance_direction = 'stop'
+
+		robot.env.position = robot.env.next_position
 
 def black_line_detected(env):
 	if robot.env.next_turn == 'forward':
@@ -85,9 +109,29 @@ def black_line_detected(env):
 		else:
 			# turn right and follow the black line, update the orientation, not the lccation
 			robot.motor(0,175)
-			
+
 			# follow black line until it saw the white line
 			pass
+
+def convert_to_direction():
+	if (robot.env.orientation == 'N' and robot.env.next_orientation == 'E') or (robot.env.orientation == 'E' and robot.env.next_orientation == 'S') or (robot.env.orientation == 'S' and robot.env.next_orientation == 'W') or (robot.env.orientation == 'W' and robot.env.next_orientation == 'N'):
+		robot.env.turns_list = ['right']
+
+	elif (robot.env.orientation == 'N' and robot.env.next_orientation == 'W') or (robot.env.orientation == 'E' and robot.env.next_orientation == 'N')  or (robot.env.orientation == 'S' and robot.env.next_orientation == 'E') or (robot.env.orientation == 'W' and robot.env.next_orientation == 'S'):
+		robot.env.turns_list = ['left']
+
+	elif (robot.env.orientation == 'N' and robot.env.next_orientation == 'S') or (robot.env.orientation == 'E' and robot.env.next_orientation == 'W') or (robot.env.orientation == 'S' and robot.env.next_orientation == 'N') or (robot.env.orientation == 'W' and robot.env.next_orientation == 'E'):
+		robot.env.turns_list = ['back']
+
+	elif (robot.env.orientation == robot.env.next_orientation):
+		robot.env.turns_list = ['forward']
+
+	else:
+		# error
+		pass
+
+	robot.env.orientation = robot.env.next_orientation
+
 
 
 sweep_time = 1750
@@ -217,7 +261,7 @@ while fsm.current_state != st_stop:
 	
 	# plan
 	fsm.tick(robot.env)
-	print(fsm.get_state(),end=' ')
+	# print(fsm.get_state(),end=' ')
 	
 	# act
 	dsp.dispatch()

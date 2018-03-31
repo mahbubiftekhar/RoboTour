@@ -140,6 +140,9 @@ class SimpleLineDetector():
 		self.max_val = 255
 		self.min_val = 0
 
+		self.hi_weight = 0.6
+		self.lo_weight = 1 - self.hi_weight
+
 		self.hi_max = self.min_val
 		self.lo_min = self.max_val
 
@@ -164,11 +167,11 @@ class SimpleLineDetector():
 		
 		if self.raw_value > self.hi_max:
 			self.hi_max = self.raw_value
-			self.threshold = (self.hi_max + self.lo_min) / 2
+			self.threshold = (self.hi_max*self.hi_weight + self.lo_min*self.lo_weight)
 
 		if self.raw_value < self.lo_min:
 			self.lo_min = self.raw_value
-			self.threshold = (self.hi_max + self.lo_min) / 2
+			self.threshold = (self.hi_max*self.hi_weight + self.lo_min*self.lo_weight)
 
 class LineSensor():
 

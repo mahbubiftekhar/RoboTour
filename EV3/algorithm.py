@@ -70,7 +70,7 @@ class LineFollowing(Algorithm):
 		steer_right = self.base_speed - self.steer
 		steer_left = self.base_speed + self.steer
 
-		print(current_value)
+		# print(current_value)
 		self.robot.motor(steer_left, steer_right)
 
 
@@ -115,7 +115,7 @@ class Calibration(Algorithm):
 
 	def run(self):
 		self.fsm.tick(self.env)
-		print(self.fsm.get_state())
+		# print(self.fsm.get_state())
 		self.dsp.dispatch()
 
 	def done(self, env):
@@ -190,12 +190,14 @@ class ObstacleAvoidance(Algorithm):
 	def turn_away(self):
 		
 		print("turning:",self.avoidance_direction)
-		if self.avoidance_direction == 'left':
+		if self.avoidance_direction == 'stop':
+			self.robot.stop()
+		elif self.avoidance_direction == 'left':
 			angle = -90
+			self.robot.rotate(angle, speed=self.rotation_speed)
 		else:
 			angle = 90
-
-		self.robot.rotate(angle, speed=self.rotation_speed)
+			self.robot.rotate(angle, speed=self.rotation_speed)
 
 
 	def follow_wall_2(self):
@@ -215,11 +217,13 @@ class ObstacleAvoidance(Algorithm):
 
 	def follow_wall(self):
 		spd = 0.5
-		if self.env.dist_front < 110:
+		if self.avoidance_direction == 'stop':
+			self.robot.stop()
+		elif self.env.dist_front < 110:
 			# if somethings in front then stop?
 			self.robot.stop()
 			return
-		if self.avoidance_direction == 'left':
+		elif self.avoidance_direction == 'left':
 			if self.env.dist_right < 110:
 				self.robot.motor(50*spd, 150*spd)
 			elif self.env.dist_right > 15:
@@ -240,7 +244,9 @@ class ObstacleAvoidance(Algorithm):
 
 
 	def recentre(self):
-		if self.avoidance_direction == 'left':
+		if self.avoidance_direction == 'stop':
+			self.robot.stop()
+		elif self.avoidance_direction == 'left':
 			self.robot.motor(-self.recentre_speed,  self.recentre_speed)
 		else:
 			self.robot.motor( self.recentre_speed, -self.recentre_speed)
@@ -250,7 +256,7 @@ class ObstacleAvoidance(Algorithm):
 			   self.env.colour_right > self.env.line_thershold
 
 	def recentered(self, env):
-		return abs(self.env.line_sens_val - 35) < 5
+		return abs(self.env.line_sens_val - 35) <= 5
 
 
 
@@ -259,7 +265,7 @@ class ObstacleAvoidance(Algorithm):
 
 	def run(self):
 		self.fsm.tick(self.env)
-		print(self.fsm.get_state())
+		# print(self.fsm.get_state())
 		self.dsp.dispatch()	
 		self.logger.log()
 

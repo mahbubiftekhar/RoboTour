@@ -24,5 +24,5 @@ class OnBranch(Transition):
 			if True in self.window[n]:
 				activated_sensors_in_window += 1
 
-		print(activated_sensors_in_window, end=' ')
+		# print(activated_sensors_in_window, end=' ')
 		return activated_sensors_in_window >= self.sensors_to_trigger
