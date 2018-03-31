@@ -276,7 +276,8 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
             } else {
             }
-        } else { }
+        } else {
+        }
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
             val language = intent.getStringExtra("language")
@@ -1034,6 +1035,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts6!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
+
     private fun speakOutExit() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
@@ -1093,12 +1095,12 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         }
                                         break
                                     }
-                                    if(a[14] == 'A'){
-                                            speakOutToilet()
+                                    if (a[14] == 'A') {
+                                        speakOutToilet()
                                         break
                                     }
-                                    if(a[15] == 'A'){
-                                            speakOutExit()
+                                    if (a[15] == 'A') {
+                                        speakOutExit()
                                         break
                                     }
                                     if (a[14] == 'N') {
@@ -1362,7 +1364,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 listPaintings[i].visibility = View.GONE
             }
         }
-        for (i in 0..numSelectedPaintings-1) {
+        for (i in 0..numSelectedPaintings - 1) {
             print("£££££" + i)
             listPaintings[i].visibility = View.VISIBLE
         }
@@ -1388,10 +1390,11 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
     }
+
     private fun getETA(paintingIndex: Int): String {
         /*This function will get the ETA*/
-        for(i in 0..map.size){
-            if(map[i]==paintingIndex){
+        for (i in 0..map.size) {
+            if (map[i] == paintingIndex) {
                 return "ETA $i min"
             }
         }

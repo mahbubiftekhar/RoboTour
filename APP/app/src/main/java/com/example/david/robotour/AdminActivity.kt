@@ -19,6 +19,8 @@ import java.util.ArrayList
 import org.jetbrains.anko.*
 import java.io.InterruptedIOException
 import java.net.URL
+import android.content.Intent
+import kotlinx.android.synthetic.*
 
 
 class AdminActivity : AppCompatActivity() {
@@ -34,7 +36,8 @@ class AdminActivity : AppCompatActivity() {
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
         val httPpost = HttpPost(url)
-        try { val nameValuePairs = ArrayList<NameValuePair>(4)
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
             nameValuePairs.add(BasicNameValuePair("command$identifier", command))
             httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
             httpclient.execute(httPpost)
@@ -95,8 +98,8 @@ class AdminActivity : AppCompatActivity() {
             "6" -> true
             "7" -> true
             "8" -> true
-            "9"-> true
-            "10"->true
+            "9" -> true
+            "10" -> true
             " " -> true
             else -> false
         }
@@ -134,6 +137,11 @@ class AdminActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
+        fun loadInt(key: String): Int {
+            /*Function to load an SharedPreference value which holds an Int*/
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
+            return sharedPreferences.getInt(key, 0)
+        }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         sendy.setOnClickListener {
             if (destination == null) {
@@ -178,19 +186,48 @@ class AdminActivity : AppCompatActivity() {
         AUX_RESET.setOnClickListener {
             /*Resets all the AUX, This means that the stuff from stuff such as skip etc will be reset, this
             excludes the user data */
-            for (i in 10..22) {
+            for (i in 10..24) {
                 async {
                     sendPUTNEW(i, "F")
                 }
             }
             vibrate()
         }
-        SWITCH_URL.setOnClickListener{
-           toast("function deprecated - speak to Mahbub")
+        SWITCH_URL.setOnClickListener {
+            println(">>>>before")
+            when (loadInt("urlnum")) {
+                1 -> {
+                    saveInt("urlnum",2)
+                    toast("receiver2 set, app will restart")
+                    async{
+                        clearFindViewByIdCache()
+                        Thread.sleep(3000)
+                        restartApp()
+                    }
+                }
+                2 -> {
+                    saveInt("urlnum",3)
+                    toast("homepages set, app will restart")
+                    async{
+                        clearFindViewByIdCache()
+                        Thread.sleep(3000)
+                        restartApp()
+                    }
+                }
+                3 -> {
+                    saveInt("urlnum",1)
+                    toast("normal receiver set, app will restart")
+                    async{
+                        clearFindViewByIdCache()
+                        Thread.sleep(3000)
+                        restartApp()
+                    }
+                }
+            }
         }
         RESET_EVERYTHING.setOnClickListener {
             //Resets all from 0 .. 17
-            for (i in 0..22) {
+            for (i in 0..24) {
                 async {
                     sendPUTNEW(i, "F")
                 }
@@ -249,29 +286,33 @@ class AdminActivity : AppCompatActivity() {
             }
             vibrate()
         }
-        CONTROLOFF.setOnClickListener{
+        CONTROLOFF.setOnClickListener {
             async {
                 sendPUTNEW(19, "F")
             }
             vibrate()
         }
-        USER2_MODE_ON.setOnClickListener{
+        USER2_MODE_ON.setOnClickListener {
             async {
                 sendPUTNEW(18, "T")
             }
             vibrate()
-            toast("Function deprecated")
         }
-        USER2_MODE_OFF.setOnClickListener{
+        USER2_MODE_OFF.setOnClickListener {
             async {
                 sendPUTNEW(18, "F")
             }
             vibrate()
-            toast("Function deprecated")
         }
         //This languages the user thread to check for updates
         updateTextThread.start()
 
+    }
+    private fun restartApp (){
+        val i = baseContext.packageManager
+                .getLaunchIntentForPackage(baseContext.packageName)
+        i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(i)
     }
 
     private fun vibrate() {
@@ -282,6 +323,14 @@ class AdminActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(300)
         }
+    }
+
+    private fun saveInt(key: String, value: Int) {
+        /* Function to save an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val editor = sharedPreferences.edit()
+        editor.putInt(key, value)
+        editor.apply()
     }
 
     override fun onResume() {

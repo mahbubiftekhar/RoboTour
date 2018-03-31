@@ -25,7 +25,8 @@ class WaitingActivity : AppCompatActivity() {
     private var message = ""
     private var imageView: ImageView? = null
     private var descriptionView: TextView? = null
-
+    private var textView2: TextView? = null
+    private var transfered = true
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -39,12 +40,21 @@ class WaitingActivity : AppCompatActivity() {
         user = loadInt("user") //Set the user number
 
         message = when (language) {
-            "English" -> "WaitingActivity for other user..."
-            "German" -> "Bitte Warten Sie Auf den Anderen User..."
-            "French" -> "Veuillez Attendre l'Autre Utilisateur..."
-            "Spanish" -> "Por Favor Espere al Otro Usuario..."
-            "Chinese" -> "请等待其他用户..."
-            else -> "Please Wait For the Other User..."
+            "German" -> {
+                "Senden Sie Ihre Auswahl an RoboTour\n"
+            }
+            "French" -> {
+                "Envoi de votre sélection à RoboTour\n"
+            }
+            "Spanish" -> {
+                "Envío de su selección a RoboTour\n"
+            }
+            "Chinese" -> {
+                "将您的选择发送到RoboTour\n"
+            }
+            else -> {
+                "Sending your selection to RoboTour"
+            }
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         verticalLayout {
@@ -53,7 +63,7 @@ class WaitingActivity : AppCompatActivity() {
                 settings.loadWithOverviewMode = true
                 settings.useWideViewPort = true
             }
-            textView {
+            textView2 = textView {
                 textSize = 34f
                 typeface = Typeface.DEFAULT_BOLD
                 padding = dip(5)
@@ -77,13 +87,51 @@ class WaitingActivity : AppCompatActivity() {
             background = ColorDrawable(Color.parseColor("#EEEEEE"))
         }
         async {
-            switchToNavigate() //This should be removed in the final implementation
+            Thread.sleep(3000)
+            val a = URL(url).readText()
+            uiThread {
+                if (a[18] == 'F' && user == 1) {
+                    println(">>>>>in here first if")
+                    startActivity<NavigatingActivity>("language" to language)
+                } else {
+                    runOnUiThread {
+                        println(">>>>>in here starting thread")
+                        updateText()
+                        startThread()
+                    }
+                }
+            }
         }
+    }
+    private fun startThread(){
+        if (t.state == Thread.State.NEW) {
+            t.start()
+        }
+    }
 
+    private fun updateText() {
+        when (language) {
+            "German" -> {
+                textView2?.text = "Bitte Warten Sie Auf den Anderen User..."
+            }
+            "French" -> {
+                textView2?.text = "Veuillez Attendre l'Autre Utilisateur..."
+            }
+            "Spanish" -> {
+                textView2?.text = "Por Favor Espere al Otro Usuario..."
+            }
+            "Chinese" -> {
+                textView2?.text = "请等待其他用户..."
+            }
+            else -> {
+                textView2?.text = "Please Wait For the Other User..."
+            }
+        }
     }
 
     fun switchToNavigate() {
-        Thread.sleep(6500) //This should be removed in the final implementation
+        t.interrupt()
+        pictureThread.interrupt()
         interruptAllThreads() //Interrupt all the threads
         clearFindViewByIdCache()
         startActivity<NavigatingActivity>("language" to language) // now we can switch the activity
@@ -91,6 +139,7 @@ class WaitingActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         /*Overridden onBackPressed*/
+        toast(message)
     }
 
     private val t: Thread = object : Thread() {
@@ -101,17 +150,9 @@ class WaitingActivity : AppCompatActivity() {
                 println("++++ t thread WaitingActivity")
                 try {
                     val a = URL(url).readText()
-                    if (user == 1) {
-                        if (a[17] == 'Y') {
-                            //If user 1 has made their selection and you are user 2
-                            switchToNavigate()
-                        }
-                    } else {
-                        println("USERS ID IS 2")
-                        //If user 2 has made their selection and you are user 1
-                        if (a[16] == 'Y') {
-                            switchToNavigate()
-                        }
+                    if (a[16] == 'T' && a[17] == 'T' && transfered) {
+                        transfered = false
+                        switchToNavigate()
                     }
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
@@ -119,6 +160,10 @@ class WaitingActivity : AppCompatActivity() {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
+                }
+                try {
+                    Thread.sleep(750)
+                } catch (e: InterruptedException) {
                 }
             }
             Thread.currentThread().interrupt()
@@ -133,10 +178,16 @@ class WaitingActivity : AppCompatActivity() {
         t.interrupt()
     }
 
+    override fun onDestroy() {
+        t.interrupt()
+        pictureThread.start()
+        super.onDestroy()
+    }
+
     override fun onResume() {
         super.onResume()
-        if(t.state == Thread.State.NEW) {
-            t.start()
+        if (pictureThread.state == Thread.State.NEW) {
+            pictureThread.start()
         }
     }
 
@@ -145,7 +196,6 @@ class WaitingActivity : AppCompatActivity() {
         var a = 0
 
         override fun run() {
-            /*
             while (!isInterrupted) {
                 println("++++ picture thread WaitingActivity")
                 if (a > 9) {
@@ -186,7 +236,7 @@ class WaitingActivity : AppCompatActivity() {
                 } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
                 }
-            }*/
+            }
             Thread.currentThread().interrupt()
         }
     }
