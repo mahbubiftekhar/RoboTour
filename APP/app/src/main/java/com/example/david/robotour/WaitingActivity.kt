@@ -26,7 +26,7 @@ class WaitingActivity : AppCompatActivity() {
     private var imageView: ImageView? = null
     private var descriptionView: TextView? = null
     private var textView2: TextView? = null
-
+    private var transfered = true
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -94,15 +94,18 @@ class WaitingActivity : AppCompatActivity() {
                     println(">>>>>in here first if")
                     startActivity<NavigatingActivity>("language" to language)
                 } else {
-                    println(">>>>>in here starting thread")
-                    updateText()
-                    if (t.state == Thread.State.NEW) {
-                        t.start()
+                    runOnUiThread {
+                        println(">>>>>in here starting thread")
+                        updateText()
+                        startThread()
                     }
                 }
             }
-
-
+        }
+    }
+    private fun startThread(){
+        if (t.state == Thread.State.NEW) {
+            t.start()
         }
     }
 
@@ -127,6 +130,8 @@ class WaitingActivity : AppCompatActivity() {
     }
 
     fun switchToNavigate() {
+        t.interrupt()
+        pictureThread.interrupt()
         interruptAllThreads() //Interrupt all the threads
         clearFindViewByIdCache()
         startActivity<NavigatingActivity>("language" to language) // now we can switch the activity
@@ -145,7 +150,8 @@ class WaitingActivity : AppCompatActivity() {
                 println("++++ t thread WaitingActivity")
                 try {
                     val a = URL(url).readText()
-                    if (a[16] == 'T' && a[17] == 'T') {
+                    if (a[16] == 'T' && a[17] == 'T' && transfered) {
+                        transfered = false
                         switchToNavigate()
                     }
                 } catch (e: InterruptedException) {
@@ -155,7 +161,10 @@ class WaitingActivity : AppCompatActivity() {
                 } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
                 }
-                Thread.sleep(700)
+                try {
+                    Thread.sleep(750)
+                } catch (e: InterruptedException) {
+                }
             }
             Thread.currentThread().interrupt()
         }
@@ -167,6 +176,12 @@ class WaitingActivity : AppCompatActivity() {
         t.interrupt()
         pictureThread.interrupt()
         t.interrupt()
+    }
+
+    override fun onDestroy() {
+        t.interrupt()
+        pictureThread.start()
+        super.onDestroy()
     }
 
     override fun onResume() {

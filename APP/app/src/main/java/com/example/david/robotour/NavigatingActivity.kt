@@ -650,27 +650,27 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             "French" -> {
                 speechText = "Thank you for using Ro-bow-tour"
                 restartApp = "START AGAIN"
-                closeApp = "FERMER APP"
+                closeApp = "FERMER APP?"
                 otherusercancel = "D'autres utilisateurs souhaitent à cette peinture:\n"
             }
             "German" -> {
                 restartApp = "ANFANG"
-                closeApp = "SCHLIEßE APP"
+                closeApp = "SCHLIEßE APP?"
                 otherusercancel = "Andere Benutzerwünsche zu diesem Bild:\n"
             }
             "Spanish" -> {
                 restartApp = "COMIENZO"
-                closeApp = "CERRAR APP"
+                closeApp = "CERRAR APP?"
                 otherusercancel = "Otro usuario desea esta pintura:\n"
             }
             "Chinese" -> {
                 restartApp = "重新开始"
-                closeApp = "关闭"
+                closeApp = "关闭?"
                 otherusercancel = "其他用户希望这幅画：\n"
             }
             else -> {
                 restartApp = "START AGAIN"
-                closeApp = "CLOSE APP"
+                closeApp = "Close the app?"
                 otherusercancel = "Other user wishes to this painting: \n "
             }
         }
