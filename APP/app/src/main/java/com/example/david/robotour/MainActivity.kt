@@ -84,14 +84,14 @@ class MainActivity : AppCompatActivity() {
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         verticalLayout {
-            imageView(R.drawable.robotour_img2) {
+            imageView(R.drawable.robotour_img_small) {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
                 onLongClick {
                     switchToAdmin()
                     true
                 }
-                horizontalPadding = dip(20)
-                verticalPadding = dip(25)
+                horizontalPadding = dip(10)
+                verticalPadding = dip(15)
             }
             button("START") {
                 textSize = 32f

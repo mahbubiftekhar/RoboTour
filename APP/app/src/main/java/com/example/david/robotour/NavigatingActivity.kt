@@ -924,7 +924,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             gravity = Gravity.CENTER_HORIZONTAL
                                         }
                                         textView {
-                                            text = "ETA: <10s"
+                                            text = "ETA: <30s"
                                             textSize = 20f
                                             padding = dip(2)
                                             leftPadding = dip(4)

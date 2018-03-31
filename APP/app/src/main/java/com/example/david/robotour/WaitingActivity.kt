@@ -170,21 +170,24 @@ class WaitingActivity : AppCompatActivity() {
         }
     }
 
-    private fun interruptAllThreads() {
-        //This function interrupts all the threads
-        pictureThread.interrupt()
-        t.interrupt()
-        pictureThread.interrupt()
-        t.interrupt()
-    }
+        private fun interruptAllThreads() {
+            //This function interrupts all the threads
+            pictureThread.interrupt()
+            t.interrupt()
+            pictureThread.interrupt()
+            t.interrupt()
+        }
 
-    override fun onDestroy() {
-        t.interrupt()
-        pictureThread.start()
-        super.onDestroy()
-    }
+        override fun onDestroy() {
+            t.interrupt()
+            if (pictureThread.state == Thread.State.RUNNABLE) {
+                pictureThread.interrupt()
+            }
+            super.onDestroy()
+        }
 
-    override fun onResume() {
+
+        override fun onResume() {
         super.onResume()
         if (pictureThread.state == Thread.State.NEW) {
             pictureThread.start()

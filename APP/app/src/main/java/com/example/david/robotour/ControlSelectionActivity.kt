@@ -62,29 +62,19 @@ class ControlSelectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
         language = intent.getStringExtra("language") //Getting the language from the previous activity
-        message = when (language) {
+        /*message = when (language) {
             "German" -> "Die nächste RoboTour finden\n"
             "French" -> "Trouver le RoboTour le plus proche\n"
             "Spanish" -> "Encontrar el RoboTour más cercano\n"
             "Chinese" -> "寻找最近的RoboTour\n"
             else -> "Finding closest RoboTour"
-        }
-        when (language) {
-            "German" -> {
-
-            }
-            "French" -> {
-
-            }
-            "Spanish" -> {
-
-            }
-            "Chinese" -> {
-
-            }
-            else -> {
-
-            }
+        }*/
+        message = when (language) {
+            "German" -> "Wir Suchen Nach Einer Verfügbaren RoboTour"
+            "French" -> "Recherche d'un RoboTour disponible"
+            "Spanish" -> "Buscando un RoboTour disponible"
+            "Chinese" -> "搜索可用的机器人旅行"
+            else -> "Searching For An Available RoboTour"
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         verticalLayout {
@@ -141,7 +131,7 @@ class ControlSelectionActivity : AppCompatActivity() {
 
 
     private fun updatetext2() {
-        when (language) {
+        /*when (language) {
             "German" -> {
                 text2?.text = "RoboTour nicht verfügbar, bitte warten Sie, um der Tour zu folgen\n"
             }
@@ -156,6 +146,23 @@ class ControlSelectionActivity : AppCompatActivity() {
             }
             else -> {
                 text2?.text = "RoboTour not available, please wait to follow tour"
+            }
+        }*/
+        text2?.text = when (language) {
+            "German" -> {
+                "Keine RoboTour Verfügbar, Bitte Warten Sie, Um Einer Tour Zu folgen"
+            }
+            "French" -> {
+                "Aucun RoboTour Disponible, Veuillez Attendre Pour Suivre Un Tour"
+            }
+            "Spanish" -> {
+                "No RoboTour Disponible, Por Favor Espere Para Seguir Un Recorrido"
+            }
+            "Chinese" -> {
+                "没有 RoboTour 可用，请稍等一个游览"
+            }
+            else -> {
+                "No RoboTour Available, Please Wait To Be Assigned To An Existing Tour"
             }
         }
     }
