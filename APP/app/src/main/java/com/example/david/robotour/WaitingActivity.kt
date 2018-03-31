@@ -155,6 +155,7 @@ class WaitingActivity : AppCompatActivity() {
                 } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
                 }
+                Thread.sleep(700)
             }
             Thread.currentThread().interrupt()
         }
