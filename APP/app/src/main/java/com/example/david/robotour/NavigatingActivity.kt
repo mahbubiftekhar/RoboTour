@@ -1444,22 +1444,21 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     runOnUiThread {
                                         println(">>>>>the integer" + a[20].toInt())
                                         cancelRequest = true
-                                        var title = ""
-                                        when (language) {
+                                        val title = when (language) {
                                             "French" -> {
-                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].nameFrench
+                                                otherUseCancel + allArtPieces[a[20].toString().toInt()].nameFrench
                                             }
                                             "Chinese" -> {
-                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].nameChinese
+                                                otherUseCancel + allArtPieces[a[20].toString().toInt()].nameChinese
                                             }
                                             "Spanish" -> {
-                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].nameSpanish
+                                                otherUseCancel + allArtPieces[a[20].toString().toInt()].nameSpanish
                                             }
                                             "German" -> {
-                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].nameGerman
+                                                otherUseCancel + allArtPieces[a[20].toString().toInt()].nameGerman
                                             }
                                             else -> {
-                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].name
+                                                otherUseCancel + allArtPieces[a[20].toString().toInt()].name
                                             }
                                         }
                                         alert(title) {
@@ -2076,11 +2075,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun getETA(paintingIndex: Int): String {
         /*This function will get the ETA*/
-        (0..map.size)
-                .filter { map[it] == paintingIndex }
-                .map { map[it] }
-                .forEach { return "ETA $it minute" }
-        return "ETA Unknown"
+        val position = map[paintingIndex]!!
+        return ("ETA: " + (30 * 1+position) + " Seconds")
+       // return (20 * (1+paintingIndex)).toString()
     }
 
     @SuppressLint("SetTextI18n")
