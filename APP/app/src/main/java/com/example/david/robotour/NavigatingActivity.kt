@@ -100,7 +100,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var exitSpeech = true
     private var obstaclePopUp = true
     private var twoUserMode = false
-    private var finnishing = false
+    private var finnishing = true
     private var otherusercancel = ""
 
     private fun loadInt(key: String): Int {
@@ -710,7 +710,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "SPEED"
                 startRoboTour = "Press START when you are ready for RoboTour to resume"
-                otherUseCancel = "Other user wishes to cancel, allow cancel?"
+                otherUseCancel = "Other user wishes to cancel, allow cancel?: "
                 cancelRequestSent = "Cancel request sent"
                 cancelPainting = "Cancel painting"
             }
@@ -732,7 +732,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toilet = "W.C."
                 toiletDesc = "Voulez-vous aller aux toilettes?"
                 changeSpeed = "Changer Vitesse"
-                otherUseCancel = "D'autres utilisateurs souhaitent annuler, autoriser l'annulation?"
+                otherUseCancel = "D'autres utilisateurs souhaitent annuler, autoriser l'annulation?: "
                 cancelRequestSent = "Annuler la demande envoyée"
                 cancelPainting = "Annuler la peinture"
             }
@@ -753,7 +753,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toilet = "带我去厕所"
                 toiletDesc = "确定要去厕所吗？"
                 changeSpeed = "改变速度"
-                otherUseCancel = "其他用户希望取消，允许取消？"
+                otherUseCancel = "其他用户希望取消，允许取消？: "
                 cancelRequestSent = "取消请求已发送"
                 cancelPainting = "取消绘画"
             }
@@ -774,7 +774,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toilet = "Baño"
                 toiletDesc = "¿Quieres ir al baño?"
                 changeSpeed = "Cambiar Velocidad"
-                otherUseCancel = "Otro usuario desea cancelar, ¿permite cancelar?"
+                otherUseCancel = "Otro usuario desea cancelar, ¿permite cancelar?: "
                 cancelRequestSent = "Cancelar solicitud enviada"
                 cancelPainting = "Cancelar pintura"
             }
@@ -796,7 +796,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toiletDesc = "Wollen sie zum W.C. gehen?"
                 changeSpeed = "Geschwindig keit ändern"
                 btnTextSize = 20f
-                otherUseCancel = "Andere Benutzer möchten stornieren, Abbrechen zulassen?"
+                otherUseCancel = "Andere Benutzer möchten stornieren, Abbrechen zulassen? :"
                 cancelRequestSent = "Anfrage abbrechen gesendet"
                 cancelPainting = "Gemälde abbrechenC"
             }
@@ -817,7 +817,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toilet = "W.C."
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "SPEED"
-                otherUseCancel = "Other user wishes to cancel, allow cancel?"
+                otherUseCancel = "Other user wishes to cancel, allow cancel?: "
                 cancelRequestSent = "Cancel request sent"
                 cancelPainting = "Cancel painting"
             }
@@ -1274,7 +1274,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 val paintings = a.substring(0, 9)
                                 runOnUiThread { updateScrollView(paintings) }
                                 val counter = (0..16).count { a[it] == 'F' }
-                                if (counter == 17 && finnishing) {
+                                if (counter >= 17 && finnishing) {
                                     finnishing = false
                                     runOnUiThread {
                                         switchToFinnished()
@@ -1436,14 +1436,32 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 }
                                 if (userid == 1.toString() && !cancelRequest && a[23] == 'Q') {
                                     runOnUiThread {
-                                        println(">>>>> in here aya")
+                                        println(">>>>>the integer" + a[20].toInt())
                                         cancelRequest = true
-                                        alert(otherusercancel+ allArtPieces[a[20].toInt()]) {
+                                        var title = ""
+                                        when (language) {
+                                            "French" -> {
+                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].nameFrench
+                                            }
+                                            "Chinese" -> {
+                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].nameChinese
+                                            }
+                                            "Spanish" -> {
+                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].nameSpanish
+                                            }
+                                            "German" -> {
+                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].nameGerman
+                                            }
+                                            else -> {
+                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].name
+                                            }
+                                        }
+                                        alert(title) {
                                             cancellable(false)
                                             setFinishOnTouchOutside(false)
                                             positiveButton(positive) {
                                                 async {
-                                                    sendPUTNEW(a[20].toInt(), "F")
+                                                    sendPUTNEW(a[20].toString().toInt(), "F")
                                                     sendPUTNEW(23, "F")
                                                     cancelRequest = false
                                                 }
@@ -1460,12 +1478,31 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     runOnUiThread {
                                         println(">>>>> in here ahas")
                                         cancelRequest = true
-                                        alert(otherusercancel+ allArtPieces[a[20].toInt()]) {
+                                        println(">>>>>the integer" + a[20].toInt())
+                                        var title = ""
+                                        when (language) {
+                                            "French" -> {
+                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].nameFrench
+                                            }
+                                            "Chinese" -> {
+                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].nameChinese
+                                            }
+                                            "Spanish" -> {
+                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].nameSpanish
+                                            }
+                                            "German" -> {
+                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].nameGerman
+                                            }
+                                            else -> {
+                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].name
+                                            }
+                                        }
+                                        alert(title) {
                                             cancellable(false)
                                             setFinishOnTouchOutside(false)
                                             positiveButton(positive) {
                                                 async {
-                                                    sendPUTNEW(a[20].toInt(), "F")
+                                                    sendPUTNEW(a[20].toString().toInt(), "F")
                                                     sendPUTNEW(23, "F")
                                                     cancelRequest = false
                                                 }
@@ -1583,9 +1620,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
                 }
-                try{
+                try {
                     Thread.sleep(1500)
-                } catch(e:InterruptedException){
+                } catch (e: InterruptedException) {
 
                 }
             }

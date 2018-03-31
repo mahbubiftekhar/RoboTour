@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.WindowManager
 import kotlinx.android.synthetic.main.activity_admin.*
@@ -18,6 +19,8 @@ import java.util.ArrayList
 import org.jetbrains.anko.*
 import java.io.InterruptedIOException
 import java.net.URL
+import android.content.Intent
+import kotlinx.android.synthetic.*
 
 
 class AdminActivity : AppCompatActivity() {
@@ -134,6 +137,11 @@ class AdminActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
+        fun loadInt(key: String): Int {
+            /*Function to load an SharedPreference value which holds an Int*/
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
+            return sharedPreferences.getInt(key, 0)
+        }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         sendy.setOnClickListener {
             if (destination == null) {
@@ -186,7 +194,36 @@ class AdminActivity : AppCompatActivity() {
             vibrate()
         }
         SWITCH_URL.setOnClickListener {
-            toast("function deprecated - speak to Mahbub")
+            println(">>>>before")
+            when (loadInt("urlnum")) {
+                1 -> {
+                    saveInt("urlnum",2)
+                    toast("receiver2 set, app will restart")
+                    async{
+                        clearFindViewByIdCache()
+                        Thread.sleep(3000)
+                        restartApp()
+                    }
+                }
+                2 -> {
+                    saveInt("urlnum",3)
+                    toast("homepages set, app will restart")
+                    async{
+                        clearFindViewByIdCache()
+                        Thread.sleep(3000)
+                        restartApp()
+                    }
+                }
+                3 -> {
+                    saveInt("urlnum",1)
+                    toast("normal receiver set, app will restart")
+                    async{
+                        clearFindViewByIdCache()
+                        Thread.sleep(3000)
+                        restartApp()
+                    }
+                }
+            }
         }
         RESET_EVERYTHING.setOnClickListener {
             //Resets all from 0 .. 17
@@ -260,18 +297,22 @@ class AdminActivity : AppCompatActivity() {
                 sendPUTNEW(18, "T")
             }
             vibrate()
-            toast("Function deprecated")
         }
         USER2_MODE_OFF.setOnClickListener {
             async {
                 sendPUTNEW(18, "F")
             }
             vibrate()
-            toast("Function deprecated")
         }
         //This languages the user thread to check for updates
         updateTextThread.start()
 
+    }
+    private fun restartApp (){
+        val i = baseContext.packageManager
+                .getLaunchIntentForPackage(baseContext.packageName)
+        i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(i)
     }
 
     private fun vibrate() {
@@ -282,6 +323,14 @@ class AdminActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(300)
         }
+    }
+
+    private fun saveInt(key: String, value: Int) {
+        /* Function to save an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val editor = sharedPreferences.edit()
+        editor.putInt(key, value)
+        editor.apply()
     }
 
     override fun onResume() {

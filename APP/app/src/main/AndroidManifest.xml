@@ -42,7 +42,6 @@
         <activity
             android:name=".NavigatingActivity"
             android:screenOrientation="portrait">
-            android:screenOrientation="portrait"
         </activity>
         <activity
             android:name=".AdminActivity"
@@ -59,8 +58,9 @@
             android:label="@string/title_activity_choose_level"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name=".ChooseActivityUI"></activity>
-        <activity android:name=".WaitingActivity" />
+        <activity android:name=".WaitingActivity"
+            android:screenOrientation="portrait"
+            />
     </application>
 
 </manifest>

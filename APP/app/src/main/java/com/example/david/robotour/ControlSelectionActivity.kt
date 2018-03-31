@@ -43,12 +43,6 @@ class ControlSelectionActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    private fun loadInt(key: String): Int {
-        /*Function to load an SharedPreference value which holds an Int*/
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        return sharedPreferences.getInt(key, -1)
-    }
-
     private fun sendPUTNEW(identifier: Int, command: String) {
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
@@ -75,17 +69,17 @@ class ControlSelectionActivity : AppCompatActivity() {
             "Chinese" -> "寻找最近的RoboTour\n"
             else -> "Finding closest RoboTour"
         }
-        when(language){
+        when (language) {
             "German" -> {
 
             }
-            "French"-> {
+            "French" -> {
 
             }
-            "Spanish"->{
+            "Spanish" -> {
 
             }
-            "Chinese"->{
+            "Chinese" -> {
 
             }
             else -> {
@@ -128,21 +122,19 @@ class ControlSelectionActivity : AppCompatActivity() {
             if (a[24] == 'T') {
                 switchBackToMain()
             } else if (a[16] == 'F') {
-                sendPUTNEW(16, "T")
+                sendPUTNEW(16, "O")
                 saveInt("user", 1)
                 Thread.sleep(4000)
                 switchToPictures()
-            } else if (a[17] == 'F') {
-                sendPUTNEW(17, "T")
+            } else if (a[17] == 'F' && a[18] == 'T') {
+                sendPUTNEW(17, "O")
                 saveInt("user", 2)
                 Thread.sleep(4000)
                 switchToPictures()
             } else {
                 Thread.sleep(4000)
                 waitingForListen = true
-                if (t.state == Thread.State.NEW) {
-                    t.start()
-                }
+                t.start()
             }
         }
     }
@@ -167,82 +159,23 @@ class ControlSelectionActivity : AppCompatActivity() {
             }
         }
     }
-    private val pictureThread: Thread = object : Thread() {
-        /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
-        var a = 0
-
-        override fun run() {
-            while (!isInterrupted) {
-                println("++++ picture thread WaitingActivity")
-                if (a > 9) {
-                    //Reset A to avoid null pointers
-                    a = 0
-                }
-                try {
-                    //UI thread MUST be updates on the UI thread, other threads may not update the UI thread
-                    runOnUiThread {
-                        imageView?.setImageResource(allArtPieces[a].imageID)
-                        descriptionView?.text = allArtPieces[a].name
-                        when (language) {
-                            "French" -> {
-                                descriptionView?.text = allArtPieces[a].nameFrench
-
-                            }
-                            "German" -> {
-                                descriptionView?.text = allArtPieces[a].nameGerman
-
-                            }
-                            "Spanish" -> {
-                                descriptionView?.text = allArtPieces[a].nameSpanish
-
-                            }
-                            "Chinese" -> {
-                                descriptionView?.text = allArtPieces[a].nameChinese
-
-                            }
-                            else -> {
-                                descriptionView?.text = allArtPieces[a].name
-                            }
-                        }
-                    }
-                    Thread.sleep(1500)
-                    a++
-                } catch (e: InterruptedException) {
-                    Thread.currentThread().interrupt()
-                } catch (e: InterruptedIOException) {
-                    Thread.currentThread().interrupt()
-                }
-            }
-            Thread.currentThread().interrupt()
-        }
-    }
-
-    override fun onResume() {
-        if (pictureThread.state == Thread.State.NEW) {
-            pictureThread.start()
-        }
-        super.onResume()
-    }
 
     private fun switchBackToMain() {
         clearFindViewByIdCache()
         toast("error occured")
         waitingForListen = false
-        pictureThread.interrupt()
         t.interrupt()
         startActivity<MainActivity>("language" to language) // now we can switch the activity
     }
 
     private fun switchToPictures() {
         clearFindViewByIdCache()
-        pictureThread.interrupt()
         t.interrupt()
         startActivity<PicturesActivity>("language" to language) // now we can switch the activity
     }
 
     private fun switchToListen() {
         clearFindViewByIdCache()
-        pictureThread.interrupt()
         t.interrupt()
         startActivity<ListenInActivity>("language" to language) // now we can switch the activity
     }
