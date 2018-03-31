@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dip"
@@ -84,6 +85,7 @@
                 android:background="@drawable/buttonxml"
                 android:text="@string/listen_off"
                 tools:ignore="ButtonStyle" />
+
             <Button
                 android:id="@+id/CONTROLOFF"
                 android:layout_width="0dip"
@@ -117,6 +119,7 @@
                 android:background="@drawable/buttonxml"
                 android:text="@string/user2_online"
                 tools:ignore="ButtonStyle" />
+
             <Button
                 android:id="@+id/SWITCH_URL"
                 android:layout_width="0dip"
@@ -150,6 +153,7 @@
                 android:background="@drawable/buttonxml"
                 android:text="@string/two_user_mode_on"
                 tools:ignore="ButtonStyle" />
+
             <Button
                 android:id="@+id/RandomCarousel"
                 android:layout_width="0dip"

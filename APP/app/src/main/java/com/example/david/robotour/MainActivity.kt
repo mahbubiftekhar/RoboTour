@@ -72,7 +72,6 @@ class MainActivity : AppCompatActivity() {
                 toast("WARNING!!!: homepages receiver")
                 saveInt("urlnum", 3)
             }
-        //This will keep the screen on, overriding users settings
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         verticalLayout {
@@ -99,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 onLongClick {
-                    true
+                  true
                 }
             }
         }

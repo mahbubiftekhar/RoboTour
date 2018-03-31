@@ -411,23 +411,23 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             "French" -> {
                 speechText = "Thank you for using Ro-bow-tour"
                 restartApp = "START AGAIN"
-                closeApp = "FERMER APP"
+                closeApp = "FERMER APP?"
             }
             "German" -> {
                 restartApp = "ANFANG"
-                closeApp = "SCHLIEßE APP"
+                closeApp = "SCHLIEßE APP?"
             }
             "Spanish" -> {
                 restartApp = "COMIENZO"
-                closeApp = "CERRAR APP"
+                closeApp = "CERRAR APP?"
             }
             "Chinese" -> {
                 restartApp = "重新开始"
-                closeApp = "关闭"
+                closeApp = "关闭?"
             }
             else -> {
                 restartApp = "START AGAIN"
-                closeApp = "CLOSE APP"
+                closeApp = "CLOSE APP?"
             }
         }
         speakOutThanks()

@@ -1105,6 +1105,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                     //If single user tell roboTour to cancel
                                                     sendPUTNEW(12, "T")
                                                     sendPUTNEW(userid.toInt(), "F")
+                                                    sendPUTNEW(11,"F")
                                                 }
                                             }
                                             if (userid == "1") {
@@ -1221,6 +1222,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     positiveButton(positive) {
                                         if (isNetworkConnected()) {
                                             async {
+                                                sendPUTNEW(11,"F")
                                                 sendPUTNEW(14, "T")
                                             }
                                         } else {
@@ -1833,6 +1835,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         //This function will tell the robot to take the user to the exit
         val a = loadInt("user")
         async {
+            sendPUTNEW(11,"F")
             when (a) {
                 1 -> sendPUTNEW(16, "F")
                 2 -> sendPUTNEW(17, "F")

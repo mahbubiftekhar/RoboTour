@@ -109,13 +109,16 @@ class ControlSelectionActivity : AppCompatActivity() {
         async {
             val a = URL(url).readText()
             if (a[24] == 'T') {
-                switchBackToMain()
-            } else if (a[16] == 'F') {
+                switchBackToMain() //Switch to the main activity for safety
+            } else if (a[21] == 'T') {
+                //If the robot is on tour, switch directly to the listen activity
+                switchToListen()
+            } else if (a[16] == 'F' && a[21] != 'T') {
                 sendPUTNEW(16, "O")
                 saveInt("user", 1)
                 Thread.sleep(4000)
                 switchToPictures()
-            } else if (a[17] == 'F' && a[18] == 'T') {
+            } else if (a[17] == 'F' && a[18] == 'T' && a[21] != 'T') {
                 sendPUTNEW(17, "O")
                 saveInt("user", 2)
                 Thread.sleep(4000)
@@ -161,7 +164,7 @@ class ControlSelectionActivity : AppCompatActivity() {
                 "没有 RoboTour 可用，请稍等一个游览"
             }
             else -> {
-                "No RoboTour Available, Please Wait To Be Assigned To An Existing Tour"
+                "Sorry, No RoboTour Available, Please Wait To Be Assigned To An Existing Tour"
             }
         }
     }
