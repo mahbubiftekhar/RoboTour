@@ -55,7 +55,39 @@ def seek_line():
 	line_follower.base_speed = tmp
 
 def branch_routine():
-	robot.motor(-100,100)
+	print(robot.env.next_turn)
+	if(robot.env.next_turn == 'left'):
+		robot.motor(0,175)
+		
+	elif robot.env.next_turn == 'right':
+		robot.motor(175,0)
+	elif robot.env.next_turn == 'forward':
+		line_follower.run()
+	else:
+		pass  # arrvided, turn pointer
+
+def determine_next_turn():
+	robot.env.next_turn = robot.env.turns_list.pop()
+
+def black_line_detected(env):
+	if robot.env.next_turn == 'forward':
+			# count for the branch, update location, orientation, etc.
+			determine_next_turn()
+			pass
+	else:
+
+		if robot.env.avoidance_direction == 'left':
+			# turn right and follow the black line, update the orientation, not the lccation
+			robot.motor(175,0)
+
+			# follow black line until it saw the white line
+			pass
+		else:
+			# turn right and follow the black line, update the orientation, not the lccation
+			robot.motor(0,175)
+			
+			# follow black line until it saw the white line
+			pass
 
 
 sweep_time = 1750
@@ -82,7 +114,8 @@ st_line_lost.add_transition(Transition(st_line_lost, robot.line_sensor.no_line))
 st_line_lost.add_transition(Transition(st_obstacle_avoidance, obstacle_detected))
 
 
-st_branch.add_transition(TransitionTimed(500, st_line_following))
+st_branch.add_transition(TransitionTimed(1500, st_line_following))
+st_branch.on_activate(determine_next_turn)
 
 
 st_obstacle_avoidance.add_transition(Transition(st_line_following, obstacle_avoidance.done))

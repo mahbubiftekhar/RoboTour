@@ -31,6 +31,10 @@ class Environment():
 
 		self.sees_line = {}
 
+		self.next_turn = 'left'
+		self.turns_list = ['forward', 'forward', 'right', 'right', 'forward', 'forward', 'left', 'arrivided']
+		self.turns_list.reverse()
+
 
 	def init(self):
 		self.clock_init()

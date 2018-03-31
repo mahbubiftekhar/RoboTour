@@ -1,6 +1,7 @@
 
 from finite_state_machine import *
 from dispatcher import Dispatcher
+from telemetry import *
 
 
 class Algorithm():
@@ -134,6 +135,7 @@ class ObstacleAvoidance(Algorithm):
 		self.pid = PIDController(0.025, 0.0001, 0.013)
 		self.pid_set_value = self.follow_distance
 
+		self.logger = None
 
 
 		self.st_start = State("Start")
@@ -164,22 +166,39 @@ class ObstacleAvoidance(Algorithm):
 
 	def initialise(self):
 		self.robot.stop()
-		self.avoidance_direction = self.env.avoidance_direction
+		self.avoidance_direction = self.robot.env.avoidance_direction
 		self.pid.reset()
+		self.logger = DataLogger("it_obstacle_"+self.avoidance_direction, folder='../logs/',)
+
+		def right_hook():
+			return self.env.dist_right
+		def left_hook():
+			return self.env.dist_left
+		def rot_left_hook():
+			return self.env.rot_left
+		def rot_right_hook():
+			return self.env.rot_right
+
+		self.logger.add_channel(DataChannel("sensor_right", right_hook))
+		self.logger.add_channel(DataChannel("sensor_left", left_hook))
+		self.logger.add_channel(DataChannel("left_wheel", rot_left_hook))
+		self.logger.add_channel(DataChannel("right_wheel", rot_right_hook))
+
+		self.logger.init()
 
 
 	def turn_away(self):
 		
-
+		print("turning:",self.avoidance_direction)
 		if self.avoidance_direction == 'left':
 			angle = -90
 		else:
-			angle =  90
+			angle = 90
 
 		self.robot.rotate(angle, speed=self.rotation_speed)
 
 
-	def follow_wall(self):
+	def follow_wall_2(self):
 
 		if self.avoidance_direction == 'left':
 			# following towards left, follow wall with ride side
@@ -193,6 +212,31 @@ class ObstacleAvoidance(Algorithm):
 			steer_right = self.base_speed + steer
 
 		self.robot.motor(steer_left, steer_right)
+
+	def follow_wall(self):
+		spd = 0.5
+		if self.env.dist_front < 110:
+			# if somethings in front then stop?
+			self.robot.stop()
+			return
+		if self.avoidance_direction == 'left':
+			if self.env.dist_right < 110:
+				self.robot.motor(50*spd, 150*spd)
+			elif self.env.dist_right > 15:
+				self.robot.motor(250*spd, 100*spd)
+			elif self.env.dist_right > 110:
+				self.robot.motor(100*spd, 50*spd)
+			else:
+				self.robot.motor(100*spd, 100*spd)
+		else:
+			if self.env.dist_left < 110:
+				self.robot.motor(150*spd, 50*spd)
+			elif self.env.dist_left > 15:
+				self.robot.motor(100*spd, 250*spd)
+			elif self.env.dist_left > 110:
+				self.robot.motor(50*spd, 100*spd)
+			else:
+				self.robot.motor(100*spd, 100*spd)
 
 
 	def recentre(self):
@@ -217,6 +261,7 @@ class ObstacleAvoidance(Algorithm):
 		self.fsm.tick(self.env)
 		print(self.fsm.get_state())
 		self.dsp.dispatch()	
+		self.logger.log()
 
 	def done(self, env):
 		return self.fsm.current_state == self.st_done

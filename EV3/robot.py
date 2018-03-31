@@ -29,8 +29,8 @@ class Robot():
 
 		self.hub = SensorHub()
 
-		self.sonarR = HubSonar(self.hub, "s0")
-		self.sonarL = HubSonar(self.hub, "s1")
+		self.sonarR = HubSonar(self.hub, "s1")
+		self.sonarL = HubSonar(self.hub, "s0")
 
 		self.line_sensor = LineSensor(self.hub)
 
@@ -65,27 +65,21 @@ class Robot():
 		self.env.rot_right = self.motorR.position
 		self.env.rot_left  = self.motorL.position
 
-
-
 		self.env.update()
 
 
 	def motor(self, pL, pR):
-		self.motorL.run_forever(speed_sp = pL) 
-		self.motorR.run_forever(speed_sp = pR)
+		self.motorL.run_timed(speed_sp = pL, time_sp=300) 
+		self.motorR.run_timed(speed_sp = pR, time_sp=300)
 
 	def rotate(self, degrees, speed):
 		# calculate by how much the wheels need to rotate
 		delta = degrees * self.model.wheel_to_rotation_ratio
 		
-		# rotate right
-		if degrees > 0:
-			delta_l =  delta
-			delta_r = -delta
-		# rotate left
-		else:
-			delta_l = -delta
-			delta_r =  delta
+
+		delta_l =  delta
+		delta_r = -delta
+		print("ROTATING: {} {}".format(delta_l, delta_r))
 
 		self.motorL.run_to_rel_pos(speed_sp = speed, position_sp = delta_l)
 		self.motorR.run_to_rel_pos(speed_sp = speed, position_sp = delta_r)
