@@ -98,6 +98,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 onLongClick {
+                    startActivity<InfoForumDemoActivity>()
                     true
                 }
             }

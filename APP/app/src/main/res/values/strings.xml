@@ -129,4 +129,5 @@
     <string name="todo">TODO</string>
     <string name="robotour">RoboTour</string>
     <string name="random_carousel">RANDOM CAROUSEL</string>
+    <string name="title_activity_info_forum_demo">InfoForumDemo</string>
 </resources>

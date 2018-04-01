@@ -1857,6 +1857,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         Send the user back to MainActivity */
         alert(closeApp) {
             positiveButton(positive) {
+                checkerThread.interrupt()
                 async {
                     val aB = URL(url).readText()
                     if (aB[18] == 'F') {

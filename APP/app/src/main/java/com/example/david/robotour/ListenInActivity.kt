@@ -436,6 +436,8 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             cancellable(false)
             setFinishOnTouchOutside(false)
             positiveButton(restartApp) {
+                pictureThread.interrupt()
+                checkerThread.interrupt()
                 clearFindViewByIdCache()
                 deleteCache(applicationContext)
                 val i = baseContext.packageManager
