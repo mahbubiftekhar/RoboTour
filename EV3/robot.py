@@ -8,7 +8,8 @@ from model import Model
 from environment import Environment
 
 class Robot():
-	def __init__(self):
+	def __init__(self, fast_hub=False):
+		self.fast_hub = fast_hub
 		self.setup_hardware()
 		#self.hardware_check()
 
@@ -27,13 +28,19 @@ class Robot():
 
 		self.sonarF = ev3.UltrasonicSensor("in2")
 
-		self.hub = SensorHub()
+		if self.fast_hub:
+			self.hub = SensorHubFast()
+		else:
+			self.hub = SensorHub()
 
 		self.sonarR = HubSonar(self.hub, "s1")
 		self.sonarL = HubSonar(self.hub, "s0")
 
 		self.line_sensor = LineSensor(self.hub)
 
+		self.button = ev3.Button()
+
+		self.LED = ev3.Leds()
 
 		# setup modes if appropriate
 		self.colourSensorR.mode = "COL-REFLECT"
@@ -43,6 +50,8 @@ class Robot():
 
 		self.motorR.stop_action = "hold"
 		self.motorL.stop_action = "hold"
+
+		self.sound = ev3.Sound
 
 	def hardware_check(self):
 		pass	
@@ -84,6 +93,27 @@ class Robot():
 		self.motorL.run_to_rel_pos(speed_sp = speed, position_sp = delta_l)
 		self.motorR.run_to_rel_pos(speed_sp = speed, position_sp = delta_r)
 
+	def indicate_error(self):
+		self.LED.set_color(self.LED.LEFT, self.LED.RED)
+		self.LED.set_color(self.LED.RIGHT, self.LED.RED)
+
+		self.sound.beep('r 3')
+
+	def indicate_zero(self):
+		self.LED.set_color(self.LED.LEFT,  self.LED.AMBER)
+		self.LED.set_color(self.LED.RIGHT, self.LED.AMBER)
+		pass
+		
+
+	def indicate_one(self):
+		self.LED.set_color(self.LED.LEFT,  self.LED.GREEN)
+		self.LED.set_color(self.LED.RIGHT, self.LED.RED)
+		pass
+
+	def indicate_two(self):
+		self.LED.set_color(self.LED.LEFT,  self.LED.GREEN)
+		self.LED.set_color(self.LED.RIGHT, self.LED.GREEN)
+		pass
 
 	# check if any motors are doing something
 	def done_movement(self, env):
