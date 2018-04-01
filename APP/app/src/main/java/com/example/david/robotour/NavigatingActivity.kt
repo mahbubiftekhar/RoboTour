@@ -1279,7 +1279,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             async {
                                 val a = URL(url).readText()
                                 /*This updates the picture and text for the user*/
-                                val paintings = a.substring(0, 9)
+                                val paintings = a.substring(0, 10)
                                 runOnUiThread { updateScrollView(paintings) }
                                 val counter = (0..16).count { a[it] == 'F' }
                                 if (counter >= 17 && finnishing) {
@@ -2079,7 +2079,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun getETA(paintingIndex: Int): String {
         /*This function will get the ETA*/
         val position = map[paintingIndex]!!
-        return ("ETA: " + (30 * 1 + position) + " Seconds")
+        return ("ETA: " + (30 * (1 + position)) + " Seconds")
         // return (20 * (1+paintingIndex)).toString()
     }
 

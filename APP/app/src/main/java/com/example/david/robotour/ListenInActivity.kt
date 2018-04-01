@@ -815,13 +815,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         relativeLayout {
-            val nextPaintings = textView {
-                id = View.generateViewId()
-                // text = "Next Art Pieces:"
-                textSize = 16f
-                typeface = Typeface.DEFAULT_BOLD
-                padding = dip(2)
-            }.lparams { alignParentTop() }
+            lparams { height = matchParent }
             val hSV = horizontalScrollView {
                 id = View.generateViewId()
                 linearLayout {
@@ -836,7 +830,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         }
                     }
                 }
-            }.lparams { below(nextPaintings) }
+            }.lparams { alignParentTop() }
 
             tableLayout2 = linearLayout {
                 orientation = LinearLayout.VERTICAL
@@ -953,12 +947,6 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                         }
                     }
-                    verticalLayout {
-                        imageView2 = imageView {
-                            backgroundColor = Color.TRANSPARENT //Removes gray border
-                            gravity = Gravity.CENTER_HORIZONTAL
-                        }
-                    }.lparams { alignParentBottom() }
                 }
                 when (language) {
                     "English" -> {
@@ -1005,6 +993,12 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }.lparams {
                 below(hSV)
             }
+            verticalLayout {
+                imageView2 = imageView {
+                    backgroundColor = Color.TRANSPARENT //Removes gray border
+                    gravity = Gravity.CENTER_HORIZONTAL
+                }.lparams { bottomPadding = dip(-80) }
+            }.lparams { alignParentBottom() }
         }
     }
 
