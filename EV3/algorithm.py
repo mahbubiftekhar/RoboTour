@@ -159,8 +159,7 @@ class ObstacleAvoidance(Algorithm):
 		self.st_turn.on_activate(self.turn_away)
 		self.dsp.link_action(self.st_follow_around, self.follow_wall)
 		self.dsp.link_action(self.st_recentre, self.recentre)
-		self.dsp.link_action(self.st_done, self.robot.stop)
-		self.st_done.on_activate(self.logger.write_buffer)
+		self.dsp.link_action(self.st_done, self.finish)
 
 	def reset(self):
 		self.fsm.reset()
@@ -252,6 +251,11 @@ class ObstacleAvoidance(Algorithm):
 			self.robot.motor(-self.recentre_speed,  self.recentre_speed)
 		else:
 			self.robot.motor( self.recentre_speed, -self.recentre_speed)
+
+	def finish(self):
+		self.robot.stop()
+		self.logger.write_buffer()
+
 
 	def back_on_line(self, env):
 		return self.env.colour_left  > self.env.line_thershold or \
