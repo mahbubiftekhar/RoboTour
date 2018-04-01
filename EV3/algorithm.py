@@ -160,6 +160,7 @@ class ObstacleAvoidance(Algorithm):
 		self.dsp.link_action(self.st_follow_around, self.follow_wall)
 		self.dsp.link_action(self.st_recentre, self.recentre)
 		self.dsp.link_action(self.st_done, self.robot.stop)
+		self.st_done.on_activate(self.logger.write_buffer)
 
 	def reset(self):
 		self.fsm.reset()
@@ -169,6 +170,7 @@ class ObstacleAvoidance(Algorithm):
 		self.avoidance_direction = self.robot.env.avoidance_direction
 		self.pid.reset()
 		self.logger = DataLogger("it_obstacle_"+self.avoidance_direction, folder='../logs/',)
+		self.logger.lines_per_write = 1000
 
 		def right_hook():
 			return self.env.dist_right
@@ -257,9 +259,6 @@ class ObstacleAvoidance(Algorithm):
 
 	def recentered(self, env):
 		return abs(self.env.line_sens_val - 35) <= 5
-
-
-
 
 
 
