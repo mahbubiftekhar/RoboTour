@@ -134,6 +134,21 @@ class AdminActivity : AppCompatActivity() {
         }
     }
 
+    private fun sendFORUM(identifier: Int, command: String) {
+        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
+        * as security exception - just a heads up */
+        val httpclient = DefaultHttpClient()
+        val httPpost = HttpPost("http://www.mahbubiftekhar.co.uk/forum.php")
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
+            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
+            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+            httpclient.execute(httPpost)
+        } catch (e: ClientProtocolException) {
+        } catch (e: IOException) {
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
@@ -143,6 +158,46 @@ class AdminActivity : AppCompatActivity() {
             return sharedPreferences.getInt(key, 0)
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
+
+        INFO_FORUM.setOnClickListener {
+            println(">>>>in button")
+            async {
+                val a = (URL("http://www.mahbubiftekhar.co.uk/forum.php").readText())
+                val b = a[0].toString().toInt()
+                println(">>>$a")
+                when (b) {
+                    0 -> {
+                        println(">>>>0")
+                        sendFORUM(0, 1.toString())
+                    }
+                    1 -> {
+                        println(">>>>1")
+                        sendFORUM(0, 2.toString())
+
+                    }
+                    2 -> {
+                        println(">>>>2")
+                        sendFORUM(0, 3.toString())
+
+                    }
+                    3 -> {
+                        println(">>>>3")
+                        sendFORUM(0, 4.toString())
+
+                    }
+                    4 -> {
+                        println(">>>>4")
+                        sendFORUM(0, 0.toString())
+
+                    }
+                    5 -> {
+
+                    }
+
+                }
+            }
+        }
+
         sendy.setOnClickListener {
             try {
                 if (destination == null) {

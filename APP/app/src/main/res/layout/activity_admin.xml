@@ -33,6 +33,14 @@
                 android:background="@drawable/buttonxml"
                 android:text="@string/STOPROBOTOUR"
                 tools:ignore="ButtonStyle" />
+            <Button
+                android:id="@+id/INFO_FORUM"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/info_forum_increment"
+                tools:ignore="ButtonStyle" />
 
         </LinearLayout>
 
