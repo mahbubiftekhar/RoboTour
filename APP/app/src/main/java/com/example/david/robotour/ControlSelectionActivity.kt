@@ -112,13 +112,17 @@ class ControlSelectionActivity : AppCompatActivity() {
                 switchBackToMain() //Switch to the main activity for safety
             } else if (a[21] == 'T') {
                 //If the robot is on tour, switch directly to the listen activity
+                updatetext2() //Update the text
+                Thread.sleep(3500) //Sleep so the user can read the message
                 switchToListen()
             } else if (a[16] == 'F' && a[21] != 'T') {
+                //User 1 is not online hence take that position
                 sendPUTNEW(16, "O")
                 saveInt("user", 1)
                 Thread.sleep(4000)
                 switchToPictures()
             } else if (a[17] == 'F' && a[18] == 'T' && a[21] != 'T') {
+                //user 2 is not online, hence take that position
                 sendPUTNEW(17, "O")
                 saveInt("user", 2)
                 Thread.sleep(4000)

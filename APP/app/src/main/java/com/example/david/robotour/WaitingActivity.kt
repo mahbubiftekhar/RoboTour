@@ -177,8 +177,6 @@ class WaitingActivity : AppCompatActivity() {
         //This function interrupts all the threads
         pictureThread.interrupt()
         t.interrupt()
-        pictureThread.interrupt()
-        t.interrupt()
     }
 
     override fun onDestroy() {

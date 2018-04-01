@@ -799,28 +799,25 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             adapter.notifyDataSetChanged()
             searchedForPainting = false
         } else {
-            val count = allArtPieces.count { it.selected }
-            if (count == 0) {
-                /*If the user has not made any selections, let them press back no questions asked*/
-                clearFindViewByIdCache()
-                allArtPieces.clear()
-                switchToMain()
-            } else {
-                alert(areYouSure) {
-                    positiveButton(positive) {
-                        t.interrupt() //Stops the thread
-                        async {
-                            clearFindViewByIdCache()
-                            allArtPieces.clear()
-                            switchToMain()
+            alert(areYouSure) {
+                positiveButton(positive) {
+                    t.interrupt() //Stops the thread
+                    async {
+                        clearFindViewByIdCache()
+                        allArtPieces.clear()
+                        sendPUTNEW(24,"T")
+                        switchToMain()
+                        async{
+                            Thread.sleep(6000)
+                            sendPUTNEW(24,"F")
                         }
-                        //super.onBackPressed() // Call super.onBackPressed
                     }
-                    negativeButton(negative) {
-                        /*Do nothing*/
-                    }
-                }.show()
-            }
+                    //super.onBackPressed() // Call super.onBackPressed
+                }
+                negativeButton(negative) {
+                    /*Do nothing*/
+                }
+            }.show()
         }
     }
 

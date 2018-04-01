@@ -28,7 +28,6 @@ class SelectLanguageActivity : AppCompatActivity() {
                 1 -> sendPUTNEW(16, "F")
                 2 -> sendPUTNEW(17, "F")
                 else -> {
-                    //Do nothing
                 }
             }
         }

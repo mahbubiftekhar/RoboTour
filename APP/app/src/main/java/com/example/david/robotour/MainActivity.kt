@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 onLongClick {
-                  true
+                    true
                 }
             }
         }

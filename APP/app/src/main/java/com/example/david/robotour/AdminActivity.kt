@@ -144,35 +144,39 @@ class AdminActivity : AppCompatActivity() {
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         sendy.setOnClickListener {
-            if (destination == null) {
-                toast("Don't do that! Destination cannot be null!!")
-            } else if (messageToSend.text == null) {
-                toast("Don't do that! message cannot be null!!")
-            } else {
-                val destination = destination.text.toString()
-                var message = ""
-                try {
-                    message = messageToSend.text.toString().toUpperCase()
-                } catch (e: NumberFormatException) {
-                    toast("Error!! Please don't do that!")
-                }
-                if (destination(destination.toInt()) && messageValid(message) && message != "") {
-                    vibrate()
-                    async {
-                        try {
-                            sendPUTNEW(destination.toInt(), message)
-                        } catch (e: Exception) {
-                            toast("Error!! Please don't do that!")
-                        } catch (e: NumberFormatException) {
-                            toast("Error!! Please don't do that!")
-                        }
-                        runOnUiThread {
-                            toast("SENT $message TO $destination SUCCESSFULLY")
-                        }
-                    }
+            try {
+                if (destination == null) {
+                    toast("Don't do that! Destination cannot be null!!")
+                } else if (messageToSend.text == null) {
+                    toast("Don't do that! message cannot be null!!")
                 } else {
-                    toast("Invalid input, try again, any issues consulate Mahbub")
+                    val destination = destination.text.toString()
+                    var message = ""
+                    try {
+                        message = messageToSend.text.toString().toUpperCase()
+                    } catch (e: NumberFormatException) {
+                        toast("Error!! Please don't do that!")
+                    }
+                    if (destination(destination.toInt()) && messageValid(message) && message != "") {
+                        vibrate()
+                        async {
+                            try {
+                                sendPUTNEW(destination.toInt(), message)
+                            } catch (e: Exception) {
+                                toast("Error!! Please don't do that!")
+                            } catch (e: NumberFormatException) {
+                                toast("Error!! Please don't do that!")
+                            }
+                            runOnUiThread {
+                                toast("SENT $message TO $destination SUCCESSFULLY")
+                            }
+                        }
+                    } else {
+                        toast("Invalid input, try again, any issues consulate Mahbub")
+                    }
                 }
+            } catch (e: Exception) {
+                toast("Please don't do that!!!!")
             }
         }
 
@@ -235,10 +239,14 @@ class AdminActivity : AppCompatActivity() {
         }
         RESET_EVERYTHING.setOnClickListener {
             //Resets all from 0 .. 17
-            for (i in 0..24) {
-                async {
-                    sendPUTNEW(i, "F")
+            try {
+                for (i in 0..24) {
+                    async {
+                        sendPUTNEW(i, "F")
+                    }
                 }
+            } catch (e: Exception) {
+                toast("error occurred, try again")
             }
             //vibrate()
         }
