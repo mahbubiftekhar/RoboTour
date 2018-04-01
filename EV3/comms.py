@@ -31,6 +31,8 @@ class Server():
             '7': 7,
             '8': 8,
             '9': 9,
+            '10': 15,
+            '12': 14,
             'Skip': 10,
             'Stop': 11,
             'Cancel': 12,
@@ -132,6 +134,9 @@ class Server():
 
     ############
     # THESE ARE NOT FOR CD2, Don't worry about it now
+
+    def stop_check(self):
+        return self.commands[self.id_map['Stop']]
 
     # Checks if user1 has submitted their painting requests
     def user_1_check(self):
