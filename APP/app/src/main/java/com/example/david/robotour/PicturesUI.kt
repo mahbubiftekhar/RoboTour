@@ -86,7 +86,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                 }.lparams { width = matchParent; height = dip(0); weight = 1.0f }
                 navigateButton = button(a) {
                     textSize = 32f
-                    background = ColorDrawable(resources.getColor(R.color.roboTourTeal))
+                    background = ColorDrawable(resources.getColor(R.color.androidsBackground))
                     onClick {
                         var isSelected = 0
                         allArtPieces
@@ -107,7 +107,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                                             sendPUTNEW(17, "T")
                                         }
                                     }
-                                    startActivity<NavigatingActivity>("language" to language)
+                                    startActivity<WaitingActivity>("language" to language)
                                 }
                                 negativeButton(negative) {
                                     // navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))

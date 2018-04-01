@@ -38,7 +38,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     data class ArtPiece(val name: String, val artist: String, val nameChinese: String, val nameGerman: String, val nameSpanish: String, val nameFrench: String, val English_Desc: String, val German_Desc: String, val French_Desc: String, val Chinese_Desc: String, val Spanish_Desc: String, val imageID: Int, val eV3ID: Int, var selected: Boolean, val LongEnglish: String, val LongChinese: String, val LongFrench: String, val LongSpanish: String, val LongGerman: String)
 
     private var shownArtPieces = ArrayList<ArtPiece>()
-    private val REQ_CODE_SPEECH_INPUT = 100
+    private val req_speed_code = 100
     private var queriedArtPieces = ArrayList<ArtPiece>()
     private var searchedForPainting = false //true if we've searched for a painting
     private var adapter = PicturesAdapter(shownArtPieces, "") //initialise adapter for global class use
@@ -370,7 +370,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     imageID = R.drawable.creationofadam, eV3ID = 1, selected = false, LongEnglish = "The Creation of Adam is a fresco painting by Michelangelo, which forms part of the Sistine Chapel's ceiling, painted c. 1508–1512. It illustrates the Biblical creation narrative from the Book of Genesis in which God gives life to Adam, the first man. The fresco is part of a complex iconographic scheme and is chronologically the fourth in the series of panels depicting episodes from Genesis.\n" +
                     "The image of the near-touching hands of God and Adam has become iconic of humanity.\n", LongChinese = "亚当的创作是米开朗基罗的壁画，它构成了西斯廷教堂天花板的一部分，被绘成c。1508年至1512年。 它阐述了创世记中的圣经创作叙事，上帝赋予了第一个人亚当的生命。 壁画是一个复杂的肖像画方案的一部分，并按时间顺序排列在描绘创世纪剧集系列的第四位。\n" +
                     "上帝和亚当接近感人的双手的形象已成为人类的标志。", LongFrench = "La création d'Adam est une fresque de Michel-Ange, qui fait partie du plafond de la chapelle Sixtine, peinte c. 1508-1512. Il illustre le récit de la création biblique du livre de la Genèse dans lequel Dieu donne la vie à Adam, le premier homme. La fresque fait partie d'un schéma iconographique complexe et est chronologiquement la quatrième de la série de panneaux représentant des épisodes de la Genèse.\n", LongSpanish = "La creación de Adán es una pintura al fresco de Miguel Ángel, que forma parte del techo de la Capilla Sixtina, pintado c. 1508-1512. Ilustra la narrativa bíblica de la creación del Libro del Génesis en la que Dios le da vida a Adán, el primer hombre. El fresco es parte de un esquema iconográfico complejo y es cronológicamente el cuarto de la serie de paneles que representan episodios del Génesis.\n" +
-                    "La imagen de las manos casi tocadoras de Dios y Adán se ha convertido en un icono de la humanidad.\n", LongGerman = "Die Erschaffung Adams ist eine Freskomalerei von Michelangelo, die Teil der Decke der Sixtinischen Kapelle ist, bemalt c. 1508-1512. Es illustriert die biblische Schöpfungsgeschichte aus dem Buch Genesis, in der Gott Adam, dem ersten Menschen, Leben gibt. Das Fresko ist Teil eines komplexen ikonografischen Schemas und ist chronologisch das vierte in der Reihe von Tafeln, die Episoden aus der Genesis zeigen.\n" +
+                    "La imagen de las manos casi tocadoras de Dios y Adán se ha convertido en un icono de la humanidad.\n", LongGerman = "Die Erschaffung von Adam ist eine Freskomalerei von Michelangelo, die Teil der Decke der Sixtinischen Kapelle ist, bemalt c. 1508-1512. Es illustriert die biblische Schöpfungsgeschichte aus dem Buch Genesis, in der Gott Adam, dem ersten Menschen, Leben gibt. Das Fresko ist Teil eines komplexen ikonografischen Schemas und ist chronologisch das vierte in der Reihe von Tafeln, die Episoden aus der Genesis zeigen.\n" +
                     "Das Bild der nahe berührenden Hände Gottes und Adams ist zur Ikone der Menschheit geworden."))
             add(ArtPiece(name = "David", artist = "Michelangelo", nameChinese = "大卫像", nameGerman = "David", nameSpanish = "David", nameFrench = "David",
                     English_Desc = "A masterpiece of Renaissance sculpture created in marble between 1501 and 1504 by Michelangelo",
@@ -385,7 +385,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     "David es una obra maestra de la escultura renacentista creada en mármol entre 1501 y 1504 por Miguel Ángel. La estatua representa al héroe bíblico David.\n" +
                     "Originalmente, David fue comisionado como una de una serie de estatuas de profetas que se colocaron a lo largo de la línea del este de la catedral de Florencia, pero se colocó en una plaza pública, en las afueras del Palazzo Vecchio, sede del gobierno cívico de Florencia, donde se dio a conocer el 8 de septiembre de 1504.\n" +
                     "\n", LongGerman = "David ist ein Meisterwerk der Renaissanceskulptur, das zwischen 1501 und 1504 von Michelangelo aus Marmor geschaffen wurde. Die Statue repräsentiert den biblischen Helden David.\n" +
-                    "David wurde ursprünglich als eine aus einer Reihe von Prophetenstatuen in Auftrag gegeben, die entlang der Dachlinie des östlichen Endes der Kathedrale von Florenz positioniert werden sollte, wurde aber stattdessen auf einem öffentlichen Platz außerhalb des Palazzo Vecchio, dem Sitz der Bürgerregierung in Florenz, aufgestellt wurde am 8. September 1504 enthüllt.\n"))
+                    "David wurde ursprünglich als eine aus einer Reihe von Prophetenstatuen in Auftrag gegeben, die entlang der Dachlinie des östlichen Endes der Kathedrale von Florenz positioniert werden sollte, wurde aber stattdessen auf einem öffentlichen Platz außerhalb des Palazzo Vecchio, dem Sitz der Bürgerregierung in Florenz, aufgestellt und wurde am 8. September 1504 enthüllt.\n"))
             add(ArtPiece(name = "Girl with a Pearl Earring", artist = "Johannes Vermeer", nameChinese = "戴珍珠耳环的少女", nameGerman = "Das Mädchen mit dem Perlenohrring", nameSpanish = "Chica con un pendiente de perla", nameFrench = "une fille avec une boucle d'oreille",
                     English_Desc = "Showcasing the electrifying gaze of a young girl adorned with a blue and gold turban.",
                     German_Desc = "Den elektrisierenden Blick eines jungen Mädchens zeigen, das mit einem Blau- und Goldturban geschmückt wird.",
@@ -799,28 +799,25 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             adapter.notifyDataSetChanged()
             searchedForPainting = false
         } else {
-            val count = allArtPieces.count { it.selected }
-            if (count == 0) {
-                /*If the user has not made any selections, let them press back no questions asked*/
-                clearFindViewByIdCache()
-                allArtPieces.clear()
-                switchToMain()
-            } else {
-                alert(areYouSure) {
-                    positiveButton(positive) {
-                        t.interrupt() //Stops the thread
-                        async {
-                            clearFindViewByIdCache()
-                            allArtPieces.clear()
-                            switchToMain()
+            alert(areYouSure) {
+                positiveButton(positive) {
+                    t.interrupt() //Stops the thread
+                    async {
+                        clearFindViewByIdCache()
+                        allArtPieces.clear()
+                        sendPUTNEW(24,"T")
+                        switchToMain()
+                        async{
+                            Thread.sleep(6000)
+                            sendPUTNEW(24,"F")
                         }
-                        //super.onBackPressed() // Call super.onBackPressed
                     }
-                    negativeButton(negative) {
-                        /*Do nothing*/
-                    }
-                }.show()
-            }
+                    //super.onBackPressed() // Call super.onBackPressed
+                }
+                negativeButton(negative) {
+                    /*Do nothing*/
+                }
+            }.show()
         }
     }
 
@@ -864,7 +861,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         startActivity<MainActivity>()
     }
 
-    private fun askSpeechInput(language:String) {
+    private fun askSpeechInput(language: String) {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         println(">>>>the language in askSpeehcInput: $language")
@@ -914,7 +911,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         try {
             searchedForPainting = true
-            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT)
+            startActivityForResult(intent, req_speed_code)
         } catch (a: ActivityNotFoundException) {
         } catch (e: java.lang.RuntimeException) {
         } catch (e: java.lang.IllegalArgumentException) {
@@ -1056,7 +1053,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (resultCode != RESULT_CANCELED && requestCode != RESULT_CANCELED) {
             if (data != null) {
                 when (requestCode) {
-                    REQ_CODE_SPEECH_INPUT -> {
+                    req_speed_code -> {
                         if (resultCode == RESULT_OK) {
                             var result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                             if (superlanguage == "English") {

@@ -41,9 +41,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".NavigatingActivity"
-            android:screenOrientation="portrait">
-            android:screenOrientation="portrait"
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".AdminActivity"
             android:label="@string/title_activity_admin"
@@ -55,11 +53,17 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ChooseActivity"
+            android:name=".ControlSelectionActivity"
             android:label="@string/title_activity_choose_level"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name=".ChooseActivityUI"></activity>
+        <activity
+            android:name=".WaitingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".InfoForumDemoActivity"
+            android:label="@string/title_activity_info_forum_demo"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -19,6 +19,8 @@ import java.util.ArrayList
 import org.jetbrains.anko.*
 import java.io.InterruptedIOException
 import java.net.URL
+import android.content.Intent
+import kotlinx.android.synthetic.*
 
 
 class AdminActivity : AppCompatActivity() {
@@ -34,7 +36,8 @@ class AdminActivity : AppCompatActivity() {
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()
         val httPpost = HttpPost(url)
-        try { val nameValuePairs = ArrayList<NameValuePair>(4)
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
             nameValuePairs.add(BasicNameValuePair("command$identifier", command))
             httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
             httpclient.execute(httPpost)
@@ -95,8 +98,8 @@ class AdminActivity : AppCompatActivity() {
             "6" -> true
             "7" -> true
             "8" -> true
-            "9"-> true
-            "10"->true
+            "9" -> true
+            "10" -> true
             " " -> true
             else -> false
         }
@@ -131,39 +134,111 @@ class AdminActivity : AppCompatActivity() {
         }
     }
 
+    private fun sendFORUM(identifier: Int, command: String) {
+        /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
+        * as security exception - just a heads up */
+        val httpclient = DefaultHttpClient()
+        val httPpost = HttpPost("http://www.mahbubiftekhar.co.uk/forum.php")
+        try {
+            val nameValuePairs = ArrayList<NameValuePair>(4)
+            nameValuePairs.add(BasicNameValuePair("command$identifier", command))
+            httPpost.entity = UrlEncodedFormEntity(nameValuePairs)
+            httpclient.execute(httPpost)
+        } catch (e: ClientProtocolException) {
+        } catch (e: IOException) {
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
+        fun loadInt(key: String): Int {
+            /*Function to load an SharedPreference value which holds an Int*/
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
+            return sharedPreferences.getInt(key, 0)
+        }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
-        sendy.setOnClickListener {
-            if (destination == null) {
-                toast("Don't do that! Destination cannot be null!!")
-            } else if (messageToSend.text == null) {
-                toast("Don't do that! message cannot be null!!")
-            } else {
-                val destination = destination.text.toString()
-                var message = ""
-                try {
-                    message = messageToSend.text.toString().toUpperCase()
-                } catch (e: NumberFormatException) {
-                    toast("Error!! Please don't do that!")
-                }
-                if (destination(destination.toInt()) && messageValid(message) && message != "") {
-                    vibrate()
-                    async {
-                        try {
-                            sendPUTNEW(destination.toInt(), message)
-                        } catch (e: Exception) {
-                            toast("Error!! Please don't do that!")
-                        } catch (e: NumberFormatException) {
-                            toast("Error!! Please don't do that!")
-                        }
-                        runOnUiThread {
-                            toast("SENT $message TO $destination SUCCESSFULLY")
-                        }
+
+        INFO_FORUM.setOnClickListener {
+            println(">>>>in button")
+            async {
+                val a = (URL("http://www.mahbubiftekhar.co.uk/forum.php").readText())
+                val b = a[0].toString().toInt()
+                println(">>>$a")
+                when (b) {
+                    0 -> {
+                        println(">>>>0")
+                        sendFORUM(0, 1.toString())
                     }
+                    1 -> {
+                        println(">>>>1")
+                        sendFORUM(0, 2.toString())
+
+                    }
+                    2 -> {
+                        println(">>>>2")
+                        sendFORUM(0, 3.toString())
+
+                    }
+                    3 -> {
+                        println(">>>>3")
+                        sendFORUM(0, 4.toString())
+
+                    }
+                    4 -> {
+                        println(">>>>4")
+                        sendFORUM(0, 0.toString())
+
+                    }
+                    5 -> {
+
+                    }
+
+                }
+            }
+        }
+
+        sendy.setOnClickListener {
+            try {
+                if (destination == null) {
+                    toast("Don't do that! Destination cannot be null!!")
+                } else if (messageToSend.text == null) {
+                    toast("Don't do that! message cannot be null!!")
                 } else {
-                    toast("Invalid input, try again, any issues consulate Mahbub")
+                    val destination = destination.text.toString()
+                    var message = ""
+                    try {
+                        message = messageToSend.text.toString().toUpperCase()
+                    } catch (e: NumberFormatException) {
+                        toast("Error!! Please don't do that!")
+                    }
+                    if (destination(destination.toInt()) && messageValid(message) && message != "") {
+                        vibrate()
+                        async {
+                            try {
+                                sendPUTNEW(destination.toInt(), message)
+                            } catch (e: Exception) {
+                                toast("Error!! Please don't do that!")
+                            } catch (e: NumberFormatException) {
+                                toast("Error!! Please don't do that!")
+                            }
+                            runOnUiThread {
+                                toast("SENT $message TO $destination SUCCESSFULLY")
+                            }
+                        }
+                    } else {
+                        toast("Invalid input, try again, any issues consulate Mahbub")
+                    }
+                }
+            } catch (e: Exception) {
+                toast("Please don't do that!!!!")
+            }
+        }
+
+        RandomCarousel.setOnClickListener {
+            async {
+                for (i in 0..9) {
+                    sendPUTNEW(i, i.toString())
                 }
             }
         }
@@ -178,24 +253,57 @@ class AdminActivity : AppCompatActivity() {
         AUX_RESET.setOnClickListener {
             /*Resets all the AUX, This means that the stuff from stuff such as skip etc will be reset, this
             excludes the user data */
-            for (i in 10..22) {
+            for (i in 10..24) {
                 async {
                     sendPUTNEW(i, "F")
                 }
             }
             vibrate()
         }
-        SWITCH_URL.setOnClickListener{
-           toast("function deprecated - speak to Mahbub")
+        SWITCH_URL.setOnClickListener {
+            println(">>>>before")
+            when (loadInt("urlnum")) {
+                1 -> {
+                    saveInt("urlnum", 2)
+                    toast("receiver2 set, app will restart")
+                    async {
+                        clearFindViewByIdCache()
+                        Thread.sleep(3000)
+                        restartApp()
+                    }
+                }
+                2 -> {
+                    saveInt("urlnum", 3)
+                    toast("homepages set, app will restart")
+                    async {
+                        clearFindViewByIdCache()
+                        Thread.sleep(3000)
+                        restartApp()
+                    }
+                }
+                3 -> {
+                    saveInt("urlnum", 1)
+                    toast("normal receiver set, app will restart")
+                    async {
+                        clearFindViewByIdCache()
+                        Thread.sleep(3000)
+                        restartApp()
+                    }
+                }
+            }
         }
         RESET_EVERYTHING.setOnClickListener {
             //Resets all from 0 .. 17
-            for (i in 0..22) {
-                async {
-                    sendPUTNEW(i, "F")
+            try {
+                for (i in 0..24) {
+                    async {
+                        sendPUTNEW(i, "F")
+                    }
                 }
+            } catch (e: Exception) {
+                toast("error occurred, try again")
             }
-            vibrate()
+            //vibrate()
         }
         USER1_ONLINE.setOnClickListener {
             //Set user one as online
@@ -249,29 +357,34 @@ class AdminActivity : AppCompatActivity() {
             }
             vibrate()
         }
-        CONTROLOFF.setOnClickListener{
+        CONTROLOFF.setOnClickListener {
             async {
                 sendPUTNEW(19, "F")
             }
             vibrate()
         }
-        USER2_MODE_ON.setOnClickListener{
+        USER2_MODE_ON.setOnClickListener {
             async {
                 sendPUTNEW(18, "T")
             }
             vibrate()
-            toast("Function deprecated")
         }
-        USER2_MODE_OFF.setOnClickListener{
+        USER2_MODE_OFF.setOnClickListener {
             async {
                 sendPUTNEW(18, "F")
             }
             vibrate()
-            toast("Function deprecated")
         }
         //This languages the user thread to check for updates
         updateTextThread.start()
 
+    }
+
+    private fun restartApp() {
+        val i = baseContext.packageManager
+                .getLaunchIntentForPackage(baseContext.packageName)
+        i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(i)
     }
 
     private fun vibrate() {
@@ -282,6 +395,14 @@ class AdminActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(300)
         }
+    }
+
+    private fun saveInt(key: String, value: Int) {
+        /* Function to save an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val editor = sharedPreferences.edit()
+        editor.putInt(key, value)
+        editor.apply()
     }
 
     override fun onResume() {

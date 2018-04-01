@@ -28,7 +28,6 @@ class SelectLanguageActivity : AppCompatActivity() {
                 1 -> sendPUTNEW(16, "F")
                 2 -> sendPUTNEW(17, "F")
                 else -> {
-                    //Do nothing
                 }
             }
         }
@@ -70,7 +69,7 @@ class SelectLanguageActivity : AppCompatActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
 
         //UI
-        linearLayout{
+        linearLayout {
             tableLayout {
                 //Loop through List
                 for (i in 0..4 step 2) {
@@ -79,7 +78,7 @@ class SelectLanguageActivity : AppCompatActivity() {
                             imageButton(languages[i + j].imageID) {
                                 backgroundColor = Color.TRANSPARENT
                                 onClick {
-                                    startActivity<ChooseActivity>("language" to languages[i + j].name)
+                                    startActivity<ControlSelectionActivity>("language" to languages[i + j].name)
                                 }
                             }.lparams { topMargin = dip(15); leftMargin = dip(20 + (j + 1) * 10) }
                         }

@@ -16,6 +16,7 @@ import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
+import android.view.View.GONE
 import android.widget.*
 import kotlinx.android.synthetic.*
 import org.jetbrains.anko.*
@@ -276,7 +277,8 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
             } else {
             }
-        } else { }
+        } else {
+        }
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
             val language = intent.getStringExtra("language")
@@ -410,23 +412,23 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             "French" -> {
                 speechText = "Thank you for using Ro-bow-tour"
                 restartApp = "START AGAIN"
-                closeApp = "FERMER APP"
+                closeApp = "FERMER APP?"
             }
             "German" -> {
                 restartApp = "ANFANG"
-                closeApp = "SCHLIEßE APP"
+                closeApp = "SCHLIEßE APP?"
             }
             "Spanish" -> {
                 restartApp = "COMIENZO"
-                closeApp = "CERRAR APP"
+                closeApp = "CERRAR APP?"
             }
             "Chinese" -> {
                 restartApp = "重新开始"
-                closeApp = "关闭"
+                closeApp = "关闭?"
             }
             else -> {
                 restartApp = "START AGAIN"
-                closeApp = "CLOSE APP"
+                closeApp = "CLOSE APP?"
             }
         }
         speakOutThanks()
@@ -434,6 +436,8 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             cancellable(false)
             setFinishOnTouchOutside(false)
             positiveButton(restartApp) {
+                pictureThread.interrupt()
+                checkerThread.interrupt()
                 clearFindViewByIdCache()
                 deleteCache(applicationContext)
                 val i = baseContext.packageManager
@@ -498,7 +502,6 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         userid = loadInt("user").toString()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_navigating)
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         supportActionBar?.hide() //hide actionbar
@@ -507,7 +510,10 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             Thread.sleep(1500)
             speakOutOnCreate()
         }
-
+        for (i in 0 until listPaintings.size) {
+            listPaintings[i].visibility = View.GONE
+        }
+        allArtPieces.clear()
         allArtPieces.run {
             add(PicturesActivity.ArtPiece(name = "The Birth of Venus",
                     artist = "Sandro Botticelli", nameChinese = "维纳斯的诞生", nameGerman = "Die Geburt der Venus", nameSpanish = "El nacimiento de Venus", nameFrench = "La naissance de Vénus",
@@ -661,7 +667,9 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     LongGerman =
                     "Water Lilies (oder Nymphéas) ist Teil einer Serie von etwa 250 Ölgemälden des französischen Impressionisten Claude Monet (1840-1926). Die Bilder zeigen seinen Blumengarten in seinem Haus in Giverny und waren der Schwerpunkt seiner künstlerischen Produktion in den letzten dreißig Jahren seines Lebens. Viele der Werke wurden gemalt, während Monet an Katarakten litt.\n"))
         }
-
+        for (i in 0 until listPaintings.size) {
+            listPaintings[i].visibility = View.GONE
+        }
         val language = intent.getStringExtra("language")
         when (language) {
             "French" -> {
@@ -816,13 +824,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         relativeLayout {
-            val nextPaintings = textView {
-                id = View.generateViewId()
-                // text = "Next Art Pieces:"
-                textSize = 16f
-                typeface = Typeface.DEFAULT_BOLD
-                padding = dip(2)
-            }.lparams { alignParentTop() }
+            lparams { height = matchParent }
             val hSV = horizontalScrollView {
                 id = View.generateViewId()
                 linearLayout {
@@ -837,8 +839,16 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         }
                     }
                 }
-            }.lparams { below(nextPaintings) }
+            }.lparams { alignParentTop() }
 
+            try {
+                for (i in 0 until listPaintings.size) {
+                    //This fixes the bug
+                    listPaintings[i].visibility = View.GONE
+                }
+            } catch (e: Exception) {
+
+            }
             tableLayout2 = linearLayout {
                 orientation = LinearLayout.VERTICAL
                 relativeLayout {
@@ -954,12 +964,6 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
                         }
                     }
-                    verticalLayout {
-                        imageView2 = imageView {
-                            backgroundColor = Color.TRANSPARENT //Removes gray border
-                            gravity = Gravity.CENTER_HORIZONTAL
-                        }
-                    }.lparams { alignParentBottom() }
                 }
                 when (language) {
                     "English" -> {
@@ -1006,6 +1010,12 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }.lparams {
                 below(hSV)
             }
+            verticalLayout {
+                imageView2 = imageView {
+                    backgroundColor = Color.TRANSPARENT //Removes gray border
+                    gravity = Gravity.CENTER_HORIZONTAL
+                }.lparams { bottomPadding = dip(-80) }
+            }.lparams { alignParentBottom() }
         }
     }
 
@@ -1034,6 +1044,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts6!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
+
     private fun speakOutExit() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
@@ -1093,11 +1104,11 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         }
                                         break
                                     }
-                                    if(a[14] == 'A'){
+                                    if (a[14] == 'A') {
                                         speakOutToilet()
                                         break
                                     }
-                                    if(a[15] == 'A'){
+                                    if (a[15] == 'A') {
                                         speakOutExit()
                                         break
                                     }
@@ -1355,15 +1366,10 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun updateScrollViewPictures(sortedNums: MutableCollection<Int>) {
         val numSelectedPaintings = sortedNums.size
-        print(">>>>>>>" + numSelectedPaintings)
-        for (i in numSelectedPaintings..10) {
-            if (i < 10) {
-                print("£££££" + i)
-                listPaintings[i].visibility = View.GONE
-            }
-        }
-        for (i in 0..numSelectedPaintings-1) {
-            print("£££££" + i)
+        (numSelectedPaintings..10)
+                .filter { it < 10 }
+                .forEach { listPaintings[it].visibility = View.GONE }
+        for (i in 0 until numSelectedPaintings) {
             listPaintings[i].visibility = View.VISIBLE
         }
         sortedNums.withIndex().forEach { (listIndex, i) ->
@@ -1371,13 +1377,20 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 0 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.birthofvenus))
                 1 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.creationofadam))
                 2 -> {
-                    println("+++++ getting in here updateScrollView")
                     listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.david))
                 }
-                3 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.girlwithpearlearring))
-                4 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.monalisa))
-                5 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.napoleoncrossingthealps))
-                6 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.starrynight))
+                3 -> {
+                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.girlwithpearlearring))
+                }
+                4 -> {
+                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.monalisa))
+                }
+                5 -> {
+                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.napoleoncrossingthealps))
+                }
+                6 -> {
+                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.starrynight))
+                }
                 7 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.thelastsupper))
                 8 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.tsunami))
                 9 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.waterlillies))
@@ -1388,14 +1401,18 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
     }
+
     private fun getETA(paintingIndex: Int): String {
         /*This function will get the ETA*/
-        for(i in 0..map.size){
-            if(map[i]==paintingIndex){
+        val position = map[paintingIndex]!!
+        return ("ETA: " + (30 * (1 + position)) + " Seconds")
+        /*
+        for (i in 0..map.size) {
+            if (map[i] == paintingIndex) {
                 return "ETA $i min"
             }
         }
-        return "ETA Unknown"
+         */
     }
 
     @SuppressLint("SetTextI18n")

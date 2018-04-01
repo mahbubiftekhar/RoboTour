@@ -128,4 +128,7 @@
     <string name="switch_url">SWITCH URL</string>
     <string name="todo">TODO</string>
     <string name="robotour">RoboTour</string>
+    <string name="random_carousel">RANDOM CAROUSEL</string>
+    <string name="title_activity_info_forum_demo">InfoForumDemo</string>
+    <string name="info_forum_increment">INFO FORUM INCREMENT</string>
 </resources>
