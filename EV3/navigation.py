@@ -11,6 +11,7 @@ class Navigation():
 		self.get_art_pieces_from_app()
 		self.robot.env.pictures_to_go = self.calculate_paintings_order(self.robot.env.pictures_to_go)
 		print("Determined route: ", self.robot.env.positions_list)
+		self.server.update_art_piece(self.robot.env.pictures_to_go[0])
 		# self.robot.env.route_dene = True
 
 
@@ -39,11 +40,11 @@ class Navigation():
 				closest_painting = path[-1]
 		return closest_painting, short_path
 
-	def calculate_paintings_order(self, picture_to_go):
+	def calculate_paintings_order(self, picture_to_go, virtual_location=None):
 		print("Calculate paintings order")
-		virtual_location = self.robot.env.position
+		if virtual_location is None:
+			virtual_location = self.robot.env.position
 		virtual_remaining_pictures_to_go = []
-
 		total = len(picture_to_go)
 		for i in range(total):
 			closest_painting, path = self.get_closest_painting(virtual_location, picture_to_go)
@@ -55,6 +56,8 @@ class Navigation():
 
 			self.robot.env.positions_list.extend(path[1:])
 			# self.robot.env.positions_list.append('arrived')
+
+		self.robot.env.finished_tour = False
 		return virtual_remaining_pictures_to_go
 
 
