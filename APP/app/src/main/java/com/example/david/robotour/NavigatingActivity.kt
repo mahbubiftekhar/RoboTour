@@ -1110,10 +1110,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             }
                                             if (userid == "1") {
                                                 async {
+                                                    sendPUTNEW(18,"F") //Set two user mode to false
                                                     sendPUTNEW(16, "F")
                                                 }
                                             } else if (userid == "2") {
                                                 async {
+                                                    sendPUTNEW(18,"F") //Set two user mode to false
                                                     sendPUTNEW(17, "F")
                                                 }
                                             }
@@ -1279,6 +1281,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             async {
                                 val a = URL(url).readText()
                                 /*This updates the picture and text for the user*/
+                                twoUserMode = a[18]=='T'
                                 val paintings = a.substring(0, 10)
                                 runOnUiThread { updateScrollView(paintings) }
                                 val counter = (0..16).count { a[it] == 'F' }
