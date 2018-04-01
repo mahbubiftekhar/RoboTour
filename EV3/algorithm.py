@@ -80,7 +80,7 @@ class Calibration(Algorithm):
 	def __init__(self, robot):
 		Algorithm.__init__(self, robot)
 
-		self.calibration_time = 8000
+		self.calibration_time = 5000
 		sweep_time = self.calibration_time/4
 
 		self.st_start = State("Start")

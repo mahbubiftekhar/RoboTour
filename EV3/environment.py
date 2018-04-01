@@ -50,6 +50,7 @@ class Environment():
         self.pictures_to_go = []
 
         self.route_done = False
+        self.finished_tour = False
 
         self.dijkstra_map = {
         '0': {'1': 26, '8': 21},

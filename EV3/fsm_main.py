@@ -15,7 +15,8 @@ robot = Robot(fast_hub=True)
 
 # instantiate and set up line following algorithm
 line_follower = LineFollowing(robot)
-line_follower.set_gains(2.5, 0, 1.5)
+line_follower.set_gains(2.75, 0.01, 1.5)
+line_follower.base_speed = 215
 
 calibration = Calibration(robot)
 obstacle_avoidance = ObstacleAvoidance(robot)
@@ -42,8 +43,12 @@ st_line_following = State("Line following")
 st_line_lost = State("Lost line")
 
 st_branch = State("Branch detected")
+st_taking_branch = State("Navigating branch")
 
 st_at_painting = State("At painting")
+st_painting_done = State("Leaving painting")
+
+st_tour_done = State("Tour finished")
 
 st_obstacle_avoidance = State("Obstacle Avoidance")
 
@@ -61,8 +66,22 @@ def users_ready(env):
 	else:
 		return False
 
+def user_continue(env):
+		return server.stop_check() != 'T'
+def user_stop(env):
+		return server.stop_check() == 'T'
+
 def arrived_at_painting(env):
-	return env.position in env.pictures_to_go
+	if not env.pictures_to_go:
+		return False
+	return env.position == env.pictures_to_go[0]
+
+def tour_done(env):
+	# no more points to go
+	return not env.positions_list
+
+def no_path(env):
+	return not env.positions_list
 
 def ask_for_mode_press():
 	ev3.Sound.speak('Please select single or multi user mode.')
@@ -72,6 +91,16 @@ def reset():
 	robot.indicate_zero()
 	robot.env.users = 1
 	robot.sound.beep('-f 700 -l 50 -r 4')
+	# try:
+	# 	kp = float(input("Kp? "))
+	# 	ki = float(input("Ki? "))
+	# 	kd = float(input("Kd? "))
+
+	# 	line_follower.set_gains(kp,ki,kd)
+	# except:
+	# 	print("no changes")
+	# robot.sound.beep()
+
 	# robot.sound.beep('-f 700 -l 100')
 
 def mode_selection():
@@ -86,13 +115,13 @@ def mode_selection():
 def seek_line():
 	tmp = line_follower.base_speed
 	line_follower.base_speed = 0
-
-	print("LINE LOST")
+	# robot.indicate_error()
+	# print("LINE LOST")
 	line_follower.run()
 	line_follower.base_speed = tmp
 
 def branch_routine():
-	print(robot.env.next_turn)
+	# print(robot.env.next_turn)
 	if(robot.env.next_turn == 'left'):
 		robot.motor(0,175)
 		
@@ -107,29 +136,100 @@ def branch_routine():
 		robot.stop()
 	else:
 		pass  # arrived, turn pointer
+def show_painting():
+	robot.stop()
+	server.update_status_arrived(robot.env.position)
+	server.set_stop_true()
+	server.update_commands()
+
+def leaving_painting():
+	robot.env.pictures_to_go.pop(0)
+	if not robot.env.pictures_to_go:
+		robot.env.finished_tour = True
+		server.update_art_piece('Exit')
+	else:
+		pic = robot.env.pictures_to_go[0]
+		server.update_art_piece(pic)
+
+def reset_robot():
+	robot.rotate(180, 150)
+	robot.env.orientation = 'N'
+	server.reset_list_on_server()
+
+
+def update_location_on_branch():
+	robot.env.position = robot.env.positions_list.pop(0)
+
+		# robot.stop()
+	if server.check_position('Cancel') == 'T':
+		print("Cancel")
+		robot.env.positions_list = []
+		server.update_status_false('Cancel')
+	
+	elif server.check_position('Toilet') == 'T':
+		print("Toilet")
+		_, path = nav.get_closest_painting(robot.env.position, ['12'])
+		robot.env.positions_list = path[1:]
+		# recalculate from toilet and add to positions_list
+		server.update_art_piece('Toilet')
+		robot.env.pictures_to_go = nav.calculate_paintings_order(robot.env.pictures_to_go, '12')
+		robot.env.pictures_to_go.insert(0, '12')
+		server.update_status_false('Toilet')
+	
+	elif server.check_position('Exit') == 'T':
+		print("Exit")
+		_, path = nav.get_closest_painting(robot.env.position, ['10'])
+		robot.env.positions_list = path[1:]
+		# recalculate from exit and add to positions_list
+		server.update_art_piece('Exit')
+		robot.env.pictures_to_go = nav.calculate_paintings_order(robot.env.pictures_to_go, '10')
+		robot.env.pictures_to_go.insert(0, '10')
+		server.update_status_false('Exit')
+
+	elif server.check_position('Skip') == 'T':
+		print("Skippito")
+		robot.env.pictures_to_go.pop(0)
+		# recalculate
+		robot.env.positions_list = []
+		robot.env.pictures_to_go = nav.calculate_paintings_order(robot.env.pictures_to_go)
+		server.update_status_false('Skip')
+		server.update_art_piece(robot.env.pictures_to_go[0])
+
+	if not robot.env.positions_list:
+		if robot.env.position != '10':
+			_, path = nav.get_closest_painting(robot.env.position, ['10'])
+			robot.env.positions_list = path[1:]
+			# server.update_art_piece('Exit')
+
 
 def determine_next_turn():
 
-	print(robot.env.positions_list)
+	print("paintings:", robot.env.pictures_to_go)
+	print("position: ", robot.env.positions_list)
 	if not robot.env.positions_list:
 		robot.env.next_turn = 'stop'
 	else:
-		robot.env.next_position = robot.env.positions_list.pop(0)
-		if robot.env.next_position == 'arrived':
-			robot.stop()
+		
+		robot.env.next_position = robot.env.positions_list[0]
+		robot.env.next_orientation = robot.env.orientation_map[(robot.env.position, robot.env.next_position)]
+		convert_to_direction()
+		print(robot.env.turns_list)
+		
+		robot.env.next_turn = robot.env.turns_list.pop()
+
+		if (robot.env.position, robot.env. next_position) in robot.env.obstacle_map:
+
+			robot.env.avoidance_direction = robot.env.obstacle_map[(robot.env.position, robot.env.next_position)]
 		else:
-			robot.env.next_orientation = robot.env.orientation_map[(robot.env.position, robot.env.next_position)]
-			convert_to_direction()
-			print(robot.env.turns_list)
-			robot.env.next_turn = robot.env.turns_list.pop()
+			robot.env.avoidance_direction = 'stop'
 
-			if (robot.env.position, robot.env. next_position) in robot.env.obstacle_map:
+			# robot.env.position = robot.env.next_position
 
-				robot.env.avoidance_direction = robot.env.obstacle_map[(robot.env.position, robot.env.next_position)]
-			else:
-				robot.env.avoidance_direction = 'stop'
-
-			robot.env.position = robot.env.next_position
+def calculate_route_to_exit():
+	print("TOUR FINISHED. Going to exit")
+	_, path = nav.get_closest_painting(robot.env.position, ['10'])
+	robot.env.positions_list = path[1:]
+	robot.env.finished_tour = False
 
 def black_line_detected(env):
 	if robot.env.next_turn == 'forward':
@@ -182,32 +282,45 @@ st_calibration.add_transition(Transition(st_idle, calibration.done))
 st_idle.add_transition(Transition(st_route_planning, users_ready))
 st_idle.on_activate(ask_for_mode_press)
 
-st_route_planning.add_transition(Transition(st_line_following))
+st_route_planning.add_transition(Transition(st_taking_branch))
 
-# if nothing happens - obstacle disapears, go to line-following
-st_wait.set_default(st_line_following)
-# point back to yourself if 
-st_wait.add_transition(Transition(st_wait, obstacle_detected))
-# after 5 sec of seeing obstacle finish program NB higher priority transition
-st_wait.add_transition(TransitionTimed(5000, st_stop))
+# # if nothing happens - obstacle disapears, go to line-following
+# st_wait.set_default(st_line_following)
+# # point back to yourself if 
+# st_wait.add_transition(Transition(st_wait, obstacle_detected))
+# # after 5 sec of seeing obstacle finish program NB higher priority transition
+# st_wait.add_transition(TransitionTimed(5000, st_stop))
 
 st_line_following.add_transition(Transition(st_line_lost, robot.line_sensor.no_line))
 st_line_following.add_transition(Transition(st_obstacle_avoidance, obstacle_detected))
 st_line_following.add_transition(OnBranch(st_branch))
-st_line_following.on_activate(determine_next_turn)
+st_line_following.add_transition(Transition(st_wait, user_stop))
+# st_line_following.on_activate(determine_next_turn)
+
+st_wait.add_transition(Transition(st_line_following, user_continue))
 
 st_line_lost.set_default(st_line_following)
 st_line_lost.add_transition(Transition(st_line_lost, robot.line_sensor.no_line))
 st_line_lost.add_transition(Transition(st_obstacle_avoidance, obstacle_detected))
 
 
-st_branch.add_transition(TransitionTimed(1500, st_line_following))
-st_branch.on_activate(determine_next_turn)
+st_branch.add_transition(Transition(st_taking_branch))
+st_branch.add_transition(Transition(st_at_painting, arrived_at_painting))
+st_branch.add_transition(Transition(st_tour_done, tour_done))
+st_branch.on_activate(update_location_on_branch)
 
+st_at_painting.add_transition(Transition(st_painting_done, user_continue))
+
+st_painting_done.add_transition(Transition(st_taking_branch))
+st_painting_done.add_transition(Transition(st_tour_done, tour_done))
+
+st_taking_branch.on_activate(determine_next_turn)
+st_taking_branch.add_transition(TransitionTimed(1750, st_line_following))
 
 st_obstacle_avoidance.add_transition(Transition(st_line_following, obstacle_avoidance.done))
 st_obstacle_avoidance.on_activate(obstacle_avoidance.reset)
 
+st_tour_done.add_transition(Transition(st_idle, robot.done_movement))
 
 fsm = FSM(st_start)
 dsp = Dispatcher(fsm)
@@ -225,7 +338,14 @@ dsp.link_action(st_route_planning, nav.plan_route)
 dsp.link_action(st_line_following, line_follower.run)
 dsp.link_action(st_line_lost, seek_line)
 
-dsp.link_action(st_branch, branch_routine)
+dsp.link_action(st_at_painting, robot.stop)
+st_at_painting.on_activate(show_painting)
+
+st_painting_done.on_activate(leaving_painting)
+
+st_tour_done.on_activate(reset_robot)
+
+dsp.link_action(st_taking_branch, branch_routine)
 
 dsp.link_action(st_stop, robot.stop)
 
@@ -369,11 +489,12 @@ try:
 		# act
 		dsp.dispatch()
 
-		logger.log()
+		# logger.log()
 
 		# print(robot.env.line_sens_val, robot.env.dist_front, robot.line_sensor.no_line(None))
 except:
 	robot.stop()
 	logger.write_buffer()
+	server.reset_list_on_server()
 	raise
 	
