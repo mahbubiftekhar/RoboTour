@@ -5,9 +5,13 @@ from algorithm import LineFollowing, Calibration, ObstacleAvoidance
 from robot import Robot
 from telemetry import *
 from transitions import OnBranch
+from dijkstra import *
+from comms import *
+from threading import Thread
+import ev3dev.ev3 as ev3
 
 # instantiate main robot class
-robot = Robot()
+robot = Robot(fast_hub=True)
 
 # instantiate and set up line following algorithm
 line_follower = LineFollowing(robot)
@@ -15,6 +19,8 @@ line_follower.set_gains(2.5, 0, 1.5)
 
 calibration = Calibration(robot)
 obstacle_avoidance = ObstacleAvoidance(robot)
+
+server = Server()
 
 ## FSM SETUP ##
 
@@ -45,6 +51,81 @@ st_stop = State("Stop")
 # define obstacle detection trigger
 def obstacle_detected(env):
 	return env.dist_front < 200
+
+def users_ready(env):
+	if env.users == 1:
+		return server.user_1_check() == 'T'
+	elif env.users == 2:
+		return server.user_1_check() == 'T' and server.user_2_check() == 'T'
+	else:
+		return False
+
+def ask_for_mode_press():
+	ev3.Sound.speak('Please select single or multi user mode.')
+
+def reset():
+	robot.stop()
+	robot.indicate_zero()
+	robot.env.users = 1
+	robot.sound.beep('-f 700 -l 50 -r 4')
+	# robot.sound.beep('-f 700 -l 100')
+
+def mode_selection():
+	if robot.button.left:
+		robot.env.users = 1
+		robot.indicate_one()
+	if robot.button.right:
+		robot.env.users = 2
+		robot.indicate_two()
+
+def plan_route():
+	# robot.env.route_done = False
+	get_art_pieces_from_app()
+	robot.env.pictures_to_go = calculate_paintings_order(robot.env.pictures_to_go)
+	# robot.env.route_dene = True
+
+
+def get_art_pieces_from_app():
+	server.update_commands()
+	server.update_pictures_to_go()
+	pictures = server.get_pictures_to_go()
+	print(pictures)
+	robot.env.pictures_to_go = []
+	for index in range(len(pictures)):
+		if pictures[index] == "T":
+			robot.env.pictures_to_go.append(str(index))
+	print(robot.env.pictures_to_go)
+	return robot.env.pictures_to_go
+
+def get_closest_painting(location, pictures_lists):
+	shortest_distance = sys.maxsize
+	short_path = None
+	closest_painting = None
+	d_map = robot.env.dijkstra_map
+	for painting in pictures_lists:
+		(path, distance) = dijkstra(d_map, location, painting, [], {}, {})
+		if shortest_distance > distance:
+			shortest_distance = distance
+			short_path = path
+			closest_painting = path[-1]
+	return closest_painting, short_path
+
+def calculate_paintings_order(picture_to_go):
+	print("Calculate paintings order")
+	virtual_location = robot.env.position
+	virtual_remaining_pictures_to_go = []
+
+	for i in range(len(picture_to_go)):
+		closest_painting, path = get_closest_painting(virtual_location, picture_to_go)
+		print("closest painting: ", closest_painting)
+		server.http_post(int(closest_painting), str(i))
+		picture_to_go.remove(closest_painting)
+		virtual_remaining_pictures_to_go.append(closest_painting)
+		virtual_location = path[-1]
+
+		robot.env.positions_list.extend(path[1:])
+		robot.env.positions_list.append('arrvided')
+	return virtual_remaining_pictures_to_go
 
 
 
@@ -79,19 +160,22 @@ def determine_next_turn():
 	if not robot.env.positions_list:
 		robot.env.next_turn = 'stop'
 	else:
-		robot.env.next_position = robot.env.positions_list.pop()
-		robot.env.next_orientation = robot.env.orientation_map[(robot.env.position, robot.env.next_position)]
-		convert_to_direction()
-		print(robot.env.turns_list)
-		robot.env.next_turn = robot.env.turns_list.pop()
-
-		if (robot.env.position, robot.env. next_position) in robot.env.obstacle_map:
-
-			robot.env.avoidance_direction = robot.env.obstacle_map[(robot.env.position, robot.env.next_position)]
+		robot.env.next_position = robot.env.positions_list.pop(0)
+		if robot.env.next_position == 'arrvided':
+			robot.stop()
 		else:
-			robot.env.avoidance_direction = 'stop'
+			robot.env.next_orientation = robot.env.orientation_map[(robot.env.position, robot.env.next_position)]
+			convert_to_direction()
+			print(robot.env.turns_list)
+			robot.env.next_turn = robot.env.turns_list.pop()
 
-		robot.env.position = robot.env.next_position
+			if (robot.env.position, robot.env. next_position) in robot.env.obstacle_map:
+
+				robot.env.avoidance_direction = robot.env.obstacle_map[(robot.env.position, robot.env.next_position)]
+			else:
+				robot.env.avoidance_direction = 'stop'
+
+			robot.env.position = robot.env.next_position
 
 def black_line_detected(env):
 	if robot.env.next_turn == 'forward':
@@ -140,7 +224,11 @@ st_start.add_transition(Transition(st_calibration))
 
 st_calibration.add_transition(Transition(st_idle, calibration.done))
 
-st_idle.add_transition(Transition(st_wait, obstacle_detected))
+# st_idle.add_transition(Transition(st_wait, obstacle_detected))
+st_idle.add_transition(Transition(st_route_planning, users_ready))
+st_idle.on_activate(ask_for_mode_press)
+
+st_route_planning.add_transition(Transition(st_line_following))
 
 # if nothing happens - obstacle disapears, go to line-following
 st_wait.set_default(st_line_following)
@@ -152,6 +240,7 @@ st_wait.add_transition(TransitionTimed(5000, st_stop))
 st_line_following.add_transition(Transition(st_line_lost, robot.line_sensor.no_line))
 st_line_following.add_transition(Transition(st_obstacle_avoidance, obstacle_detected))
 st_line_following.add_transition(OnBranch(st_branch))
+st_line_following.on_activate(determine_next_turn)
 
 st_line_lost.set_default(st_line_following)
 st_line_lost.add_transition(Transition(st_line_lost, robot.line_sensor.no_line))
@@ -173,8 +262,11 @@ dsp.link_action(st_calibration, calibration.run)
 dsp.link_action(st_obstacle_avoidance, obstacle_avoidance.run)
 
 
-dsp.link_action(st_idle, robot.stop)
+dsp.link_action(st_idle, mode_selection)
+st_idle.on_activate(reset)
 dsp.link_action(st_wait, robot.stop)
+
+dsp.link_action(st_route_planning, plan_route)
 
 dsp.link_action(st_line_following, line_follower.run)
 dsp.link_action(st_line_lost, seek_line)
@@ -182,6 +274,58 @@ dsp.link_action(st_line_lost, seek_line)
 dsp.link_action(st_branch, branch_routine)
 
 dsp.link_action(st_stop, robot.stop)
+
+
+def server_check():
+    global default_speed
+    global is_stop
+    global is_skip
+    global is_toilet
+    global is_exit
+    global is_cancel
+
+    while True:
+        server.update_commands()
+
+        if server.check_position('Speed') == "3":
+            default_speed = 140
+        elif server.check_position('Speed') == "2":
+            default_speed = 100
+        elif server.check_position('Speed') == "1":
+            default_speed = 60
+        else:
+            default_speed = 100
+
+        if server.check_position('Stop') == "T":
+            is_stop = True
+        else:
+            is_stop = False
+
+        if server.check_position('Skip') == "T":
+            is_skip = True
+        else:
+            is_skip = False
+
+        if server.check_position('Toilet') == "T":
+            is_toilet = True
+        else:
+            is_toilet = False
+
+        if server.check_position('Exit') == "T":
+            is_exit = True
+        else:
+            is_exit = False
+
+        if server.check_position('Cancel') == "T":
+            is_cancel = True
+        else:
+            is_cancel = False
+
+        time.sleep(1)
+
+server_check_thread = Thread(target=server_check)
+server_check_thread.daemon = True
+server_check_thread.start()
 
 
 ####### LOGGER SET UP
@@ -222,6 +366,7 @@ def rot_left_hook():
 
 # instantiate the logger object
 logger = DataLogger("integration_test", folder='../logs/', timer=timer_hook)
+logger.lines_per_write = 5000
 
 # add channels for sensor values
 for s in robot.line_sensor.detector_names:
@@ -251,23 +396,30 @@ logger.init()
 for i in range(10):
 	robot.hub.poll()
 
-assert robot.hub.connected
+while not robot.hub.connected:
+	robot.indicate_error()
+	time.sleep(5)
+	robot.hub.poll()
 robot.update_env()
 
 
-while fsm.current_state != st_stop:
-	# sense
-	robot.update_env()
+try:
+	while fsm.current_state != st_stop:
+		# sense
+		robot.update_env()
+		
+		# plan
+		fsm.tick(robot.env)
+		print(fsm.get_state(),end=' ')
+		
+		# act
+		dsp.dispatch()
+
+		logger.log()
+
+		# print(robot.env.line_sens_val, robot.env.dist_front, robot.line_sensor.no_line(None))
+except:
+	robot.stop()
+	logger.write_buffer()
+	raise
 	
-	# plan
-	fsm.tick(robot.env)
-	# print(fsm.get_state(),end=' ')
-	
-	# act
-	dsp.dispatch()
-
-	logger.log()
-
-	# print(robot.env.line_sens_val, robot.env.dist_front, robot.line_sensor.no_line(None))
-
-robot.stop()
