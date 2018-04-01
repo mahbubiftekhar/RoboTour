@@ -5,7 +5,7 @@ from algorithm import LineFollowing, Calibration, ObstacleAvoidance
 from robot import Robot
 from telemetry import *
 from transitions import OnBranch
-from dijkstra import *
+from navigation import Navigation
 from comms import *
 from threading import Thread
 import ev3dev.ev3 as ev3
@@ -21,6 +21,7 @@ calibration = Calibration(robot)
 obstacle_avoidance = ObstacleAvoidance(robot)
 
 server = Server()
+nav = Navigation(robot, server)
 
 ## FSM SETUP ##
 
@@ -60,6 +61,9 @@ def users_ready(env):
 	else:
 		return False
 
+def arrived_at_painting(env):
+	return env.position in env.pictures_to_go
+
 def ask_for_mode_press():
 	ev3.Sound.speak('Please select single or multi user mode.')
 
@@ -77,56 +81,6 @@ def mode_selection():
 	if robot.button.right:
 		robot.env.users = 2
 		robot.indicate_two()
-
-def plan_route():
-	# robot.env.route_done = False
-	get_art_pieces_from_app()
-	robot.env.pictures_to_go = calculate_paintings_order(robot.env.pictures_to_go)
-	# robot.env.route_dene = True
-
-
-def get_art_pieces_from_app():
-	server.update_commands()
-	server.update_pictures_to_go()
-	pictures = server.get_pictures_to_go()
-	print(pictures)
-	robot.env.pictures_to_go = []
-	for index in range(len(pictures)):
-		if pictures[index] == "T":
-			robot.env.pictures_to_go.append(str(index))
-	print(robot.env.pictures_to_go)
-	return robot.env.pictures_to_go
-
-def get_closest_painting(location, pictures_lists):
-	shortest_distance = sys.maxsize
-	short_path = None
-	closest_painting = None
-	d_map = robot.env.dijkstra_map
-	for painting in pictures_lists:
-		(path, distance) = dijkstra(d_map, location, painting, [], {}, {})
-		if shortest_distance > distance:
-			shortest_distance = distance
-			short_path = path
-			closest_painting = path[-1]
-	return closest_painting, short_path
-
-def calculate_paintings_order(picture_to_go):
-	print("Calculate paintings order")
-	virtual_location = robot.env.position
-	virtual_remaining_pictures_to_go = []
-
-	for i in range(len(picture_to_go)):
-		closest_painting, path = get_closest_painting(virtual_location, picture_to_go)
-		print("closest painting: ", closest_painting)
-		server.http_post(int(closest_painting), str(i))
-		picture_to_go.remove(closest_painting)
-		virtual_remaining_pictures_to_go.append(closest_painting)
-		virtual_location = path[-1]
-
-		robot.env.positions_list.extend(path[1:])
-		robot.env.positions_list.append('arrvided')
-	return virtual_remaining_pictures_to_go
-
 
 
 def seek_line():
@@ -152,7 +106,7 @@ def branch_routine():
 	elif robot.env.next_turn == 'stop':
 		robot.stop()
 	else:
-		pass  # arrvided, turn pointer
+		pass  # arrived, turn pointer
 
 def determine_next_turn():
 
@@ -161,7 +115,7 @@ def determine_next_turn():
 		robot.env.next_turn = 'stop'
 	else:
 		robot.env.next_position = robot.env.positions_list.pop(0)
-		if robot.env.next_position == 'arrvided':
+		if robot.env.next_position == 'arrived':
 			robot.stop()
 		else:
 			robot.env.next_orientation = robot.env.orientation_map[(robot.env.position, robot.env.next_position)]
@@ -266,7 +220,7 @@ dsp.link_action(st_idle, mode_selection)
 st_idle.on_activate(reset)
 dsp.link_action(st_wait, robot.stop)
 
-dsp.link_action(st_route_planning, plan_route)
+dsp.link_action(st_route_planning, nav.plan_route)
 
 dsp.link_action(st_line_following, line_follower.run)
 dsp.link_action(st_line_lost, seek_line)
@@ -410,7 +364,7 @@ try:
 		
 		# plan
 		fsm.tick(robot.env)
-		print(fsm.get_state(),end=' ')
+		# print(fsm.get_state(),end=' ')
 		
 		# act
 		dsp.dispatch()
