@@ -280,7 +280,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             negativeButton {
 
             }
-        }
+        }.show()
     }
 
 
