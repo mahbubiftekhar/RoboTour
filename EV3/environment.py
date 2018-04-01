@@ -33,16 +33,23 @@ class Environment():
 
         self.next_turn = 'left'
         self.turns_list = ['forward', 'forward',    'right', 'right', 'forward', 'forward', 'left', 'arrivided']
-        self.turns_list.reverse()
+        # self.turns_list.reverse()
 
-        self.positions_list = ['11', '4', '11', '10']
-        self.positions_list.reverse()
+        self.positions_list = []
+        # self.positions_list.reverse()
+
 
         self.position = '10'
         self.orientation = 'N'
 
         self.next_position = '10'
         self.next_orientation = 'N'
+
+        self.users = 1
+
+        self.pictures_to_go = []
+
+        self.route_done = False
 
         self.dijkstra_map = {
         '0': {'1': 26, '8': 21},
