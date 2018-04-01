@@ -10,127 +10,142 @@ import time
 
 
 class Server():
-    ## THIS WILL CONTAIN THE ARTPIECES THAT THE USER
+    #  THIS WILL CONTAIN THE ARTPIECES THAT THE USER
     #  WANTS TO GO TO, THIS WILL NOT CHANGE DURING THE TRIP
     def __init__(self):
-        self.command = myfile.decode("utf-8")  # convert bytearray to string
         self.previousArtPiece = "-1"
+        #                       0    1    2    3    4    5    6    7    8    9
         self.picturesToGoTO = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F"]
-        self.commands = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F"]
+        #                 0    1    2    3    4    5    6    7    8    9    10   11   12
+        self.commands = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F",
+                         "F", "F", "F", "F", "F", "F", "F", "F", "F"]
+        #                 13   14   15   16   17   18   19   20   21
+        self.id_map = {
+            '0': 0,
+            '1': 1,
+            '2': 2,
+            '3': 3,
+            '4': 4,
+            '5': 5,
+            '6': 6,
+            '7': 7,
+            '8': 8,
+            '9': 9,
+            'Skip': 10,
+            'Stop': 11,
+            'Cancel': 12,
+            'Speed': 13,
+            'Toilet': 14,
+            'Exit': 15,
+            'User 1': 16,
+            'User 2': 17,
+            'Two user mode': 18,
+            'Listen ready': 19,
+            'Obstacle detected': 20,
+            'onTour': 21
+        }
+
+    def get_commands(self):
+        return self.commands
+
+    def get_pictures_to_go(self):
+        return self.picturesToGoTO
 
     # Helper function that does a http post request
-    def httpPost(self, position, message):
+    def http_post(self, position, message):
         data = bytes(urllib.parse.urlencode({"command" + str(position): message}).encode())
-        urllib.request.urlopen("http://homepages.inf.ed.ac.uk/s1553593/receiver.php", data)
+        urllib.request.urlopen("http://www.mahbubiftekhar.co.uk/receiver.php", data)
 
     # Helper function that does HTTP get request
-    def httpGet(self):
-        f = urllib.request.urlopen("http://homepages.inf.ed.ac.uk/s1553593/receiver.php")  # open url
+    def http_get(self):
+        f = urllib.request.urlopen("http://www.mahbubiftekhar.co.uk/receiver.php")  # open url
         myfile = f.read()  # read url contents
+        self.command = myfile.decode("utf-8")  # convert bytearray to string
         return self.command
 
-    def startUp(self):
-        self.getListConstant()
-        while self.user1Check() != "T":
-            time.sleep(0.5)
-        self.getListFirstTime()
+    def start_up_single(self):
+        self.commands = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F",
+                         "F", "F", "F", "F", "F", "F", "F", "F", "F"]
+        self.update_pictures_to_go()
+
+        self.update_commands()
+        while self.user_1_check() != "T":
+            self.update_commands()
+            time.sleep(1)
+        self.update_pictures_to_go()
+
+    def start_up_double(self):
+        self.update_commands()
+        while self.user_1_check() != "T" or self.user_2_check() != 'T':
+            self.update_commands()
+            time.sleep(1)
+        self.update_pictures_to_go()
 
     # Updates the picturesToGoTO as an array, T means that the user wish's to go to the painting, F means they do not,
     # This will be the union of both users wishes
-    def getListFirstTime(self):
-        self.picturesToGoTO = self.httpGet()
+    def update_pictures_to_go(self):
+        self.picturesToGoTO = self.commands[0:10]
 
     # This will be used to constantly update the list AFTER the first instance
-    def getListConstant(self):
-        data = self.httpGet()
+    def update_commands(self):
+        data = self.http_get()
         for i in range(0, len(self.commands)):
             self.commands[i] = data[i]
 
     # Resets the entire list online,
     # should be called once the robot is finnished giving the tour and returns to the
-    def resetListOnServer(self):
+    def reset_list_on_server(self):
+        print("Resetting Server")
         for x in range(0, 17):
             # Updating the list online
-            self.httpPost(x, "F")
+            self.http_post(x, "F")
         self.picturesToGoTO = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F"]
+        self.commands = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F",
+                         "F", "F", "F", "F", "F", "F", "F", "F", "F"]
 
-    # Checks if the user wants to go to the toilet or the exit
-    def toiletCheck(self):
-        return self.commands[14]
+    def check_position(self, position):  # get command of Toilet, Stop etc.
+        return self.commands[self.id_map[position]]
 
     # Updates the user once they have arrived at the TOILET
-    def toiletArrived(self):
-        self.httpPost(14, "A")
+    def update_status_arrived(self, position):
+        self.http_post(self.id_map[position], "A")
 
-    # Updates the user once they have arrived at the EXIT
-    def exitArrived(self):
-        self.httpPost(15, "A")
+    def update_status_true(self, position):
+        self.http_post(self.id_map[position], "T")
 
-    # Checks if the user wishes for RoboTOur to stop
-    def stopCheck(self):
-        return self.commands[11]
+    def update_status_false(self, position):
+        self.http_post(self.id_map[position], "F")
+
+    def set_stop_true(self):
+        self.http_post(self.id_map['Stop'], "T")
+
+    def set_stop_false(self):
+        self.http_post(self.id_map['Stop'], "F")
+
+    def wait_for_continue(self):
+        print("Wait for user to press continue.")
+        self.update_commands()
+        while self.command[self.id_map['Stop']] == 'T':
+            self.update_commands()
+            time.sleep(0.5)
+        print("Continue")
 
     ############
     # THESE ARE NOT FOR CD2, Don't worry about it now
 
     # Checks if user1 has submitted their painting requests
-    def user1Check(self):
+    def user_1_check(self):
         return self.commands[16]
 
     # Checks if user2 has submitted their painting requests
-    def user2Check(self):
+    def user_2_check(self):
         return self.commands[17]
-
-    # Check if the user wishes to change the speed
-    def speedCheck(self):
-        return self.commands[13]
 
     # Update the users screen with the artPiece they should be displayed - simply pass in the next optimal artPiece and
     # the rest is sorted
-    def updateArtPiece(self, nextArtWork):
+    def update_art_piece(self, next_art_work):  # input string
         if self.previousArtPiece != "-1":
-            # self.httpPost(previousArtPiece, "F")
-            self.httpPost(nextArtWork, "N")
-            self.previousArtPiece = nextArtWork
-
-    ###########
-
-    # Checks if user wants to cancel the tour
-    def cancelTourCheck(self):
-        return self.commands[12]
-
-    # Check if the user wishes to skip the tour
-    def skipCheck(self):
-        return self.commands[10]
-
-    def constantCheck(self):
-        while True:
-            self.getListConstant()
-            if self.toiletCheck() == "T":
-                # Do something to take the user to the toilet2
-                pass
-            if self.exitArrived() == "T":
-                # Take the user to the exit
-                pass
-            if self.skipCheck() == "Y":
-                # Do something to skip the next artPiece
-                pass
-            if self.stopCheck() == "T":
-                # Stop the robot until the user presses stop
-                pass
-            if self.stopCheck() == "F":
-                # Start the robot, iff if is not started already
-                pass
-            time.sleep(2)  # Sleep for 2 seconds
-            print("toilet: " + self.toiletCheck())
-            print("skip: " + self.skipCheck())
-            print("stop: " + self.stopCheck())
-
-    def getCommands(self):
-        return self.commands
-
-    def getPicturesToGo(self):
-        return self.picturesToGoTO
-
-    while True:
-        print(user1Check())
+            self.http_post(self.id_map[self.previousArtPiece], "F")
+        self.http_post(self.id_map[next_art_work], "N")
+        self.previousArtPiece = next_art_work
+        self.update_commands()  # update command
