@@ -362,13 +362,13 @@ def server_check():
         server.update_commands()
 
         if server.check_position('Speed') == "3":
-            default_speed = 140
+            line_follower.base_speed = 175
         elif server.check_position('Speed') == "2":
-            default_speed = 100
+            line_follower.base_speed = 130
         elif server.check_position('Speed') == "1":
-            default_speed = 60
+            line_follower.base_speed = 75
         else:
-            default_speed = 100
+            line_follower.base_speed = 130
 
         if server.check_position('Stop') == "T":
             is_stop = True
