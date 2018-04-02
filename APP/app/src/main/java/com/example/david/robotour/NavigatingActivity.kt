@@ -105,6 +105,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var finnishing = true
     private var otherusercancel = ""
     private var relLay : RelativeLayout? = null
+    private var snackBar = true
+    private var pressContinue = "Press CONTINUE when ready to move to the next painting."
+    private var continuer = "CONTINUE"
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -655,21 +658,30 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 restartApp = "START AGAIN"
                 closeApp = "FERMER APP?"
                 otherusercancel = "D'autres utilisateurs souhaitent à cette peinture:\n"
+                pressContinue = "Appuyez sur CONTINUER lorsque vous êtes prêt à passer à la peinture suivante.\n"
+                continuer = "CONTINUER"
             }
             "German" -> {
                 restartApp = "ANFANG"
                 closeApp = "SCHLIEßE APP?"
                 otherusercancel = "Andere Benutzerwünsche zu diesem Bild:\n"
+                pressContinue = "Drücken Sie WEITER, wenn Sie bereit sind, zum nächsten Bild zu wechseln.\n"
+                continuer = "FORTSETZEN"
             }
             "Spanish" -> {
                 restartApp = "COMIENZO"
                 closeApp = "CERRAR APP?"
+                pressContinue = "Presione CONTINUAR cuando esté listo para pasar a la siguiente pintura.\n"
                 otherusercancel = "Otro usuario desea esta pintura:\n"
+                continuer = "CONTINUAR"
             }
             "Chinese" -> {
                 restartApp = "重新开始"
                 closeApp = "关闭?"
+                pressContinue = "准备移动到下一张油画时按下CONTINUE。\n"
                 otherusercancel = "其他用户希望这幅画：\n"
+                continuer = "继续"
+
             }
             else -> {
                 restartApp = "START AGAIN"
@@ -1608,38 +1620,42 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     runOnUiThread {
                                         toggleStBtn = true
                                         stopButton!!.text = start
-                                        Snackbar.make(relLay!!, "", Snackbar.LENGTH_LONG)
-                                            .setText("Press CONTINUE when ready to move to the next painting.")
-                                            .setDuration(4000)
-                                            .setAction("CONTINUE", View.OnClickListener {
-                                                if (isNetworkConnected()) {
-                                                    alertStBtn = if (toggleStBtn) {
-                                                        startDesc
-                                                    } else {
-                                                        stopDesc
-                                                    }
-                                                    if (isNetworkConnected()) {
-                                                        if (!toggleStBtn) {
-                                                            stopButton?.text = stop
-                                                            async {
-                                                                stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                        if(snackBar) {
+                                            snackBar = false
+                                            Snackbar.make(relLay!!, pressContinue, Snackbar.LENGTH_LONG)
+                                                    .setText(pressContinue)
+                                                    .setDuration(5000)
+                                                    .setAction(continuer, View.OnClickListener {
+                                                        if (isNetworkConnected()) {
+                                                            alertStBtn = if (toggleStBtn) {
+                                                                startDesc
+                                                            } else {
+                                                                stopDesc
                                                             }
-                                                        } else {
-                                                            stopButton?.text = start
-                                                            async {
-                                                                startRoboTour()
+                                                            if (isNetworkConnected()) {
+                                                                if (!toggleStBtn) {
+                                                                    stopButton?.text = stop
+                                                                    async {
+                                                                        stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                                                    }
+                                                                } else {
+                                                                    stopButton?.text = start
+                                                                    async {
+                                                                        startRoboTour()
+                                                                    }
+                                                                }
+                                                                toggleStBtn = !toggleStBtn
+                                                            } else {
+                                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                             }
                                                         }
-                                                        toggleStBtn = !toggleStBtn
-                                                    } else {
-                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                                                    }
-                                                }
-                                            })
-                                            .show()
+                                                    })
+                                                    .show()
+                                        }
                                     }
                                 } else {
                                     runOnUiThread {
+                                        snackBar = true
                                         stopButton!!.text = stop
                                         toggleStBtn = false
                                     }

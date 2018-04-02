@@ -105,6 +105,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
             val result: Int
+
             val spanish = Locale("es", "ES")
             result = tts2!!.setLanguage(spanish)
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -127,10 +128,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
             } else {
             }
-        } else {
-
-        }
-
+        } else { }
     }
 
     override fun onPause() {
