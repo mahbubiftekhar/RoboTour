@@ -332,7 +332,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 negative = "Cancel"
                 areYouSure = "Are you sure you want to leave? Your selections will be lost"
             }
-            "else" -> {
+            else -> {
                 title = "Please enter painting you wish to go to"
                 search = "Search"
                 positive = "Yes exit"
@@ -808,7 +808,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         sendPUTNEW(24,"T")
                         switchToMain()
                         async{
-                            Thread.sleep(6000)
+                            Thread.sleep(4000)
                             sendPUTNEW(24,"F")
                         }
                     }

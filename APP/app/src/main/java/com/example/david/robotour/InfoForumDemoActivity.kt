@@ -115,7 +115,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
-            val result: Int = tts4!!.setLanguage(Locale.GERMAN)
+            val result: Int = tts4!!.setLanguage(Locale.FRENCH)
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
             } else {
             }
@@ -123,7 +123,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
-            val result: Int = tts3!!.setLanguage(Locale.FRENCH)
+            val result: Int = tts3!!.setLanguage(Locale.GERMAN)
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
             } else {
             }
