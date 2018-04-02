@@ -67,7 +67,18 @@ class SelectLanguageActivity : AppCompatActivity() {
         languages.add(Language("English", R.drawable.ukflag))
         languages.add(Language("No Language", R.drawable.otherpicture))
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
+        val a = loadInt("urlnum")
 
+        when (a) {
+            1 -> {
+            }
+            2 -> {
+                toast("****WARNING!!!: receiver2 1&1****")
+            }
+            3 -> {
+                toast("****WARNING!!!: homepages receiver****")
+            }
+        }
         //UI
         linearLayout {
             tableLayout {

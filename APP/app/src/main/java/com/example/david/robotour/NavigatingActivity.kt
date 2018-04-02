@@ -104,7 +104,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var twoUserMode = false
     private var finnishing = true
     private var otherusercancel = ""
-    private var relLay : RelativeLayout? = null
+    private var relLay: RelativeLayout? = null
     private var snackBar = true
     private var pressContinue = "Press CONTINUE when ready to move to the next painting."
     private var continuer = "CONTINUE"
@@ -639,11 +639,26 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         tts2 = TextToSpeech(this, this)
         tts4 = TextToSpeech(this, this)
+        val a = loadInt("urlnum")
+        when (a) {
+            1 -> {
+            }
+            2 -> {
+                toast("****WARNING!!!: receiver2 1&1****")
+            }
+            3 -> {
+                toast("****WARNING!!!: homepages receiver****")
+            }
+        }
         async {
             val twoUserOrNot = URL(url).readText()[18]
             uiThread {
                 twoUserMode = twoUserOrNot == 'T'
             }
+        }
+        async{
+            //Starts RoboTour
+            sendPUTNEW(11,"T")
         }
         supportActionBar?.hide() //hide actionbar
         //vibrate()
@@ -1118,12 +1133,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             }
                                             if (userid == "1") {
                                                 async {
-                                                    sendPUTNEW(18,"F") //Set two user mode to false
+                                                    sendPUTNEW(18, "F") //Set two user mode to false
                                                     sendPUTNEW(16, "F")
                                                 }
                                             } else if (userid == "2") {
                                                 async {
-                                                    sendPUTNEW(18,"F") //Set two user mode to false
+                                                    sendPUTNEW(18, "F") //Set two user mode to false
                                                     sendPUTNEW(17, "F")
                                                 }
                                             }
@@ -1289,7 +1304,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             async {
                                 val a = URL(url).readText()
                                 /*This updates the picture and text for the user*/
-                                twoUserMode = a[18]=='T'
+                                twoUserMode = a[18] == 'T'
                                 val paintings = a.substring(0, 10)
                                 runOnUiThread { updateScrollView(paintings) }
                                 val counter = (0..16).count { a[it] == 'F' }
@@ -1301,6 +1316,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                                 if (a[14] == 'N' || a[14] == 'T') {
+                                    async {
+                                        sendPUTNEW(currentPic,"T" )
+                                    }
                                     runOnUiThread {
                                         //User going to the toilet
                                         imageView?.setImageResource(R.drawable.toilet)
@@ -1309,6 +1327,13 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                                 if (a[15] == 'N' || a[15] == 'T') {
+                                    async {
+                                        try {
+                                            sendPUTNEW(currentPic, "T")
+                                        } catch (e: Exception) {
+
+                                        }
+                                    }
                                     runOnUiThread {
                                         //User going to the toilet
                                         imageView?.setImageResource(R.drawable.exit)
@@ -1557,20 +1582,23 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 if (a[14] == 'A' && toiletPopUpBool) {
                                     toiletPopUpBool = false
                                     runOnUiThread {
-                                        toiletPopUp = alert(startRoboTour) {
-                                            cancellable(false)
-                                            setFinishOnTouchOutside(false)
-                                            positiveButton(positive) {
-                                                if (isNetworkConnected()) {
-                                                    async {
-                                                        sendPUTNEW(11, "F")
-                                                        sendPUTNEW(14, "F")
+                                        toiletPopUpBool = false
+                                        try {
+                                            toiletPopUp = alert(startRoboTour) {
+                                                cancellable(false)
+                                                setFinishOnTouchOutside(false)
+                                                positiveButton(positive) {
+                                                    if (isNetworkConnected()) {
+                                                        async {
+                                                            sendPUTNEW(11, "F")
+                                                            sendPUTNEW(14, "F")
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                     }
-                                                } else {
-                                                    Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                 }
-                                            }
-                                        }.show()
+                                            }.show()
+                                        } catch (e:Exception){ }
                                     }
                                 } else if (a[14] == 'F' && !toiletPopUpBool) {
                                     //If the other user selects, the pop up for the other use will be removed
@@ -1578,9 +1606,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         toiletPopUpBool = true
                                         try {
                                             toiletPopUp.dismiss()
-                                        } catch (e: Exception) {
-
-                                        }
+                                        } catch (e: Exception) { }
                                     }
                                 } else {
                                     //Do nothing
@@ -1588,20 +1614,23 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 if (a[15] == 'A' && exitPop) {
                                     exitPop = false
                                     runOnUiThread {
-                                        exitPopUp = alert(startRoboTour) {
-                                            cancellable(false)
-                                            setFinishOnTouchOutside(false)
-                                            positiveButton(positive) {
-                                                if (isNetworkConnected()) {
-                                                    async {
-                                                        sendPUTNEW(11, "F")
-                                                        sendPUTNEW(15, "F")
+                                        exitPop = false
+                                        try{
+                                            exitPopUp = alert(startRoboTour) {
+                                                cancellable(false)
+                                                setFinishOnTouchOutside(false)
+                                                positiveButton(positive) {
+                                                    if (isNetworkConnected()) {
+                                                        async {
+                                                            sendPUTNEW(11, "F")
+                                                            sendPUTNEW(15, "F")
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                     }
-                                                } else {
-                                                    Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                 }
-                                            }
-                                        }.show()
+                                            }.show()
+                                        }  catch (e:Exception){ }
                                     }
                                 } else if (a[15] == 'F' && !exitPop) {
                                     //If the other user selects, the pop up for the other use will be removed
@@ -1620,7 +1649,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     runOnUiThread {
                                         toggleStBtn = true
                                         stopButton!!.text = start
-                                        if(snackBar) {
+                                        if (snackBar) {
                                             snackBar = false
                                             Snackbar.make(relLay!!, pressContinue, Snackbar.LENGTH_LONG)
                                                     .setText(pressContinue)

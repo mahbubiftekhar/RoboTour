@@ -158,7 +158,18 @@ class AdminActivity : AppCompatActivity() {
             return sharedPreferences.getInt(key, 0)
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
+        val a = loadInt("urlnum")
 
+        when (a) {
+            1 -> {
+            }
+            2 -> {
+                toast("****WARNING!!!: receiver2 1&1****")
+            }
+            3 -> {
+                toast("****WARNING!!!: homepages receiver****")
+            }
+        }
         INFO_FORUM.setOnClickListener {
             println(">>>>in button")
             async {
