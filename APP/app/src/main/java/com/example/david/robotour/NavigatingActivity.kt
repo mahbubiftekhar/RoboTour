@@ -14,6 +14,7 @@ import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.speech.tts.TextToSpeech
 import android.support.annotation.RequiresApi
+import android.support.design.widget.Snackbar
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
@@ -27,6 +28,7 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
+import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.design.floatingActionButton
 import java.io.File
 import java.io.IOException
@@ -102,6 +104,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var twoUserMode = false
     private var finnishing = true
     private var otherusercancel = ""
+    private var relLay : RelativeLayout? = null
+    private var snackBar = true
+    private var pressContinue = "Press CONTINUE when ready to move to the next painting."
+    private var continuer = "CONTINUE"
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -652,21 +658,30 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 restartApp = "START AGAIN"
                 closeApp = "FERMER APP?"
                 otherusercancel = "D'autres utilisateurs souhaitent à cette peinture:\n"
+                pressContinue = "Appuyez sur CONTINUER lorsque vous êtes prêt à passer à la peinture suivante.\n"
+                continuer = "CONTINUER"
             }
             "German" -> {
                 restartApp = "ANFANG"
                 closeApp = "SCHLIEßE APP?"
                 otherusercancel = "Andere Benutzerwünsche zu diesem Bild:\n"
+                pressContinue = "Drücken Sie WEITER, wenn Sie bereit sind, zum nächsten Bild zu wechseln.\n"
+                continuer = "FORTSETZEN"
             }
             "Spanish" -> {
                 restartApp = "COMIENZO"
                 closeApp = "CERRAR APP?"
+                pressContinue = "Presione CONTINUAR cuando esté listo para pasar a la siguiente pintura.\n"
                 otherusercancel = "Otro usuario desea esta pintura:\n"
+                continuer = "CONTINUAR"
             }
             "Chinese" -> {
                 restartApp = "重新开始"
                 closeApp = "关闭?"
+                pressContinue = "准备移动到下一张油画时按下CONTINUE。\n"
                 otherusercancel = "其他用户希望这幅画：\n"
+                continuer = "继续"
+
             }
             else -> {
                 restartApp = "START AGAIN"
@@ -822,14 +837,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 cancelPainting = "Cancel painting"
             }
         }
-        relativeLayout {
-            val nextPaintings = textView {
-                id = View.generateViewId()
-                // text = "Next Art Pieces:"
-                textSize = 16f
-                typeface = Typeface.DEFAULT_BOLD
-                padding = dip(2)
-            }.lparams { alignParentTop() }
+        relLay = relativeLayout {
             val hSV = horizontalScrollView {
                 id = View.generateViewId()
                 linearLayout {
@@ -844,7 +852,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         }
                     }
                 }
-            }.lparams { below(nextPaintings) }
+            }.lparams { alignParentTop() }
 
             tableLayout2 = linearLayout {
                 orientation = LinearLayout.VERTICAL
@@ -1612,9 +1620,42 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     runOnUiThread {
                                         toggleStBtn = true
                                         stopButton!!.text = start
+                                        if(snackBar) {
+                                            snackBar = false
+                                            Snackbar.make(relLay!!, pressContinue, Snackbar.LENGTH_LONG)
+                                                    .setText(pressContinue)
+                                                    .setDuration(5000)
+                                                    .setAction(continuer, View.OnClickListener {
+                                                        if (isNetworkConnected()) {
+                                                            alertStBtn = if (toggleStBtn) {
+                                                                startDesc
+                                                            } else {
+                                                                stopDesc
+                                                            }
+                                                            if (isNetworkConnected()) {
+                                                                if (!toggleStBtn) {
+                                                                    stopButton?.text = stop
+                                                                    async {
+                                                                        stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                                                    }
+                                                                } else {
+                                                                    stopButton?.text = start
+                                                                    async {
+                                                                        startRoboTour()
+                                                                    }
+                                                                }
+                                                                toggleStBtn = !toggleStBtn
+                                                            } else {
+                                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                            }
+                                                        }
+                                                    })
+                                                    .show()
+                                        }
                                     }
                                 } else {
                                     runOnUiThread {
+                                        snackBar = true
                                         stopButton!!.text = stop
                                         toggleStBtn = false
                                     }
@@ -1858,7 +1899,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onBackPressed() {
         /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
         Send the user back to MainActivity */
-        alert(closeApp) {
+        alert(cancelDesc) {
             positiveButton(positive) {
                 checkerThread.interrupt()
                 async {

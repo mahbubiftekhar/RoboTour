@@ -123,7 +123,7 @@ class ControlSelectionActivity : AppCompatActivity() {
                 Thread.sleep(4000)
                 switchToPictures()
             } else {
-                Thread.sleep(4000)
+                println(">>>> in the else clause")
                 waitingForListen = true
                 t.start()
             }
@@ -132,23 +132,6 @@ class ControlSelectionActivity : AppCompatActivity() {
 
 
     private fun updatetext2() {
-        /*when (language) {
-            "German" -> {
-                text2?.text = "RoboTour nicht verfügbar, bitte warten Sie, um der Tour zu folgen\n"
-            }
-            "French" -> {
-                text2?.text = "RoboTour non disponible, veuillez patienter pour le tour\n"
-            }
-            "Spanish" -> {
-                text2?.text = "RoboTour no disponible, espere para seguir la gira\n"
-            }
-            "Chinese" -> {
-                text2?.text = "RoboTour无法使用，请等待跟随游览\n"
-            }
-            else -> {
-                text2?.text = "RoboTour not available, please wait to follow tour"
-            }
-        }*/
         text2?.text = when (language) {
             "German" -> {
                 "Keine RoboTour Verfügbar, Bitte Warten Sie, Um Einer Tour Zu folgen"
@@ -170,7 +153,7 @@ class ControlSelectionActivity : AppCompatActivity() {
 
     private fun switchBackToMain() {
         clearFindViewByIdCache()
-        toast("error occured")
+        toast("Timed Out")
         waitingForListen = false
         t.interrupt()
         startActivity<MainActivity>("language" to language) // now we can switch the activity
@@ -204,6 +187,7 @@ class ControlSelectionActivity : AppCompatActivity() {
             runOnUiThread {
                 updatetext2()
             }
+            Thread.sleep(5000)
             while (!Thread.currentThread().isInterrupted) {
                 println("++++ t thread WaitingActivity")
                 try {

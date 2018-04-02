@@ -17,6 +17,9 @@ import java.io.InterruptedIOException
 import java.net.URL
 import java.util.*
 import android.widget.TextView
+import android.util.DisplayMetrics
+
+
 
 @Suppress("DEPRECATION")
 class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
@@ -102,6 +105,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
             val result: Int
+
             val spanish = Locale("es", "ES")
             result = tts2!!.setLanguage(spanish)
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -112,7 +116,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
-            val result: Int = tts4!!.setLanguage(Locale.GERMAN)
+            val result: Int = tts4!!.setLanguage(Locale.FRENCH)
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
             } else {
             }
@@ -120,14 +124,11 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         if (status == TextToSpeech.SUCCESS) {
             // set US English as language for tts
-            val result: Int = tts3!!.setLanguage(Locale.FRENCH)
+            val result: Int = tts3!!.setLanguage(Locale.GERMAN)
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
             } else {
             }
-        } else {
-
-        }
-
+        } else { }
     }
 
     override fun onPause() {
@@ -217,16 +218,39 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vibrate()
-        verticalLayout {
-            imageView(R.drawable.robotourlarge) {
-                backgroundColor = Color.TRANSPARENT //Removes gray border
+        val metrics = DisplayMetrics()
+        getWindowManager().getDefaultDisplay().getMetrics(metrics)
+
+        val yInches = metrics.heightPixels / metrics.ydpi
+        val xInches = metrics.widthPixels / metrics.xdpi
+        val diagonalInches = Math.sqrt((xInches * xInches + yInches * yInches).toDouble())
+        if (diagonalInches >= 6.5) {
+            // 6.5inch device or bigger
+            verticalLayout {
+                imageView(R.drawable.robotourlarge) {
+                    backgroundColor = Color.TRANSPARENT //Removes gray border
+                }
+                text2 = textView {
+                    textSize = 62f
+                    typeface = Typeface.DEFAULT_BOLD
+                    padding = dip(5)
+                    topPadding = dip(20)
+                    gravity = Gravity.CENTER
+                }
             }
-            text2 = textView {
-                textSize = 62f
-                typeface = Typeface.DEFAULT_BOLD
-                padding = dip(5)
-                topPadding = dip(20)
-                gravity = Gravity.CENTER
+        } else {
+            // smaller device
+            verticalLayout {
+                imageView(R.drawable.robotour_img_small) {
+                    backgroundColor = Color.TRANSPARENT //Removes gray border
+                }
+                text2 = textView {
+                    textSize = 40f
+                    typeface = Typeface.DEFAULT_BOLD
+                    padding = dip(5)
+                    topPadding = dip(20)
+                    gravity = Gravity.CENTER
+                }
             }
         }
 
@@ -244,8 +268,8 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
             1 -> {
                 //Spanish
-                updateTextView2("Bienvenue sur RoboTour")
-                val e = "Bienvenue sur RoboTour"
+                updateTextView2("Bienvenido a RoboTour")
+                val e = "Bienvenido a RoboTour"
                 tts2!!.speak(e, TextToSpeech.QUEUE_FLUSH, null)
             }
             2 -> {
@@ -260,8 +284,8 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
             3 -> {
                 //French
-                updateTextView2("Bienvenido a RoboTour")
-                tts4!!.speak("Bienvenido a RoboTour", TextToSpeech.QUEUE_FLUSH, null)
+                updateTextView2("Bienvenue sur RoboTour")
+                tts4!!.speak("Bienvenue sur RoboTour", TextToSpeech.QUEUE_FLUSH, null)
             }
             4 -> {
                 //Chinese
@@ -280,7 +304,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             negativeButton {
 
             }
-        }
+        }.show()
     }
 
 
