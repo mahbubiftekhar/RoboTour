@@ -14,6 +14,7 @@ import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.speech.tts.TextToSpeech
 import android.support.annotation.RequiresApi
+import android.support.design.widget.Snackbar
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
@@ -27,6 +28,7 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
+import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.design.floatingActionButton
 import java.io.File
 import java.io.IOException
@@ -102,6 +104,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var twoUserMode = false
     private var finnishing = true
     private var otherusercancel = ""
+    private var relLay : RelativeLayout? = null
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -822,14 +825,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 cancelPainting = "Cancel painting"
             }
         }
-        relativeLayout {
-            val nextPaintings = textView {
-                id = View.generateViewId()
-                // text = "Next Art Pieces:"
-                textSize = 16f
-                typeface = Typeface.DEFAULT_BOLD
-                padding = dip(2)
-            }.lparams { alignParentTop() }
+        relLay = relativeLayout {
             val hSV = horizontalScrollView {
                 id = View.generateViewId()
                 linearLayout {
@@ -844,7 +840,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         }
                     }
                 }
-            }.lparams { below(nextPaintings) }
+            }.lparams { alignParentTop() }
 
             tableLayout2 = linearLayout {
                 orientation = LinearLayout.VERTICAL
@@ -1612,6 +1608,35 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     runOnUiThread {
                                         toggleStBtn = true
                                         stopButton!!.text = start
+                                        Snackbar.make(relLay!!, "", Snackbar.LENGTH_LONG)
+                                            .setText("Press CONTINUE when ready to move to the next painting.")
+                                            .setDuration(4000)
+                                            .setAction("CONTINUE", View.OnClickListener {
+                                                if (isNetworkConnected()) {
+                                                    alertStBtn = if (toggleStBtn) {
+                                                        startDesc
+                                                    } else {
+                                                        stopDesc
+                                                    }
+                                                    if (isNetworkConnected()) {
+                                                        if (!toggleStBtn) {
+                                                            stopButton?.text = stop
+                                                            async {
+                                                                stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                                            }
+                                                        } else {
+                                                            stopButton?.text = start
+                                                            async {
+                                                                startRoboTour()
+                                                            }
+                                                        }
+                                                        toggleStBtn = !toggleStBtn
+                                                    } else {
+                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                    }
+                                                }
+                                            })
+                                            .show()
                                     }
                                 } else {
                                     runOnUiThread {
