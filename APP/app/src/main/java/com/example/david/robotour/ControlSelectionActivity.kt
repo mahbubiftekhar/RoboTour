@@ -170,7 +170,7 @@ class ControlSelectionActivity : AppCompatActivity() {
 
     private fun switchBackToMain() {
         clearFindViewByIdCache()
-        toast("error occured")
+        toast("Timed Out")
         waitingForListen = false
         t.interrupt()
         startActivity<MainActivity>("language" to language) // now we can switch the activity

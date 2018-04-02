@@ -1858,7 +1858,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onBackPressed() {
         /*Overriding on back pressed, otherwise user can go back to previous maps and we do not want that
         Send the user back to MainActivity */
-        alert(closeApp) {
+        alert(cancelDesc) {
             positiveButton(positive) {
                 checkerThread.interrupt()
                 async {
