@@ -73,9 +73,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var cancelPainting = ""
     private var artPieceTitle = ""
     private var artPieceDescription = ""
-    private var speechText = ""
     private var closeApp = ""
-    private var restartApp = ""
     private var advertisements = ArrayList<Int>()
 
     private fun loadInt(key: String): Int {
@@ -399,45 +397,64 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun switchToFinnished() {
         checkerThread.interrupt()
         clearFindViewByIdCache()
-        val message: String
         val language = intent.getStringExtra("language")
-        message = when (language) {
-            "French" -> "Merci d'utiliser RoboTour.\nNous espérons que vous avez apprécié votre visite."
-            "German" -> "Vielen Dank für die Verwendung von RoboTour.\nWir hoffen, Sie haben Ihre Tour genossen."
-            "Spanish" -> "Gracias por usar RoboTour.\nEsperamos que hayas disfrutado tu recorrido."
-            "Chinese" -> "感谢您使用萝卜途\n希望您喜欢这次旅程"
-            else -> "Thank you for using RoboTour.\nWe hope you enjoyed your tour."
+        val message = when (language) {
+            "French" -> "Merci d'utiliser RoboTour."
+            "German" -> "Vielen Dank für die Verwendung von RoboTour."
+            "Spanish" -> "Gracias por usar RoboTour."
+            "Chinese" -> "感谢您使用萝卜途"
+            else -> "Thank you for using RoboTour."
+        }
+        val message2 = when (language) {
+            "French" -> "Nous espérons que vous avez apprécié votre visite."
+            "German" -> "Wir hoffen, Sie haben Ihre Tour genossen."
+            "Spanish" -> "Esperamos que hayas disfrutado tu recorrido."
+            "Chinese" -> "希望您喜欢这次旅程"
+            else -> "We hope you enjoyed your tour."
         }
         when (language) {
             "French" -> {
-                speechText = "Thank you for using Ro-bow-tour"
-                restartApp = "START AGAIN"
-                closeApp = "FERMER APP?"
+                //restartApp = "START AGAIN"
+                closeApp = "Etes-vous sûr de vouloir arrêter de suivre cette tournée?"
             }
             "German" -> {
-                restartApp = "ANFANG"
-                closeApp = "SCHLIEßE APP?"
+                //restartApp = "ANFANG"
+                closeApp = "Sind Sie sicher, dass Sie aufhören möchten, diese Tour zu folgen?"
             }
             "Spanish" -> {
-                restartApp = "COMIENZO"
-                closeApp = "CERRAR APP?"
+                //restartApp = "COMIENZO"
+                closeApp = "¿Seguro que quieres dejar de seguir esta gira?"
             }
             "Chinese" -> {
-                restartApp = "重新开始"
-                closeApp = "关闭?"
+                //restartApp = "重新开始"
+                closeApp = "你确定你想停下来参观这次巡演吗?"
             }
             else -> {
-                restartApp = "START AGAIN"
-                closeApp = "CLOSE APP?"
+                //restartApp = "START AGAIN"
+                closeApp = "Are you sure you want to stop following this tour?"
             }
         }
         speakOutThanks()
-        alert(message) {
+        alert {
+            customView {
+                linearLayout {
+                    leftPadding = dip(4)
+                    orientation = LinearLayout.VERTICAL
+                    textView {
+                        text = message
+                        textSize = 22f
+                        typeface = Typeface.DEFAULT_BOLD
+                        verticalPadding = dip(10)
+                    }
+                    textView {
+                        text = message2
+                        textSize = 18f
+                    }
+                }
+            }
             cancellable(false)
             setFinishOnTouchOutside(false)
-            positiveButton(restartApp) {
-                pictureThread.interrupt()
-                checkerThread.interrupt()
+            positiveButton {
                 clearFindViewByIdCache()
                 deleteCache(applicationContext)
                 val i = baseContext.packageManager
@@ -673,25 +690,24 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         val language = intent.getStringExtra("language")
         when (language) {
             "French" -> {
-                speechText = "Thank you for using Ro-bow-tour"
-                restartApp = "START AGAIN"
-                closeApp = "FERMER APP"
+                //restartApp = "START AGAIN"
+                closeApp = "Etes-vous sûr de vouloir arrêter de suivre cette tournée?"
             }
             "German" -> {
-                restartApp = "ANFANG"
-                closeApp = "SCHLIEßE APP"
+                //restartApp = "ANFANG"
+                closeApp = "Sind Sie sicher, dass Sie aufhören möchten, diese Tour zu folgen?"
             }
             "Spanish" -> {
-                restartApp = "COMIENZO"
-                closeApp = "CERRAR APP"
+                //restartApp = "COMIENZO"
+                closeApp = "¿Seguro que quieres dejar de seguir esta gira?"
             }
             "Chinese" -> {
-                restartApp = "重新开始"
-                closeApp = "关闭"
+                //restartApp = "重新开始"
+                closeApp = "你确定你想停下来参观这次巡演吗?"
             }
             else -> {
-                restartApp = "START AGAIN"
-                closeApp = "CLOSE APP"
+                //restartApp = "START AGAIN"
+                closeApp = "Are you sure you want to stop following this tour?"
             }
         }
         when (language) {
@@ -1085,7 +1101,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 val a = URL(url).readText()
                                 println("++++++++" + a)
                                 /*This updates the picture and text for the user*/
-                                val paintings = a.substring(0, 9)
+                                val paintings = a.substring(0, 10)
                                 runOnUiThread { updateScrollView(paintings) }
                                 val counter = (0..16).count { a[it] == 'F' }
                                 if (counter == 17) {
@@ -1363,7 +1379,6 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-
     private fun updateScrollViewPictures(sortedNums: MutableCollection<Int>) {
         val numSelectedPaintings = sortedNums.size
         (numSelectedPaintings..10)
@@ -1406,13 +1421,6 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         /*This function will get the ETA*/
         val position = map[paintingIndex]!!
         return ("ETA: " + (30 * (1 + position)) + " Seconds")
-        /*
-        for (i in 0..map.size) {
-            if (map[i] == paintingIndex) {
-                return "ETA $i min"
-            }
-        }
-         */
     }
 
     @SuppressLint("SetTextI18n")
@@ -1452,25 +1460,24 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         typeface = Typeface.DEFAULT_BOLD
                         padding = dip(3)
                         gravity = Gravity.CENTER_HORIZONTAL
-
-                        textView {
-                            text = alertETA //The position the paining is on the list times 10s
-                            textSize = 20f
-                            padding = dip(2)
-                        }
-                        textView {
-                            text = alertDescription
-                            textSize = 16f
-                            padding = dip(2)
-                        }
-                        button {
-                            text = cancelPainting
-                            onClick {
-                                //Remove Painting From List
-                                //listPaintings[map[paintIndex]!!].visibility = View.GONE
-                                toast(cancelRequestSent)
-                                dismiss()
-                            }
+                    }
+                    textView {
+                        text = alertETA //The position the paining is on the list times 10s
+                        textSize = 20f
+                        padding = dip(2)
+                    }
+                    textView {
+                        text = alertDescription
+                        textSize = 16f
+                        padding = dip(2)
+                    }
+                    button {
+                        text = cancelPainting
+                        onClick {
+                            //Remove Painting From List
+                            //listPaintings[map[paintIndex]!!].visibility = View.GONE
+                            toast(cancelRequestSent)
+                            dismiss()
                         }
                     }
                 }
