@@ -130,6 +130,10 @@ class AdminActivity : AppCompatActivity() {
             19 -> true
             20 -> true
             21 -> true
+            22 -> true
+            23 -> true
+            24 -> true
+            25 -> true
             else -> false
         }
     }
@@ -171,41 +175,16 @@ class AdminActivity : AppCompatActivity() {
             }
         }
         INFO_FORUM.setOnClickListener {
-            println(">>>>in button")
             async {
-                val a = (URL("http://www.mahbubiftekhar.co.uk/forum.php").readText())
-                val b = a[0].toString().toInt()
-                println(">>>$a")
-                when (b) {
-                    0 -> {
-                        println(">>>>0")
-                        sendFORUM(0, 1.toString())
+                val b = URL("http://www.mahbubiftekhar.co.uk/forum.php").readText()
+                for (i in 0..3) {
+                    if (b[i] == 'N' || b[i] == 'A') {
+                        sendFORUM(i, "F")
+                        sendFORUM(i + 1, "A")
+                        break
                     }
-                    1 -> {
-                        println(">>>>1")
-                        sendFORUM(0, 2.toString())
-
-                    }
-                    2 -> {
-                        println(">>>>2")
-                        sendFORUM(0, 3.toString())
-
-                    }
-                    3 -> {
-                        println(">>>>3")
-                        sendFORUM(0, 4.toString())
-
-                    }
-                    4 -> {
-                        println(">>>>4")
-                        sendFORUM(0, 0.toString())
-
-                    }
-                    5 -> {
-
-                    }
-
                 }
+                toast("Yippe kayay!")
             }
         }
 
@@ -264,7 +243,7 @@ class AdminActivity : AppCompatActivity() {
         AUX_RESET.setOnClickListener {
             /*Resets all the AUX, This means that the stuff from stuff such as skip etc will be reset, this
             excludes the user data */
-            for (i in 10..24) {
+            for (i in 10..25) {
                 async {
                     sendPUTNEW(i, "F")
                 }
@@ -306,7 +285,7 @@ class AdminActivity : AppCompatActivity() {
         RESET_EVERYTHING.setOnClickListener {
             //Resets all from 0 .. 17
             try {
-                for (i in 0..24) {
+                for (i in 0..25) {
                     async {
                         sendPUTNEW(i, "F")
                     }

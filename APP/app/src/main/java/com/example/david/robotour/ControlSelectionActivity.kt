@@ -72,7 +72,7 @@ class ControlSelectionActivity : AppCompatActivity() {
             "German" -> "Wir Suchen Nach Einer Verfügbaren RoboTour"
             "French" -> "Recherche d'un RoboTour disponible"
             "Spanish" -> "Buscando un RoboTour disponible"
-            "Chinese" -> "搜索可用的机器人旅行"
+            "Chinese" -> "正在寻找可用的萝卜途"
             else -> "Searching For An Available RoboTour"
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -130,7 +130,6 @@ class ControlSelectionActivity : AppCompatActivity() {
         }
     }
 
-
     private fun updatetext2() {
         text2?.text = when (language) {
             "German" -> {
@@ -143,7 +142,7 @@ class ControlSelectionActivity : AppCompatActivity() {
                 "No RoboTour Disponible, Por Favor Espere Para Seguir Un Recorrido"
             }
             "Chinese" -> {
-                "没有 RoboTour 可用，请稍等一个游览"
+                "暂时没有可用的萝卜途，请等候别的萝卜途结束旅行"
             }
             else -> {
                 "Sorry, No RoboTour Available, Please Wait To Be Assigned To An Existing Tour"

@@ -656,10 +656,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 twoUserMode = twoUserOrNot == 'T'
             }
         }
-        async{
-            //Starts RoboTour
-            sendPUTNEW(11,"T")
-        }
         supportActionBar?.hide() //hide actionbar
         //vibrate()
         async {
@@ -732,14 +728,14 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 stopDesc = "Are you sure you want to stop RoboTour?"
                 start = "CONTINUE"
                 startDesc = "Do you want to start RoboTour?"
-                cancelTour = "Cancel"
+                cancelTour = "Cancel Tour"
                 cancelDesc = "Are you sure you want to cancel the tour?"
-                exit = "Exit"
+                exit = "Go To Exit"
                 exitDesc = "Do you want to go to the exit"
                 toilet = "Toilet"
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "SPEED"
-                startRoboTour = "Press START when you are ready for RoboTour to resume"
+                startRoboTour = "Press YES when you are ready for RoboTour to resume"
                 otherUseCancel = "Other user wishes to cancel, allow cancel?: "
                 cancelRequestSent = "Cancel request sent"
                 cancelPainting = "Cancel painting"
@@ -831,7 +827,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 cancelPainting = "Gemälde abbrechenC"
             }
             else -> {
-                startRoboTour = "Press start when you are ready for RoboTour to resume"
+                startRoboTour = "Press YES when you are ready for RoboTour to resume"
                 positive = "Yes"
                 negative = "No"
                 skip = "SKIP"
@@ -1316,9 +1312,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                                 if (a[14] == 'N' || a[14] == 'T') {
-                                    async {
-                                        sendPUTNEW(currentPic,"T" )
-                                    }
                                     runOnUiThread {
                                         //User going to the toilet
                                         imageView?.setImageResource(R.drawable.toilet)
@@ -1327,13 +1320,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                                 if (a[15] == 'N' || a[15] == 'T') {
-                                    async {
-                                        try {
-                                            sendPUTNEW(currentPic, "T")
-                                        } catch (e: Exception) {
-
-                                        }
-                                    }
                                     runOnUiThread {
                                         //User going to the toilet
                                         imageView?.setImageResource(R.drawable.exit)
@@ -1506,6 +1492,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 async {
                                                     sendPUTNEW(a[20].toString().toInt(), "F")
                                                     sendPUTNEW(23, "F")
+                                                    sendPUTNEW(25, "T")
                                                     cancelRequest = false
                                                 }
                                             }
@@ -1547,6 +1534,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 async {
                                                     sendPUTNEW(a[20].toString().toInt(), "F")
                                                     sendPUTNEW(23, "F")
+                                                    sendPUTNEW(25, "T")
                                                     cancelRequest = false
                                                 }
                                             }
@@ -1587,7 +1575,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             toiletPopUp = alert(startRoboTour) {
                                                 cancellable(false)
                                                 setFinishOnTouchOutside(false)
-                                                positiveButton(positive) {
+                                                positiveButton() {
                                                     if (isNetworkConnected()) {
                                                         async {
                                                             sendPUTNEW(11, "F")
@@ -2100,6 +2088,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         when {
             !twoUserMode -> async {
                 sendPUTNEW(paintingID, "F")
+                sendPUTNEW(25, "T")
             }
             userid == 1.toString() -> async {
                 sendPUTNEW(20, paintingID.toString())
