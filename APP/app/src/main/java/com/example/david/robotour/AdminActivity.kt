@@ -180,7 +180,11 @@ class AdminActivity : AppCompatActivity() {
                 for (i in 0..3) {
                     if (b[i] == 'N' || b[i] == 'A') {
                         sendFORUM(i, "F")
-                        sendFORUM(i + 1, "A")
+                        if(i==3){
+                            sendFORUM(0, "A")
+                        }else {
+                            sendFORUM(i + 1, "A")
+                        }
                         break
                     }
                 }
