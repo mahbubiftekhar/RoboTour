@@ -131,4 +131,6 @@
     <string name="random_carousel">RANDOM CAROUSEL</string>
     <string name="title_activity_info_forum_demo">InfoForumDemo</string>
     <string name="info_forum_increment">INFO FORUM INCREMENT</string>
+    <string name="_2_user_mode">2 USER MODE</string>
+    <string name="_1_user_mode">1 USER MODE</string>
 </resources>
