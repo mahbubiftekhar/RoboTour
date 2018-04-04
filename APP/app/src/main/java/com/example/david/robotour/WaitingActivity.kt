@@ -51,7 +51,7 @@ class WaitingActivity : AppCompatActivity() {
                 "Envío de su selección a RoboTour\n"
             }
             "Chinese" -> {
-                "将您的选择发送到RoboTour\n"
+                "正在将您的选择发给萝卜途...\n"
             }
             else -> {
                 "Sending your selection to RoboTour"

@@ -327,8 +327,8 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     LongEnglish = "The Mona Lisa ( or La Gioconda ) by the Italian Renaissance artist Leonardo da Vinci has been described as the best known, the most visited, the most written about, the most sung about, the most parodied work of art in the world" +
                             "The painting is thought to be a portrait of Lisa Gherardini, the wife of Francesco del Giocondo. It had been believed to have been painted between 1503 and 1506.",
                     LongChinese = "《蒙娜丽莎》是文艺复兴时期画家列奥纳多·达·芬奇所绘的肖像画。画中描绘了一位表情内敛的、微带笑容的女士，她的笑容有时被称作是\"神秘的笑容\"。\n" +
-                            "意大利文艺复兴时期艺术家达芬奇的蒙娜丽莎（或La Gioconda）被形容为“世界上最知名，访问量最大，写得最多，唱得最多的艺术品”。\n" +
-                            "这幅画被认为是Francesco del Giocondo的妻子Lisa Gherardini的一幅肖像。 它被认为是在1503和1506之间画的。\n",
+                            "畫中人物坐著並把交疊的雙手擱在座椅的扶手上，從頭部至腰部完整的呈現出半身形體，一改早期畫像只畫頭部及上半身、在胸部截斷的構圖，為日後的畫家及攝影師樹立新的肖像圖基本架構。\n" +
+                            "达·芬奇使用金字塔结构来将画中的女士简单而充满地放置在画中。她的叠在一起的手构成金字塔前方的角。她的胸部、頸部和面部焕发出与她的手同样的柔软的光芒。这些有机部分的光芒的变化显示出肉体的丰满和柔润，包括上述的笑容。西格蒙德·弗洛伊德将这个笑容理解为画家对他母亲的感性的怀念。其他人将它描写为天真的、诱媚的或甚至于出神的或悲伤的。应该指出的是达·芬奇当时的肖像画多半带有这样的微笑。\n",
                     LongFrench = "La Mona Lisa (ou La Gioconda) de l'artiste de la Renaissance italienne Leonardo da Vinci a été décrite comme \"la plus connue, la plus visitée, la plus écrite, la plus chantée, l'œuvre d'art la plus parodiée au monde\".\n" +
                             "Le tableau est censé être un portrait de Lisa Gherardini, l'épouse de Francesco del Giocondo. Il aurait été peint entre 1503 et 1506.\n" +
                             "\n",
@@ -346,8 +346,9 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     Spanish_Desc = "Óleo sobre lienzo retrato ecuestre de Napoleón Bonaparte pintado por el artista francés Jacques-Louis David entre 1801 y 1805",
                     imageID = R.drawable.napoleoncrossingthealps, eV3ID = 5, selected = false,
                     LongEnglish = "Napoleon Crossing the Alps is the title given to the five versions of an oil on canvas equestrian portrait of Napoleon Bonaparte painted by the French artist Jacques-Louis David between 1801 and 1805. Initially commissioned by the King of Spain, the composition shows a strongly idealized view of the real crossing that Napoleon and his army made across the Alps through the Great St. Bernard Pass in May 1800.",
-                    LongChinese = "\n" +
-                            "拿破仑穿越阿尔卑斯山是在1801年至1805年间由法国艺术家雅克 - 路易斯大卫绘制的油画布油画马术画像的五个版本的标题。最初由西班牙国王委托，该作品表现出强烈的理想化 查看拿破仑和他的军队在1800年5月通过圣伯纳德山口横穿阿尔卑斯山的真实过境点。\n",
+                    LongChinese = "《拿破仑翻越阿尔卑斯山》是雅克-路易·大卫绘制的五幅油画的统称，绘制了拿破仑·波拿巴在发动马伦哥战役前越过圣伯纳隘道时的情景。\n" +
+                            "委托人並不是拿破侖，而是當時的西班牙國王卡洛斯四世。\n" +
+                            "畫中的場景並不與現實完全相符，因爲實際上當時拿破侖騎著的是騾子而不是馬，當時的天氣也並不糟糕。\n",
                     LongFrench = "Napoleon Crossing the Alps est le titre donné aux cinq versions d'un portrait équestre à l'huile sur toile de Napoléon Bonaparte peint par l'artiste français Jacques-Louis David entre 1801 et 1805. Initialement commandé par le roi d'Espagne, la composition montre une forte idéalisation vue de la véritable traversée que Napoléon et son armée ont fait à travers les Alpes à travers le col du Grand Saint-Bernard en mai 1800.\n",
                     LongSpanish = "Napoleón cruzando los Alpes es el título dado a las cinco versiones de un óleo sobre lienzo retrato ecuestre de Napoleón Bonaparte pintado por el artista francés Jacques-Louis David entre 1801 y 1805. Inicialmente encargado por el rey de España, la composición muestra un ideal fuertemente vista de la travesía real que Napoleón y su ejército cruzaron los Alpes a través del Gran Paso de San Bernardo en mayo de 1800.\n" +
                             "\n",
@@ -361,8 +362,8 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             "", imageID = R.drawable.starrynight, eV3ID = 6, selected = false,
                     LongEnglish = "\n" +
                             "The Starry Night is an oil on canvas by the Dutch post-impressionist painter Vincent van Gogh. Painted in June 1889, it depicts the view from the east-facing window of his asylum room at Saint-Rémy-de-Provence, just before sunrise, with the addition of an idealized village. It is regarded as among Van Gogh's finest works and is one of the most recognized paintings in the history of Western culture.\n",
-                    LongChinese = "\n" +
-                            "星夜是荷兰后印象派画家文森特梵高的油画。 画于1889年6月，描绘了在日出之前，圣雷米普罗旺斯的庇护室的朝东窗户的景色，还有一个理想化的村庄。 它被认为是梵高最优秀的作品之一，也是西方文化史上最受认可的作品之一。\n",
+                    LongChinese = "《星夜》是荷兰后印象派画家文森特·梵高于1890年在法国圣雷米的一家精神病院里创作的一幅著名油画。\n" +
+                            "這幅畫有很強的筆觸。油画中的主色调藍色代表不開心、陰沉的感覺。很粗的筆觸代表憂愁。畫中景象是一個望出窗外的景象。畫中的樹是柏樹，但畫得像黑色火舌一般，直上云端，令人有不安之感。天空的紋理像渦狀星系，并伴随众多星点，而月亮则是以昏黄的月蚀形式出现。整幅画中，底部的村落是以平直、粗短的线条绘画，表现出一种宁静；但与上部粗犷弯曲的线条却产生强烈的对比，在这种高度夸张变形和强烈视觉对比中体现出了画家躁动不安的情感和迷幻的意象世界。\n",
                     LongFrench = "\n" +
                             "La nuit étoilée est une huile sur toile du peintre post-impressionniste néerlandais Vincent van Gogh. Peint en juin 1889, il représente la vue depuis la fenêtre orientée vers l'est de sa chambre d'asile à Saint-Rémy-de-Provence, juste avant le lever du soleil, avec l'ajout d'un village idéalisé. Il est considéré comme l'une des plus belles œuvres de Van Gogh et est l'une des peintures les plus reconnues de l'histoire de la culture occidentale.\n",
                     LongSpanish = "\n" +
@@ -373,11 +374,11 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     English_Desc = "The theme was a traditional one for refectories, although the room was not a refectory at the time that Leonardo painted it.",
                     German_Desc = "Das Thema war ein traditionelles Thema für die Mensen, obwohl das Zimmer zu der Zeit, als Leonardo es malte, kein Refektorium war.",
                     French_Desc = "Le thème était traditionnel pour les réfectoires, bien que la salle n'était pas un réfectoire à l'époque où Léonard la peignait.",
-                    Chinese_Desc = "《最后的晚餐》是文艺复兴时期由列奥纳多·达·芬奇于米兰的天主教恩宠圣母的多明我会院食堂墙壁上绘成，取材自基督教圣经马太福音第26章，描绘了耶稣在遭罗马兵逮捕的前夕和十二宗徒共进最后一餐时预言\"你们其中一人将出卖我\"后，门徒们显得困惑、哀伤与骚动，纷纷询问耶稣：\"主啊，是我吗？\"的瞬间情景。唯有坐在耶稣右侧的叛徒犹达斯惊恐地将身体后倾，一手抓着出卖耶稣的酬劳，脸部显得阴暗。",
+                    Chinese_Desc = "《最后的晚餐》是文艺复兴时期由列奥纳多·达·芬奇于米兰的天主教恩宠圣母的多明我会院食堂墙壁上绘成。",
                     Spanish_Desc = "El tema era tradicional para los refectorios, aunque la sala no era un refectorio en el momento en que Leonardo la pintó.",
                     imageID = R.drawable.thelastsupper, eV3ID = 7, selected = false,
                     LongEnglish = "The Starry Night is an oil on canvas by the Dutch post-impressionist painter Vincent van Gogh. Painted in June 1889, it depicts the view from the east-facing window of his asylum room at Saint-Rémy-de-Provence, just before sunrise, with the addition of an idealized village. It is regarded as among Van Gogh's finest works and is one of the most recognized paintings in the history of Western culture.",
-                    LongChinese = "星夜是荷兰后印象派画家文森特梵高的油画。 画于1889年6月，描绘了在日出之前，圣雷米普罗旺斯的庇护室的朝东窗户的景色，还有一个理想化的村庄。 它被认为是梵高最优秀的作品之一，也是西方文化史上最受认可的作品之一。",
+                    LongChinese = "《最后的晚餐》是文艺复兴时期由列奥纳多·达·芬奇于米兰的天主教恩宠圣母的多明我会院食堂墙壁上绘成，取材自基督教圣经马太福音第26章，描绘了耶稣在遭罗马兵逮捕的前夕和十二宗徒共进最后一餐时预言\"你们其中一人将出卖我\"后，门徒们显得困惑、哀伤与骚动，纷纷询问耶稣：\"主啊，是我吗？\"的瞬间情景。唯有坐在耶稣右侧的叛徒犹达斯惊恐地将身体后倾，一手抓着出卖耶稣的酬劳，脸部显得阴暗。\n",
                     LongFrench = "La Cène est une peinture murale de Léonard de Vinci de la fin du XVe siècle, conservée par le réfectoire du couvent de Santa Maria delle Grazie à Milan. Le travail est supposé avoir été commencé autour de 1495-96 et a été commandé dans le cadre d'un plan de rénovation de l'église et de ses bâtiments conventuels par le patron de Leonardo Ludovico Sforza, duc de Milan. La peinture représente la scène de la dernière Cène de Jésus avec ses apôtres, comme il est dit dans l'Évangile de Jean, 13: 21. Leonardo a dépeint la consternation qui a eu lieu parmi les Douze Disciples quand Jésus a annoncé que l'un d'eux le trahirait",
                     LongSpanish = "La Última Cena es una pintura mural de finales del siglo XV de Leonardo da Vinci ubicada en el refectorio del Convento de Santa Maria delle Grazie en Milán. Se presume que la obra comenzó alrededor de 1495-96 y fue encargada como parte de un plan de renovación de la iglesia y sus edificios conventuales por parte del patrón de Leonardo, Ludovico Sforza, duque de Milán. La pintura representa la escena de la Última Cena de Jesús con sus apóstoles, como se dice en el Evangelio de Juan, 13:21. Leonardo ha descrito la consternación que ocurrió entre los Doce Discípulos cuando Jesús anunció que uno de ellos lo traicionaría. ",
                     LongGerman = "Das letzte Abendmahl ist eine Wandmalerei von Leonardo da Vinci aus dem späten 15. Jahrhundert, die im Refektorium des Klosters Santa Maria delle Grazie in Mailand untergebracht ist. Es wird angenommen, dass das Werk um 1495-96 begonnen wurde und im Rahmen eines Renovierungsplan für die Kirche und die Klostergebäude von Leonardos Patron Ludovico Sforza, Herzog von Mailand, in Auftrag gegeben wurde. Das Gemälde stellt den Schauplatz des Letzten Abendmahls Jesu mit seinen Aposteln dar, wie es im Johannesevangelium 13, 21 heißt. Leonardo hat die Bestürzung der Zwölf Jünger dargestellt, als Jesus verkündete, dass einer von ihnen ihn verraten würde ."))
@@ -385,13 +386,13 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     English_Desc = "The Great Wave off Kanagawa, also known as The Great Wave or simply The Wave, is a woodblock print by the Japanese ukiyo-e artist Hokusai.",
                     German_Desc = "Die Große Welle vor Kanagawa, auch bekannt als The Great Wave oder einfach The Wave, ist ein Holzschnitt des japanischen Ukiyo-e Künstlers Hokusai.",
                     French_Desc = "La Gran Ola de Kanagawa, también conocida como La Gran Ola o simplemente La Ola, es un grabado en madera del artista ukiyo-e japonés Hokusai.",
-                    Chinese_Desc = "《神奈川冲浪里》是日本浮世绘画家葛饰北斋的著名木版画，于1832年出版，是《富岳三十六景》系列作品之一。画中描绘的惊涛巨浪掀卷着渔船，船工们为了生存而努力抗争的图像，远景是富士山。",
+                    Chinese_Desc = "《神奈川冲浪里》是日本浮世绘画家葛饰北斋的著名木版画，于1832年出版，是《富岳三十六景》系列作品之一。",
                     Spanish_Desc = "La Grande Vague de Kanagawa, également connue sous le nom de La Grande Vague ou simplement La Vague, est une gravure sur bois de l'artiste japonais Ukiyo-e Hokusai.",
                     imageID = R.drawable.tsunami, eV3ID = 8, selected = false,
                     LongEnglish =
                     "The Great Wave off Kanagawa (also known as The Great Wave, is a woodblock print by the Japanese ukiyo-e artist Hokusai. It was published sometime between 1829 and 1833[1] in the late Edo period as the first print in Hokusai's series Thirty-six Views of Mount Fuji. It is Hokusai's most famous work, and one of the most recognizable works of Japanese art in the world.\n",
                     LongChinese =
-                    "神奈川的大波浪（也称为“大波浪”，是日本浮世绘艺术家Hokusai的木刻版画，在江户时代后期的1829年至1833年期间发行[1]，作为Hokusai系列的第一部作品Thirty - 富士山的六景，是北下最有名的作品，也是世界上最知名的日本艺术作品之一。\n",
+                    "《神奈川冲浪里》是日本浮世绘画家葛饰北斋的著名木版画，于1832年出版，是《富岳三十六景》系列作品之一。画中描绘的惊涛巨浪掀卷着渔船，船工们为了生存而努力抗争的图像，远景是富士山。\n",
                     LongFrench =
                     "La Grande Vague de Kanagawa (également connue sous le nom de Grande Vague) est une gravure sur bois de l'artiste japonais Ukiyo-e Hokusai, publiée entre 1829 et 1833 à la fin de l'ère Edo, première série de Hokusai. Trente-six Vues du mont Fuji, c'est l'œuvre la plus célèbre de Hokusai et l'une des œuvres d'art japonais les plus reconnaissables au monde.\n",
                     LongSpanish = "La gran ola de Kanagawa (también conocida como La gran ola) es una impresión en madera del artista ukiyo-e japonés Hokusai. Fue publicada en algún momento entre 1829 y 1833 a finales del período Edo como la primera copia de la serie de Hokusai. del Monte Fuji. Es la obra más famosa de Hokusai, y una de las obras de arte japonés más reconocidas en el mundo.\n",
@@ -405,7 +406,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     imageID = R.drawable.waterlillies, eV3ID = 9, selected = false,
                     LongEnglish =
                     "Water Lilies (or Nymphéas) is part of  a series of approximately 250 oil paintings by French Impressionist Claude Monet. The paintings depict his flower garden at his home in Giverny, and were the main focus of his artistic production during the last thirty years of his4 life. Many of the works were painted while Monet suffered from cataracts.\n",
-                    LongChinese = "睡莲（或Nymphéas）是由法国印象派克劳德莫奈绘制的约250幅油画系列中的一部分。这些绘画描绘了他在吉维尼家中的花园，并且是他在过去三十年中艺术创作的主要焦点 他的生命。 莫奈患有白内障时，许多作品都被画了。",
+                    LongChinese = "《睡莲》是法国印象派画家莫奈所绘的系列油画作品，主要描绘的是莫奈在吉维尼花园中的睡莲。创作花费了莫奈晚年的大部分时光，且繪成於莫奈罹患白內障時期。",
                     LongFrench =
                     "Nymphéas fait partie d'une série d'environ 250 peintures à l'huile de l'impressionniste français Claude Monet (1840-1926). Les peintures représentent son jardin de fleurs chez lui à Giverny, et ont été au centre de sa production artistique durant les trente dernières années de sa vie. Beaucoup d'œuvres ont été peintes pendant que Monet souffrait de cataractes.\n",
                     LongSpanish =
