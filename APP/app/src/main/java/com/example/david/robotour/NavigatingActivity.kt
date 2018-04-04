@@ -412,15 +412,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     }
 
-    private fun resetSpeech() {
-        try {
-            tts = null
-            tts = TextToSpeech(this, this)
-        } catch (e: Exception) {
-
-        }
-    }
-
     override fun onPause() {
         try {
             if (tts != null) {
@@ -1393,7 +1384,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         }
                                         runOnUiThread {
                                             currentPic = i // Set current pic to the one being shown
-                                            resetSpeech()
                                             speaking = i
                                             //Change the image, text and descrioption
                                             imageView?.setImageResource(allArtPieces[i].imageID)
@@ -1828,7 +1818,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     }
                 }
                 try {
-                    resetSpeech()
+                    println(">>>>>tts")
                     tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
                 } catch (e: Exception) {
 
