@@ -429,7 +429,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
             "Chinese" -> {
                 //restartApp = "重新开始"
-                closeApp = "你确定你想停下来参观这次巡演吗?"
+                closeApp = "您确定要停止萝卜途吗？"
             }
             else -> {
                 //restartApp = "START AGAIN"
@@ -721,7 +721,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
             "Chinese" -> {
                 //restartApp = "重新开始"
-                closeApp = "你确定你想停下来参观这次巡演吗?"
+                closeApp = "您确定要停止萝卜途吗？"
             }
             else -> {
                 //restartApp = "START AGAIN"
@@ -778,19 +778,19 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 skip = "跳过"
                 skipDesc = "确定要跳过这一幅作品吗？"
                 stop = "停止"
-                stopDesc = "确定要停止萝卜途吗？"
+                stopDesc = "确定要暂停萝卜途吗？"
                 start = "开始"
                 startDesc = "确定开始萝卜途吗？"
                 cancelTour = "取消游览"
                 cancelDesc = "确定要取消游览吗？"
-                exit = "带我去出口"
+                exit = "出口"
                 exitDesc = "确定要去出口吗？"
-                toilet = "带我去厕所"
+                toilet = "厕所"
                 toiletDesc = "确定要去厕所吗？"
                 changeSpeed = "改变速度"
-                otherUseCancel = "其他用户希望取消，允许取消？"
+                otherUseCancel = "其他用户希望取消这幅作品，允许取消吗？"
                 cancelRequestSent = "取消请求已发送"
-                cancelPainting = "取消绘画"
+                cancelPainting = "取消这幅作品"
             }
             "Spanish" -> {
                 positive = "Sí"
