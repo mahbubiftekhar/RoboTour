@@ -180,14 +180,14 @@ class AdminActivity : AppCompatActivity() {
                 for (i in 0..3) {
                     if (b[i] == 'N' || b[i] == 'A') {
                         sendFORUM(i, "F")
-                        if(i==3){
+                        if (i == 3) {
                             sendFORUM(0, "A")
-                        }else {
+                        } else {
                             sendFORUM(i + 1, "A")
                         }
                         break
-                    } else if (i==3){
-                        sendPUTNEW(3,"N")
+                    } else if (i == 3) {
+                        sendPUTNEW(3, "N")
                     }
                 }
                 toast("Yippe kayay!")
@@ -278,6 +278,15 @@ class AdminActivity : AppCompatActivity() {
                     }
                 }
                 3 -> {
+                    saveInt("urlnum", 4)
+                    toast("homepages mahbub receiver set, app will restart")
+                    async {
+                        clearFindViewByIdCache()
+                        Thread.sleep(3000)
+                        restartApp()
+                    }
+                }
+                4 -> {
                     saveInt("urlnum", 1)
                     toast("normal receiver set, app will restart")
                     async {
@@ -361,13 +370,13 @@ class AdminActivity : AppCompatActivity() {
         }
         USER2_MODE_ON.setOnClickListener {
             async {
-                sendPUTNEW(18, "T")
+                sendPUTNEW(18, "2")
             }
             vibrate()
         }
         USER2_MODE_OFF.setOnClickListener {
             async {
-                sendPUTNEW(18, "F")
+                sendPUTNEW(18, "1")
             }
             vibrate()
         }

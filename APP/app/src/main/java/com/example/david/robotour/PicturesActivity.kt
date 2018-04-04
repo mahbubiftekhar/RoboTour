@@ -512,7 +512,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             * colour of the start button to grey*/
             override fun run() {
                 while (!Thread.currentThread().isInterrupted) {
-                    println("++++getting in pictureActivity t thread")
+                   // println("++++getting in pictureActivity t thread")
                     try {
                         val count = allArtPieces.count { it.selected }
                         if (count > 0) {
