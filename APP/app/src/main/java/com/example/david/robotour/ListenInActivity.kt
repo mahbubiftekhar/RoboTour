@@ -694,7 +694,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     imageID = R.drawable.waterlillies, eV3ID = 9, selected = false,
                     LongEnglish =
                     "Water Lilies (or Nymphéas) is part of  a series of approximately 250 oil paintings by French Impressionist Claude Monet. The paintings depict his flower garden at his home in Giverny, and were the main focus of his artistic production during the last thirty years of his4 life. Many of the works were painted while Monet suffered from cataracts.\n",
-                    LongChinese = "睡莲（或Nymphéas）是由法国印象派克劳德莫奈绘制的约250幅油画系列中的一部分。这些绘画描绘了他在吉维尼家中的花园，并且是他在过去三十年中艺术创作的主要焦点 他的生命。 莫奈患有白内障时，许多作品都被画了。",
+                    LongChinese = "《睡莲》是法国印象派画家莫奈所绘的系列油画作品，主要描绘的是莫奈在吉维尼花园中的睡莲。创作花费了莫奈晚年的大部分时光，且繪成於莫奈罹患白內障時期。",
                     LongFrench =
                     "Nymphéas fait partie d'une série d'environ 250 peintures à l'huile de l'impressionniste français Claude Monet (1840-1926). Les peintures représentent son jardin de fleurs chez lui à Giverny, et ont été au centre de sa production artistique durant les trente dernières années de sa vie. Beaucoup d'œuvres ont été peintes pendant que Monet souffrait de cataractes.\n",
                     LongSpanish =
