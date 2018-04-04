@@ -65,14 +65,14 @@ class ControlSelectionActivity : AppCompatActivity() {
             "German" -> "Die nächste RoboTour finden\n"
             "French" -> "Trouver le RoboTour le plus proche\n"
             "Spanish" -> "Encontrar el RoboTour más cercano\n"
-            "Chinese" -> "寻找最近的RoboTour\n"
+            "Chinese" -> "正在寻找最近的萝卜途...\n"
             else -> "Finding closest RoboTour"
         }*/
         message = when (language) {
             "German" -> "Wir Suchen Nach Einer Verfügbaren RoboTour"
             "French" -> "Recherche d'un RoboTour disponible"
             "Spanish" -> "Buscando un RoboTour disponible"
-            "Chinese" -> "正在寻找可用的萝卜途"
+            "Chinese" -> "正在寻找可用的萝卜途..."
             else -> "Searching For An Available RoboTour"
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
