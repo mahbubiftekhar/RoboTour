@@ -31,10 +31,11 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var text2: TextView? = null
     private var language = "English"
     private var painting0 = 0
-    private var painting1 = 0
-    private var painting2 = 0
+    private var painting1 = 1
+    private var painting2 = 2
     private var imageView1: ImageView? = null
     private var imageView2: ImageView? = null
+    private var last = -1
 
 
     public override fun onDestroy() {
@@ -54,6 +55,15 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (tts4 != null) {
             tts4!!.stop()
             tts4!!.shutdown()
+
+        }
+        if (tts5 != null) {
+            tts5!!.stop()
+            tts5!!.shutdown()
+        }
+        if (tts5 != null) {
+            tts5!!.stop()
+            tts5!!.shutdown()
         }
         t.interrupt()
         super.onDestroy()
@@ -99,7 +109,6 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         } else {
         }
         if (status == TextToSpeech.SUCCESS) {
-            // set US English as language for tts
             val result: Int = tts5!!.setLanguage(Locale.CHINESE)
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
             } else {
@@ -175,9 +184,6 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts5 = TextToSpeech(this, this)
         onInit(0)
         super.onResume()
-        if (t.state == Thread.State.NEW) {
-            t.start()
-        }
     }
 
     private val t: Thread = object : Thread() {
@@ -185,19 +191,33 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!Thread.currentThread().isInterrupted) {
-                println("++++ t thread WaitingActivity")
+                println("++++ t thread InfoForumActivity")
                 try {
+                    /*
+                    THE BIRTH OF VENUS
+                    THE CREATION OF ADAM
+                    DAVID
+                     */
                     async {
-                            val a = URL("forum").readText()
+                            val a = URL("http://www.mahbubiftekhar.co.uk/receiver.php").readText()
                             for(i in 0..3) {
+                                val c = i
                                 if (a[i] == 'N') {
-                                    changePictures(i)
-                                    changeFlag()
+                                    println(">>>> IN IN: $c ")
+                                    runOnUiThread{
+                                        changePictures(i)
+                                    }
                                     break
-                                } else if (a[i] == 'A') {
-                                    println()
-                                    speakOut(i)
+                                } else if (a[i] == 'A' && i!=last) {
+                                    println("in else if")
+                                    last = i
+                                    runOnUiThread {
+                                        changePictures(i)
+                                        speakOut(i)
+                                    }
                                     break
+                                }else {
+                                    println(">>> else clause")
                                 }
                             }
                         }
@@ -405,7 +425,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         //Flag on the lhs is the pictures
                         scaleX=2.0f
                         scaleY=2.0f
-                        lparams { topMargin=dip(150);
+                        lparams { topMargin=dip(150)
                             leftMargin=dip(50) }
                         backgroundColor = Color.TRANSPARENT //Removes gray border
                     }
@@ -444,6 +464,10 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
             }
         }
+        if (t.state == Thread.State.NEW) {
+            t.start()
+            toast("Thread started now")
+        }
     }
 
     private fun speakOut(position: Int) {
@@ -451,7 +475,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             0 -> {
                 when (language) {
                     "English" -> {
-                        tts4!!.speak(allArtPieces[painting0].English_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts!!.speak(allArtPieces[painting0].English_Desc, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "French" -> {
                         tts4!!.speak(allArtPieces[painting0].French_Desc, TextToSpeech.QUEUE_FLUSH, null)
@@ -473,7 +497,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             1 -> {
                 when (language) {
                     "English" -> {
-                        tts4!!.speak(allArtPieces[painting1].English_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts!!.speak(allArtPieces[painting1].English_Desc, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "French" -> {
                         tts4!!.speak(allArtPieces[painting1].French_Desc, TextToSpeech.QUEUE_FLUSH, null)
@@ -495,7 +519,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             2 -> {
                 when (language) {
                     "English" -> {
-                        tts4!!.speak(allArtPieces[painting2].English_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts!!.speak(allArtPieces[painting2].English_Desc, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "French" -> {
                         tts4!!.speak(allArtPieces[painting2].French_Desc, TextToSpeech.QUEUE_FLUSH, null)
@@ -515,69 +539,73 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
             }
             3 -> {
+                println(">>>>>> in speak out")
                 speakOutWelcome()
                 changeLanguage()
             }
         }
     }
     private fun speakOutWelcome(){
+        println(">>>>> in speakOutWelcome")
         when (language) {
             "French" -> {
-                tts4?.speak("Bienvenue sur RoboTour",TextToSpeech.QUEUE_FLUSH,null)
+                println(">>1")
+                tts?.speak("Bienvenue sur RoboTour", TextToSpeech.QUEUE_FLUSH, null)
             }
             "Chinese" -> {
-                tts5?.speak("欢迎来到RoboTour",TextToSpeech.QUEUE_FLUSH,null)
+                tts5?.speak("欢迎来到RoboTour", TextToSpeech.QUEUE_FLUSH, null)
             }
             "Spanish" -> {
-                tts2?.speak("Bienvenido a RoboTour",TextToSpeech.QUEUE_FLUSH,null)
+                tts2?.speak("Bienvenido a RoboTour", TextToSpeech.QUEUE_FLUSH, null)
             }
             "German" -> {
-                tts2?.speak("Willkommen bei RoboTour",TextToSpeech.QUEUE_FLUSH,null)
+                tts2?.speak("Willkommen bei RoboTour", TextToSpeech.QUEUE_FLUSH, null)
             }
             else -> {
-                tts?.speak("Welcome to RoboTour",TextToSpeech.QUEUE_FLUSH,null)
+                tts?.speak("Welcome to RoboTour", TextToSpeech.QUEUE_FLUSH, null)
             }
         }
     }
     private fun changePictures(position: Int){
+        println(">>>>$position")
         when(position){
             0->{
-                imageView2?.setImageDrawable(resources.getDrawable(R.drawable.birthofvenus))
+                imageView1?.setImageDrawable(resources.getDrawable(R.drawable.birthofvenus))
             }
             1->{
-                imageView2?.setImageDrawable(resources.getDrawable(R.drawable.creationofadam))
+                imageView1?.setImageDrawable(resources.getDrawable(R.drawable.creationofadam))
             }
             2->{
-                imageView2?.setImageDrawable(resources.getDrawable(R.drawable.david))
+                imageView1?.setImageDrawable(resources.getDrawable(R.drawable.david))
             }
             else ->{
-                imageView2?.setImageDrawable(resources.getDrawable(R.drawable.monalisa))
+                imageView1?.setImageDrawable(resources.getDrawable(R.drawable.monalisa))
             }
         }
     }
     private fun changeFlag(){
         when(language){
             "Spanish"->{
-                imageView1?.setImageDrawable(resources.getDrawable(R.drawable.spanishflag))
+                imageView2?.setImageDrawable(resources.getDrawable(R.drawable.spanishflag))
             }
             "French"->{
-                imageView1?.setImageDrawable(resources.getDrawable(R.drawable.frenchflag))
+                imageView2?.setImageDrawable(resources.getDrawable(R.drawable.frenchflag))
             }
             "Chinese"->{
-                imageView1?.setImageDrawable(resources.getDrawable(R.drawable.chineseflag_fixed))
+                imageView2?.setImageDrawable(resources.getDrawable(R.drawable.chineseflag_fixed))
             }
             "German"->{
-                imageView1?.setImageDrawable(resources.getDrawable(R.drawable.germanflag))
+                imageView2?.setImageDrawable(resources.getDrawable(R.drawable.germanflag))
             }
             else -> {
-                imageView1?.setImageDrawable(resources.getDrawable(R.drawable.ukflag))
+                imageView2?.setImageDrawable(resources.getDrawable(R.drawable.ukflag))
             }
         }
     }
-    fun changeLanguage() {
+    private fun changeLanguage() {
         when (language) {
             "English" -> {
-                language = "English"
+                language = "French"
             }
             "French" -> {
                 language = "German"
@@ -599,6 +627,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 language = "English"
             }
         }
+        changeFlag()
     }
 
     override fun onBackPressed() {

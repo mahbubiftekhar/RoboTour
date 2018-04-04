@@ -186,6 +186,8 @@ class AdminActivity : AppCompatActivity() {
                             sendFORUM(i + 1, "A")
                         }
                         break
+                    } else if (i==3){
+                        sendPUTNEW(3,"N")
                     }
                 }
                 toast("Yippe kayay!")

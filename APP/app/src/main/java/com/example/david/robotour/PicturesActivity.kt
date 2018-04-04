@@ -27,6 +27,7 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import java.io.IOException
+import java.io.InterruptedIOException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -522,8 +523,11 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         Thread.sleep(100)
                     } catch (e: InterruptedException) {
                         Thread.currentThread().interrupt()
+                    } catch (e: InterruptedIOException){
+                        Thread.currentThread().interrupt()
                     }
                 }
+                Thread.currentThread().interrupt()
             }
         }
         t.start() /*Start to run the thread*/

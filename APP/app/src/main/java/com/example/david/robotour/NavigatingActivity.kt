@@ -81,6 +81,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var toiletPopUpBool = true
     private var exitPop = true
     private var speaking = -1
+    private var optional = false
     private var killThread = false
     private var userTwoMode = false
     private val listPaintings = ArrayList<ImageButton>()
@@ -1327,14 +1328,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         descriptionView?.text = exit
                                     }
                                 }
-                                if (a[15] == 'N' || a[15] == 'T') {
-                                    runOnUiThread {
-                                        //User going to the toilet
-                                        imageView?.setImageResource(R.drawable.exit)
-                                        titleView?.text = exit
-                                        descriptionView?.text = exit
-                                    }
-                                }
                                 if (a[14] == 'A' && toiletSpeech) {
                                     println(">>>>2")
                                     toiletSpeech = false
@@ -1604,7 +1597,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     runOnUiThread {
                                         exitPop = false
                                         try{
-                                            exitPopUp = alert(startRoboTour) {
+                                            /*exitPopUp = alert(startRoboTour) {
                                                 cancellable(false)
                                                 setFinishOnTouchOutside(false)
                                                 positiveButton(positive) {
@@ -1617,7 +1610,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                         Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
                                                     }
                                                 }
-                                            }.show()
+                                            }.show() */
                                         }  catch (e:Exception){ }
                                     }
                                 } else if (a[15] == 'F' && !exitPop) {
@@ -1633,11 +1626,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 } else {
                                     //Do nothing
                                 }
-                                if (a[11] == 'T') {
+                                if (a[11] == 'T' ) {
                                     runOnUiThread {
                                         toggleStBtn = true
                                         stopButton!!.text = start
-                                        if (snackBar) {
+                                        if (snackBar && !optional) {
                                             snackBar = false
                                             Snackbar.make(relLay!!, pressContinue, Snackbar.LENGTH_LONG)
                                                     .setText(pressContinue)
@@ -1649,6 +1642,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                             } else {
                                                                 stopDesc
                                                             }
+                                                            optional = false
                                                             if (isNetworkConnected()) {
                                                                 if (!toggleStBtn) {
                                                                     stopButton?.text = stop
@@ -1673,6 +1667,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 } else {
                                     runOnUiThread {
                                         snackBar = true
+                                        optional = false
                                         stopButton!!.text = stop
                                         toggleStBtn = false
                                     }
@@ -2047,6 +2042,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun stopRoboTour() {
         if (isNetworkConnected()) {
+            optional = true
             async {
                 sendPUTNEW(11, "T")
             }
