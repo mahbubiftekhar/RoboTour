@@ -655,7 +655,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         async {
             val twoUserOrNot = URL(url).readText()[18]
             uiThread {
-                twoUserMode = twoUserOrNot == 'T'
+                twoUserMode = twoUserOrNot == '2'
             }
         }
         supportActionBar?.hide() //hide actionbar
@@ -1122,7 +1122,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         positiveButton(positive) {
                                             async {
                                                 val aB = URL(url).readText()
-                                                if (aB[18] == 'F') {
+                                                if (aB[18] == '1') {
                                                     //If single user tell roboTour to cancel
                                                     sendPUTNEW(12, "T")
                                                     sendPUTNEW(userid.toInt(), "F")
@@ -1131,12 +1131,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             }
                                             if (userid == "1") {
                                                 async {
-                                                    sendPUTNEW(18, "F") //Set two user mode to false
+                                                    sendPUTNEW(18, "1") //Set two user mode to false
                                                     sendPUTNEW(16, "F")
                                                 }
                                             } else if (userid == "2") {
                                                 async {
-                                                    sendPUTNEW(18, "F") //Set two user mode to false
+                                                    sendPUTNEW(18, "1") //Set two user mode to false
                                                     sendPUTNEW(17, "F")
                                                 }
                                             }
@@ -1302,7 +1302,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             async {
                                 val a = URL(url).readText()
                                 /*This updates the picture and text for the user*/
-                                twoUserMode = a[18] == 'T'
+                                twoUserMode = a[18] == '2'
                                 val paintings = a.substring(0, 10)
                                 runOnUiThread { updateScrollView(paintings) }
                                 val counter = (0..16).count { a[it] == 'F' }
@@ -1922,7 +1922,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 checkerThread.interrupt()
                 async {
                     val aB = URL(url).readText()
-                    if (aB[18] == 'F') {
+                    if (aB[18] == '1') {
                         //If single user tell roboTour to cancel
                         sendPUTNEW(12, "T")
                         sendPUTNEW(userid.toInt(), "F")
