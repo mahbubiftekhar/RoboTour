@@ -543,7 +543,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     text = "Merci d'utiliser RoboTour"
                 }
                 "Chinese" -> {
-                    text = "感谢您使用RoboTour"
+                    text = "感谢您使用萝卜途"
                 }
                 "Spanish" -> {
                     text = "Gracias por usar RoboTour"
@@ -569,7 +569,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     text = "Nous sommes arrivés aux toilettes"
                 }
                 "Chinese" -> {
-                    text = "我们已经到了厕所"
+                    text = "我们已经到达厕所"
                 }
                 "Spanish" -> {
                     text = "Hemos llegado al baño"
@@ -690,9 +690,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
             "Chinese" -> {
                 restartApp = "重新开始"
-                closeApp = "关闭?"
-                pressContinue = "准备移动到下一张油画时按下CONTINUE。\n"
-                otherusercancel = "其他用户希望这幅画：\n"
+                closeApp = "关闭"
+                pressContinue = "准备好去下一幅作品时请按下 继续。\n"
+                otherusercancel = "其他用户希望取消这幅作品\n"
                 continuer = "继续"
 
             }
@@ -707,7 +707,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 obstacleRemovePlease = "S'il vous plaît retirer l'obstacle devant RoboTour\n"
             }
             "Chinese" -> {
-                obstacleRemovePlease = "请移除RoboTour前面的障碍物\n"
+                obstacleRemovePlease = "请移走萝卜途前面的障碍物\n"
             }
             "Spanish" -> {
                 obstacleRemovePlease = "Quita el obstáculo delante de Ro-bow-Tour\n"
@@ -776,14 +776,14 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 startDesc = "确定开始萝卜途吗？"
                 cancelTour = "取消游览"
                 cancelDesc = "确定要取消游览吗？"
-                exit = "带我去出口"
+                exit = "出口"
                 exitDesc = "确定要去出口吗？"
-                toilet = "带我去厕所"
+                toilet = "厕所"
                 toiletDesc = "确定要去厕所吗？"
                 changeSpeed = "改变速度"
-                otherUseCancel = "其他用户希望取消，允许取消？: "
+                otherUseCancel = "其他用户希望取消这幅作品，允许取消吗？ "
                 cancelRequestSent = "取消请求已发送"
-                cancelPainting = "取消绘画"
+                cancelPainting = "取消这幅作品"
             }
             "Spanish" -> {
                 positive = "Sí"
@@ -1791,7 +1791,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     text = "S'il vous plaît retirer l'obstacle devant Ro-bow-Tour\n"
                 }
                 "Chinese" -> {
-                    text = "请移除Ro-bow-Tour前面的障碍物\n"
+                    text = "请移走萝卜途前面的障碍物\n"
                 }
                 "Spanish" -> {
                     text = "Quita el obstáculo delante de Ro-bow-Tour\n"

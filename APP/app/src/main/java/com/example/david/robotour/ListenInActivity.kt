@@ -1062,7 +1062,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     text = "Nous sommes arrivés aux toilettes"
                 }
                 "Chinese" -> {
-                    text = "我们已经到了厕所"
+                    text = "我们已经到达厕所"
                 }
                 "Spanish" -> {
                     text = "Hemos llegado al baño"
