@@ -242,5 +242,7 @@ class LineSensor():
 
 		return self.last_value
 
-	def no_line(self, env):
+	def no_line(self, env=None):
 		return self.activated_sens == 0
+	def line_detected(self, env=None):
+		return self.activated_sens > 0

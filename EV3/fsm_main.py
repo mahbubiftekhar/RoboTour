@@ -12,6 +12,7 @@ import ev3dev.ev3 as ev3
 
 # instantiate main robot class
 robot = Robot(fast_hub=True)
+server = Server()
 
 # instantiate and set up line following algorithm
 line_follower = LineFollowing(robot)
@@ -19,9 +20,8 @@ line_follower.set_gains(2.75, 0.01, 1.5)
 line_follower.base_speed = 215
 
 calibration = Calibration(robot)
-obstacle_avoidance = ObstacleAvoidance(robot)
+obstacle_avoidance = ObstacleAvoidance(robot, server)
 
-server = Server()
 nav = Navigation(robot, server)
 
 ## FSM SETUP ##
@@ -44,6 +44,7 @@ st_line_lost = State("Lost line")
 
 st_branch = State("Branch detected")
 st_taking_branch = State("Navigating branch")
+st_clearing_branch = State("Moving away from the branch")
 
 st_at_painting = State("At painting")
 st_painting_done = State("Leaving painting")
@@ -76,6 +77,17 @@ def arrived_at_painting(env):
 		return False
 	return env.position == env.pictures_to_go[0]
 
+def branch_taken(env):
+	if(robot.env.next_turn == 'forward'):
+		robot.reset_position_at_branch()
+		return True
+	else:
+		if robot.done_movement(env):
+			robot.reset_position_at_branch()
+			return True
+		else:
+			return False
+
 def tour_done(env):
 	# no more points to go
 	return not env.positions_list
@@ -84,12 +96,12 @@ def no_path(env):
 	return not env.positions_list
 
 def ask_for_mode_press():
-	ev3.Sound.speak('Please select single or multi user mode.')
+	robot.speak('Please select single or multi user mode.')
 
 def reset():
 	robot.stop()
 	robot.indicate_zero()
-	robot.env.users = 1
+	robot.env.users = 0
 	robot.sound.beep('-f 700 -l 50 -r 4')
 	# try:
 	# 	kp = float(input("Kp? "))
@@ -121,49 +133,110 @@ def seek_line():
 	line_follower.base_speed = tmp
 
 def branch_routine():
+
 	# print(robot.env.next_turn)
+	if True:
+		return
 	if(robot.env.next_turn == 'left'):
-		robot.motor(0,175)
-		
+		angle = -90
 	elif robot.env.next_turn == 'right':
-		robot.motor(175,0)
-	elif robot.env.next_turn == 'forward':
-		line_follower.run()
+		angle = 90
+		# robot.motor(175,0)
 	elif robot.env.next_turn == 'back':
+		angle = 180
 		# Michal in this part the robot needs to turn 180 degrees,there should be a better way than calling motor()
-		robot.motor(250,-250)
-	elif robot.env.next_turn == 'stop':
-		robot.stop()
+	# forward
 	else:
-		pass  # arrived, turn pointer
+		angle = 0
+	robot.rotate(angle,175)
+
 def show_painting():
 	robot.stop()
+	turn_pointer()
 	server.update_status_arrived(robot.env.position)
 	server.set_stop_true()
 	server.update_commands()
 
 def leaving_painting():
+	
 	robot.env.pictures_to_go.pop(0)
 	if not robot.env.pictures_to_go:
 		robot.env.finished_tour = True
 		server.update_art_piece('Exit')
 	else:
+		robot.env.positions_list = []
+		nav.plan_route()
 		pic = robot.env.pictures_to_go[0]
 		server.update_art_piece(pic)
 
+	turn_pointer_back()
+
+def turn_pointer():
+	
+	if (robot.env.orientation == 'N' and robot.env.motor_map[robot.env.position] == 'E') or (robot.env.orientation == 'E' and robot.env.motor_map[robot.env.position] == 'S') or (robot.env.orientation == 'S' and robot.env.motor_map[robot.env.position] == 'W') or (robot.env.orientation == 'W' and robot.env.motor_map[robot.env.position] == 'N'):
+		robot.pointer_motor(45,300)
+		robot.env.pointer_orientation = 'E'
+
+	elif (robot.env.orientation == 'N' and robot.env.motor_map[robot.env.position] == 'W') or (robot.env.orientation == 'E' and robot.env.motor_map[robot.env.position] == 'N')  or (robot.env.orientation == 'S' and robot.env.motor_map[robot.env.position] == 'E') or (robot.env.orientation == 'W' and robot.env.motor_map[robot.env.position] == 'S'):
+		robot.pointer_motor(-45,300)
+		robot.env.pointer_orientation = 'W'
+
+	elif (robot.env.orientation == 'N' and robot.env.motor_map[robot.env.position] == 'S') or (robot.env.orientation == 'E' and robot.env.motor_map[robot.env.position] == 'W') or (robot.env.orientation == 'S' and robot.env.motor_map[robot.env.position] == 'N') or (robot.env.orientation == 'W' and robot.env.motor_map[robot.env.position] == 'E'):
+		robot.pointer_motor(180,300)
+		robot.env.pointer_orientation = 'S'
+
+	elif (robot.env.orientation == robot.env.motor_map[robot.env.position]):
+		pass
+
+	else:
+		# error
+		pass
+
+def turn_pointer_back():
+
+	if robot.env.pointer_orientation == 'E':
+		robot.pointer_motor(-45,150)
+	elif robot.env.pointer_orientation == 'W':
+		robot.pointer_motor(45,150)
+	elif robot.env.pointer_orientation == 'S':
+		robot.pointer_motor(-180,150)
+	elif robot.env.pointer_orientation == 'N':
+		pass
+	else:
+		# error
+		pass
+
+	robot.env.pointer_orientation = 'N'
+
 def reset_robot():
-	robot.rotate(180, 150)
-	robot.env.orientation = 'N'
+	server.update_status_arrived('Exit')
+	align_to_N()
 	server.reset_list_on_server()
 
+def align_to_N():
+	if robot.env.orientation == 'E':
+		robot.rotate_branch(-90, 150)
+	elif robot.env.orientation == 'W':
+		robot.rotate_branch(90, 150)
+	elif robot.env.orientation == 'S':
+		robot.rotate(180, 150)
+	elif robot.env.orientation == 'N':
+		pass
+	else:
+		# error
+		pass
+	
+	robot.env.orientation = 'N'
 
 def update_location_on_branch():
 	robot.env.position = robot.env.positions_list.pop(0)
+	robot.reset_position_at_branch()
 
 		# robot.stop()
 	if server.check_position('Cancel') == 'T':
 		print("Cancel")
 		robot.env.positions_list = []
+		robot.env.pictures_to_go = []
 		server.update_status_false('Cancel')
 	
 	elif server.check_position('Toilet') == 'T':
@@ -174,7 +247,7 @@ def update_location_on_branch():
 		server.update_art_piece('Toilet')
 		robot.env.pictures_to_go = nav.calculate_paintings_order(robot.env.pictures_to_go, '12')
 		robot.env.pictures_to_go.insert(0, '12')
-		server.update_status_false('Toilet')
+		# server.update_status_false('Toilet')
 	
 	elif server.check_position('Exit') == 'T':
 		print("Exit")
@@ -184,8 +257,7 @@ def update_location_on_branch():
 		server.update_art_piece('Exit')
 		robot.env.pictures_to_go = nav.calculate_paintings_order(robot.env.pictures_to_go, '10')
 		robot.env.pictures_to_go.insert(0, '10')
-		server.update_status_false('Exit')
-
+		# server.update_status_false('Exit')
 	elif server.check_position('Skip') == 'T':
 		print("Skippito")
 		robot.env.pictures_to_go.pop(0)
@@ -204,10 +276,17 @@ def update_location_on_branch():
 
 def determine_next_turn():
 
+	if server.check_position('Change') == 'T':
+		print("Change")
+		server.update_status_false('Change')
+		robot.env.positions_list = []
+		nav.plan_route()
+
 	print("paintings:", robot.env.pictures_to_go)
 	print("position: ", robot.env.positions_list)
 	if not robot.env.positions_list:
 		robot.env.next_turn = 'stop'
+
 	else:
 		
 		robot.env.next_position = robot.env.positions_list[0]
@@ -225,52 +304,53 @@ def determine_next_turn():
 
 			# robot.env.position = robot.env.next_position
 
+		if(robot.env.next_turn == 'left'):
+			# robot.go_forward(200)
+			angle = -90
+			robot.rotate_branch(angle,175)
+		elif robot.env.next_turn == 'right':
+			# robot.go_forward(200)
+			angle = 90
+			robot.rotate_branch(angle,175)
+			# robot.motor(175,0)
+		elif robot.env.next_turn == 'back':
+			angle = 180
+			robot.rotate(angle,175)
+			# Michal in this part the robot needs to turn 180 degrees,there should be a better way than calling motor()
+		# forward
+		else:
+			angle = 0
+
+	robot.reset_position_at_branch()
+
 def calculate_route_to_exit():
 	print("TOUR FINISHED. Going to exit")
 	_, path = nav.get_closest_painting(robot.env.position, ['10'])
 	robot.env.positions_list = path[1:]
 	robot.env.finished_tour = False
 
-def black_line_detected(env):
-	if robot.env.next_turn == 'forward':
-			# count for the branch, update location, orientation, etc.
-			determine_next_turn()
-			pass
-	else:
-
-		if robot.env.avoidance_direction == 'left':
-			# turn right and follow the black line, update the orientation, not the lccation
-			robot.motor(175,0)
-
-			# follow black line until it saw the white line
-			pass
-		else:
-			# turn right and follow the black line, update the orientation, not the lccation
-			robot.motor(0,175)
-
-			# follow black line until it saw the white line
-			pass
 
 def convert_to_direction():
-	if (robot.env.orientation == 'N' and robot.env.next_orientation == 'E') or (robot.env.orientation == 'E' and robot.env.next_orientation == 'S') or (robot.env.orientation == 'S' and robot.env.next_orientation == 'W') or (robot.env.orientation == 'W' and robot.env.next_orientation == 'N'):
+	if (robot.env.orientation == 'N' and robot.env.next_orientation[0] == 'E') or (robot.env.orientation == 'E' and robot.env.next_orientation[0] == 'S') or (robot.env.orientation == 'S' and robot.env.next_orientation[0] == 'W') or (robot.env.orientation == 'W' and robot.env.next_orientation[0] == 'N'):
 		robot.env.turns_list = ['right']
 
-	elif (robot.env.orientation == 'N' and robot.env.next_orientation == 'W') or (robot.env.orientation == 'E' and robot.env.next_orientation == 'N')  or (robot.env.orientation == 'S' and robot.env.next_orientation == 'E') or (robot.env.orientation == 'W' and robot.env.next_orientation == 'S'):
+	elif (robot.env.orientation == 'N' and robot.env.next_orientation[0] == 'W') or (robot.env.orientation == 'E' and robot.env.next_orientation[0] == 'N')  or (robot.env.orientation == 'S' and robot.env.next_orientation[0] == 'E') or (robot.env.orientation == 'W' and robot.env.next_orientation[0] == 'S'):
 		robot.env.turns_list = ['left']
 
-	elif (robot.env.orientation == 'N' and robot.env.next_orientation == 'S') or (robot.env.orientation == 'E' and robot.env.next_orientation == 'W') or (robot.env.orientation == 'S' and robot.env.next_orientation == 'N') or (robot.env.orientation == 'W' and robot.env.next_orientation == 'E'):
+	elif (robot.env.orientation == 'N' and robot.env.next_orientation[0] == 'S') or (robot.env.orientation == 'E' and robot.env.next_orientation[0] == 'W') or (robot.env.orientation == 'S' and robot.env.next_orientation[0] == 'N') or (robot.env.orientation == 'W' and robot.env.next_orientation[0] == 'E'):
 		robot.env.turns_list = ['back']
 
-	elif (robot.env.orientation == robot.env.next_orientation):
+	elif (robot.env.orientation == robot.env.next_orientation[0]):
 		robot.env.turns_list = ['forward']
 
 	else:
 		# error
 		pass
 
-	robot.env.orientation = robot.env.next_orientation
+	robot.env.orientation = robot.env.next_orientation[-1]
 
-
+def update_on_tour():
+	server.update_status_true('onTour')
 
 sweep_time = 1750
 
@@ -283,6 +363,7 @@ st_idle.add_transition(Transition(st_route_planning, users_ready))
 st_idle.on_activate(ask_for_mode_press)
 
 st_route_planning.add_transition(Transition(st_taking_branch))
+st_route_planning.on_activate(update_on_tour)
 
 # # if nothing happens - obstacle disapears, go to line-following
 # st_wait.set_default(st_line_following)
@@ -315,7 +396,11 @@ st_painting_done.add_transition(Transition(st_taking_branch))
 st_painting_done.add_transition(Transition(st_tour_done, tour_done))
 
 st_taking_branch.on_activate(determine_next_turn)
-st_taking_branch.add_transition(TransitionTimed(1750, st_line_following))
+st_taking_branch.add_transition(Transition(st_clearing_branch, branch_taken))
+
+st_clearing_branch.add_transition(TransitionTimed(1000, st_line_following))
+st_clearing_branch.add_transition(Transition(st_obstacle_avoidance, obstacle_detected))
+
 
 st_obstacle_avoidance.add_transition(Transition(st_line_following, obstacle_avoidance.done))
 st_obstacle_avoidance.on_activate(obstacle_avoidance.reset)
@@ -337,6 +422,8 @@ dsp.link_action(st_route_planning, nav.plan_route)
 
 dsp.link_action(st_line_following, line_follower.run)
 dsp.link_action(st_line_lost, seek_line)
+
+dsp.link_action(st_clearing_branch, line_follower.run)
 
 dsp.link_action(st_at_painting, robot.stop)
 st_at_painting.on_activate(show_painting)
@@ -362,13 +449,13 @@ def server_check():
         server.update_commands()
 
         if server.check_position('Speed') == "3":
-            line_follower.base_speed = 175
+            line_follower.base_speed = 225
         elif server.check_position('Speed') == "2":
-            line_follower.base_speed = 130
+            line_follower.base_speed = 150
         elif server.check_position('Speed') == "1":
             line_follower.base_speed = 75
         else:
-            line_follower.base_speed = 130
+            line_follower.base_speed = 150
 
         if server.check_position('Stop') == "T":
             is_stop = True
@@ -484,7 +571,7 @@ try:
 		
 		# plan
 		fsm.tick(robot.env)
-		# print(fsm.get_state(),end=' ')
+		# print(fsm.get_state())
 		
 		# act
 		dsp.dispatch()
@@ -495,6 +582,7 @@ try:
 except:
 	robot.stop()
 	logger.write_buffer()
+	turn_pointer_back()
 	server.reset_list_on_server()
 	raise
 	

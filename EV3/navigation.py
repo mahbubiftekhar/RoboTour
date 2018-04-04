@@ -12,6 +12,7 @@ class Navigation():
 		self.robot.env.pictures_to_go = self.calculate_paintings_order(self.robot.env.pictures_to_go)
 		print("Determined route: ", self.robot.env.positions_list)
 		self.server.update_art_piece(self.robot.env.pictures_to_go[0])
+		# self.server.update_status_true('onTour')
 		# self.robot.env.route_dene = True
 
 
@@ -22,7 +23,7 @@ class Navigation():
 		print("Server state: ", pictures)
 		self.robot.env.pictures_to_go = []
 		for index in range(len(pictures)):
-			if pictures[index] == "T":
+			if pictures[index] in ["T","N","0","1","2","3","4","5","6","7","8","9"]:
 				self.robot.env.pictures_to_go.append(str(index))
 		print("Selected pictures: ", self.robot.env.pictures_to_go)
 		return self.robot.env.pictures_to_go

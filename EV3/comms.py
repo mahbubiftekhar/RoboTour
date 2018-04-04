@@ -12,14 +12,23 @@ import time
 class Server():
     #  THIS WILL CONTAIN THE ARTPIECES THAT THE USER
     #  WANTS TO GO TO, THIS WILL NOT CHANGE DURING THE TRIP
-    def __init__(self):
+    def __init__(self, link_option='1&1'):
+
+        if link_option == '1&1':
+            self.link = "http://www.mahbubiftekhar.co.uk/receiver.php"
+        elif link_option == 'homepages':
+            self.link = "http://homepages.inf.ed.ac.uk/s1539308/receiver.php"
+        else:
+            self.link = "http://www.mahbubiftekhar.co.uk/receiver.php"
+            
+
         self.previousArtPiece = "-1"
         #                       0    1    2    3    4    5    6    7    8    9
         self.picturesToGoTO = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F"]
         #                 0    1    2    3    4    5    6    7    8    9    10   11   12
         self.commands = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F",
-                         "F", "F", "F", "F", "F", "F", "F", "F", "F"]
-        #                 13   14   15   16   17   18   19   20   21
+                         "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F"]
+        #                 13   14   15   16   17   18   19   20   21   22   23   24   25
         self.id_map = {
             '0': 0,
             '1': 1,
@@ -44,7 +53,8 @@ class Server():
             'Two user mode': 18,
             'Listen ready': 19,
             'Obstacle detected': 20,
-            'onTour': 21
+            'onTour': 21,
+            'Change': 25
         }
 
     def get_commands(self):
@@ -56,18 +66,18 @@ class Server():
     # Helper function that does a http post request
     def http_post(self, position, message):
         data = bytes(urllib.parse.urlencode({"command" + str(position): message}).encode())
-        urllib.request.urlopen("http://www.mahbubiftekhar.co.uk/receiver.php", data)
+        urllib.request.urlopen(self.link, data)
 
     # Helper function that does HTTP get request
     def http_get(self):
-        f = urllib.request.urlopen("http://www.mahbubiftekhar.co.uk/receiver.php")  # open url
+        f = urllib.request.urlopen(self.link)  # open url
         myfile = f.read()  # read url contents
         self.command = myfile.decode("utf-8")  # convert bytearray to string
         return self.command
 
     def start_up_single(self):
         self.commands = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F",
-                         "F", "F", "F", "F", "F", "F", "F", "F", "F"]
+                         "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F"]
         self.update_pictures_to_go()
 
         self.update_commands()
@@ -98,12 +108,10 @@ class Server():
     # should be called once the robot is finnished giving the tour and returns to the
     def reset_list_on_server(self):
         print("Resetting Server")
-        for x in range(0, 17):
+        for x in range(0, 25):
             # Updating the list online
             self.http_post(x, "F")
-        self.picturesToGoTO = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F"]
-        self.commands = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F",
-                         "F", "F", "F", "F", "F", "F", "F", "F", "F"]
+        self.update_commands
 
     def check_position(self, position):  # get command of Toilet, Stop etc.
         return self.commands[self.id_map[position]]
@@ -124,12 +132,18 @@ class Server():
     def set_stop_false(self):
         self.http_post(self.id_map['Stop'], "F")
 
+    def set_obstacle_true(self):
+        self.http_post(self.id_map['Obstacle detected'], "T")
+
+    def set_obstacle_false(self):
+        self.http_post(self.id_map['Obstacle detected'], "F")
+
     def wait_for_continue(self):
         print("Wait for user to press continue.")
         self.update_commands()
         while self.command[self.id_map['Stop']] == 'T':
             self.update_commands()
-            time.sleep(0.5)
+            time.sleep(1)
         print("Continue")
 
     ############

@@ -20,6 +20,7 @@ class Environment():
         self.rot_left  = 0
 
 
+
         self.clock_ms = 0
         self.clock_start = 0
 
@@ -41,11 +42,12 @@ class Environment():
 
         self.position = '10'
         self.orientation = 'N'
+        self.pointer_orientation = 'N'
 
         self.next_position = '10'
         self.next_orientation = 'N'
 
-        self.users = 1
+        self.users = 0
 
         self.pictures_to_go = []
 
@@ -82,6 +84,8 @@ class Environment():
         '7': "N",
         '8': "N",
         '9': "E",
+        '10': "S",
+        '12': "S",
         'Exit': "S",
         'Toilet': "S"
         }
