@@ -13,6 +13,7 @@ import android.preference.PreferenceManager
 import android.view.WindowManager
 import android.widget.Toast
 import kotlinx.android.synthetic.*
+import java.net.URL
 
 @Suppress("DEPRECATION")
 var url = "http://www.mahbubiftekhar.co.uk/receiver.php"
@@ -91,11 +92,17 @@ class MainActivity : AppCompatActivity() {
                 lparams { width = matchParent; horizontalMargin = dip(5); topMargin = dip(5) }
                 onClick {
                     if (isNetworkConnected()) {
-                        continueThread = false
-                        startActivity<SelectLanguageActivity>()
-                    } else {
-                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
-                    }
+                       // async{
+                         //   val b = URL(url).readText()
+                           // if(b[18]=='1' || b[18]=='2'){
+                               //runOnUiThread{
+                                   continueThread = false
+                                   startActivity<SelectLanguageActivity>()
+                               //}
+                            } else {
+                                toast("Robotour is not on")
+                            }
+                        //}
                 }
                 onLongClick {
                     startActivity<InfoForumDemoActivity>()

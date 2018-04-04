@@ -91,7 +91,7 @@ class WaitingActivity : AppCompatActivity() {
             Thread.sleep(3000)
             val a = URL(url).readText()
             uiThread {
-                if (a[18] == 'F' && user == 1) {
+                if (a[18] == '1' && user == 1) {
                     println(">>>>>in here first if")
                     startActivity<NavigatingActivity>("language" to language)
                 } else {
