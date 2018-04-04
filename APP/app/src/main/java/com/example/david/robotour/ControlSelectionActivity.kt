@@ -65,14 +65,14 @@ class ControlSelectionActivity : AppCompatActivity() {
             "German" -> "Die nächste RoboTour finden\n"
             "French" -> "Trouver le RoboTour le plus proche\n"
             "Spanish" -> "Encontrar el RoboTour más cercano\n"
-            "Chinese" -> "寻找最近的RoboTour\n"
+            "Chinese" -> "正在寻找最近的萝卜途...\n"
             else -> "Finding closest RoboTour"
         }*/
         message = when (language) {
             "German" -> "Wir Suchen Nach Einer Verfügbaren RoboTour"
             "French" -> "Recherche d'un RoboTour disponible"
             "Spanish" -> "Buscando un RoboTour disponible"
-            "Chinese" -> "搜索可用的机器人旅行"
+            "Chinese" -> "正在寻找可用的萝卜途..."
             else -> "Searching For An Available RoboTour"
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -116,7 +116,7 @@ class ControlSelectionActivity : AppCompatActivity() {
                 saveInt("user", 1)
                 Thread.sleep(4000)
                 switchToPictures()
-            } else if (a[17] == 'F' && a[18] == 'T' && a[21] != 'T') {
+            } else if (a[17] == 'F' && a[18] == '2' && a[21] != 'T') {
                 //user 2 is not online, hence take that position
                 sendPUTNEW(17, "O")
                 saveInt("user", 2)
@@ -130,7 +130,6 @@ class ControlSelectionActivity : AppCompatActivity() {
         }
     }
 
-
     private fun updatetext2() {
         text2?.text = when (language) {
             "German" -> {
@@ -143,7 +142,7 @@ class ControlSelectionActivity : AppCompatActivity() {
                 "No RoboTour Disponible, Por Favor Espere Para Seguir Un Recorrido"
             }
             "Chinese" -> {
-                "没有 RoboTour 可用，请稍等一个游览"
+                "暂时没有可用的萝卜途，请等候别的萝卜途结束旅行"
             }
             else -> {
                 "Sorry, No RoboTour Available, Please Wait To Be Assigned To An Existing Tour"
@@ -187,7 +186,11 @@ class ControlSelectionActivity : AppCompatActivity() {
             runOnUiThread {
                 updatetext2()
             }
-            Thread.sleep(5000)
+            try{
+                Thread.sleep(5000)
+            }catch (e:Exception){
+
+            }
             while (!Thread.currentThread().isInterrupted) {
                 println("++++ t thread WaitingActivity")
                 try {

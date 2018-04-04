@@ -51,7 +51,7 @@ class WaitingActivity : AppCompatActivity() {
                 "Envío de su selección a RoboTour\n"
             }
             "Chinese" -> {
-                "将您的选择发送到RoboTour\n"
+                "正在将您的选择发给萝卜途...\n"
             }
             else -> {
                 "Sending your selection to RoboTour"
@@ -91,7 +91,7 @@ class WaitingActivity : AppCompatActivity() {
             Thread.sleep(3000)
             val a = URL(url).readText()
             uiThread {
-                if (a[18] == 'F' && user == 1) {
+                if (a[18] == '1' && user == 1) {
                     println(">>>>>in here first if")
                     startActivity<NavigatingActivity>("language" to language)
                 } else {
@@ -150,7 +150,7 @@ class WaitingActivity : AppCompatActivity() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!Thread.currentThread().isInterrupted) {
-                println("++++ t thread WaitingActivity")
+                println("++++ t thread WaitingActivity defo")
                 try {
                     val a = URL(url).readText()
                     if (a[16] == 'T' && a[17] == 'T' && transfered) {
