@@ -674,13 +674,13 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     English_Desc = "The Great Wave off Kanagawa, also known as The Great Wave or simply The Wave, is a woodblock print by the Japanese ukiyo-e artist Hokusai.",
                     German_Desc = "Die Große Welle vor Kanagawa, auch bekannt als The Great Wave oder einfach The Wave, ist ein Holzschnitt des japanischen Ukiyo-e Künstlers Hokusai.",
                     French_Desc = "La Gran Ola de Kanagawa, también conocida como La Gran Ola o simplemente La Ola, es un grabado en madera del artista ukiyo-e japonés Hokusai.",
-                    Chinese_Desc = "《神奈川冲浪里》是日本浮世绘画家葛饰北斋的著名木版画，于1832年出版，是《富岳三十六景》系列作品之一。画中描绘的惊涛巨浪掀卷着渔船，船工们为了生存而努力抗争的图像，远景是富士山。",
+                    Chinese_Desc = "《神奈川冲浪里》是日本浮世绘画家葛饰北斋的著名木版画，于1832年出版，是《富岳三十六景》系列作品之一。",
                     Spanish_Desc = "La Grande Vague de Kanagawa, également connue sous le nom de La Grande Vague ou simplement La Vague, est une gravure sur bois de l'artiste japonais Ukiyo-e Hokusai.",
                     imageID = R.drawable.tsunami, eV3ID = 8, selected = false,
                     LongEnglish =
                     "The Great Wave off Kanagawa (also known as The Great Wave, is a woodblock print by the Japanese ukiyo-e artist Hokusai. It was published sometime between 1829 and 1833[1] in the late Edo period as the first print in Hokusai's series Thirty-six Views of Mount Fuji. It is Hokusai's most famous work, and one of the most recognizable works of Japanese art in the world.\n",
                     LongChinese =
-                    "神奈川的大波浪（也称为“大波浪”，是日本浮世绘艺术家Hokusai的木刻版画，在江户时代后期的1829年至1833年期间发行[1]，作为Hokusai系列的第一部作品Thirty - 富士山的六景，是北下最有名的作品，也是世界上最知名的日本艺术作品之一。\n",
+                    "《神奈川冲浪里》是日本浮世绘画家葛饰北斋的著名木版画，于1832年出版，是《富岳三十六景》系列作品之一。画中描绘的惊涛巨浪掀卷着渔船，船工们为了生存而努力抗争的图像，远景是富士山。\n",
                     LongFrench =
                     "La Grande Vague de Kanagawa (également connue sous le nom de Grande Vague) est une gravure sur bois de l'artiste japonais Ukiyo-e Hokusai, publiée entre 1829 et 1833 à la fin de l'ère Edo, première série de Hokusai. Trente-six Vues du mont Fuji, c'est l'œuvre la plus célèbre de Hokusai et l'une des œuvres d'art japonais les plus reconnaissables au monde.\n",
                     LongSpanish = "La gran ola de Kanagawa (también conocida como La gran ola) es una impresión en madera del artista ukiyo-e japonés Hokusai. Fue publicada en algún momento entre 1829 y 1833 a finales del período Edo como la primera copia de la serie de Hokusai. del Monte Fuji. Es la obra más famosa de Hokusai, y una de las obras de arte japonés más reconocidas en el mundo.\n",
