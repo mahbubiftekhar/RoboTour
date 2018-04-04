@@ -520,7 +520,11 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         } else {
                             runOnUiThread { ui.navigateButton.background = ColorDrawable(Color.parseColor("#505050")) }
                         }
-                        Thread.sleep(100)
+                        try{
+                            Thread.sleep(100)
+                        }catch (e:Exception){
+
+                        }
                     } catch (e: InterruptedException) {
                         Thread.currentThread().interrupt()
                     } catch (e: InterruptedIOException){

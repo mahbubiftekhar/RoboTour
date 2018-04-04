@@ -28,7 +28,6 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.message.BasicNameValuePair
 import org.jetbrains.anko.*
-import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.design.floatingActionButton
 import java.io.File
 import java.io.IOException
@@ -583,6 +582,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                 }
             }
+            stopAllSpeech()
             tts6!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
@@ -609,6 +609,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                 }
             }
+            stopAllSpeech()
             tts5!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
@@ -1775,6 +1776,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                     }
                 }
+                stopAllSpeech()
                 tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
             }
         }
@@ -1802,6 +1804,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                 }
             }
+            stopAllSpeech()
             tts7!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
@@ -1828,6 +1831,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                 }
             }
+            stopAllSpeech()
             tts3!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
         }
     }
@@ -1854,6 +1858,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         text = allArtPieces[input].English_Desc
                     }
                 }
+                stopAllSpeech()
                 tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
             } else if (input == -1) {
                 when (language) {
@@ -1874,6 +1879,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                     }
                 }
+                stopAllSpeech()
                 tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
             }
         }
@@ -1956,6 +1962,34 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         } else {
             toast("Check your network connection, command not sent")
+        }
+    }
+
+    private fun stopAllSpeech() {
+        try{
+            if (tts != null) {
+                tts!!.stop()
+            }
+            if (tts7 != null) {
+                tts7!!.stop()
+            }
+            if (tts2 != null) {
+                tts2!!.stop()
+            }
+            if (tts3 != null) {
+                tts3!!.stop()
+            }
+            if (tts4 != null) {
+                tts4!!.stop()
+            }
+            if (tts6 != null) {
+                tts6!!.stop()
+            }
+            if (tts5 != null) {
+                tts5!!.stop()
+            }
+        }catch(e:Exception){
+
         }
     }
 

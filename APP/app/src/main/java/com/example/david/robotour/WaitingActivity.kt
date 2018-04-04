@@ -150,7 +150,7 @@ class WaitingActivity : AppCompatActivity() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
             while (!Thread.currentThread().isInterrupted) {
-                println("++++ t thread WaitingActivity")
+                println("++++ t thread WaitingActivity defo")
                 try {
                     val a = URL(url).readText()
                     if (a[16] == 'T' && a[17] == 'T' && transfered) {

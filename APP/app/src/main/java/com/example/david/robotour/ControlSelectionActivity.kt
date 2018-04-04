@@ -186,7 +186,11 @@ class ControlSelectionActivity : AppCompatActivity() {
             runOnUiThread {
                 updatetext2()
             }
-            Thread.sleep(5000)
+            try{
+                Thread.sleep(5000)
+            }catch (e:Exception){
+
+            }
             while (!Thread.currentThread().isInterrupted) {
                 println("++++ t thread WaitingActivity")
                 try {
