@@ -116,7 +116,7 @@ class ControlSelectionActivity : AppCompatActivity() {
                 saveInt("user", 1)
                 Thread.sleep(4000)
                 switchToPictures()
-            } else if (a[17] == 'F' && a[18] == 'T' && a[21] != 'T') {
+            } else if (a[17] == 'F' && a[18] == '2' && a[21] != 'T') {
                 //user 2 is not online, hence take that position
                 sendPUTNEW(17, "O")
                 saveInt("user", 2)
