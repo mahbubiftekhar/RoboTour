@@ -18,3 +18,5 @@ class Model():
 
 		# required distance not to hit anything if rotationg in place
 		self.rotation_minimal_spacing =  200
+
+		self.pointer_gear_ratio = -4.8

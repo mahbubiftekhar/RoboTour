@@ -6,6 +6,7 @@ from sensor_hub import *
 from line_sensor import LineSensor
 from model import Model
 from environment import Environment
+from comms import *
 
 class Robot():
 	def __init__(self, fast_hub=False):
@@ -43,15 +44,17 @@ class Robot():
 		self.LED = ev3.Leds()
 
 		# setup modes if appropriate
-		self.colourSensorR.mode = "COL-REFLECT"
-		self.colourSensorL.mode = "COL-REFLECT"
+		self.colourSensorR.mode = "COL-COLOR"
+		self.colourSensorL.mode = "COL-COLOR"
 
 		self.sonarF.mode = "US-DIST-CM"
 
 		self.motorR.stop_action = "hold"
 		self.motorL.stop_action = "hold"
 
-		self.sound = ev3.Sound
+		self.sound = ev3.Sound()
+
+		self.position_from_branch = 0
 
 	def hardware_check(self):
 		pass	
@@ -76,10 +79,41 @@ class Robot():
 
 		self.env.update()
 
+	def pointer_motor(self, degrees, speed):
+		delta = degrees * self.model.pointer_gear_ratio
+		self.motorPointer.run_to_rel_pos(speed_sp = speed, position_sp = delta)
 
 	def motor(self, pL, pR):
 		self.motorL.run_timed(speed_sp = pL, time_sp=300) 
 		self.motorR.run_timed(speed_sp = pR, time_sp=300)
+
+	def go_forward(self, speed=125):
+		self.motor(speed, speed)
+
+	def rotate_branch(self, degrees, speed):
+		# rotate at the midpoint between cetnre and wheel
+		# outer wheel circle radius - 3/4 of wheel separation
+		# inner wheel circle radius - 1/4 of wheel separation
+
+		rotation_outer = 1.5 * self.model.wheel_to_rotation_ratio * abs(degrees)
+		rotation_inner = 0.5 * self.model.wheel_to_rotation_ratio * abs(degrees)
+
+		# if turn right, move left wheel forward 
+		if degrees > 0: 
+			delta_l =  rotation_outer
+			delta_r = -rotation_inner
+			speed_l = 1.5 * speed
+			speed_r = 0.5 * speed
+		else:
+			delta_l = -rotation_inner
+			delta_r =  rotation_outer
+			speed_l = 0.5 * speed
+			speed_r = 1.5 * speed
+
+
+
+		self.motorL.run_to_rel_pos(speed_sp = speed_l, position_sp = delta_l)
+		self.motorR.run_to_rel_pos(speed_sp = speed_r, position_sp = delta_r)
 
 	def rotate(self, degrees, speed):
 		# calculate by how much the wheels need to rotate
@@ -115,9 +149,22 @@ class Robot():
 		self.LED.set_color(self.LED.RIGHT, self.LED.GREEN)
 		pass
 
+	def wait_for_motor(self):
+		self.motorL.wait_until_not_moving()
+		self.motorR.wait_until_not_moving()
+
+	def reset_position_at_branch(self):
+		self.position_from_branch = self.motorR.position
+
+	def get_position_from_branch(self):
+		return self.motorR.position - self.position_from_branch
+
 	# check if any motors are doing something
 	def done_movement(self, env):
 		return not (self.motorL.is_running or self.motorR.is_running)
+
+	def speak(self, string):
+		self.sound.speak(string)
 
 	def stop(self):
 		self.motorL.stop()
