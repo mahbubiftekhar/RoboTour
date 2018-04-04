@@ -1444,8 +1444,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 if (userid == 1.toString()) {
                                     println("&&& we are getting in")
                                     println(">>>>> $skippable")
-                                    println("&&&&" + a[10].toString().toInt())
-                                    if (a[10].toString().toInt() == 2 && skippable) {
+                                    if (a[10].toString() == 2.toString() && skippable) {
                                         skippable = false
                                         runOnUiThread {
                                             try {
@@ -1475,7 +1474,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 } else if (userid == 2.toString()) {
                                     println(">>>>> $skippable")
-                                    if (a[10].toString().toInt() == 1 && skippable) {
+                                    if (a[10].toString() == 1.toString() && skippable) {
                                         skippable = false
                                         runOnUiThread {
                                             try {
@@ -2318,11 +2317,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             if (twoUserMode) {
                                 toast(cancelRequestSent)
                             }
-                           try {
-                               dismiss()
-                           } catch (e:Exception){
+                            try {
+                                dismiss()
+                            } catch (e:Exception){
 
-                           }
+                            }
                         }
                     }
                 }

@@ -1498,15 +1498,6 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         textSize = 16f
                         padding = dip(2)
                     }
-                    button {
-                        text = cancelPainting
-                        onClick {
-                            //Remove Painting From List
-                            //listPaintings[map[paintIndex]!!].visibility = View.GONE
-                            toast(cancelRequestSent)
-                            dismiss()
-                        }
-                    }
                 }
             }
         }.show()
