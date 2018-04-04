@@ -73,12 +73,16 @@ class SelectLanguageActivity : AppCompatActivity() {
             1 -> {
             }
             2 -> {
-                toast("****WARNING!!!: receiver2 1&1****")
+                toast("WARNING!!!: receiver2 1&1")
             }
             3 -> {
-                toast("****WARNING!!!: homepages receiver****")
+                toast("WARNING!!!: homepages receiver")
+            }
+            4 -> {
+                toast("WARNING!!!: 000webHost receiver")
             }
         }
+
         //UI
         linearLayout {
             tableLayout {

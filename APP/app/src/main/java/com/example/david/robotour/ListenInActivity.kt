@@ -397,7 +397,11 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun switchToFinnished() {
-        checkerThread.interrupt()
+        try {
+            checkerThread.interrupt()
+        } catch (e: Exception) {
+
+        }
         clearFindViewByIdCache()
         val language = intent.getStringExtra("language")
         val message = when (language) {
@@ -497,7 +501,12 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                 }
             }
-            tts4!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            try {
+                resetSpeech()
+                tts4!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            } catch (e: Exception) {
+
+            }
         }
     }
 
@@ -543,18 +552,18 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     Spanish_Desc = "Representa a la diosa Venus llegando a la orilla después de su nacimiento",
                     imageID = R.drawable.birthofvenus, eV3ID = 0, selected = false,
                     LongEnglish = "\n" +
-                    "The Birth of Venus is a painting by Sandro Botticelli probably made in the mid 1480s. It depicts the goddess Venus arriving at the shore after her birth, when she had emerged from the sea fully-grown.\n" +
-                    "Although the two are not a pair, the painting is inevitably discussed with Botticelli's other very large mythological painting, the Primavera, also in the Uffizi.",
+                            "The Birth of Venus is a painting by Sandro Botticelli probably made in the mid 1480s. It depicts the goddess Venus arriving at the shore after her birth, when she had emerged from the sea fully-grown.\n" +
+                            "Although the two are not a pair, the painting is inevitably discussed with Botticelli's other very large mythological painting, the Primavera, also in the Uffizi.",
                     LongChinese = "《維納斯的誕生》是義大利文藝復興時期畫家桑德罗·波提切利最著名的作品之一，這件作品根據波利齊安諾的長詩吉奧斯特納而作，描述羅馬神話中女神維納斯從海中誕生的情景：她赤裸著身子踩在一個貝殼之上，右边春之女神正在为她披上华服而左边的风神送来暖风阵阵，吹起她的发丝。\n" +
-                    "在早期的文藝復興，大約由這幅畫開始，作畫題材由聖經故事改為希臘（羅馬）神話，即由宗教變成異教題材。人物比例不對，頸部較長，下半身較大，肩膀也是窄小下塌，正是为了使她的身体线条更加优美而忽视了应有的正常形态，畫家重視感覺勝於比例。畫中有不少光暗，使人物穿的衣物有了柔軟、輕薄的感覺。",
+                            "在早期的文藝復興，大約由這幅畫開始，作畫題材由聖經故事改為希臘（羅馬）神話，即由宗教變成異教題材。人物比例不對，頸部較長，下半身較大，肩膀也是窄小下塌，正是为了使她的身体线条更加优美而忽视了应有的正常形态，畫家重視感覺勝於比例。畫中有不少光暗，使人物穿的衣物有了柔軟、輕薄的感覺。",
                     LongFrench = "La Naissance de Vénus est une peinture de Sandro Botticelli probablement réalisée au milieu des années 1480. Il représente la déesse Vénus arrivant au rivage après sa naissance, quand elle était sortie de la mer.\n" +
-                    "Bien que les deux ne soient pas une paire, la peinture est inévitablement discutée avec l'autre très grande peinture mythologique de Botticelli, la Primavera, également aux Offices.",
+                            "Bien que les deux ne soient pas une paire, la peinture est inévitablement discutée avec l'autre très grande peinture mythologique de Botticelli, la Primavera, également aux Offices.",
                     LongSpanish = "\n" +
-                    "\n" +
-                    " El nacimiento de Venus es una pintura de Sandro Botticelli probablemente realizada a mediados de la década de 1480. Representa a la diosa Venus llegando a la orilla después de su nacimiento, cuando ella había emergido del mar completamente crecida"
-                    + "Aunque los dos no son una pareja, la pintura se discute inevitablemente con otra pintura mitológica muy grande de Botticelli, la Primavera, también en los Uffizi",
+                            "\n" +
+                            " El nacimiento de Venus es una pintura de Sandro Botticelli probablemente realizada a mediados de la década de 1480. Representa a la diosa Venus llegando a la orilla después de su nacimiento, cuando ella había emergido del mar completamente crecida"
+                            + "Aunque los dos no son una pareja, la pintura se discute inevitablemente con otra pintura mitológica muy grande de Botticelli, la Primavera, también en los Uffizi",
                     LongGerman = "Die Geburt der Venus ist ein Gemälde von Sandro Botticelli, das wahrscheinlich Mitte der 1480er Jahre entstand. Es stellt die Göttin Venus dar, die nach ihrer Geburt an der Küste ankommt, als sie voll ausgewachsen aus dem Meer gekommen ist.\n" +
-                    "Obwohl die beiden kein Paar sind, wird das Gemälde unvermeidlich mit Botticellis anderem sehr großen mythologischen Gemälde, der Primavera, ebenfalls in den Uffizien, besprochen"))
+                            "Obwohl die beiden kein Paar sind, wird das Gemälde unvermeidlich mit Botticellis anderem sehr großen mythologischen Gemälde, der Primavera, ebenfalls in den Uffizien, besprochen"))
             add(PicturesActivity.ArtPiece(name = "The Creation of Adam",
                     artist = "Michelangelo", nameChinese = "创造亚当", nameGerman = "Die Schaffung von Adam", nameSpanish = "La creación de adam", nameFrench = "La création d'Adam",
                     English_Desc = "A fresco painting by Michelangelo, which forms part of the Sistine Chapel's ceiling",
@@ -564,14 +573,14 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     Spanish_Desc = "Una pintura al fresco de Miguel Ángel, que forma parte del techo de la Capilla Sixtina",
                     imageID = R.drawable.creationofadam, eV3ID = 1, selected = false,
                     LongEnglish = "The Creation of Adam is a fresco painting by Michelangelo, which forms part of the Sistine Chapel's ceiling, painted c. 1508–1512. It illustrates the Biblical creation narrative from the Book of Genesis in which God gives life to Adam, the first man. The fresco is part of a complex iconographic scheme and is chronologically the fourth in the series of panels depicting episodes from Genesis.\n" +
-                    "The image of the near-touching hands of God and Adam has become iconic of humanity.\n",
+                            "The image of the near-touching hands of God and Adam has become iconic of humanity.\n",
                     LongChinese = "《創造亞當》 是米開朗基羅創作的西斯廷禮拜堂天頂畫《創世紀》的一部分，創作於1511至1512年間的文藝復興全盛期。這幅壁畫描繪的是《聖經·創世紀》中上帝創造人類始祖亞當的情形，按照事情發展順序是創世紀天頂畫中的第四幅。\n" +
-                    "畫中右側穿著飄逸長袍的白鬍鬚老者是上帝，亞當則位於畫面左側，通身赤裸。上帝的右臂舒張開來，生命之火從他的指頭中傳遞給了亞當，而後者則以同樣的方式舒展左臂，含蓄地指出人類是按照上帝的模樣來創造的。關於上帝周圍的形象有許多臆測，例如抱著上帝左臂的可能是夏娃，但也有可能是聖母瑪利亞，或者可能只是一個單純的女性天使。",
+                            "畫中右側穿著飄逸長袍的白鬍鬚老者是上帝，亞當則位於畫面左側，通身赤裸。上帝的右臂舒張開來，生命之火從他的指頭中傳遞給了亞當，而後者則以同樣的方式舒展左臂，含蓄地指出人類是按照上帝的模樣來創造的。關於上帝周圍的形象有許多臆測，例如抱著上帝左臂的可能是夏娃，但也有可能是聖母瑪利亞，或者可能只是一個單純的女性天使。",
                     LongFrench = "La création d'Adam est une fresque de Michel-Ange, qui fait partie du plafond de la chapelle Sixtine, peinte c. 1508-1512. Il illustre le récit de la création biblique du livre de la Genèse dans lequel Dieu donne la vie à Adam, le premier homme. La fresque fait partie d'un schéma iconographique complexe et est chronologiquement la quatrième de la série de panneaux représentant des épisodes de la Genèse.\n",
                     LongSpanish = "La creación de Adán es una pintura al fresco de Miguel Ángel, que forma parte del techo de la Capilla Sixtina, pintado c. 1508-1512. Ilustra la narrativa bíblica de la creación del Libro del Génesis en la que Dios le da vida a Adán, el primer hombre. El fresco es parte de un esquema iconográfico complejo y es cronológicamente el cuarto de la serie de paneles que representan episodios del Génesis.\n" +
-                    "La imagen de las manos casi tocadoras de Dios y Adán se ha convertido en un icono de la humanidad.\n",
+                            "La imagen de las manos casi tocadoras de Dios y Adán se ha convertido en un icono de la humanidad.\n",
                     LongGerman = "Die Erschaffung Adams ist eine Freskomalerei von Michelangelo, die Teil der Decke der Sixtinischen Kapelle ist, bemalt c. 1508-1512. Es illustriert die biblische Schöpfungsgeschichte aus dem Buch Genesis, in der Gott Adam, dem ersten Menschen, Leben gibt. Das Fresko ist Teil eines komplexen ikonografischen Schemas und ist chronologisch das vierte in der Reihe von Tafeln, die Episoden aus der Genesis zeigen.\n" +
-                    "Das Bild der nahe berührenden Hände Gottes und Adams ist zur Ikone der Menschheit geworden."))
+                            "Das Bild der nahe berührenden Hände Gottes und Adams ist zur Ikone der Menschheit geworden."))
             add(PicturesActivity.ArtPiece(name = "David", artist = "Michelangelo", nameChinese = "大卫像", nameGerman = "David", nameSpanish = "David", nameFrench = "David",
                     English_Desc = "A masterpiece of Renaissance sculpture created in marble between 1501 and 1504 by Michelangelo",
                     German_Desc = "Ein Meisterwerk der Renaissanceskulpturen, das zwischen 1501 und 1504 von Michelangelo aus Marmor geschaffen wurde",
@@ -580,17 +589,17 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     Spanish_Desc = "Una obra maestra de la escultura renacentista creada en mármol entre 1501 y 1504 por Miguel Ángel",
                     imageID = R.drawable.david, eV3ID = 2, selected = false,
                     LongEnglish = "David is a masterpiece of Renaissance sculpture created in marble between 1501 and 1504 by Michelangelo. The statue represents the Biblical hero David. \n" +
-                    "David was originally commissioned as one of a series of statues of prophets to be positioned along the roofline of the east end of Florence Cathedral, but was instead placed in a public square, outside the Palazzo Vecchio, the seat of civic government in Florence where it was unveiled on September 8, 1504.",
+                            "David was originally commissioned as one of a series of statues of prophets to be positioned along the roofline of the east end of Florence Cathedral, but was instead placed in a public square, outside the Palazzo Vecchio, the seat of civic government in Florence where it was unveiled on September 8, 1504.",
                     LongChinese = "《大卫像》是文艺复兴时代米开朗基罗的杰作，于1501年至1504年雕成。雕像为白色大理石雕成的站立的男性裸体，高5.17米，重约6吨。用以表现圣经中的犹太英雄大卫王。\n" +
-                    "以前的藝術家雕描述的大衛多表现他割下歌利亞的頭，取得勝利的情景。但学者一般认为，米開朗基羅的大衛像描绘了战斗之前的大卫。雕像面色坚毅，头部左转，颈部的筋凸起，似乎正在准备战斗。他的上唇和鼻子附近的肌肉紧绷，眼睛全神贯注地望着远方。静脉从他下垂的右手上凸起，但他的身体确实放松的姿态，重量都放在右腿上，右手拿石头，左手前曲，将机弦搭在左肩上。他面色的紧张和姿态放松形成了强烈的对比。说明他刚做出战斗的决定，却还未踏上战场。曾經被人說是一塊失敗的石頭，眼睛大略成愛心型。雕像的上半身，尤其是头和左手和正常人体比例比偏大，这很可能是因为雕像最初要放在屋顶，雕像上部要放大，以便从下方欣赏。和雕像的高度相比，雕像的前后宽度很窄，这也许和大理石最初的形状有关。",
+                            "以前的藝術家雕描述的大衛多表现他割下歌利亞的頭，取得勝利的情景。但学者一般认为，米開朗基羅的大衛像描绘了战斗之前的大卫。雕像面色坚毅，头部左转，颈部的筋凸起，似乎正在准备战斗。他的上唇和鼻子附近的肌肉紧绷，眼睛全神贯注地望着远方。静脉从他下垂的右手上凸起，但他的身体确实放松的姿态，重量都放在右腿上，右手拿石头，左手前曲，将机弦搭在左肩上。他面色的紧张和姿态放松形成了强烈的对比。说明他刚做出战斗的决定，却还未踏上战场。曾經被人說是一塊失敗的石頭，眼睛大略成愛心型。雕像的上半身，尤其是头和左手和正常人体比例比偏大，这很可能是因为雕像最初要放在屋顶，雕像上部要放大，以便从下方欣赏。和雕像的高度相比，雕像的前后宽度很窄，这也许和大理石最初的形状有关。",
                     LongFrench = "David est un chef-d'œuvre de la sculpture de la Renaissance créée en marbre entre 1501 et 1504 par Michel-Ange. La statue représente le héros biblique David.\n" +
-                    "David fut à l'origine commandé comme une des statues de prophètes à placer le long de la ligne de toit de l'extrémité est de la cathédrale de Florence, mais fut placé sur une place publique, à l'extérieur du Palazzo Vecchio, siège du gouvernement civique à Florence. a été dévoilé le 8 septembre 1504.\n",
+                            "David fut à l'origine commandé comme une des statues de prophètes à placer le long de la ligne de toit de l'extrémité est de la cathédrale de Florence, mais fut placé sur une place publique, à l'extérieur du Palazzo Vecchio, siège du gouvernement civique à Florence. a été dévoilé le 8 septembre 1504.\n",
                     LongSpanish = "\n" +
-                    "David es una obra maestra de la escultura renacentista creada en mármol entre 1501 y 1504 por Miguel Ángel. La estatua representa al héroe bíblico David.\n" +
-                    "Originalmente, David fue comisionado como una de una serie de estatuas de profetas que se colocaron a lo largo de la línea del este de la catedral de Florencia, pero se colocó en una plaza pública, en las afueras del Palazzo Vecchio, sede del gobierno cívico de Florencia, donde se dio a conocer el 8 de septiembre de 1504.\n" +
-                    "\n",
+                            "David es una obra maestra de la escultura renacentista creada en mármol entre 1501 y 1504 por Miguel Ángel. La estatua representa al héroe bíblico David.\n" +
+                            "Originalmente, David fue comisionado como una de una serie de estatuas de profetas que se colocaron a lo largo de la línea del este de la catedral de Florencia, pero se colocó en una plaza pública, en las afueras del Palazzo Vecchio, sede del gobierno cívico de Florencia, donde se dio a conocer el 8 de septiembre de 1504.\n" +
+                            "\n",
                     LongGerman = "David ist ein Meisterwerk der Renaissanceskulptur, das zwischen 1501 und 1504 von Michelangelo aus Marmor geschaffen wurde. Die Statue repräsentiert den biblischen Helden David.\n" +
-                    "David wurde ursprünglich als eine aus einer Reihe von Prophetenstatuen in Auftrag gegeben, die entlang der Dachlinie des östlichen Endes der Kathedrale von Florenz positioniert werden sollte, wurde aber stattdessen auf einem öffentlichen Platz außerhalb des Palazzo Vecchio, dem Sitz der Bürgerregierung in Florenz, aufgestellt wurde am 8. September 1504 enthüllt.\n"))
+                            "David wurde ursprünglich als eine aus einer Reihe von Prophetenstatuen in Auftrag gegeben, die entlang der Dachlinie des östlichen Endes der Kathedrale von Florenz positioniert werden sollte, wurde aber stattdessen auf einem öffentlichen Platz außerhalb des Palazzo Vecchio, dem Sitz der Bürgerregierung in Florenz, aufgestellt wurde am 8. September 1504 enthüllt.\n"))
             add(PicturesActivity.ArtPiece(name = "Girl with a Pearl Earring", artist = "Johannes Vermeer", nameChinese = "戴珍珠耳环的少女", nameGerman = "Das Mädchen mit dem Perlenohrring", nameSpanish = "Chica con un pendiente de perla", nameFrench = "une fille avec une boucle d'oreille",
                     English_Desc = "Showcasing the electrifying gaze of a young girl adorned with a blue and gold turban.",
                     German_Desc = "Den elektrisierenden Blick eines jungen Mädchens zeigen, das mit einem Blau- und Goldturban geschmückt wird.",

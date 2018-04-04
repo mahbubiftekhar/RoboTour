@@ -89,7 +89,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var alertDescription = ""
     private var cancelRequest = false
     private val map = mutableMapOf<Int, Int>()
-    private var otherUseCancel = "Other user wishes to cancel, allow cancel?"
+    private var otherUseCancel = "Other user wishes to cancel going to "
+    private var otherUseCancel1 = "Other user wishes to cancel going to "
+    private var otherUseCancel2 = ". Do you also want to cancel?"
     private var cancelRequestSent = ""
     private var cancelPainting = ""
     private var artPieceTitle = ""
@@ -116,36 +118,45 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     public override fun onDestroy() {
-        checkerThread.interrupt()
+        try {
+            checkerThread.interrupt()
+        } catch (e: Exception) {
+
+        }
         // Shutdown TTS
-        if (tts != null) {
-            tts!!.stop()
-            tts!!.shutdown()
+        try {
+            if (tts != null) {
+                tts!!.stop()
+                tts!!.shutdown()
+            }
+            if (tts7 != null) {
+                tts7!!.stop()
+                tts7!!.shutdown()
+            }
+            if (tts2 != null) {
+                tts2!!.stop()
+                tts2!!.shutdown()
+            }
+            if (tts3 != null) {
+                tts3!!.stop()
+                tts3!!.shutdown()
+            }
+            if (tts4 != null) {
+                tts4!!.stop()
+                tts4!!.shutdown()
+            }
+            if (tts6 != null) {
+                tts6!!.stop()
+                tts6!!.shutdown()
+            }
+            if (tts5 != null) {
+                tts5!!.stop()
+                tts5!!.shutdown()
+            }
+        } catch (e: Exception) {
+
         }
-        if (tts7 != null) {
-            tts7!!.stop()
-            tts7!!.shutdown()
-        }
-        if (tts2 != null) {
-            tts2!!.stop()
-            tts2!!.shutdown()
-        }
-        if (tts3 != null) {
-            tts3!!.stop()
-            tts3!!.shutdown()
-        }
-        if (tts4 != null) {
-            tts4!!.stop()
-            tts4!!.shutdown()
-        }
-        if (tts6 != null) {
-            tts6!!.stop()
-            tts6!!.shutdown()
-        }
-        if (tts5 != null) {
-            tts5!!.stop()
-            tts5!!.shutdown()
-        }
+
         if (userid == "1") {
             async {
                 sendPUTNEW(16, "F")
@@ -155,38 +166,47 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 sendPUTNEW(17, "F")
             }
         }
-        checkerThread.interrupt()
+
+        try {
+            checkerThread.interrupt()
+        } catch (e: Exception) {
+
+        }
         super.onDestroy()
     }
 
     public override fun onStop() {
-        if (tts != null) {
-            tts!!.stop()
-            tts!!.shutdown()
-        }
-        if (tts7 != null) {
-            tts7!!.stop()
-            tts7!!.shutdown()
-        }
-        if (tts2 != null) {
-            tts2!!.stop()
-            tts2!!.shutdown()
-        }
-        if (tts3 != null) {
-            tts3!!.stop()
-            tts3!!.shutdown()
-        }
-        if (tts4 != null) {
-            tts4!!.stop()
-            tts4!!.shutdown()
-        }
-        if (tts6 != null) {
-            tts6!!.stop()
-            tts6!!.shutdown()
-        }
-        if (tts5 != null) {
-            tts5!!.stop()
-            tts5!!.shutdown()
+        try {
+            if (tts != null) {
+                tts!!.stop()
+                tts!!.shutdown()
+            }
+            if (tts7 != null) {
+                tts7!!.stop()
+                tts7!!.shutdown()
+            }
+            if (tts2 != null) {
+                tts2!!.stop()
+                tts2!!.shutdown()
+            }
+            if (tts3 != null) {
+                tts3!!.stop()
+                tts3!!.shutdown()
+            }
+            if (tts4 != null) {
+                tts4!!.stop()
+                tts4!!.shutdown()
+            }
+            if (tts6 != null) {
+                tts6!!.stop()
+                tts6!!.shutdown()
+            }
+            if (tts5 != null) {
+                tts5!!.stop()
+                tts5!!.shutdown()
+            }
+        } catch (e: Exception) {
+
         }
         super.onStop()
     }
@@ -392,49 +412,52 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     }
 
-    private fun resetSpeech() {
-        tts = null
-        tts = TextToSpeech(this, this)
-    }
-
     override fun onPause() {
-        if (tts != null) {
-            tts!!.stop()
-            tts!!.shutdown()
-        }
-        if (tts2 != null) {
-            tts2!!.stop()
-            tts2!!.shutdown()
-        }
-        if (tts3 != null) {
-            tts3!!.stop()
-            tts3!!.shutdown()
-        }
-        if (tts4 != null) {
-            tts4!!.stop()
-            tts4!!.shutdown()
-        }
-        if (tts5 != null) {
-            tts5!!.stop()
-            tts5!!.shutdown()
-        }
-        if (tts6 != null) {
-            tts6!!.stop()
-            tts6!!.shutdown()
+        try {
+            if (tts != null) {
+                tts!!.stop()
+                tts!!.shutdown()
+            }
+            if (tts2 != null) {
+                tts2!!.stop()
+                tts2!!.shutdown()
+            }
+            if (tts3 != null) {
+                tts3!!.stop()
+                tts3!!.shutdown()
+            }
+            if (tts4 != null) {
+                tts4!!.stop()
+                tts4!!.shutdown()
+            }
+            if (tts5 != null) {
+                tts5!!.stop()
+                tts5!!.shutdown()
+            }
+            if (tts6 != null) {
+                tts6!!.stop()
+                tts6!!.shutdown()
+            }
+        } catch (e: Exception) {
+
         }
         super.onPause()
     }
 
     override fun onResume() {
         //This ensures that when the nav activity is minimized and reloaded up, the speech still works
-        tts = TextToSpeech(this, this)
-        tts2 = TextToSpeech(this, this)
-        tts3 = TextToSpeech(this, this)
-        tts4 = TextToSpeech(this, this)
-        tts5 = TextToSpeech(this, this)
-        tts6 = TextToSpeech(this, this)
-        tts7 = TextToSpeech(this, this)
-        onInit(0)
+        try {
+            tts = TextToSpeech(this, this)
+            tts2 = TextToSpeech(this, this)
+            tts3 = TextToSpeech(this, this)
+            tts4 = TextToSpeech(this, this)
+            tts5 = TextToSpeech(this, this)
+            tts6 = TextToSpeech(this, this)
+            tts7 = TextToSpeech(this, this)
+            onInit(0)
+        } catch (e: Exception) {
+
+        }
         super.onResume()
         if (checkerThread.state == Thread.State.NEW) {
             checkerThread.start()
@@ -454,7 +477,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
             }
         }
-        checkerThread.interrupt()
+        try {
+            checkerThread.interrupt()
+        } catch (e: Exception) {
+
+        }
         val message: String
         val message2: String
         val language = intent.getStringExtra("language")
@@ -633,25 +660,26 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         userid = loadInt("user").toString()
+        println(">>>>>$userid")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
-        if (url == "https://proparoxytone-icing.000webhostapp.com/receiverPhone.php") {
-            toast("Warning, in receiverPhone mode")
-        }
-        tts = TextToSpeech(this, this)
-        tts2 = TextToSpeech(this, this)
-        tts4 = TextToSpeech(this, this)
-        val a = loadInt("urlnum")
-        when (a) {
+        val abc = loadInt("urlnum")
+        when (abc) {
             1 -> {
             }
             2 -> {
-                toast("****WARNING!!!: receiver2 1&1****")
+                toast("WARNING!!!: receiver2 1&1")
             }
             3 -> {
-                toast("****WARNING!!!: homepages receiver****")
+                toast("WARNING!!!: homepages receiver")
+            }
+            4 -> {
+                toast("WARNING!!!: 000webHost receiver")
             }
         }
+        //tts = TextToSpeech(this, this)
+        //tts2 = TextToSpeech(this, this)
+        //tts4 = TextToSpeech(this, this)
         async {
             val twoUserOrNot = URL(url).readText()[18]
             uiThread {
@@ -738,7 +766,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "SPEED"
                 startRoboTour = "Press YES when you are ready for RoboTour to resume"
-                otherUseCancel = "Other user wishes to cancel, allow cancel?: "
                 cancelRequestSent = "Cancel request sent"
                 cancelPainting = "Cancel painting"
             }
@@ -760,7 +787,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toilet = "W.C."
                 toiletDesc = "Voulez-vous aller aux toilettes?"
                 changeSpeed = "Changer Vitesse"
-                otherUseCancel = "D'autres utilisateurs souhaitent annuler, autoriser l'annulation?: "
+                otherUseCancel = "D'autres utilisateurs souhaitent annuler, autoriser l'annulation?: \n"
                 cancelRequestSent = "Annuler la demande envoyée"
                 cancelPainting = "Annuler la peinture"
             }
@@ -802,7 +829,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toilet = "Baño"
                 toiletDesc = "¿Quieres ir al baño?"
                 changeSpeed = "Cambiar Velocidad"
-                otherUseCancel = "Otro usuario desea cancelar, ¿permite cancelar?: "
+                otherUseCancel = "Otro usuario desea cancelar, ¿permite cancelar?: \n"
                 cancelRequestSent = "Cancelar solicitud enviada"
                 cancelPainting = "Cancelar pintura"
             }
@@ -824,7 +851,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toiletDesc = "Wollen sie zum W.C. gehen?"
                 changeSpeed = "Geschwindig keit ändern"
                 btnTextSize = 20f
-                otherUseCancel = "Andere Benutzer möchten stornieren, Abbrechen zulassen? :"
+                otherUseCancel = "Anderer Benutzer will zum folgenden Bild nicht mehr gehen. Abbrechung zulassen? :\n"
                 cancelRequestSent = "Anfrage abbrechen gesendet"
                 cancelPainting = "Gemälde abbrechenC"
             }
@@ -845,7 +872,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toilet = "W.C."
                 toiletDesc = "Do you want to go to the toilet?"
                 changeSpeed = "SPEED"
-                otherUseCancel = "Other user wishes to cancel, allow cancel?: "
+                otherUseCancel = "Other user wishes to cancel, allow cancel?: \n"
                 cancelRequestSent = "Cancel request sent"
                 cancelPainting = "Cancel painting"
             }
@@ -890,7 +917,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         onClick {
                             //UI
                             //ColorStateList usually requires a list of states but this works for a single color
-                            if (!(currentPic in 0..9)) {
+                            if (currentPic !in 0..9) {
                                 when (language) {
                                     "French" -> {
                                         artPieceDescription = "RoboTour calcule l'itinéraire optimal"
@@ -1114,6 +1141,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                             textSize = btnTextSize
                             verticalPadding = dip(0)
+                            horizontalPadding = dip(0)
                             height = dip(btnHgt)
                             width = matchParent
                             onClick {
@@ -1152,7 +1180,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             runOnUiThread {
                                                 switchToFinnished()
                                             }
-                                            checkerThread.interrupt()
+                                            try {
+                                                checkerThread.interrupt()
+                                            } catch (e: Exception) {
+
+                                            }
                                         }
                                         negativeButton(negative) {
                                             //onBackPressed()
@@ -1345,8 +1377,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     exitSpeech = true
                                 }
                                 for (i in 0..9) {
-                                    println(">>>> in the for loop")
-
                                     if (a[i] == 'A' && speaking != i) {
                                         /*This will mean that when the robot has arrived at the painting*/
                                         if (tts != null) {
@@ -1354,7 +1384,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         }
                                         runOnUiThread {
                                             currentPic = i // Set current pic to the one being shown
-                                            resetSpeech()
                                             speaking = i
                                             //Change the image, text and descrioption
                                             imageView?.setImageResource(allArtPieces[i].imageID)
@@ -1375,7 +1404,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 else -> descriptionView?.text = allArtPieces[i].English_Desc
                                             }
                                         }
-                                        speakOut(i)
+                                        try {
+                                            speakOut(i)
+                                        } catch (e: Exception) {
+
+                                        }
                                         break
                                     }
 
@@ -1407,54 +1440,67 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 }
                                 userTwoMode = a[16] == 'T' && a[17] == 'T'
                                 println("+++" + userTwoMode)/* This checks if the both users are online, if both are then we are in user two mode, otherwise immediate skip is allowed */
+                                println("&&& just above getting in")
                                 if (userid == 1.toString()) {
-                                    if (a[10].toInt() == 2 && skippable) {
+                                    println("&&& we are getting in")
+                                    println(">>>>> $skippable")
+                                    println("&&&&" + a[10].toString().toInt())
+                                    if (a[10].toString().toInt() == 2 && skippable) {
                                         skippable = false
                                         runOnUiThread {
-                                            alert(skip) {
-                                                cancellable(false)
-                                                setFinishOnTouchOutside(false)
-                                                positiveButton(positive) {
-                                                    if (isNetworkConnected()) {
-                                                        skipImmediately()
-                                                    } else {
-                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                            try {
+                                                alert(skipDesc) {
+                                                    cancellable(false)
+                                                    setFinishOnTouchOutside(false)
+                                                    positiveButton(positive) {
+                                                        if (isNetworkConnected()) {
+                                                            skipImmediately()
+                                                        } else {
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
                                                     }
-                                                }
-                                                negativeButton(negative) {
-                                                    if (isNetworkConnected()) {
-                                                        rejectSkip()
-                                                    } else {
-                                                        skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
-                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                    negativeButton(negative) {
+                                                        if (isNetworkConnected()) {
+                                                            rejectSkip()
+                                                        } else {
+                                                            skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
                                                     }
-                                                }
-                                            }.show()
+                                                }.show()
+                                            } catch (e: Exception) {
+
+                                            }
                                         }
                                     }
                                 } else if (userid == 2.toString()) {
-                                    if (a[10].toInt() == 1 && skippable) {
+                                    println(">>>>> $skippable")
+                                    if (a[10].toString().toInt() == 1 && skippable) {
                                         skippable = false
                                         runOnUiThread {
-                                            alert(skip) {
-                                                cancellable(false)
-                                                setFinishOnTouchOutside(false)
-                                                positiveButton(positive) {
-                                                    if (isNetworkConnected()) {
-                                                        skipImmediately()
-                                                    } else {
-                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                            try {
+                                                alert(skipDesc) {
+                                                    cancellable(false)
+                                                    setFinishOnTouchOutside(false)
+                                                    positiveButton(positive) {
+                                                        if (isNetworkConnected()) {
+                                                            skipImmediately()
+                                                        } else {
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
                                                     }
-                                                }
-                                                negativeButton(negative) {
-                                                    if (isNetworkConnected()) {
-                                                        rejectSkip()
-                                                    } else {
-                                                        skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
-                                                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                    negativeButton(negative) {
+                                                        if (isNetworkConnected()) {
+                                                            rejectSkip()
+                                                        } else {
+                                                            skippable = true /*This will mean when the network is reestablished, the pop up will come again*/
+                                                            Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                        }
                                                     }
-                                                }
-                                            }.show()
+                                                }.show()
+                                            } catch (e: Exception) {
+
+                                            }
                                         }
                                     }
                                 }
@@ -1476,31 +1522,35 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 otherUseCancel + allArtPieces[a[20].toString().toInt()].nameGerman
                                             }
                                             else -> {
-                                                otherUseCancel + allArtPieces[a[20].toString().toInt()].name
+                                                otherUseCancel1 + allArtPieces[a[20].toString().toInt()].name + otherUseCancel2
                                             }
                                         }
-                                        alert(title) {
-                                            cancellable(false)
-                                            setFinishOnTouchOutside(false)
-                                            positiveButton(positive) {
-                                                async {
-                                                    sendPUTNEW(a[20].toString().toInt(), "F")
-                                                    sendPUTNEW(23, "F")
-                                                    sendPUTNEW(25, "T")
-                                                    cancelRequest = false
+                                        try {
+                                            alert(title) {
+                                                cancellable(false)
+                                                setFinishOnTouchOutside(false)
+                                                positiveButton(positive) {
+                                                    async {
+                                                        sendPUTNEW(a[20].toString().toInt(), "F")
+                                                        sendPUTNEW(23, "F")
+                                                        sendPUTNEW(25, "T")
+                                                        cancelRequest = false
+                                                    }
                                                 }
-                                            }
-                                            negativeButton(negative) {
-                                                async {
-                                                    sendPUTNEW(23, "F")
-                                                    cancelRequest = false
+                                                negativeButton(negative) {
+                                                    async {
+                                                        sendPUTNEW(23, "F")
+                                                        cancelRequest = false
+                                                    }
                                                 }
-                                            }
-                                        }.show()
+                                            }.show()
+                                        } catch (e: Exception) {
+
+                                        }
                                     }
                                 } else if (userid == 2.toString() && !cancelRequest && a[23] == 'W') {
                                     runOnUiThread {
-                                        println(">>>>> in here ahas")
+                                        // println(">>>>> in here ahas")
                                         cancelRequest = true
                                         println(">>>>>the integer" + a[20].toInt())
                                         val title: String
@@ -1518,27 +1568,31 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 title = otherUseCancel + allArtPieces[a[20].toString().toInt()].nameGerman
                                             }
                                             else -> {
-                                                title = otherUseCancel + allArtPieces[a[20].toString().toInt()].name
+                                                title = otherUseCancel1 + allArtPieces[a[20].toString().toInt()].name + otherUseCancel2
                                             }
                                         }
-                                        alert(title) {
-                                            cancellable(false)
-                                            setFinishOnTouchOutside(false)
-                                            positiveButton(positive) {
-                                                async {
-                                                    sendPUTNEW(a[20].toString().toInt(), "F")
-                                                    sendPUTNEW(23, "F")
-                                                    sendPUTNEW(25, "T")
-                                                    cancelRequest = false
+                                        try {
+                                            alert(title) {
+                                                cancellable(false)
+                                                setFinishOnTouchOutside(false)
+                                                positiveButton(positive) {
+                                                    async {
+                                                        sendPUTNEW(a[20].toString().toInt(), "F")
+                                                        sendPUTNEW(23, "F")
+                                                        sendPUTNEW(25, "T")
+                                                        cancelRequest = false
+                                                    }
                                                 }
-                                            }
-                                            negativeButton(negative) {
-                                                async {
-                                                    sendPUTNEW(23, "F")
-                                                    cancelRequest = false
+                                                negativeButton(negative) {
+                                                    async {
+                                                        sendPUTNEW(23, "F")
+                                                        cancelRequest = false
+                                                    }
                                                 }
-                                            }
-                                        }.show()
+                                            }.show()
+                                        } catch (e: Exception) {
+
+                                        }
                                     }
                                 } else if (a[23] == 'F') {
                                     cancelRequest = false
@@ -1580,7 +1634,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                     }
                                                 }
                                             }.show()
-                                        } catch (e:Exception){ }
+                                        } catch (e: Exception) {
+                                        }
                                     }
                                 } else if (a[14] == 'F' && !toiletPopUpBool) {
                                     //If the other user selects, the pop up for the other use will be removed
@@ -1588,7 +1643,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                         toiletPopUpBool = true
                                         try {
                                             toiletPopUp.dismiss()
-                                        } catch (e: Exception) { }
+                                        } catch (e: Exception) {
+                                        }
                                     }
                                 } else {
                                     //Do nothing
@@ -1597,7 +1653,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     exitPop = false
                                     runOnUiThread {
                                         exitPop = false
-                                        try{
+                                        try {
                                             /*exitPopUp = alert(startRoboTour) {
                                                 cancellable(false)
                                                 setFinishOnTouchOutside(false)
@@ -1612,7 +1668,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                     }
                                                 }
                                             }.show() */
-                                        }  catch (e:Exception){ }
+                                        } catch (e: Exception) {
+                                        }
                                     }
                                 } else if (a[15] == 'F' && !exitPop) {
                                     //If the other user selects, the pop up for the other use will be removed
@@ -1627,42 +1684,46 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 } else {
                                     //Do nothing
                                 }
-                                if (a[11] == 'T' ) {
+                                if (a[11] == 'T') {
                                     runOnUiThread {
                                         toggleStBtn = true
                                         stopButton!!.text = start
                                         if (snackBar && !optional) {
                                             snackBar = false
-                                            Snackbar.make(relLay!!, pressContinue, Snackbar.LENGTH_LONG)
-                                                    .setText(pressContinue)
-                                                    .setDuration(5000)
-                                                    .setAction(continuer, View.OnClickListener {
-                                                        if (isNetworkConnected()) {
-                                                            alertStBtn = if (toggleStBtn) {
-                                                                startDesc
-                                                            } else {
-                                                                stopDesc
-                                                            }
-                                                            optional = false
+                                            try {
+                                                Snackbar.make(relLay!!, pressContinue, Snackbar.LENGTH_LONG)
+                                                        .setText(pressContinue)
+                                                        .setDuration(5000)
+                                                        .setAction(continuer, View.OnClickListener {
                                                             if (isNetworkConnected()) {
-                                                                if (!toggleStBtn) {
-                                                                    stopButton?.text = stop
-                                                                    async {
-                                                                        stopRoboTour() /*This function will call for RoboTour to be stopped*/
-                                                                    }
+                                                                alertStBtn = if (toggleStBtn) {
+                                                                    startDesc
                                                                 } else {
-                                                                    stopButton?.text = start
-                                                                    async {
-                                                                        startRoboTour()
-                                                                    }
+                                                                    stopDesc
                                                                 }
-                                                                toggleStBtn = !toggleStBtn
-                                                            } else {
-                                                                Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                                optional = false
+                                                                if (isNetworkConnected()) {
+                                                                    if (!toggleStBtn) {
+                                                                        stopButton?.text = stop
+                                                                        async {
+                                                                            stopRoboTour() /*This function will call for RoboTour to be stopped*/
+                                                                        }
+                                                                    } else {
+                                                                        stopButton?.text = start
+                                                                        async {
+                                                                            startRoboTour()
+                                                                        }
+                                                                    }
+                                                                    toggleStBtn = !toggleStBtn
+                                                                } else {
+                                                                    Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                                                                }
                                                             }
-                                                        }
-                                                    })
-                                                    .show()
+                                                        })
+                                                        .show()
+                                            } catch (e: Exception) {
+
+                                            }
                                         }
                                     }
                                 } else {
@@ -1756,7 +1817,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         text = allArtPieces[input].English_Desc
                     }
                 }
-                tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+                try {
+                    println(">>>>>tts")
+                    tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+                } catch (e: Exception) {
+
+                }
             } else {
                 when (language) {
                     "French" -> {
@@ -1776,8 +1842,16 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                     }
                 }
-                stopAllSpeech()
-                tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+                try {
+                    stopAllSpeech()
+                } catch (e: Exception) {
+
+                }
+                try {
+                    tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+                } catch (e: Exception) {
+
+                }
             }
         }
     }
@@ -1804,8 +1878,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                 }
             }
-            stopAllSpeech()
-            tts7!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            try {
+                stopAllSpeech()
+                tts7!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            } catch (e: Exception) {
+
+            }
         }
     }
 
@@ -1831,8 +1909,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                 }
             }
-            stopAllSpeech()
-            tts3!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            try {
+                stopAllSpeech()
+                tts3!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+            } catch (e: Exception) {
+
+            }
         }
     }
 
@@ -1858,8 +1940,12 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         text = allArtPieces[input].English_Desc
                     }
                 }
-                stopAllSpeech()
-                tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+                try {
+                    stopAllSpeech()
+                    tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+                } catch (e: Exception) {
+
+                }
             } else if (input == -1) {
                 when (language) {
                     "French" -> {
@@ -1879,9 +1965,13 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
                     }
                 }
-                stopAllSpeech()
-                tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+                try {
+                    stopAllSpeech()
+                    tts2!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+                } catch (e: Exception) {
+                }
             }
+
         }
     }
 
@@ -1944,7 +2034,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         sendPUTNEW(12, "T")
                     }
                 }
-                checkerThread.interrupt()
+                try{
+                    checkerThread.interrupt()
+                } catch (e:Exception){
+
+                }
                 clearFindViewByIdCache()
                 runOnUiThread {
                     switchToFinnished()
@@ -1956,6 +2050,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun rejectSkip() {
         if (isNetworkConnected()) {
+            skippable = true
             async {
                 //This function will reject the skip by adding the empty string
                 sendPUTNEW(10, "F")
@@ -1966,7 +2061,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun stopAllSpeech() {
-        try{
+        try {
             if (tts != null) {
                 tts!!.stop()
             }
@@ -1988,18 +2083,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             if (tts5 != null) {
                 tts5!!.stop()
             }
-        }catch(e:Exception){
+        } catch (e: Exception) {
 
-        }
-    }
-
-    private fun vibrate() {
-        if (Build.VERSION.SDK_INT > 25) { /*Attempt to not use the deprecated version if possible, if the SDK version is >25, use the newer one*/
-            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(VibrationEffect.createOneShot(300, 10))
-        } else {
-            /*for backward comparability*/
-            @Suppress("DEPRECATION")
-            (getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(300)
         }
     }
 
@@ -2233,7 +2318,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             if (twoUserMode) {
                                 toast(cancelRequestSent)
                             }
-                            dismiss()
+                           try {
+                               dismiss()
+                           } catch (e:Exception){
+
+                           }
                         }
                     }
                 }

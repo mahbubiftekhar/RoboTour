@@ -13,6 +13,7 @@ import android.preference.PreferenceManager
 import android.view.WindowManager
 import android.widget.Toast
 import kotlinx.android.synthetic.*
+import java.io.InterruptedIOException
 import java.net.URL
 
 @Suppress("DEPRECATION")
@@ -21,12 +22,21 @@ var url = "http://www.mahbubiftekhar.co.uk/receiver.php"
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
     private var continueThread = true
-
+    private var userGoThrough = false
     override fun onBackPressed() {
         clearFindViewByIdCache()
         val intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_HOME)
         startActivity(intent)
+    }
+
+    override fun onDestroy() {
+        try{
+            updateTextThread.interrupt()
+        }catch (e:Exception){
+
+        }
+        super.onDestroy()
     }
 
     private fun switchToAdmin() {
@@ -73,7 +83,13 @@ class MainActivity : AppCompatActivity() {
                 toast("WARNING!!!: homepages receiver")
                 saveInt("urlnum", 3)
             }
+            4 -> {
+                url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
+                toast("WARNING!!!: 000webHost receiver")
+                saveInt("urlnum", 4)
+            }
         }
+
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         verticalLayout {
             imageView(R.drawable.robotour_img_small) {
@@ -91,18 +107,14 @@ class MainActivity : AppCompatActivity() {
                 background = buttonBg() // Using kotlin - better ;)
                 lparams { width = matchParent; horizontalMargin = dip(5); topMargin = dip(5) }
                 onClick {
-                    if (isNetworkConnected()) {
-                       // async{
-                         //   val b = URL(url).readText()
-                           // if(b[18]=='1' || b[18]=='2'){
-                               //runOnUiThread{
-                                   continueThread = false
-                                   startActivity<SelectLanguageActivity>()
-                               //}
-                            } else {
-                                toast("Robotour is not on")
-                            }
-                        //}
+                    if (!userGoThrough) {
+                        toast("RoboTour not online")
+                    } else if (isNetworkConnected()) {
+                        continueThread = false
+                        startActivity<SelectLanguageActivity>()
+                    } else {
+                        toast("No Network - Please investigate")
+                    }
                 }
                 onLongClick {
                     startActivity<InfoForumDemoActivity>()
@@ -116,6 +128,40 @@ class MainActivity : AppCompatActivity() {
         /*Function to load an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
         return sharedPreferences.getInt(key, 1)
+    }
+
+    private val updateTextThread: Thread = object : Thread() {
+        /*This thread is used to update the header*/
+        /*Will update the header automatically*/
+        override fun run() {
+            while (!isInterrupted) {
+                try {
+                    async {
+                        val a = URL(url).readText()
+                        if (a[18].toString().toInt() == 1 || a[18].toString().toInt() == 2) {
+                            userGoThrough = true
+                        }
+                    }
+                    try {
+                        Thread.sleep(1000)
+                    } catch (e: Exception) {
+
+                    }
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedIOException) {
+                    Thread.currentThread().interrupt()
+                }
+            }
+            Thread.currentThread().interrupt()
+        }
+    }
+
+    override fun onResume() {
+        if (updateTextThread.state == Thread.State.NEW) {
+            updateTextThread.start()
+        }
+        super.onResume()
     }
 
     private fun buttonBg() = GradientDrawable().apply {
