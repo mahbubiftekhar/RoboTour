@@ -58,9 +58,9 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                 "Chinese" -> {
                     a = "开始导航"
                     navigate = "确定要导航到指定的作品吗？"
-                    toastText = "请选择一件或多件作品"
+                    toastText = "请选择一件或者多件作品"
                     positive = "是"
-                    negative = "没有"
+                    negative = "不是"
                 }
                 else -> {
                     a = "Start tour"
