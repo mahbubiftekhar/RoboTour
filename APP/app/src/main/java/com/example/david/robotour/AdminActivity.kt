@@ -359,13 +359,13 @@ class AdminActivity : AppCompatActivity() {
         }
         CONTROLON.setOnClickListener {
             async {
-                sendPUTNEW(19, "T")
+                sendPUTNEW(21, "T")
             }
             vibrate()
         }
         CONTROLOFF.setOnClickListener {
             async {
-                sendPUTNEW(19, "F")
+                sendPUTNEW(21, "F")
             }
             vibrate()
         }
