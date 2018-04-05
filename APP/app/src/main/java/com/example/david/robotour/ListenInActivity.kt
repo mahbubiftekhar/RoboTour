@@ -419,29 +419,24 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         when (language) {
             "French" -> {
-                //restartApp = "START AGAIN"
                 closeApp = "Etes-vous sûr de vouloir arrêter de suivre cette tournée?"
             }
             "German" -> {
-                //restartApp = "ANFANG"
                 closeApp = "Sind Sie sicher, dass Sie aufhören möchten, diese Tour zu folgen?"
             }
             "Spanish" -> {
-                //restartApp = "COMIENZO"
                 closeApp = "¿Seguro que quieres dejar de seguir esta gira?"
             }
             "Chinese" -> {
-                //restartApp = "重新开始"
                 closeApp = "您确定要停止萝卜途吗？"
             }
             else -> {
-                //restartApp = "START AGAIN"
                 closeApp = "Are you sure you want to stop following this tour?"
             }
         }
-        speakOutThanks()
-        if(arrivedAtEnd==false) {
+        if (!arrivedAtEnd) {
             arrivedAtEnd = true
+            speakOutThanks()
             alert {
                 customView {
                     linearLayout {
