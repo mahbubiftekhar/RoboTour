@@ -1,5 +1,6 @@
 package com.example.david.robotour
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
@@ -34,12 +35,13 @@ class ControlSelectionActivity : AppCompatActivity() {
     private var imageView: ImageView? = null
     private var descriptionView: TextView? = null
 
+    @SuppressLint("ApplySharedPref")
     private fun saveInt(key: String, value: Int) {
         /* Function to save an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val editor = sharedPreferences.edit()
         editor.putInt(key, value)
-        editor.apply()
+        editor.commit()
     }
 
     private fun sendPUTNEW(identifier: Int, command: String) {

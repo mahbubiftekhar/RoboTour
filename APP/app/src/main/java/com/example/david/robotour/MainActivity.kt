@@ -51,12 +51,13 @@ class MainActivity : AppCompatActivity() {
         return networkInfo != null && networkInfo.isConnected
     }
 
+    @SuppressLint("ApplySharedPref")
     private fun saveInt(key: String, value: Int) {
         /* Function to save an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val editor = sharedPreferences.edit()
         editor.putInt(key, value)
-        editor.apply()
+        editor.commit()
     }
 
     @SuppressLint("SetTextI18n")

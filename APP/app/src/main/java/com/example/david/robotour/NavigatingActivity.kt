@@ -677,13 +677,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toast("WARNING!!!: 000webHost receiver")
             }
         }
-        //tts = TextToSpeech(this, this)
-        //tts2 = TextToSpeech(this, this)
-        //tts4 = TextToSpeech(this, this)
         async {
-            val twoUserOrNot = URL(url).readText()[18]
+            val twoUserOrNot = URL(url).readText()
             uiThread {
-                twoUserMode = twoUserOrNot == '2'
+                twoUserMode = twoUserOrNot[16] == 'T' && twoUserOrNot[17] == 'T'
             }
         }
         supportActionBar?.hide() //hide actionbar
@@ -1334,7 +1331,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             async {
                                 val a = URL(url).readText()
                                 /*This updates the picture and text for the user*/
-                                twoUserMode = a[18] == '2'
+                                twoUserMode = a[16] == 'T' && a[17] == 'T'
                                 val paintings = a.substring(0, 10)
                                 runOnUiThread { updateScrollView(paintings) }
                                 val counter = (0..16).count { a[it] == 'F' }
@@ -1379,9 +1376,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 for (i in 0..9) {
                                     if (a[i] == 'A' && speaking != i) {
                                         /*This will mean that when the robot has arrived at the painting*/
-                                        if (tts != null) {
-                                            tts!!.stop()
-                                        }
                                         runOnUiThread {
                                             currentPic = i // Set current pic to the one being shown
                                             speaking = i
@@ -1405,6 +1399,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             }
                                         }
                                         try {
+                                            stopAllSpeech()
                                             speakOut(i)
                                         } catch (e: Exception) {
 

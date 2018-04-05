@@ -1,5 +1,6 @@
 package com.example.david.robotour
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -402,12 +403,13 @@ class AdminActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("ApplySharedPref")
     private fun saveInt(key: String, value: Int) {
         /* Function to save an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val editor = sharedPreferences.edit()
         editor.putInt(key, value)
-        editor.apply()
+        editor.commit()
     }
 
     override fun onResume() {

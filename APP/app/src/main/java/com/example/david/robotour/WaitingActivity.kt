@@ -24,6 +24,7 @@ class WaitingActivity : AppCompatActivity() {
     private var user = 1
     private var language = ""
     private var message = ""
+    private var stopThread = false
     private var imageView: ImageView? = null
     private var descriptionView: TextView? = null
     private var textView2: TextView? = null
@@ -88,7 +89,7 @@ class WaitingActivity : AppCompatActivity() {
             background = ColorDrawable(Color.parseColor("#EEEEEE"))
         }
         async {
-            Thread.sleep(3000)
+            Thread.sleep(2500)
             val a = URL(url).readText()
             uiThread {
                 if (a[18] == '1' && user == 1) {
@@ -133,6 +134,7 @@ class WaitingActivity : AppCompatActivity() {
     }
 
     fun switchToNavigate() {
+        stopThread = true
         t.interrupt()
         pictureThread.interrupt()
         interruptAllThreads() //Interrupt all the threads
@@ -144,15 +146,18 @@ class WaitingActivity : AppCompatActivity() {
         /*Overridden onBackPressed*/
         toast(message)
     }
-
     private val t: Thread = object : Thread() {
         /*This thread will check if the other use has made their selection*/
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
-            while (!Thread.currentThread().isInterrupted) {
+            while (!isInterrupted) {
                 println("++++ t thread WaitingActivity defo")
                 try {
                     val a = URL(url).readText()
+                    if(a[18] == '1' && user == 1){
+                        transfered = false
+                        switchToNavigate()
+                    }
                     if (a[16] == 'T' && a[17] == 'T' && transfered) {
                         transfered = false
                         switchToNavigate()
@@ -162,6 +167,8 @@ class WaitingActivity : AppCompatActivity() {
                 } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedByTimeoutException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: InterruptedException){
                     Thread.currentThread().interrupt()
                 }
                 try {
@@ -233,7 +240,11 @@ class WaitingActivity : AppCompatActivity() {
                             }
                         }
                     }
-                    Thread.sleep(1500)
+                    try{
+                        Thread.sleep(1500)
+                    } catch (e:Exception){
+
+                    }
                     a++
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()

@@ -518,7 +518,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             /*This thread will check if the user has selected at least one picture, if they haven't then it will change the background
             * colour of the start button to grey*/
             override fun run() {
-                while (!Thread.currentThread().isInterrupted) {
+                while (!isInterrupted) {
                    // println("++++getting in pictureActivity t thread")
                     try {
                         val count = allArtPieces.count { it.selected }
