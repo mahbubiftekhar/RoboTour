@@ -62,7 +62,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var toiletDesc = ""
     private var obstacleRemovePlease = ""
     private var changeSpeed = ""
-    private var imageView: ImageView? = null
+    private var imageView: ImageButton? = null
     private var titleView: TextView? = null
     private var descriptionView: TextView? = null
     private var stopButton: Button? = null
@@ -931,7 +931,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     }
                     floatingActionButton {
                         //Alert
-                        imageResource = R.drawable.ic_chat_black_24dp
+                        imageResource = R.drawable.ic_info_outline_black_24dp
                         backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.roboTourTeal))
                         lparams { alignParentLeft(); topMargin = dip(100); leftMargin = dip(20) }
                         onClick {
@@ -1019,9 +1019,82 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         }
                         verticalLayout {
                             orientation = LinearLayout.HORIZONTAL
-                            imageView = imageView {
+                            imageView = imageButton {
                                 backgroundColor = Color.TRANSPARENT //Removes gray border
                                 gravity = Gravity.CENTER_HORIZONTAL
+                                onClick {
+                                    //UI
+                                    //ColorStateList usually requires a list of states but this works for a single color
+                                    if (currentPic !in 0..9) {
+                                        when (language) {
+                                            "French" -> {
+                                                artPieceDescription = "RoboTour calcule l'itinéraire optimal"
+                                                artPieceTitle = "RoboTour calcule l'itinéraire optimal"
+                                            }
+                                            "Chinese" -> {
+                                                artPieceDescription = "萝卜途正在计算最佳路线"
+                                                artPieceTitle = "萝卜途正在计算最佳路线"
+                                            }
+                                            "Spanish" -> {
+                                                artPieceDescription = "RoboTour está calculando la ruta óptima"
+                                                artPieceTitle = "RoboTour está calculando la ruta óptima"
+                                            }
+                                            "German" -> {
+                                                artPieceDescription = "RoboTour berechnet die optimale Route"
+                                                artPieceTitle = "RoboTour berechnet die optimale Route"
+                                            }
+                                        }
+                                    } else {
+                                        when (language) {
+                                            "French" -> {
+                                                artPieceTitle = allArtPieces[currentPic].nameFrench
+                                                artPieceDescription = allArtPieces[currentPic].LongFrench
+                                            }
+                                            "Chinese" -> {
+                                                artPieceTitle = allArtPieces[currentPic].nameChinese
+                                                artPieceDescription = allArtPieces[currentPic].LongChinese
+                                            }
+                                            "Spanish" -> {
+                                                artPieceTitle = allArtPieces[currentPic].nameSpanish
+                                                artPieceDescription = allArtPieces[currentPic].LongSpanish
+                                            }
+                                            "German" -> {
+                                                artPieceTitle = allArtPieces[currentPic].nameGerman
+                                                artPieceDescription = allArtPieces[currentPic].LongGerman
+                                            }
+                                            else -> {
+                                                artPieceTitle = allArtPieces[currentPic].name
+                                                artPieceDescription = allArtPieces[currentPic].LongEnglish
+                                            }
+                                        }
+                                    }
+                                    alert {
+                                        customView {
+                                            linearLayout {
+                                                orientation = LinearLayout.VERTICAL
+                                                textView {
+                                                    text = artPieceTitle
+                                                    textSize = 32f
+                                                    typeface = Typeface.DEFAULT_BOLD
+                                                    padding = dip(3)
+                                                    gravity = Gravity.CENTER_HORIZONTAL
+                                                }
+                                                textView {
+                                                    text = "ETA: <30s"
+                                                    textSize = 20f
+                                                    padding = dip(2)
+                                                    leftPadding = dip(4)
+                                                }
+                                                textView {
+                                                    text = artPieceDescription
+                                                    textSize = 16f
+                                                    padding = dip(2)
+                                                    leftPadding = dip(4)
+                                                }
+                                            }
+                                        }
+                                    }.show()
+                                }
                             }.lparams {
                                 bottomMargin = dip(10)
                                 topMargin = dip(10)
