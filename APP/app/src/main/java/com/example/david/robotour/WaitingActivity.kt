@@ -52,7 +52,7 @@ class WaitingActivity : AppCompatActivity() {
                 "Envío de su selección a RoboTour\n"
             }
             "Chinese" -> {
-                "正在将您的选择发给萝卜途...\n"
+                "正在将您的选择发送给萝卜途...\n"
             }
             else -> {
                 "Sending your selection to RoboTour"
@@ -125,7 +125,7 @@ class WaitingActivity : AppCompatActivity() {
                 textView2?.text = "Por Favor Espere al Otro Usuario..."
             }
             "Chinese" -> {
-                textView2?.text = "请等待其他用户..."
+                textView2?.text = "请等待其他用户选择..."
             }
             else -> {
                 textView2?.text = "Please Wait For the Other User..."

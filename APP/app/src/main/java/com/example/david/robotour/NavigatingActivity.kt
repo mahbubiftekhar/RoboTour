@@ -12,8 +12,6 @@ import android.graphics.Typeface
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.speech.tts.TextToSpeech
 import android.support.annotation.RequiresApi
@@ -487,13 +485,14 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         } catch (e: Exception) {
 
         }
+        deleteCache(applicationContext)
         clearFindViewByIdCache()
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         intent.putExtra("EXIT", true)
         startActivity(intent)
         if (getIntent().getBooleanExtra("EXIT", false)) {
-            finish();
+            finish()
         }
         /* val message: String
         val message2: String
@@ -528,7 +527,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
             "Chinese" -> {
                 restartApp = "重新开始"
-                closeApp = "关闭"
+                closeApp = "退出"
             }
             else -> {
                 restartApp = "START AGAIN"
@@ -705,8 +704,13 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         supportActionBar?.hide() //hide actionbar
         //vibrate()
         async {
-            Thread.sleep(1500)
-            speakOutOnCreate()
+            try {
+                Thread.sleep(1500)
+
+                speakOutOnCreate()
+            } catch (e: Exception) {
+
+            }
         }
         val language = intent.getStringExtra("language")
         when (language) {
@@ -734,8 +738,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
             "Chinese" -> {
                 restartApp = "重新开始"
-                closeApp = "关闭"
-                pressContinue = "准备好去下一幅作品时请按下 继续。\n"
+                closeApp = "退出"
+                pressContinue = "当您准备好继续下一幅作品时，请按下 继续。\n"
                 otherusercancel = "其他用户希望取消这幅作品\n"
                 continuer = "继续"
 
@@ -813,10 +817,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 negative = "不是"
                 skip = "跳过"
                 skipDesc = "确定要跳过这一幅作品吗？"
-                stop = "停止"
-                stopDesc = "确定要停止萝卜途吗？"
-                start = "开始"
-                startDesc = "确定开始萝卜途吗？"
+                stop = "暂停"
+                stopDesc = "确定要暂停萝卜途吗？"
+                start = "继续"
+                startDesc = "确定继续萝卜途吗？"
                 cancelTour = "取消游览"
                 cancelDesc = "确定要取消游览吗？"
                 exit = "出口"
@@ -1383,6 +1387,13 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                                 if (a[14] == 'A' && toiletSpeech) {
+                                    try {
+                                        imageView?.setImageResource(R.drawable.toilet)
+                                        titleView?.text = toilet
+                                        descriptionView?.text = toilet
+                                    } catch (e: Exception) {
+
+                                    }
                                     println(">>>>2")
                                     toiletSpeech = false
                                     speakOutToilet()
@@ -2036,7 +2047,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         Send the user back to MainActivity */
         alert(cancelDesc) {
             positiveButton(positive) {
-                saveInt("user",-1)
+                saveInt("user", -1)
                 checkerThread.interrupt()
                 async {
                     val aB = URL(url).readText()
@@ -2062,9 +2073,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         sendPUTNEW(12, "T")
                     }
                 }
-                try{
+                try {
                     checkerThread.interrupt()
-                } catch (e:Exception){
+                } catch (e: Exception) {
 
                 }
                 clearFindViewByIdCache()
@@ -2349,7 +2360,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             }
                             try {
                                 dismiss()
-                            } catch (e:Exception){
+                            } catch (e: Exception) {
 
                             }
                         }
