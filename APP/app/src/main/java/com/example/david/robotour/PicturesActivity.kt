@@ -827,6 +827,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             sendPUTNEW(24,"F")
                         }
                     }
+                    finish() // NEW
                     //super.onBackPressed() // Call super.onBackPressed
                 }
                 negativeButton(negative) {

@@ -1,6 +1,9 @@
 package com.example.david.robotour
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -48,6 +51,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var skip = ""
     private var skipDesc = ""
     private var userid = ""
+    private var checkerThreadRunning = true
     private var stop = ""
     private var stopDesc = ""
     private var start = ""
@@ -466,6 +470,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun switchToFinnished() {
         checkerThread.interrupt()
+        checkerThreadRunning = false
         runOnUiThread {
             if (userid == "1") {
                 async {
@@ -482,7 +487,15 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         } catch (e: Exception) {
 
         }
-        val message: String
+        clearFindViewByIdCache()
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        intent.putExtra("EXIT", true)
+        startActivity(intent)
+        if (getIntent().getBooleanExtra("EXIT", false)) {
+            finish();
+        }
+        /* val message: String
         val message2: String
         val language = intent.getStringExtra("language")
         message = when (language) {
@@ -545,16 +558,18 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 setFinishOnTouchOutside(false)
                 positiveButton {
                     clearFindViewByIdCache()
-                    deleteCache(applicationContext)
+                    clearFindViewByIdCache()
+                    /*deleteCache(applicationContext)
                     val i = baseContext.packageManager
                             .getLaunchIntentForPackage(baseContext.packageName)
                     i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(i)
+                    startActivity(i)*/
+                    android.os.Process.killProcess(android.os.Process.myPid())
                 }
             }.show()
         } catch (e:Exception){
             startActivity<MainActivity>()
-        }
+        } */
     }
 
     private fun deleteCache(context: Context) {
@@ -1177,6 +1192,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 }
                                             }
                                             checkerThread.interrupt()
+                                            checkerThreadRunning = false
                                             clearFindViewByIdCache()
                                             runOnUiThread {
                                                 switchToFinnished()
@@ -1342,6 +1358,8 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 if (counter >= 17 && finnishing) {
                                     finnishing = false
                                     runOnUiThread {
+                                        saveInt("user", -1)
+                                        checkerThreadRunning = false
                                         switchToFinnished()
                                         killThread = true
                                     }
@@ -1885,6 +1903,15 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
+    @SuppressLint("ApplySharedPref")
+    private fun saveInt(key: String, value: Int) {
+        /* Function to save an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val editor = sharedPreferences.edit()
+        editor.putInt(key, value)
+        editor.commit()
+    }
+
     private fun speakOutOnCreate() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
@@ -2007,6 +2034,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         Send the user back to MainActivity */
         alert(cancelDesc) {
             positiveButton(positive) {
+                saveInt("user",-1)
                 checkerThread.interrupt()
                 async {
                     val aB = URL(url).readText()
@@ -2039,6 +2067,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
                 clearFindViewByIdCache()
                 runOnUiThread {
+                    checkerThreadRunning = false
                     switchToFinnished()
                 }
             }

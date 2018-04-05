@@ -140,25 +140,26 @@ class WaitingActivity : AppCompatActivity() {
         interruptAllThreads() //Interrupt all the threads
         clearFindViewByIdCache()
         startActivity<NavigatingActivity>("language" to language) // now we can switch the activity
+        finish()
     }
 
     override fun onBackPressed() {
         /*Overridden onBackPressed*/
         toast(message)
     }
+
     private val t: Thread = object : Thread() {
         /*This thread will check if the other use has made their selection*/
         @RequiresApi(Build.VERSION_CODES.O)
         override fun run() {
-            while (!isInterrupted) {
+            while (!isInterrupted && !stopThread) {
                 println("++++ t thread WaitingActivity defo")
                 try {
                     val a = URL(url).readText()
-                    if(a[18] == '1' && user == 1){
+                    if (a[18] == '1' && user == 1) {
                         transfered = false
                         switchToNavigate()
-                    }
-                    else if (a[16] == 'T' && a[17] == 'T' && transfered) {
+                    } else if (a[16] == 'T' && a[17] == 'T' && transfered) {
                         transfered = false
                         switchToNavigate()
                     }
@@ -168,7 +169,9 @@ class WaitingActivity : AppCompatActivity() {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
-                } catch (e: InterruptedException){
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                } catch (e: Exception) {
                     Thread.currentThread().interrupt()
                 }
                 try {
@@ -207,7 +210,7 @@ class WaitingActivity : AppCompatActivity() {
         var a = 0
 
         override fun run() {
-            while (!isInterrupted) {
+            while (!isInterrupted && !stopThread) {
                 println("++++ picture thread WaitingActivity")
                 if (a > 9) {
                     //Reset A to avoid null pointers
@@ -216,33 +219,37 @@ class WaitingActivity : AppCompatActivity() {
                 try {
                     //UI thread MUST be updates on the UI thread, other threads may not update the UI thread
                     runOnUiThread {
-                        imageView?.setImageResource(allArtPieces[a].imageID)
-                        descriptionView?.text = allArtPieces[a].name
-                        when (language) {
-                            "French" -> {
-                                descriptionView?.text = allArtPieces[a].nameFrench
+                        try {
+                            imageView?.setImageResource(allArtPieces[a].imageID)
+                            descriptionView?.text = allArtPieces[a].name
+                            when (language) {
+                                "French" -> {
+                                    descriptionView?.text = allArtPieces[a].nameFrench
 
-                            }
-                            "German" -> {
-                                descriptionView?.text = allArtPieces[a].nameGerman
+                                }
+                                "German" -> {
+                                    descriptionView?.text = allArtPieces[a].nameGerman
 
-                            }
-                            "Spanish" -> {
-                                descriptionView?.text = allArtPieces[a].nameSpanish
+                                }
+                                "Spanish" -> {
+                                    descriptionView?.text = allArtPieces[a].nameSpanish
 
-                            }
-                            "Chinese" -> {
-                                descriptionView?.text = allArtPieces[a].nameChinese
+                                }
+                                "Chinese" -> {
 
+                                }
+                                else -> {
+                                    descriptionView?.text = allArtPieces[a].name
+                                }
                             }
-                            else -> {
-                                descriptionView?.text = allArtPieces[a].name
-                            }
+                        } catch (e: Exception) {
+
                         }
+
                     }
-                    try{
+                    try {
                         Thread.sleep(1500)
-                    } catch (e:Exception){
+                    } catch (e: Exception) {
 
                     }
                     a++

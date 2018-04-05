@@ -112,18 +112,21 @@ class ControlSelectionActivity : AppCompatActivity() {
             val a = URL(url).readText()
             if (a[24] == 'T') {
                 switchBackToMain() //Switch to the main activity for safety
+                finish() //NEW
             } else if (a[16] == 'F' && a[21] != 'T') {
                 //User 1 is not online hence take that position
                 sendPUTNEW(16, "O")
                 saveInt("user", 1)
                 Thread.sleep(4000)
                 switchToPictures()
+                finish() //NEW
             } else if (a[17] == 'F' && a[18] == '2' && a[21] != 'T') {
                 //user 2 is not online, hence take that position
                 sendPUTNEW(17, "O")
                 saveInt("user", 2)
                 Thread.sleep(4000)
                 switchToPictures()
+                finish() //NEW
             } else {
                 println(">>>> in the else clause")
                 waitingForListen = true
