@@ -160,24 +160,28 @@ class ControlSelectionActivity : AppCompatActivity() {
         toast("Timed Out")
         waitingForListen = false
         t.interrupt()
+        finish()
         startActivity<MainActivity>("language" to language) // now we can switch the activity
     }
 
     private fun switchToPictures() {
         clearFindViewByIdCache()
         t.interrupt()
+        finish()
         startActivity<PicturesActivity>("language" to language) // now we can switch the activity
     }
 
     private fun switchToListen() {
         clearFindViewByIdCache()
         t.interrupt()
+        finish()
         startActivity<ListenInActivity>("language" to language) // now we can switch the activity
     }
 
     override fun onBackPressed() {
         /*Overridden onBackPressed*/
         if (waitingForListen) {
+            finish()
             switchBackToMain()
         } else {
             toast("please wait")
