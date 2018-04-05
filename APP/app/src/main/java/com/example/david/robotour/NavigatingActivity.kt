@@ -1157,7 +1157,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
                             textSize = btnTextSize
                             verticalPadding = dip(0)
-                            horizontalPadding = dip(0)
+                            if (language != "German") {
+                                horizontalPadding = dip(0)
+                            }
                             height = dip(btnHgt)
                             width = matchParent
                             onClick {
