@@ -74,7 +74,7 @@ class ControlSelectionActivity : AppCompatActivity() {
             "German" -> "Wir Suchen Nach Einer Verfügbaren RoboTour"
             "French" -> "Recherche d'un RoboTour disponible"
             "Spanish" -> "Buscando un RoboTour disponible"
-            "Chinese" -> "正在寻找可用的萝卜途..."
+            "Chinese" -> "正在寻找可以操控的萝卜途..."
             else -> "Searching For An Available RoboTour"
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -112,18 +112,21 @@ class ControlSelectionActivity : AppCompatActivity() {
             val a = URL(url).readText()
             if (a[24] == 'T') {
                 switchBackToMain() //Switch to the main activity for safety
+                finish() //NEW
             } else if (a[16] == 'F' && a[21] != 'T') {
                 //User 1 is not online hence take that position
                 sendPUTNEW(16, "O")
                 saveInt("user", 1)
                 Thread.sleep(4000)
                 switchToPictures()
+                finish() //NEW
             } else if (a[17] == 'F' && a[18] == '2' && a[21] != 'T') {
                 //user 2 is not online, hence take that position
                 sendPUTNEW(17, "O")
                 saveInt("user", 2)
                 Thread.sleep(4000)
                 switchToPictures()
+                finish() //NEW
             } else {
                 println(">>>> in the else clause")
                 waitingForListen = true
@@ -144,7 +147,7 @@ class ControlSelectionActivity : AppCompatActivity() {
                 "No RoboTour Disponible, Por Favor Espere Para Seguir Un Recorrido"
             }
             "Chinese" -> {
-                "暂时没有可用的萝卜途，请等候别的萝卜途结束旅行"
+                "暂时没有可以操控的萝卜途，正在跟随附近的萝卜途..."
             }
             else -> {
                 "Sorry, No RoboTour Available, Please Wait To Be Assigned To An Existing Tour"

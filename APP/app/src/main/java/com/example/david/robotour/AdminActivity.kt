@@ -81,6 +81,7 @@ class AdminActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         updateTextThread.interrupt()
+        finish()
         super.onBackPressed()
     }
 
@@ -101,6 +102,7 @@ class AdminActivity : AppCompatActivity() {
             "8" -> true
             "9" -> true
             "10" -> true
+            "O" -> true
             " " -> true
             else -> false
         }
