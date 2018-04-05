@@ -523,34 +523,38 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         speakOutThanks()
-        alert {
-            customView {
-                linearLayout {
-                    leftPadding = dip(4)
-                    orientation = LinearLayout.VERTICAL
-                    textView {
-                        text = message
-                        textSize = 22f
-                        typeface = Typeface.DEFAULT_BOLD
-                        verticalPadding = dip(10)
-                    }
-                    textView {
-                        text = message2
-                        textSize = 18f
+        try {
+            alert {
+                customView {
+                    linearLayout {
+                        leftPadding = dip(4)
+                        orientation = LinearLayout.VERTICAL
+                        textView {
+                            text = message
+                            textSize = 22f
+                            typeface = Typeface.DEFAULT_BOLD
+                            verticalPadding = dip(10)
+                        }
+                        textView {
+                            text = message2
+                            textSize = 18f
+                        }
                     }
                 }
-            }
-            cancellable(false)
-            setFinishOnTouchOutside(false)
-            positiveButton {
-                clearFindViewByIdCache()
-                deleteCache(applicationContext)
-                val i = baseContext.packageManager
-                        .getLaunchIntentForPackage(baseContext.packageName)
-                i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                startActivity(i)
-            }
-        }.show()
+                cancellable(false)
+                setFinishOnTouchOutside(false)
+                positiveButton {
+                    clearFindViewByIdCache()
+                    deleteCache(applicationContext)
+                    val i = baseContext.packageManager
+                            .getLaunchIntentForPackage(baseContext.packageName)
+                    i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(i)
+                }
+            }.show()
+        } catch (e:Exception){
+            startActivity<MainActivity>()
+        }
     }
 
     private fun deleteCache(context: Context) {
@@ -677,13 +681,10 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 toast("WARNING!!!: 000webHost receiver")
             }
         }
-        //tts = TextToSpeech(this, this)
-        //tts2 = TextToSpeech(this, this)
-        //tts4 = TextToSpeech(this, this)
         async {
-            val twoUserOrNot = URL(url).readText()[18]
+            val twoUserOrNot = URL(url).readText()
             uiThread {
-                twoUserMode = twoUserOrNot == '2'
+                twoUserMode = twoUserOrNot[16] == 'T' && twoUserOrNot[17] == 'T'
             }
         }
         supportActionBar?.hide() //hide actionbar
@@ -1334,7 +1335,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             async {
                                 val a = URL(url).readText()
                                 /*This updates the picture and text for the user*/
-                                twoUserMode = a[18] == '2'
+                                twoUserMode = a[16] == 'T' && a[17] == 'T'
                                 val paintings = a.substring(0, 10)
                                 runOnUiThread { updateScrollView(paintings) }
                                 val counter = (0..16).count { a[it] == 'F' }
@@ -1379,9 +1380,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 for (i in 0..9) {
                                     if (a[i] == 'A' && speaking != i) {
                                         /*This will mean that when the robot has arrived at the painting*/
-                                        if (tts != null) {
-                                            tts!!.stop()
-                                        }
                                         runOnUiThread {
                                             currentPic = i // Set current pic to the one being shown
                                             speaking = i
@@ -1405,6 +1403,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             }
                                         }
                                         try {
+                                            stopAllSpeech()
                                             speakOut(i)
                                         } catch (e: Exception) {
 
@@ -1444,8 +1443,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                 if (userid == 1.toString()) {
                                     println("&&& we are getting in")
                                     println(">>>>> $skippable")
-                                    println("&&&&" + a[10].toString().toInt())
-                                    if (a[10].toString().toInt() == 2 && skippable) {
+                                    if (a[10].toString() == 2.toString() && skippable) {
                                         skippable = false
                                         runOnUiThread {
                                             try {
@@ -1475,7 +1473,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 } else if (userid == 2.toString()) {
                                     println(">>>>> $skippable")
-                                    if (a[10].toString().toInt() == 1 && skippable) {
+                                    if (a[10].toString() == 1.toString() && skippable) {
                                         skippable = false
                                         runOnUiThread {
                                             try {
@@ -2318,11 +2316,11 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             if (twoUserMode) {
                                 toast(cancelRequestSent)
                             }
-                           try {
-                               dismiss()
-                           } catch (e:Exception){
+                            try {
+                                dismiss()
+                            } catch (e:Exception){
 
-                           }
+                            }
                         }
                     }
                 }

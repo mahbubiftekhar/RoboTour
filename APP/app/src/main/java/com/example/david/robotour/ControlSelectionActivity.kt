@@ -1,5 +1,6 @@
 package com.example.david.robotour
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
@@ -34,12 +35,13 @@ class ControlSelectionActivity : AppCompatActivity() {
     private var imageView: ImageView? = null
     private var descriptionView: TextView? = null
 
+    @SuppressLint("ApplySharedPref")
     private fun saveInt(key: String, value: Int) {
         /* Function to save an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val editor = sharedPreferences.edit()
         editor.putInt(key, value)
-        editor.apply()
+        editor.commit()
     }
 
     private fun sendPUTNEW(identifier: Int, command: String) {
@@ -110,7 +112,7 @@ class ControlSelectionActivity : AppCompatActivity() {
             val a = URL(url).readText()
             if (a[24] == 'T') {
                 switchBackToMain() //Switch to the main activity for safety
-            }  else if (a[16] == 'F' && a[21] != 'T') {
+            } else if (a[16] == 'F' && a[21] != 'T') {
                 //User 1 is not online hence take that position
                 sendPUTNEW(16, "O")
                 saveInt("user", 1)
@@ -186,9 +188,9 @@ class ControlSelectionActivity : AppCompatActivity() {
             runOnUiThread {
                 updatetext2()
             }
-            try{
+            try {
                 Thread.sleep(5000)
-            }catch (e:Exception){
+            } catch (e: Exception) {
 
             }
             while (!Thread.currentThread().isInterrupted) {

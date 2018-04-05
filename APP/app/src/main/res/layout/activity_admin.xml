@@ -150,7 +150,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
-                android:text="@string/two_user_mode_off"
+                android:text="@string/_1_user_mode"
                 tools:ignore="ButtonStyle,NestedWeights" />
 
             <Button
@@ -159,7 +159,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
-                android:text="@string/two_user_mode_on"
+                android:text="@string/_2_user_mode"
                 tools:ignore="ButtonStyle" />
 
             <Button

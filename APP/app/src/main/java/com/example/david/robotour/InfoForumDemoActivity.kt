@@ -199,28 +199,28 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     DAVID
                      */
                     async {
-                            val a = URL("http://www.mahbubiftekhar.co.uk/receiver.php").readText()
-                            for(i in 0..3) {
-                                val c = i
-                                if (a[i] == 'N') {
-                                    println(">>>> IN IN: $c ")
-                                    runOnUiThread{
-                                        changePictures(i)
-                                    }
-                                    break
-                                } else if (a[i] == 'A' && i!=last) {
-                                    println("in else if")
-                                    last = i
-                                    runOnUiThread {
-                                        changePictures(i)
-                                        speakOut(i)
-                                    }
-                                    break
-                                }else {
-                                    println(">>> else clause")
+                        val a = URL("http://www.mahbubiftekhar.co.uk/receiver.php").readText()
+                        for (i in 0..3) {
+                            val c = i
+                            if (a[i] == 'N') {
+                                println(">>>> IN IN: $c ")
+                                runOnUiThread {
+                                    changePictures(i)
                                 }
+                                break
+                            } else if (a[i] == 'A' && i != last) {
+                                println("in else if")
+                                last = i
+                                runOnUiThread {
+                                    changePictures(i)
+                                    speakOut(i)
+                                }
+                                break
+                            } else {
+                                println(">>> else clause")
                             }
                         }
+                    }
                     try {
                         Thread.sleep(1200)
                     } catch (e: Exception) {
@@ -419,15 +419,17 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         val diagonalInches = Math.sqrt((xInches * xInches + yInches * yInches).toDouble())
         if (diagonalInches >= 6.5) {
             // 6.5inch device or bigger
-            verticalLayout{
+            verticalLayout {
                 linearLayout {
                     orientation = LinearLayout.HORIZONTAL
                     imageView1 = imageView(R.drawable.monalisa) {
                         //Flag on the lhs is the pictures
-                        scaleX=2.0f
-                        scaleY=2.0f
-                        lparams { topMargin=dip(150)
-                            leftMargin=dip(50) }
+                        scaleX = 2.0f
+                        scaleY = 2.0f
+                        lparams {
+                            topMargin = dip(150)
+                            leftMargin = dip(50)
+                        }
                         backgroundColor = Color.TRANSPARENT //Removes gray border
                     }
                     imageView(R.drawable.robotourlarge) {
@@ -436,9 +438,9 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     }
                     imageView2 = imageView(R.drawable.ukflag) {
                         //Flag on the rhs
-                        scaleX=2.0f
-                        scaleY=2.0f
-                        lparams { topMargin=dip(150); rightMargin=dip(50) }
+                        scaleX = 2.0f
+                        scaleY = 2.0f
+                        lparams { topMargin = dip(150); rightMargin = dip(50) }
                         backgroundColor = Color.TRANSPARENT //Removes gray border
                     }
                 }
@@ -546,7 +548,8 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
     }
-    private fun speakOutWelcome(){
+
+    private fun speakOutWelcome() {
         println(">>>>> in speakOutWelcome")
         when (language) {
             "French" -> {
@@ -567,35 +570,37 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
     }
-    private fun changePictures(position: Int){
+
+    private fun changePictures(position: Int) {
         println(">>>>$position")
-        when(position){
-            0->{
+        when (position) {
+            0 -> {
                 imageView1?.setImageDrawable(resources.getDrawable(R.drawable.birthofvenus))
             }
-            1->{
+            1 -> {
                 imageView1?.setImageDrawable(resources.getDrawable(R.drawable.creationofadam))
             }
-            2->{
+            2 -> {
                 imageView1?.setImageDrawable(resources.getDrawable(R.drawable.david))
             }
-            else ->{
+            else -> {
                 imageView1?.setImageDrawable(resources.getDrawable(R.drawable.monalisa))
             }
         }
     }
-    private fun changeFlag(){
-        when(language){
-            "Spanish"->{
+
+    private fun changeFlag() {
+        when (language) {
+            "Spanish" -> {
                 imageView2?.setImageDrawable(resources.getDrawable(R.drawable.spanishflag))
             }
-            "French"->{
+            "French" -> {
                 imageView2?.setImageDrawable(resources.getDrawable(R.drawable.frenchflag))
             }
-            "Chinese"->{
+            "Chinese" -> {
                 imageView2?.setImageDrawable(resources.getDrawable(R.drawable.chineseflag_fixed))
             }
-            "German"->{
+            "German" -> {
                 imageView2?.setImageDrawable(resources.getDrawable(R.drawable.germanflag))
             }
             else -> {
@@ -603,6 +608,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
     }
+
     private fun changeLanguage() {
         when (language) {
             "English" -> {

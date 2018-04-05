@@ -12,12 +12,10 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.speech.tts.TextToSpeech
-import android.speech.tts.UtteranceProgressListener
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.View
-import android.view.View.GONE
 import android.widget.*
 import kotlinx.android.synthetic.*
 import org.jetbrains.anko.*
@@ -76,6 +74,7 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var artPieceDescription = ""
     private var closeApp = ""
     private var advertisements = ArrayList<Int>()
+    private var arrivedAtEnd = false
 
     private fun loadInt(key: String): Int {
         /*Function to load an SharedPreference value which holds an Int*/
@@ -441,34 +440,37 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         speakOutThanks()
-        alert {
-            customView {
-                linearLayout {
-                    leftPadding = dip(4)
-                    orientation = LinearLayout.VERTICAL
-                    textView {
-                        text = message
-                        textSize = 22f
-                        typeface = Typeface.DEFAULT_BOLD
-                        verticalPadding = dip(10)
-                    }
-                    textView {
-                        text = message2
-                        textSize = 18f
+        if(arrivedAtEnd==false) {
+            arrivedAtEnd = true
+            alert {
+                customView {
+                    linearLayout {
+                        leftPadding = dip(4)
+                        orientation = LinearLayout.VERTICAL
+                        textView {
+                            text = message
+                            textSize = 22f
+                            typeface = Typeface.DEFAULT_BOLD
+                            verticalPadding = dip(10)
+                        }
+                        textView {
+                            text = message2
+                            textSize = 18f
+                        }
                     }
                 }
-            }
-            cancellable(false)
-            setFinishOnTouchOutside(false)
-            positiveButton {
-                clearFindViewByIdCache()
-                deleteCache(applicationContext)
-                val i = baseContext.packageManager
-                        .getLaunchIntentForPackage(baseContext.packageName)
-                i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                startActivity(i)
-            }
-        }.show()
+                cancellable(false)
+                setFinishOnTouchOutside(false)
+                positiveButton {
+                    clearFindViewByIdCache()
+                    deleteCache(applicationContext)
+                    val i = baseContext.packageManager
+                            .getLaunchIntentForPackage(baseContext.packageName)
+                    i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(i)
+                }
+            }.show()
+        }
     }
 
     private fun deleteCache(context: Context) {
@@ -1497,15 +1499,6 @@ class ListenInActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                         text = alertDescription
                         textSize = 16f
                         padding = dip(2)
-                    }
-                    button {
-                        text = cancelPainting
-                        onClick {
-                            //Remove Painting From List
-                            //listPaintings[map[paintIndex]!!].visibility = View.GONE
-                            toast(cancelRequestSent)
-                            dismiss()
-                        }
                     }
                 }
             }

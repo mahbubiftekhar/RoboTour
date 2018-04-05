@@ -11,7 +11,6 @@ import android.graphics.drawable.GradientDrawable
 import android.net.ConnectivityManager
 import android.preference.PreferenceManager
 import android.view.WindowManager
-import android.widget.Toast
 import kotlinx.android.synthetic.*
 import java.io.InterruptedIOException
 import java.net.URL
@@ -31,9 +30,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        try{
+        try {
             updateTextThread.interrupt()
-        }catch (e:Exception){
+        } catch (e: Exception) {
 
         }
         super.onDestroy()
@@ -51,18 +50,20 @@ class MainActivity : AppCompatActivity() {
         return networkInfo != null && networkInfo.isConnected
     }
 
+    @SuppressLint("ApplySharedPref")
     private fun saveInt(key: String, value: Int) {
         /* Function to save an SharedPreference value which holds an Int*/
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val editor = sharedPreferences.edit()
         editor.putInt(key, value)
-        editor.apply()
+        editor.commit()
     }
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
+        userGoThrough = false
         async {
             saveInt("user", 1)
         }
@@ -138,9 +139,7 @@ class MainActivity : AppCompatActivity() {
                 try {
                     async {
                         val a = URL(url).readText()
-                        if (a[18].toString().toInt() == 1 || a[18].toString().toInt() == 2) {
-                            userGoThrough = true
-                        }
+                        userGoThrough = a[18].toString() == 1.toString() || a[18].toString().toInt() == 2
                     }
                     try {
                         Thread.sleep(1000)
@@ -158,6 +157,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
+        userGoThrough = false
         if (updateTextThread.state == Thread.State.NEW) {
             updateTextThread.start()
         }
