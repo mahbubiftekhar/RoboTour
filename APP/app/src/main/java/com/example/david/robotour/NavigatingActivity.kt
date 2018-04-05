@@ -523,34 +523,38 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         }
         speakOutThanks()
-        alert {
-            customView {
-                linearLayout {
-                    leftPadding = dip(4)
-                    orientation = LinearLayout.VERTICAL
-                    textView {
-                        text = message
-                        textSize = 22f
-                        typeface = Typeface.DEFAULT_BOLD
-                        verticalPadding = dip(10)
-                    }
-                    textView {
-                        text = message2
-                        textSize = 18f
+        try {
+            alert {
+                customView {
+                    linearLayout {
+                        leftPadding = dip(4)
+                        orientation = LinearLayout.VERTICAL
+                        textView {
+                            text = message
+                            textSize = 22f
+                            typeface = Typeface.DEFAULT_BOLD
+                            verticalPadding = dip(10)
+                        }
+                        textView {
+                            text = message2
+                            textSize = 18f
+                        }
                     }
                 }
-            }
-            cancellable(false)
-            setFinishOnTouchOutside(false)
-            positiveButton {
-                clearFindViewByIdCache()
-                deleteCache(applicationContext)
-                val i = baseContext.packageManager
-                        .getLaunchIntentForPackage(baseContext.packageName)
-                i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                startActivity(i)
-            }
-        }.show()
+                cancellable(false)
+                setFinishOnTouchOutside(false)
+                positiveButton {
+                    clearFindViewByIdCache()
+                    deleteCache(applicationContext)
+                    val i = baseContext.packageManager
+                            .getLaunchIntentForPackage(baseContext.packageName)
+                    i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(i)
+                }
+            }.show()
+        } catch (e:Exception){
+            startActivity<MainActivity>()
+        }
     }
 
     private fun deleteCache(context: Context) {

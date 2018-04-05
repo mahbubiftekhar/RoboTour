@@ -112,7 +112,7 @@ class ControlSelectionActivity : AppCompatActivity() {
             val a = URL(url).readText()
             if (a[24] == 'T') {
                 switchBackToMain() //Switch to the main activity for safety
-            }  else if (a[16] == 'F' && a[21] != 'T') {
+            } else if (a[16] == 'F' && a[21] != 'T') {
                 //User 1 is not online hence take that position
                 sendPUTNEW(16, "O")
                 saveInt("user", 1)
@@ -188,9 +188,9 @@ class ControlSelectionActivity : AppCompatActivity() {
             runOnUiThread {
                 updatetext2()
             }
-            try{
+            try {
                 Thread.sleep(5000)
-            }catch (e:Exception){
+            } catch (e: Exception) {
 
             }
             while (!Thread.currentThread().isInterrupted) {

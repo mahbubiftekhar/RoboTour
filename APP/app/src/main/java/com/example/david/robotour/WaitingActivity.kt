@@ -158,7 +158,7 @@ class WaitingActivity : AppCompatActivity() {
                         transfered = false
                         switchToNavigate()
                     }
-                    if (a[16] == 'T' && a[17] == 'T' && transfered) {
+                    else if (a[16] == 'T' && a[17] == 'T' && transfered) {
                         transfered = false
                         switchToNavigate()
                     }
