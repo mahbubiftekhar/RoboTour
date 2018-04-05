@@ -2,6 +2,7 @@
 
 
 import ev3dev.ev3 as ev3
+import math
 from sensor_hub import *
 from line_sensor import LineSensor
 from model import Model
@@ -77,7 +78,32 @@ class Robot():
 		self.env.rot_right = self.motorR.position
 		self.env.rot_left  = self.motorL.position
 
+		self.odometry_step()
 		self.env.update()
+
+	def odometry_step(self):	
+		r = self.env.rot_right - self.env.last_rot_right
+		l = self.env.rot_left  - self.env.last_rot_left
+
+		r *= self.model.mm_per_degree
+		l *= self.model.mm_per_degree
+
+		omega = (r-l) / self.model.wheel_separation
+		if abs(omega) > 0.1:
+		    radius = r / omega - self.model.wheel_separation/2
+		    dx = radius * 1-math.cos(omega)
+		    dy = radius * math.sin(omega)
+		else:
+		    dx = (r+l)/2
+		    dy = 0
+		# 
+		tdx = dx * math.cos(self.env.angle) - dy * math.sin(self.env.angle)
+		tdy = dx * math.sin(self.env.angle) + dy * math.cos(self.env.angle)
+		# 
+		self.env.angle += omega
+		self.env.x += tdx
+		self.env.y += tdy
+
 
 	def pointer_motor(self, degrees, speed):
 		delta = degrees * self.model.pointer_gear_ratio
@@ -131,7 +157,7 @@ class Robot():
 		self.LED.set_color(self.LED.LEFT, self.LED.RED)
 		self.LED.set_color(self.LED.RIGHT, self.LED.RED)
 
-		self.sound.beep('r 3')
+		self.speak("Hub not responsive!")
 
 	def indicate_zero(self):
 		self.LED.set_color(self.LED.LEFT,  self.LED.AMBER)
@@ -164,7 +190,7 @@ class Robot():
 		return not (self.motorL.is_running or self.motorR.is_running)
 
 	def speak(self, string):
-		self.sound.speak(string)
+		self.sound.speak(string).wait()
 
 	def stop(self):
 		self.motorL.stop()

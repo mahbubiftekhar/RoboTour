@@ -1,5 +1,6 @@
 
 import time, math
+import model
 
 class Environment():
     def __init__(self):
@@ -39,6 +40,7 @@ class Environment():
         self.positions_list = []
         # self.positions_list.reverse()
 
+        self.session_name = ''
 
         self.position = '10'
         self.orientation = 'N'
@@ -47,12 +49,18 @@ class Environment():
         self.next_position = '10'
         self.next_orientation = 'N'
 
+        self.previous_position = None
+        self.previous_next_position = None
         self.users = 0
 
         self.pictures_to_go = []
 
         self.route_done = False
         self.finished_tour = False
+
+        self.x = 0
+        self.y = 0
+        self.angle = math.pi/2
 
         self.dijkstra_map = {
         '0': {'1': 26, '8': 21},
@@ -158,12 +166,23 @@ class Environment():
         self.clock_init()
 
     def update(self):
+
+
         self.last_rot_left = self.rot_left
         self.last_rot_right = self.rot_right
         
         self.loop_time = -self.clock_ms
         self.clock_update()
         self.loop_time += self.clock_ms
+
+
+        if not (self.previous_position == self.position and self.previous_next_position == self.next_position):
+            if (self.position, self. next_position) in self.obstacle_map:
+
+                self.avoidance_direction = self.obstacle_map[(self.position, self.next_position)]
+            else:
+                self.avoidance_direction = 'stop'
+            
 
     def clock_init(self):
         self.clock_start = time.perf_counter() * 1000

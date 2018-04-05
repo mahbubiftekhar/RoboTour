@@ -20,7 +20,7 @@ class Server():
             self.link = "http://homepages.inf.ed.ac.uk/s1539308/receiver.php"
         else:
             self.link = "http://www.mahbubiftekhar.co.uk/receiver.php"
-            
+
 
         self.previousArtPiece = "-1"
         #                       0    1    2    3    4    5    6    7    8    9
@@ -168,3 +168,7 @@ class Server():
         self.http_post(self.id_map[next_art_work], "N")
         self.previousArtPiece = next_art_work
         self.update_commands()  # update command
+
+    def update_user_mode(self, mode):
+        assert mode == 1 or mode == 2
+        self.http_post('18', mode)

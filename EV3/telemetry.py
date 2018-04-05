@@ -9,6 +9,7 @@ class DataLogger():
 	def __init__(self, name, folder='./logs', timer=None):
 
 		self.name = name
+		self.folder = folder
 
 		self.channel_names = []
 		self.channels = []
@@ -25,7 +26,8 @@ class DataLogger():
 		self.lines_in_buffer = 0
 		self.buffer = []
 		self.ensure_path_exists(folder)
-		self.filename = folder+'/'+self.name+time.strftime("_%d_%m_%H-%M.csv")
+		self.full_name = self.name+time.strftime("_%d_%m_%H-%M")
+		self.filename = self.folder+'/'+self.full_name+'.csv'
 		
 	def init(self):
 		# TODO: consider using binary mode
@@ -40,6 +42,12 @@ class DataLogger():
 
 		self.file.close()
 		self.initiated = True
+	
+	def reinit(self):
+		self.full_name = self.name+time.strftime("_%d_%m_%H-%M")
+		self.filename = self.folder+'/'+self.full_name+'.csv'
+		self.init()
+
 	def ensure_path_exists(self, folder):
 		if not os.path.exists(folder):
 			print("No directory: {} !\nCreating...".format(folder))

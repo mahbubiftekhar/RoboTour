@@ -103,7 +103,6 @@ class Calibration(Algorithm):
 		self.dsp.link_action(self.st_done, self.robot.stop)
 
 
-
 	def calibrate_right(self):
 		self.robot.motor(100, -100)
 		self.robot.line_sensor.calibrate()
@@ -150,6 +149,7 @@ class ObstacleAvoidance(Algorithm):
 		self.rotation_speed = 125
 		self.recentre_speed = 90
 		self.follow_distance = 250
+		self.begin_avoidance_threshold = 150
 		
 		self.pid = PIDController(0.025, 0.0001, 0.013)
 		self.pid_set_value = self.follow_distance
@@ -234,18 +234,29 @@ class ObstacleAvoidance(Algorithm):
 		self.dsp.link_action(self.st_recentre, self.recentre)
 		self.dsp.link_action(self.st_done, self.finish)
 
+		self.st_done.on_activate(self.beebep)
+
+	def beebep(self):
+		self.robot.sound.beep('-f 750 -r 2 -l 70')
+
 	def reset(self):
 		self.fsm.reset()
 
 	def initialise(self):
 		self.robot.stop()
 		self.avoidance_direction = self.robot.env.avoidance_direction
-		if self.robot.get_position_from_branch() <= 100:
+		if self.robot.get_position_from_branch() <= self.begin_avoidance_threshold:
 			self.avoidance_direction = 'stop'
 		self.pid.reset()
-		self.logger = DataLogger("it_obstacle_"+self.avoidance_direction, folder='../logs/',)
-		self.logger.lines_per_write = 1000
+		title = "{}_obs_{}_{}_{}".format(self.robot.env.session_name, \
+										 self.robot.env.position,\
+										 self.robot.env.next_position,\
+										 self.avoidance_direction)
+		self.logger = DataLogger(title, folder='../logs/',)
+		self.logger.lines_per_write = 1500
 
+		def timer():
+			return self.env.clock_ms
 		def right_hook():
 			return self.env.dist_right
 		def left_hook():
@@ -256,12 +267,29 @@ class ObstacleAvoidance(Algorithm):
 			return self.env.rot_right
 		def sees_line_hook():
 			return sum(self.env.sees_line.values())
+		def colour_left_hook():
+			return self.env.colour_left
+		def colour_right_hook():
+			return self.env.colour_right
+		def od_x_hook():
+			return self.env.x
+		def od_y_hook():
+			return self.env.y
+		def od_a_hook():
+			return self.env.angle
+
+
 
 		self.logger.add_channel(DataChannel("sensor_right", right_hook))
 		self.logger.add_channel(DataChannel("sensor_left", left_hook))
 		self.logger.add_channel(DataChannel("line_sensor", sees_line_hook))
-		# self.logger.add_channel(DataChannel("left_wheel", rot_left_hook))
-		# self.logger.add_channel(DataChannel("right_wheel", rot_right_hook))
+		self.logger.add_channel(DataChannel("colour_right", colour_right_hook))
+		self.logger.add_channel(DataChannel("colour_left", colour_left_hook))
+		self.logger.add_channel(DataChannel("left_wheel", rot_left_hook))
+		self.logger.add_channel(DataChannel("right_wheel", rot_right_hook))
+		self.logger.add_channel(DataChannel("odometry_x", od_x_hook))
+		self.logger.add_channel(DataChannel("odometry_y", od_y_hook))
+		self.logger.add_channel(DataChannel("odometry_a", od_a_hook))
 
 		self.logger.init()
 
@@ -293,7 +321,7 @@ class ObstacleAvoidance(Algorithm):
 		self.robot.motor(steer_left, steer_right)
 
 	def follow_wall(self):
-		spd = 0.5
+		spd = 1
 		if self.env.dist_front < 200:
 			# if somethings in front then stop?
 			self.robot.stop()
@@ -319,9 +347,9 @@ class ObstacleAvoidance(Algorithm):
 
 	def align_with_black_line(self):
 		if self.env.colour_left == 1 and self.env.colour_right != 1:
-			self.robot.motor(-100, 100)
+			self.robot.motor(-30, 90)
 		if self.env.colour_right == 1 and self.env.colour_left != 1:
-			self.robot.motor(100,-100)
+			self.robot.motor(90,-30)
 		if self.env.colour_left != 1 and self.env.colour_right != 1:
 			self.robot.motor(100,100)
 
@@ -335,8 +363,12 @@ class ObstacleAvoidance(Algorithm):
 
 	def recentre(self):
 		if self.avoidance_direction == 'left':
+			# print("RECENTER: Turning left (",-self.recentre_speed, ",",self.recentre_speed,")")
+			# self.robot.speak("Left")
 			self.robot.motor(-self.recentre_speed,  self.recentre_speed)
 		else:
+			# print("RECENTER: Turning right (",self.recentre_speed, ",",-self.recentre_speed,")")
+			# self.robot.speak("Right")
 			self.robot.motor( self.recentre_speed, -self.recentre_speed)
 
 	def finish(self):
@@ -392,12 +424,14 @@ class ObstacleAvoidance(Algorithm):
 
 		self.env.next_position = self.env.positions_list[0]
 		self.robot.reset_position_at_branch()
+		self.robot.sound.beep()
+
 
 	def turn_at_black_line(self):
 		if self.avoidance_direction == 'left':
 			angle = 90
 			self.robot.rotate(angle, speed=self.rotation_speed)
-			self.robot.wait_for_motor()
+			# self.robot.wait_for_motor()
 
 			if self.env.orientation == 'N':
 				self.env.orientation = 'E'
@@ -411,7 +445,7 @@ class ObstacleAvoidance(Algorithm):
 		elif self.avoidance_direction == 'right':
 			angle = -90
 			self.robot.rotate(angle, speed=self.rotation_speed)
-			self.robot.wait_for_motor()
+			# self.robot.wait_for_motor()
 
 			if self.env.orientation == 'N':
 				self.env.orientation = 'W'
@@ -432,7 +466,7 @@ class ObstacleAvoidance(Algorithm):
 		self.robot.stop()
 
 	def recentered(self, env):
-		return abs(self.env.line_sens_val - 35) <= 5
+		return abs(self.env.line_sens_val - 35) <= 5 and True in self.env.sees_line.values()
 
 	def speak_obstacle_in_front(self):
 		self.server.set_obstacle_true()

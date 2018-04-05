@@ -11,7 +11,8 @@ class Navigation():
 		self.get_art_pieces_from_app()
 		self.robot.env.pictures_to_go = self.calculate_paintings_order(self.robot.env.pictures_to_go)
 		print("Determined route: ", self.robot.env.positions_list)
-		self.server.update_art_piece(self.robot.env.pictures_to_go[0])
+		if len(self.robot.env.pictures_to_go) != 0:
+			self.server.update_art_piece(self.robot.env.pictures_to_go[0])
 		# self.server.update_status_true('onTour')
 		# self.robot.env.route_dene = True
 

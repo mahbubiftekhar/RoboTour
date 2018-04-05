@@ -16,7 +16,7 @@ server = Server()
 
 # instantiate and set up line following algorithm
 line_follower = LineFollowing(robot)
-line_follower.set_gains(2.75, 0.01, 1.5)
+line_follower.set_gains(2.75, 0.02, 1.5)
 line_follower.base_speed = 215
 
 calibration = Calibration(robot)
@@ -90,19 +90,20 @@ def branch_taken(env):
 
 def tour_done(env):
 	# no more points to go
-	return not env.positions_list
+	return not env.positions_list and env.position == '10'
 
 def no_path(env):
 	return not env.positions_list
 
 def ask_for_mode_press():
-	robot.speak('Please select single or multi user mode.')
+	robot.speak("Please select the paintings you want to go to!")
 
 def reset():
 	robot.stop()
+	robot.env.finished_tour = False
 	robot.indicate_zero()
 	robot.env.users = 0
-	robot.sound.beep('-f 700 -l 50 -r 4')
+	robot.speak("Please select single or multi user mode!")
 	# try:
 	# 	kp = float(input("Kp? "))
 	# 	ki = float(input("Ki? "))
@@ -119,16 +120,21 @@ def mode_selection():
 	if robot.button.left:
 		robot.env.users = 1
 		robot.indicate_one()
+		server.update_user_mode(1)
 	if robot.button.right:
 		robot.env.users = 2
 		robot.indicate_two()
+		server.update_user_mode(2)
+
+def line_was_lost(env):
+	return robot.line_sensor.no_line(env) and abs(env.line_sens_val - 35) > 10 
 
 
 def seek_line():
 	tmp = line_follower.base_speed
 	line_follower.base_speed = 0
 	# robot.indicate_error()
-	# print("LINE LOST")
+	print("LINE LOST")
 	line_follower.run()
 	line_follower.base_speed = tmp
 
@@ -152,20 +158,25 @@ def branch_routine():
 
 def show_painting():
 	robot.stop()
+	server.set_stop_true()
 	turn_pointer()
 	server.update_status_arrived(robot.env.position)
-	server.set_stop_true()
 	server.update_commands()
+	logger.write_buffer()
 
 def leaving_painting():
-	
+
 	robot.env.pictures_to_go.pop(0)
+	if server.check_position('Change') == 'T':
+		print("Change")
+		server.update_status_false('Change')
+		robot.env.positions_list = []
+		nav.plan_route()
+
 	if not robot.env.pictures_to_go:
 		robot.env.finished_tour = True
 		server.update_art_piece('Exit')
 	else:
-		robot.env.positions_list = []
-		nav.plan_route()
 		pic = robot.env.pictures_to_go[0]
 		server.update_art_piece(pic)
 
@@ -195,11 +206,11 @@ def turn_pointer():
 def turn_pointer_back():
 
 	if robot.env.pointer_orientation == 'E':
-		robot.pointer_motor(-45,150)
+		robot.pointer_motor(-45,300)
 	elif robot.env.pointer_orientation == 'W':
-		robot.pointer_motor(45,150)
+		robot.pointer_motor(45,300)
 	elif robot.env.pointer_orientation == 'S':
-		robot.pointer_motor(-180,150)
+		robot.pointer_motor(-180,300)
 	elif robot.env.pointer_orientation == 'N':
 		pass
 	else:
@@ -212,6 +223,8 @@ def reset_robot():
 	server.update_status_arrived('Exit')
 	align_to_N()
 	server.reset_list_on_server()
+	logger.reinit()
+	robot.env.session_name = logger.full_name
 
 def align_to_N():
 	if robot.env.orientation == 'E':
@@ -231,47 +244,50 @@ def align_to_N():
 def update_location_on_branch():
 	robot.env.position = robot.env.positions_list.pop(0)
 	robot.reset_position_at_branch()
+	robot.sound.beep()
 
 		# robot.stop()
-	if server.check_position('Cancel') == 'T':
-		print("Cancel")
-		robot.env.positions_list = []
-		robot.env.pictures_to_go = []
-		server.update_status_false('Cancel')
-	
-	elif server.check_position('Toilet') == 'T':
-		print("Toilet")
-		_, path = nav.get_closest_painting(robot.env.position, ['12'])
-		robot.env.positions_list = path[1:]
-		# recalculate from toilet and add to positions_list
-		server.update_art_piece('Toilet')
-		robot.env.pictures_to_go = nav.calculate_paintings_order(robot.env.pictures_to_go, '12')
-		robot.env.pictures_to_go.insert(0, '12')
-		# server.update_status_false('Toilet')
-	
-	elif server.check_position('Exit') == 'T':
-		print("Exit")
-		_, path = nav.get_closest_painting(robot.env.position, ['10'])
-		robot.env.positions_list = path[1:]
-		# recalculate from exit and add to positions_list
-		server.update_art_piece('Exit')
-		robot.env.pictures_to_go = nav.calculate_paintings_order(robot.env.pictures_to_go, '10')
-		robot.env.pictures_to_go.insert(0, '10')
-		# server.update_status_false('Exit')
-	elif server.check_position('Skip') == 'T':
-		print("Skippito")
-		robot.env.pictures_to_go.pop(0)
-		# recalculate
-		robot.env.positions_list = []
-		robot.env.pictures_to_go = nav.calculate_paintings_order(robot.env.pictures_to_go)
-		server.update_status_false('Skip')
-		server.update_art_piece(robot.env.pictures_to_go[0])
-
-	if not robot.env.positions_list:
-		if robot.env.position != '10':
+	if robot.env.finished_tour == False:
+		if server.check_position('Cancel') == 'T':
+			print("Cancel")
+			robot.env.positions_list = []
+			robot.env.pictures_to_go = []
+			server.update_status_false('Cancel')
+		
+		elif server.check_position('Toilet') == 'T':
+			print("Toilet")
+			_, path = nav.get_closest_painting(robot.env.position, ['12'])
+			robot.env.positions_list = path[1:]
+			# recalculate from toilet and add to positions_list
+			server.update_art_piece('Toilet')
+			robot.env.pictures_to_go = nav.calculate_paintings_order(robot.env.pictures_to_go, '12')
+			robot.env.pictures_to_go.insert(0, '12')
+			# server.update_status_false('Toilet')
+		
+		elif server.check_position('Exit') == 'T':
+			print("Exit")
 			_, path = nav.get_closest_painting(robot.env.position, ['10'])
 			robot.env.positions_list = path[1:]
-			# server.update_art_piece('Exit')
+			# recalculate from exit and add to positions_list
+			server.update_art_piece('Exit')
+			robot.env.pictures_to_go = nav.calculate_paintings_order(robot.env.pictures_to_go, '10')
+			robot.env.pictures_to_go.insert(0, '10')
+			# server.update_status_false('Exit')
+		elif server.check_position('Skip') == 'T':
+			print("Skippito")
+			robot.env.pictures_to_go.pop(0)
+			# recalculate
+			robot.env.positions_list = []
+			robot.env.pictures_to_go = nav.calculate_paintings_order(robot.env.pictures_to_go)
+			server.update_status_false('Skip')
+			if len(robot.env.pictures_to_go) != 0:
+				server.update_art_piece(robot.env.pictures_to_go[0])
+
+		if not robot.env.positions_list:
+			if robot.env.position != '10':
+				_, path = nav.get_closest_painting(robot.env.position, ['10'])
+				robot.env.positions_list = path[1:]
+				# server.update_art_piece('Exit')
 
 
 def determine_next_turn():
@@ -295,12 +311,6 @@ def determine_next_turn():
 		print(robot.env.turns_list)
 		
 		robot.env.next_turn = robot.env.turns_list.pop()
-
-		if (robot.env.position, robot.env. next_position) in robot.env.obstacle_map:
-
-			robot.env.avoidance_direction = robot.env.obstacle_map[(robot.env.position, robot.env.next_position)]
-		else:
-			robot.env.avoidance_direction = 'stop'
 
 			# robot.env.position = robot.env.next_position
 
@@ -327,7 +337,7 @@ def calculate_route_to_exit():
 	print("TOUR FINISHED. Going to exit")
 	_, path = nav.get_closest_painting(robot.env.position, ['10'])
 	robot.env.positions_list = path[1:]
-	robot.env.finished_tour = False
+	# robot.env.finished_tour = False
 
 
 def convert_to_direction():
@@ -372,7 +382,7 @@ st_route_planning.on_activate(update_on_tour)
 # # after 5 sec of seeing obstacle finish program NB higher priority transition
 # st_wait.add_transition(TransitionTimed(5000, st_stop))
 
-st_line_following.add_transition(Transition(st_line_lost, robot.line_sensor.no_line))
+st_line_following.add_transition(Transition(st_line_lost, line_was_lost))
 st_line_following.add_transition(Transition(st_obstacle_avoidance, obstacle_detected))
 st_line_following.add_transition(OnBranch(st_branch))
 st_line_following.add_transition(Transition(st_wait, user_stop))
@@ -522,12 +532,20 @@ def rot_right_hook():
 def rot_left_hook():
 	return robot.env.rot_left
 
+def od_x_hook():
+	return robot.env.x
+
+def od_y_hook():
+	return robot.env.y
+
+def od_angle_hook():
+	return robot.env.angle
 
 
 
 # instantiate the logger object
 logger = DataLogger("integration_test", folder='../logs/', timer=timer_hook)
-logger.lines_per_write = 5000
+logger.lines_per_write = 7500
 
 # add channels for sensor values
 for s in robot.line_sensor.detector_names:
@@ -545,12 +563,15 @@ logger.add_channel(DataChannel("line_sensor", line_sensor_hook))
 logger.add_channel(DataChannel("left_wheel", rot_left_hook))
 logger.add_channel(DataChannel("right_wheel", rot_right_hook))
 
+logger.add_channel(DataChannel("odometry_x", od_x_hook))
+logger.add_channel(DataChannel("odometry_y", od_y_hook))
+logger.add_channel(DataChannel("odometry_angle", od_angle_hook))
+
 logger.add_channel(DataChannel("poll_time", polling_hook))
 logger.add_channel(DataChannel("loop_time", loop_time_hook))
 
 
 
-logger.init()
 
 ####### 
 
@@ -561,8 +582,11 @@ while not robot.hub.connected:
 	robot.indicate_error()
 	time.sleep(5)
 	robot.hub.poll()
+robot.env.init()
 robot.update_env()
 
+logger.init()
+robot.env.session_name = logger.full_name
 
 try:
 	while fsm.current_state != st_stop:
@@ -576,7 +600,7 @@ try:
 		# act
 		dsp.dispatch()
 
-		# logger.log()
+		logger.log()
 
 		# print(robot.env.line_sens_val, robot.env.dist_front, robot.line_sensor.no_line(None))
 except:

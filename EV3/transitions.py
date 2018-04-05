@@ -6,9 +6,9 @@ class OnBranch(Transition):
 
 	def __init__(self, next_state, priority=1):
 		Transition.__init__(self, next_state, priority=priority)
-		self.window_width = 5
+		self.window_width = 3
 		self.window = {}
-		self.sensors_to_trigger = 4
+		self.sensors_to_trigger = 3
 
 	def arm(self, env):
 		for n in env.sees_line:
