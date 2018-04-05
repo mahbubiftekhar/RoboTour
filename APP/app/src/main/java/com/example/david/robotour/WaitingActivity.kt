@@ -158,9 +158,11 @@ class WaitingActivity : AppCompatActivity() {
                     val a = URL(url).readText()
                     if (a[18] == '1' && user == 1) {
                         transfered = false
+                        finish()
                         switchToNavigate()
                     } else if (a[16] == 'T' && a[17] == 'T' && transfered) {
                         transfered = false
+                        finish()
                         switchToNavigate()
                     }
                 } catch (e: InterruptedException) {

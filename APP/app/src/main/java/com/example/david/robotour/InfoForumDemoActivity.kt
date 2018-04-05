@@ -640,6 +640,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     override fun onBackPressed() {
         alert("Are you sure?") {
             positiveButton {
+                finish()
                 super.onBackPressed()
             }
             negativeButton {

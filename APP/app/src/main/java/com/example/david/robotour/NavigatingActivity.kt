@@ -1,9 +1,6 @@
 package com.example.david.robotour
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -487,6 +484,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
         deleteCache(applicationContext)
         clearFindViewByIdCache()
+        finish()
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         intent.putExtra("EXIT", true)
@@ -682,6 +680,9 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigating)
         val abc = loadInt("urlnum")
+        async{
+            sendPUTNEW(21, "T") //RoboTour is on tour
+        }
         when (abc) {
             1 -> {
             }
@@ -2330,42 +2331,47 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun updateScrollViewPictures(sortedNums: MutableCollection<Int>) {
-        val numSelectedPaintings = sortedNums.size
-        (numSelectedPaintings..10)
-                .filter { it < 10 }
-                .forEach { listPaintings[it].visibility = View.GONE }
-        for (i in 0 until numSelectedPaintings) {
-            listPaintings[i].visibility = View.VISIBLE
-        }
-        sortedNums.withIndex().forEach { (listIndex, i) ->
-            when (i) {
-                0 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.birthofvenus))
-                1 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.creationofadam))
-                2 -> {
-                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.david))
-                }
-                3 -> {
-                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.girlwithpearlearring))
-                }
-                4 -> {
-                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.monalisa))
-                }
-                5 -> {
-                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.napoleoncrossingthealps))
-                }
-                6 -> {
-                    listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.starrynight))
-                }
-                7 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.thelastsupper))
-                8 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.tsunami))
-                9 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.waterlillies))
+        try {
+            val numSelectedPaintings = sortedNums.size
+            (numSelectedPaintings..10)
+                    .filter { it < 10 }
+                    .forEach { listPaintings[it].visibility = View.GONE }
+            for (i in 0 until numSelectedPaintings) {
+                listPaintings[i].visibility = View.VISIBLE
             }
-            map.put(i, listIndex)
-            listPaintings[listIndex].setOnClickListener {
-                paintingAlertUpdate(i)
+            sortedNums.withIndex().forEach { (listIndex, i) ->
+                when (i) {
+                    0 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.birthofvenus))
+                    1 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.creationofadam))
+                    2 -> {
+                        listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.david))
+                    }
+                    3 -> {
+                        listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.girlwithpearlearring))
+                    }
+                    4 -> {
+                        listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.monalisa))
+                    }
+                    5 -> {
+                        listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.napoleoncrossingthealps))
+                    }
+                    6 -> {
+                        listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.starrynight))
+                    }
+                    7 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.thelastsupper))
+                    8 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.tsunami))
+                    9 -> listPaintings[listIndex].setImageDrawable(resources.getDrawable(R.drawable.waterlillies))
+                }
+                map[i] = listIndex
+                listPaintings[listIndex].setOnClickListener {
+                    paintingAlertUpdate(i)
+                }
             }
+        } catch(e:Exception){
+
         }
     }
+
 
     private fun getETA(paintingIndex: Int): String {
         /*This function will get the ETA*/
