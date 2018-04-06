@@ -178,23 +178,7 @@ class AdminActivity : AppCompatActivity() {
             }
         }
         INFO_FORUM.setOnClickListener {
-            async {
-                val b = URL("http://www.mahbubiftekhar.co.uk/forum.php").readText()
-                for (i in 0..3) {
-                    if (b[i] == 'N' || b[i] == 'A') {
-                        sendFORUM(i, "F")
-                        if (i == 3) {
-                            sendFORUM(0, "A")
-                        } else {
-                            sendFORUM(i + 1, "A")
-                        }
-                        break
-                    } else if (i == 3) {
-                        sendPUTNEW(3, "N")
-                    }
-                }
-                toast("Yippe kayay!")
-            }
+            toast("function deprecated - please use message board below")
         }
 
         sendy.setOnClickListener {

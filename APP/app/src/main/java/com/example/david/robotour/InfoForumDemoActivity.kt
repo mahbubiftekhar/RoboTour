@@ -36,6 +36,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var imageView1: ImageView? = null
     private var imageView2: ImageView? = null
     private var last = -1
+    private var lastPaint = -1
 
 
     public override fun onDestroy() {
@@ -201,24 +202,14 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     async {
                         val a = URL("http://www.mahbubiftekhar.co.uk/receiver.php").readText()
                         for (i in 0..3) {
-                            val c = i
-                            if (a[i] == 'N') {
-                                println(">>>> IN IN: $c ")
-                                runOnUiThread {
-                                    changePictures(i)
-                                }
-                                break
-                            } else if (a[i] == 'A' && i != last) {
-                                println("in else if")
+                            if (a[i] == 'A' && i != last) {
                                 last = i
                                 runOnUiThread {
                                     changePictures(i)
                                     speakOut(i)
                                 }
                                 break
-                            } else {
-                                println(">>> else clause")
-                            }
+                            } else { }
                         }
                     }
                     try {
@@ -231,7 +222,6 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 } catch (e: InterruptedIOException) {
                     Thread.currentThread().interrupt()
                 }
-
             }
             Thread.currentThread().interrupt()
         }
@@ -478,66 +468,66 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             0 -> {
                 when (language) {
                     "English" -> {
-                        tts!!.speak(allArtPieces[painting0].English_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts!!.speak(allArtPieces[painting0].name, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "French" -> {
-                        tts4!!.speak(allArtPieces[painting0].French_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts4!!.speak(allArtPieces[painting0].nameFrench, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "German" -> {
-                        tts3!!.speak(allArtPieces[painting0].German_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts3!!.speak(allArtPieces[painting0].nameGerman, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "Chinese" -> {
-                        tts5!!.speak(allArtPieces[painting0].Chinese_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts5!!.speak(allArtPieces[painting0].nameChinese, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "Spanish" -> {
-                        tts2!!.speak(allArtPieces[painting0].Spanish_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts2!!.speak(allArtPieces[painting0].nameSpanish, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     else -> {
-                        tts!!.speak(allArtPieces[painting0].English_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts!!.speak(allArtPieces[painting0].name, TextToSpeech.QUEUE_FLUSH, null)
                     }
                 }
             }
             1 -> {
                 when (language) {
                     "English" -> {
-                        tts!!.speak(allArtPieces[painting1].English_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts!!.speak(allArtPieces[painting1].name, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "French" -> {
-                        tts4!!.speak(allArtPieces[painting1].French_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts4!!.speak(allArtPieces[painting1].nameFrench, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "German" -> {
-                        tts3!!.speak(allArtPieces[painting1].German_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts3!!.speak(allArtPieces[painting1].nameGerman, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "Chinese" -> {
-                        tts5!!.speak(allArtPieces[painting1].Chinese_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts5!!.speak(allArtPieces[painting1].nameChinese, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "Spanish" -> {
-                        tts2!!.speak(allArtPieces[painting1].Spanish_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts2!!.speak(allArtPieces[painting1].nameSpanish, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     else -> {
-                        tts!!.speak(allArtPieces[painting1].English_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts!!.speak(allArtPieces[painting1].name, TextToSpeech.QUEUE_FLUSH, null)
                     }
                 }
             }
             2 -> {
                 when (language) {
                     "English" -> {
-                        tts!!.speak(allArtPieces[painting2].English_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts!!.speak(allArtPieces[painting2].name, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "French" -> {
-                        tts4!!.speak(allArtPieces[painting2].French_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts4!!.speak(allArtPieces[painting2].nameFrench, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "German" -> {
-                        tts3!!.speak(allArtPieces[painting2].German_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts3!!.speak(allArtPieces[painting2].nameGerman, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "Chinese" -> {
-                        tts5!!.speak(allArtPieces[painting2].Chinese_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts5!!.speak(allArtPieces[painting2].nameChinese, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     "Spanish" -> {
-                        tts2!!.speak(allArtPieces[painting2].Spanish_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts2!!.speak(allArtPieces[painting2].nameSpanish, TextToSpeech.QUEUE_FLUSH, null)
                     }
                     else -> {
-                        tts!!.speak(allArtPieces[painting2].English_Desc, TextToSpeech.QUEUE_FLUSH, null)
+                        tts!!.speak(allArtPieces[painting2].name, TextToSpeech.QUEUE_FLUSH, null)
                     }
                 }
             }
@@ -554,7 +544,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         when (language) {
             "French" -> {
                 println(">>1")
-                tts?.speak("Bienvenue sur RoboTour", TextToSpeech.QUEUE_FLUSH, null)
+                tts4?.speak("Bienvenue sur RoboTour", TextToSpeech.QUEUE_FLUSH, null)
             }
             "Chinese" -> {
                 tts5?.speak("欢迎来到RoboTour", TextToSpeech.QUEUE_FLUSH, null)
@@ -563,7 +553,7 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 tts2?.speak("Bienvenido a RoboTour", TextToSpeech.QUEUE_FLUSH, null)
             }
             "German" -> {
-                tts2?.speak("Willkommen bei RoboTour", TextToSpeech.QUEUE_FLUSH, null)
+                tts3?.speak("Willkommen bei RoboTour", TextToSpeech.QUEUE_FLUSH, null)
             }
             else -> {
                 tts?.speak("Welcome to RoboTour", TextToSpeech.QUEUE_FLUSH, null)
@@ -573,20 +563,27 @@ class InfoForumDemoActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun changePictures(position: Int) {
         println(">>>>$position")
-        when (position) {
-            0 -> {
-                imageView1?.setImageDrawable(resources.getDrawable(R.drawable.birthofvenus))
-            }
-            1 -> {
-                imageView1?.setImageDrawable(resources.getDrawable(R.drawable.creationofadam))
-            }
-            2 -> {
-                imageView1?.setImageDrawable(resources.getDrawable(R.drawable.david))
-            }
-            else -> {
-                imageView1?.setImageDrawable(resources.getDrawable(R.drawable.monalisa))
+        if(position !=lastPaint){
+            when (position) {
+                0 -> {
+                    imageView1?.setImageDrawable(resources.getDrawable(R.drawable.birthofvenus))
+                    lastPaint = 0
+                }
+                1 -> {
+                    imageView1?.setImageDrawable(resources.getDrawable(R.drawable.creationofadam))
+                    lastPaint = 1
+                }
+                2 -> {
+                    imageView1?.setImageDrawable(resources.getDrawable(R.drawable.david))
+                    lastPaint = 2
+                }
+                else -> {
+                    imageView1?.setImageDrawable(resources.getDrawable(R.drawable.monalisa))
+                    lastPaint = -1
+                }
             }
         }
+
     }
 
     private fun changeFlag() {

@@ -63,13 +63,7 @@ class ControlSelectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
         language = intent.getStringExtra("language") //Getting the language from the previous activity
-        /*message = when (language) {
-            "German" -> "Die nächste RoboTour finden\n"
-            "French" -> "Trouver le RoboTour le plus proche\n"
-            "Spanish" -> "Encontrar el RoboTour más cercano\n"
-            "Chinese" -> "正在寻找最近的萝卜途...\n"
-            else -> "Finding closest RoboTour"
-        }*/
+
         message = when (language) {
             "German" -> "Wir Suchen Nach Einer Verfügbaren RoboTour"
             "French" -> "Recherche d'un RoboTour disponible"
@@ -77,7 +71,9 @@ class ControlSelectionActivity : AppCompatActivity() {
             "Chinese" -> "正在寻找可以操控的萝卜途..."
             else -> "Searching For An Available RoboTour"
         }
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //Keep the screen on
+
         verticalLayout {
             webView {
                 loadUrl("file:///android_asset/robotour_spinning_grey.gif")

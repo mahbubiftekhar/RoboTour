@@ -577,32 +577,6 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
-    private fun speakOutThanks() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val text: String
-            val language = intent.getStringExtra("language")
-            when (language) {
-                "French" -> {
-                    text = "Merci d'utiliser RoboTour"
-                }
-                "Chinese" -> {
-                    text = "感谢您使用萝卜途"
-                }
-                "Spanish" -> {
-                    text = "Gracias por usar RoboTour"
-                }
-                "German" -> {
-                    text = "Vielen Dank für die Verwendung von RoboTour"
-                }
-                else -> {
-                    text = "Thanks for using Robot Tour"
-                    //The misspelling of RobotTour in English is deliberate to ensure we get the correct pronunciation
-                }
-            }
-            tts4!!.speak(text, TextToSpeech.QUEUE_FLUSH, null)
-        }
-    }
-
     private fun speakOutToilet() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val text: String
@@ -1543,7 +1517,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                     }
                                 }
                                 userTwoMode = a[16] == 'T' && a[17] == 'T'
-                                println("+++" + userTwoMode)/* This checks if the both users are online, if both are then we are in user two mode, otherwise immediate skip is allowed */
+                                println("+++$userTwoMode")/* This checks if the both users are online, if both are then we are in user two mode, otherwise immediate skip is allowed */
                                 println("&&& just above getting in")
                                 if (userid == 1.toString()) {
                                     println("&&& we are getting in")
@@ -1726,7 +1700,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                             toiletPopUp = alert(startRoboTour) {
                                                 cancellable(false)
                                                 setFinishOnTouchOutside(false)
-                                                positiveButton() {
+                                                positiveButton {
                                                     if (isNetworkConnected()) {
                                                         async {
                                                             sendPUTNEW(11, "F")
@@ -1797,7 +1771,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                                                 Snackbar.make(relLay!!, pressContinue, Snackbar.LENGTH_LONG)
                                                         .setText(pressContinue)
                                                         .setDuration(5000)
-                                                        .setAction(continuer, View.OnClickListener {
+                                                        .setAction(continuer, {
                                                             if (isNetworkConnected()) {
                                                                 alertStBtn = if (toggleStBtn) {
                                                                     startDesc
@@ -1883,7 +1857,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             if (input2[a] == 'T' || input2[a] == 'F' || input2[a] == 'A' || input2[a] == 'N') {
             } else {
                 try {
-                    context.put(input2[a].toString().toInt(), a)
+                    context[input2[a].toString().toInt()] = a
                 } catch (e: java.lang.NumberFormatException) {
 
                 }
@@ -2259,7 +2233,7 @@ class NavigatingActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun skip() {
-        println("+++++user mode" + userTwoMode)
+        println("+++++user mode$userTwoMode")
         if (userTwoMode) {
             if (isNetworkConnected()) {
                 async {
