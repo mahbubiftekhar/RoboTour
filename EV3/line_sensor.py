@@ -10,7 +10,9 @@ class LineDetector():
 
 		self.updater_function = updater_function
 
-		self.max_val = 100
+
+		self.max_val = 255
+
 		self.min_val = 0
 
 		self.val_range = self.max_val - self.min_val
@@ -21,7 +23,7 @@ class LineDetector():
 		# percentage of the separation that is required for a reading
 		# to qualify to contribute towards the moving average
 		# lower value means harder filtering - fewer values get past it
-		self.average_margin = 0.01
+		self.average_margin = 0.8
 
 		self.lo_thresh = self.max_val
 		self.hi_thresh = self.min_val
@@ -29,7 +31,7 @@ class LineDetector():
 		# differentiate between light-line-on-dark (True) and dark-line-on-light (False) 
 		self.line_low = True
 
-		# size of the readings buffer for estimating the thershold
+		# size of the readings buffer for estimating the threshold
 		self.moving_average_size = 10
 
 		# variables for storing extreme values
@@ -42,6 +44,7 @@ class LineDetector():
 
 		self.hi_avg = self.min_val
 		self.lo_avg = self.max_val
+
 		self.mode = "NORM"
 		self.possible_modes = ["NORM", "RAW", "BOOL"]
 		
@@ -92,13 +95,13 @@ class LineDetector():
 	def _update_threshold(self):
 
 		# calculate midpoint value between the two averages
-		self.thershold = (self.hi_avg + self.lo_avg) / 2
+		self.threshold = (self.hi_avg + self.lo_avg) / 2
 
 	def line_detected(self):
 
 		self.below_threshold = self.raw_value < self.threshold
 
-		if self.line_low:
+		if line_low:
 			return self.below_threshold
 		else:
 			return not self.below_threshold
@@ -131,4 +134,115 @@ class LineDetector():
 			print("Please don't mess with the internal settings of the class :C")
 
 
+class SimpleLineDetector():
 
+	def __init__(self, line_low = True):
+		self.max_val = 255
+		self.min_val = 0
+
+		self.hi_weight = 0.6
+		self.lo_weight = 1 - self.hi_weight
+
+		self.hi_max = self.min_val
+		self.lo_min = self.max_val
+
+		self.threshold = (self.hi_max + self.lo_min) / 2
+
+		self.line_low = line_low
+
+		self.line_detected = False
+
+	def update(self, new_value):
+		self.raw_value = new_value
+
+		if self.line_low:
+			self.line_detected = self.raw_value < self.threshold
+		
+		else:
+			self.line_detected = self.raw_value > self.threshold
+
+		return self.line_detected
+
+	def calibrate(self):
+		
+		if self.raw_value > self.hi_max:
+			self.hi_max = self.raw_value
+			self.threshold = (self.hi_max*self.hi_weight + self.lo_min*self.lo_weight)
+
+		if self.raw_value < self.lo_min:
+			self.lo_min = self.raw_value
+			self.threshold = (self.hi_max*self.hi_weight + self.lo_min*self.lo_weight)
+
+class LineSensor():
+
+	def __init__(self, hub):
+
+		self.num_detectors = 6
+		self.detector_names = ["l{}".format(i)\
+		                       for i in range(self.num_detectors)]
+
+		self.line_low = True
+
+		self.hub = hub
+
+		self.last_poll = -1
+
+		self.last_value = 0
+		self.activated_sens = 0
+
+		self.raw_val = {}
+		self.prev_val = {}
+		# intialise the sensor readings in the hub if necessary
+		for n in self.detector_names:
+			if(n not in self.hub.sensor_values.keys()):
+				self.hub.sensor_values[n] = 0
+
+		self.detector = {}
+		for n in self.detector_names:
+			self.detector[n] = SimpleLineDetector(line_low = self.line_low)
+			self.detector[n].update(0)
+
+	def calibrate(self):
+		for n in self.detector_names:
+			self.detector[n].calibrate()
+
+
+	def raw_values(self):
+
+		# if a new value is requiested
+		if self.last_poll == self.hub.last_poll:
+			self.hub.poll()
+
+		self.last_poll = self.hub.last_poll
+		for n in self.detector_names:
+			self.raw_val[n] = self.hub.sensor_values[n]
+			self.detector[n].update(self.raw_val[n])
+
+		return self.raw_val 
+
+	def value_simple(self):
+
+		self.raw_values()
+		order = self.detector_names
+		weight = 10
+		
+		err = 0
+		self.activated_sens = 0
+
+		for s in order:
+			#check if sensor on line
+			if self.detector[s].line_detected:
+				err += weight
+				self.activated_sens += 1
+
+			weight += 10
+
+		if self.activated_sens > 0:
+			self.last_value = err/self.activated_sens
+
+		return self.last_value
+
+	def no_line(self, env=None):
+		return self.activated_sens == 0
+	def line_detected(self, env=None):
+		return self.activated_sens > 0

@@ -1,5 +1,5 @@
 # Adapted from source: http://www.gilles-bertrand.com/2014/03/dijkstra-algorithm-python-example-source-code-shortest-path.html
-
+import sys
 def dijkstra(graph, src, dest, visited=[], distances={}, predecessors={}):
     """ calculates a shortest path tree routed in src
     """
@@ -16,7 +16,8 @@ def dijkstra(graph, src, dest, visited=[], distances={}, predecessors={}):
         while pred != None:
             path.append(pred)
             pred = predecessors.get(pred, None)
-        print('shortest path: ' + str(path[::-1]) + " cost=" + str(distances[dest]))
+        # Debug
+        # print('shortest path: ' + str(path[::-1]) + " cost=" + str(distances[dest]))
         return (path[::-1], distances[dest])
     else:
         # if it is the initial  run, initializes the cost
@@ -42,18 +43,52 @@ def dijkstra(graph, src, dest, visited=[], distances={}, predecessors={}):
         return dijkstra(graph, x, dest, visited, distances, predecessors)
 
 
+
+
+"""
+# Test
+def getClosestPainting(map, currentLocation, paintings):
+    shortestDistance = sys.maxint
+    shortestPath = None
+
+    for painting in paintings:
+        (path, distance) = dijkstra(map, currentLocation, painting, [], {}, {})
+        if(shortestDistance > distance):
+            shortestDistance = distance
+            shortestPath = path
+    return shortestPath
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
     # unittest.main()
     graph = {
-        'A': {'B': 10, 'C': 50, 'D': 40},
-        'B': {'A': 10, 'D': 20},
-        'C': {'A': 50},
-        'D': {'B': 20, 'A': 40}
+        '0': {'1':26, '8':21},
+        '1': {'0':26, '12':19.5},
+        '2': {'3':26.5, '9':19.5},
+        '3': {'2':26.5, '13':20},
+        '4': {'11':33.5, '14':31.5},
+        '5': {'6':27, '14':46},
+        '6': {'5':27, '7':28},
+        '7': {'6':28, '15':46.5},
+        '8': {'0':21, '9':31.5, '14':28},
+        '9': {'2':19.5, '8':31.5, '15':32},
+        '10': {'11':20},
+        '11': {'4':33.5, '10':20, '12':28},
+        '12': {'1':19.5, '11':28, '13':32},
+        '13': {'3':20, '12':32, '15':85},
+        '14': {'4':31.5, '5':46, '8':28},
+        '15': {'7':46.5, '9':32, '13':85}
     }
 
 
 
-    (path, distance) = dijkstra(graph, 'A', 'D')
-    print(str(path))
-    print(str(distance))
+    #(path, distance) = dijkstra(graph, '3', '1')
+    #print(str(path))
+    #print(str(distance))
+    # Test
+    currentLocation = '10'
+    print(getClosestPainting(['12', '14', '13']))
+
+
+
+"""
+
