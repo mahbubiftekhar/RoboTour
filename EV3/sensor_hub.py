@@ -55,6 +55,7 @@ class SensorHub():
 		self.last_poll += 1
 
 		tries = 0
+
 		start = time.perf_counter()
 
 		# discard any outstanding data
@@ -67,7 +68,7 @@ class SensorHub():
 			# see if response received
 			if(not w < 0):
 				break
-			
+
 			if(tries >= self.tries_limit):
 				print("Hub not responsive")
 				self.connected = False
@@ -83,6 +84,7 @@ class SensorHub():
 		self.last_poll_time = poll_time
 		self.connected = True
 		return True
+
 
 	def send_request(self):
 		
@@ -116,6 +118,7 @@ class SensorHub():
 
 	# method for receiving the full data frame over serial
 	def get_frame(self):
+
 
 		# for timeout purposes
 		waiting = 0

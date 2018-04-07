@@ -9,10 +9,11 @@ from sensor_hub import *
 from comms import *
 
 ####################### GLOBAL VARIABLE ####################
-obstacle_detection_distance = 150 # in mm
+obstacle_detection_distance = 200 # in mm
 side_distance = 17
 link = "https://homepages.inf.ed.ac.uk/s1553593/receiver.php"
 command = ""
+commands = ""
 previouscommandid = "1"
 currentcommandid = "0"
 pointerState = ""
@@ -81,12 +82,10 @@ def isLeftLineDetected():
     return getColourLeft() > lineThreshold
 
 def isLineDetected():
-    answer = (isLeftLineDetected() or isRightLineDetected())
-    # print(answer)
-    return answer
+    return (isLeftLineDetected() or isRightLineDetected())
 
 def isWallDetected():
-    return (getColourLeft < wallThreshold or getColourRight < wallThreshold)
+    return (getColourLeft() < wallThreshold or getColourRight() < wallThreshold)
 
 def getSonarReadingsFront():
     return sonarFront.value()
@@ -133,12 +132,12 @@ def turnBack(): # 180
     motorRight.run_timed(speed_sp=-400, time_sp=1000)
 
 def turnRightNinety(): # 90
-    motorLeft.run_timed(speed_sp=400,time_sp=500)
-    motorRight.run_timed(speed_sp=-400, time_sp=500)
+    motorLeft.run_timed(speed_sp=175,time_sp=1000)
+    motorRight.run_timed(speed_sp=-175, time_sp=1000)
 
 def turnLeftNinety(): # -90
-    motorLeft.run_timed(speed_sp=-400,time_sp=500)
-    motorRight.run_timed(speed_sp=400, time_sp=500)
+    motorLeft.run_timed(speed_sp=-175,time_sp=1000)
+    motorRight.run_timed(speed_sp=175, time_sp=1000)
 
 def stopWheelMotor():
     #print(sonar.value())
@@ -152,11 +151,11 @@ def waitForMotor():
 def speak(string):
     ev3.Sound.speak(string)
 
-def turnPointer(direction):
+def turnPointer(direction): # Turn 90
     if (direction == "CW"):
         motorPointer.run_timed(speed_sp=-414, time_sp=1000)
         pointerState = "CW"
-        time.sleep(2)
+        time.sleep(5)
     if (direction == "ACW"):
         motorPointer.run_timed(speed_sp=414, time_sp=1000)
         pointerState = "ACW"
@@ -221,55 +220,93 @@ def isLost():
 def getReadyForObstacle(direction): #90 degree
     print("GET READY FOR OBSTACLE")
     if (direction == 'RIGHT'):
-        while(not isLeftSideObstacle()):
-            turnRight(10)
-        while(isLineDetected()):
-            turnRight(10)
+        turnRightNinety()
+        waitForMotor()
+        moveForward(100,500)
+        #while(not isLeftSideObstacle()):
+        #    turnRight(10)
+        #while(isLineDetected()):
+        #    turnRight(10)
     else:  # All default will go through the Left side. IE
+        turnLeftNinety()
+        waitForMotor()
+
         #print(sonarRight.value())
-        while (not isRightSideObstacle()):
-            turnLeft(10)
-        while(isLineDetected()):
-            turnLeft(10)
+        #while (not isRightSideObstacle()):
+        #    turnLeft(10)
+        #while(isLineDetected()):
+        #turnLeft(10)
 
 def goAroundObstacle(direction):
     print("GO AROUND OBSTACLE")
-    set_distance = 15
-    stopping_distance = 8 # for stopping of the other 2 sensors
-
+    set_distance = 11
     if (direction == 'RIGHT'):
-        while(not isRightLineDetected()):
-            if (getSonarReadingsLeft() < set_distance):
-                turn(200, 100, 100)
-            #if (isWallDetected()):
-                #turnBack()
-                #goAroundObstacle('LEFT')
-                #break;
-            #if (getSonarReadingsRight() < stopping_distance or getSonarReadingsFront() < stopping_distance*10):
-                #time.sleep(1)
+        while(not isLineDetected()):
+            '''
+            if (isWallDetected()):
+                turnBack()
+                waitForMotor()
+                goAroundObstacle('LEFT')
+                break;
+            '''
+            if(getSonarReadingsFront() < set_distance*10):
+                turnRightNinety()
+                waitForMotor()
+            elif (getSonarReadingsLeft() < set_distance):
+                turn(100, 50, 100)
             else:
-                turn(100, 300, 100)
+                turn(50, 150, 100)
+
     else: # All default will go through the Left side. IE
-        while(not isRightLineDetected()):
-            if (getSonarReadingsRight() < set_distance):
-                turn(100, 200, 100)
+        while(not isLineDetected()):
+            '''
+            if (isWallDetected()):
+                turnBack()
+                waitForMotor()
+                goAroundObstacle('RIGHT')
+                break;
+            '''
+            if(getSonarReadingsFront() < set_distance*10):
+                turnLeftNinety()
+                waitForMotor()
+            elif (getSonarReadingsRight() < set_distance):
+                turn(50, 100, 100)
             else:
-                turn(300, 100, 100)
+                turn(150, 50, 100)
 
 def getBackToLine(direction):
     print("GET BACK TO LINE")
     if (direction == 'RIGHT'):
+        if(isLeftLineDetected()):
+            ## That means when it detect the line, it is not facing to the obstacle
+            pass
+        else:
+            ## That means when it detect the line, it is facing to the obstacle
+            while(not isLeftLineDetected()):
+                turn(150,-100,100)
+
         while(isLeftLineDetected()):
-            turn(100,-100,100)
+            turn(100,100,100)
         while(not isLeftLineDetected()):
-            turn(250,0,100)
+            turn(150,-100,100)
         print("Find line again!")
     else:
+        if(isRightLineDetected()):
+            ## That means when it detect the line, it is not facing to the obstacle
+            pass
+
+        else:
+            ## That means when it detect the line, it is facing to the obstacle
+            while(not isRightLineDetected()):
+                turn(-100,150,100)
+
         while(isRightLineDetected()):
-            turn(-100,100,100)
+            turn(100,100,100)
         while(not isRightLineDetected()):
-            turn(0,250,100)
+            turn(-100,150,100)
+
         print("Find line again!")
+
 
 """
 def keepDistance():
@@ -312,25 +349,6 @@ static_dictionary = {
     'The Last Supper': ['RIGHT', 'FORWARD', 'CW']
 }
 
-dictionary = {
-    'Exit' : {'Monalisa': ['FORWARD','ACW'],
-              'Adam': ['RIGHT', 'LEFT', 'CW'],
-              'Pearl': ['RIGHT', 'FORWARD', 'LEFT', 'CW'],
-              'Lilies': ['RIGHT', 'FORWARD', 'RIGHT', 'FORWARD', 'CW'],
-              'Supper': ['RIGHT', 'FORWARD', 'RIGHT', 'RIGHT', 'ACW']
-              },
-    'Monalisa' : {'Napoloeon' : ['FORWARD','CW'],
-                  'Kanagawa' : ['RIGHT','FORWARD','ACW'],
-                  'Venus' : ['RIGHT','RIGHT','ACW'],
-                  ## if painting on left
-                  'Exit' : ['FOWARD','ACW'],
-                  'Adam' : ['LEFT','LEFT','CW'],
-                  'Pearl' : ['LEFT','FORWARD','LEFT','CW'],
-                  'Lilies' : ['LEFT', 'FORWARD','RIGHT','FORWARD','CW'],
-                  'Supper' : ['LEFT', 'FORWARD','RIGHT','RIGHT','ACW']}
-
-}
-
 command_index = 0
 pictures = server.getCommands()
 if (pictures[4] == "T"):
@@ -355,12 +373,12 @@ try:
             print("Stop at: (Right) ",sonarRight.value())
             goAroundObstacle(commands[command_index])
             getBackToLine(commands[command_index])
-        else:
+        else:#follow lines
             baseSpeed = 90
             currR = colourSensorRight.value()
             currL = colourSensorLeft.value()
-
-            if(currL > 50 and currR > 50):
+            #print("currR=",currR," currL",currL)
+            if(currL > 60 and currR > 60):
                 print("BRANCH")
                 if(commands[command_index] == 'RIGHT'):
                     command_index+=1
@@ -389,6 +407,10 @@ try:
                 elif(commands[command_index] == 'CW'):
                     command_index+=1
                     stopWheelMotor()
+                    if (pictures[4] == "T"):
+                        speak("This is Mona Lisa!")
+                    elif (pictures[7] == "T"):
+                        speak("This is The last supper!")
                     turnPointer('CW')
                     turnPointer('ACW')
 

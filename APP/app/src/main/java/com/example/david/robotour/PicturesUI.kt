@@ -2,6 +2,7 @@ package com.example.david.robotour
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
+import android.preference.PreferenceManager
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
@@ -26,6 +27,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
     private var negative = ""
 
     private fun notifyUser() {
+        Toast.makeText(ctx, toastText, Toast.LENGTH_LONG).show()
         Toast.makeText(ctx, toastText, Toast.LENGTH_LONG).show()
     }
 
@@ -55,10 +57,10 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                 }
                 "Chinese" -> {
                     a = "开始导航"
-                    navigate = "导航到选定的艺术品？"
-                    toastText = "请选择一件或多件作品参观"
+                    navigate = "确定要导航到指定的作品吗？"
+                    toastText = "请选择一件或者多件作品"
                     positive = "是"
-                    negative = "没有"
+                    negative = "不是"
                 }
                 else -> {
                     a = "Start tour"
@@ -84,7 +86,7 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                 }.lparams { width = matchParent; height = dip(0); weight = 1.0f }
                 navigateButton = button(a) {
                     textSize = 32f
-                    background = ColorDrawable(resources.getColor(R.color.roboTourTeal))
+                    background = ColorDrawable(resources.getColor(R.color.androidsBackground))
                     onClick {
                         var isSelected = 0
                         allArtPieces
@@ -99,14 +101,13 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                                 positiveButton(positive) {
                                     async {
                                         sendList()
-                                        sendPUTNEW(16, "T")
-
+                                        if (loadInt("user").toString() == "1") {
+                                            sendPUTNEW(16, "T")
+                                        } else {
+                                            sendPUTNEW(17, "T")
+                                        }
                                     }
-                                    async {
-                                        val a = PicturesActivity()
-                                        a.t.interrupt() //Stops the thread
-                                    }
-                                    startActivity<Waiting>("language" to language)
+                                    startActivity<WaitingActivity>("language" to language)
                                 }
                                 negativeButton(negative) {
                                     // navigateButton.background = ColorDrawable(Color.parseColor("#D3D3D3"))
@@ -127,8 +128,13 @@ class PicturesUI(private val PicturesAdapter: PicturesAdapter, private val langu
                 .forEach { sendPUTNEW(it.eV3ID, "T") }
     }
 
+    private fun loadInt(key: String): Int {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
+        return sharedPreferences.getInt(key, 0)
+    }
+
     private fun sendPUTNEW(identifier: Int, command: String) {
-        val url = "http://homepages.inf.ed.ac.uk/s1553593/receiver.php"
         /*DISCLAIMER: When calling this function, if you don't run in an async, you will get
         * as security exception - just a heads up */
         val httpclient = DefaultHttpClient()

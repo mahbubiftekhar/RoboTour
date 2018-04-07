@@ -1,13 +1,11 @@
 #! /usr/bin/env python3
 # Core imports
-# from urllib.parse import urlencode
-# from urllib.request import Request, urlopen
-# from urllib import request, parse
-import urllib.request
-import urllib.parse
-# import _thread
+#from urllib.parse import urlencode
+#from urllib.request import Request, urlopen
+#from urllib import request, parse
+import urllib.request, urllib.parse
+import  _thread
 import time
-
 
 class Server():
     #  THIS WILL CONTAIN THE ARTPIECES THAT THE USER

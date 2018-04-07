@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="com.example.david.robotour.TempActivity">
+    android:fitsSystemWindows="true">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -18,12 +17,46 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/CONTINUE"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/start_robotour"
+                tools:ignore="ButtonStyle,NestedWeights" />
+
+            <Button
                 android:id="@+id/STOP_ROBOTOUR"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
-                android:text="@string/stop_robotour"
+                android:text="@string/STOPROBOTOUR"
+                tools:ignore="ButtonStyle" />
+            <Button
+                android:id="@+id/INFO_FORUM"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/info_forum_increment"
+                tools:ignore="ButtonStyle" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/RESET_PAINTINGS"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/reset_paintings"
                 tools:ignore="ButtonStyle,NestedWeights" />
 
             <Button
@@ -53,12 +86,21 @@
                 tools:ignore="ButtonStyle,NestedWeights" />
 
             <Button
-                android:id="@+id/SWITCH_USER"
+                android:id="@+id/CONTROLON"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
-                android:text="@string/switch_user"
+                android:text="@string/listen_off"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:id="@+id/CONTROLOFF"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/listen_on"
                 tools:ignore="ButtonStyle" />
         </LinearLayout>
 
@@ -84,6 +126,49 @@
                 android:layout_weight="1"
                 android:background="@drawable/buttonxml"
                 android:text="@string/user2_online"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:id="@+id/SWITCH_URL"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/switch_url"
+                tools:ignore="ButtonStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/USER2_MODE_OFF"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/_1_user_mode"
+                tools:ignore="ButtonStyle,NestedWeights" />
+
+            <Button
+                android:id="@+id/USER2_MODE_ON"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/_2_user_mode"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:id="@+id/RandomCarousel"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/buttonxml"
+                android:text="@string/random_carousel"
                 tools:ignore="ButtonStyle" />
         </LinearLayout>
 
@@ -131,7 +216,7 @@
 
         <Button
             android:id="@+id/sendy"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/send" />
