@@ -54,6 +54,7 @@ class PicturesActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var positive = ""
     private var negative = ""
     private var superlanguage = ""
+
     public override fun onDestroy() {
         // Shutdown TTS
         if (tts != null) {
