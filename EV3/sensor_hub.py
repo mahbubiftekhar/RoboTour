@@ -57,8 +57,20 @@ class SensorHub():
 		tries = 0
 		start = time.perf_counter()
 
+
+		start = time.perf_counter()
+
 		# discard any outstanding data
 		self.serial_port.flushInput()
+
+
+		while True:
+			
+			w = self.send_request()
+			# see if response received
+			if(not w < 0):
+				break
+
 
 
 		while True:
@@ -83,6 +95,7 @@ class SensorHub():
 		self.last_poll_time = poll_time
 		self.connected = True
 		return True
+
 
 	def send_request(self):
 		
@@ -116,6 +129,27 @@ class SensorHub():
 
 	# method for receiving the full data frame over serial
 	def get_frame(self):
+
+		# for timeout purposes
+		waiting = 0
+		dt = 0.00001 # 10us
+		cycles = 0
+
+		read_wait = 0
+		byte_count = 0
+
+		# record starting time
+		start = time.perf_counter()
+		while True:
+			# calculate elapsed time
+			waiting = time.perf_counter() - start
+			if self.serial_port.inWaiting() > 0:
+
+				read_wait -= time.perf_counter()
+				# convert the incoming byte to 
+				val = int(self.serial_port.read(1)[0])
+				read_wait += time.perf_counter()
+
 
 		# for timeout purposes
 		waiting = 0
@@ -177,6 +211,123 @@ class SensorHub():
 			self.frame_dropped = True
 			self.dropped_frames += 1
 			print("Error processing frame: {}".format(frame))
+
+
+class SensorHubFast():
+
+	def __init__(self):
+		self.response_timeout = 250/1000
+		self.baud = 115200
+		self.port = self.get_available_port()
+		self.serial_port = serial.Serial(port=self.port,\
+										 baudrate=self.baud,
+										 timeout=self.response_timeout)
+		self.n_sonars = 4
+		self.sonar_maxrange = 255
+
+		self.tries_limit = 10
+
+		# time to receive response from the hub
+		# time to have the entire frame transmitted
+		self.frame_timeout = 20
+
+		self.__DEBUG__ = False
+
+
+		# the order at which the bytes will come to the sensor
+		self.sensors = ['l0', 'l1', 'l2', 'l3', 'l4', 'l5',\
+						's0', 's1']
+		self.sensor_values = {}
+
+		self.bytes_per_frame = len(self.sensors)
+
+		self.last_poll = 0
+		self.last_poll_time = 0
+
+		self.poll()
+
+
+	def debug_print(self, message):
+		if self.__DEBUG__:
+			print(message)
+
+	def get_available_port(self):
+		out = subprocess.check_output("ls /dev/ttyACM*", shell=True)
+		port = out.split(b'\n')[0].decode('utf-8')
+		return port
+
+
+
+	def poll(self):
+		self.last_poll += 1
+
+		tries = 0
+		start = time.perf_counter()
+
+		# discard any outstanding data
+		self.serial_port.flushInput()
+
+
+		while True:
+			
+			w = self.send_request()
+			# see if response received
+			if(not w < 0):
+				break
+			
+			if(tries >= self.tries_limit):
+				print("Hub not responsive")
+				self.connected = False
+				return False
+			
+			tries += 1
+
+		self.get_frame()
+		end = time.perf_counter()
+		
+		poll_time = (end-start)*1000
+		self.last_poll_time = poll_time
+		self.connected = True
+		return True
+
+	def send_request(self):
+		
+		waiting = 0
+
+		dt = 0.001
+
+		start = time.perf_counter()
+		self.serial_port.write(b'r\n')
+
+		# while no response receieved
+		while self.serial_port.inWaiting() < 1:
+			# see if we have been waiting for long enough
+
+			if(waiting >= self.response_timeout):
+				# self.debug_print(".")
+				return -1
+			time.sleep(dt)
+			waiting = (time.perf_counter() - start) * 1000
+		
+		return waiting
+
+
+
+	# THE PROBLEM IS HERE!!!
+
+	# method for receiving the full data frame over serial
+	def get_frame(self):
+
+		byte_count = 0
+		vals = self.serial_port.read(self.bytes_per_frame)
+
+		for v in vals:
+			self.sensor_values[self.sensors[byte_count]] = int(v)
+			byte_count += 1
+
+		if(byte_count < self.bytes_per_frame):
+			print("PROBELEM")
+
 		
 
 class HubSonar():

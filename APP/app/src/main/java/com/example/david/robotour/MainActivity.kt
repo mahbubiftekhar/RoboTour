@@ -5,32 +5,37 @@ import android.content.Context
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.content.res.ResourcesCompat
 import org.jetbrains.anko.*
 import android.content.Intent
+import android.graphics.drawable.GradientDrawable
 import android.net.ConnectivityManager
-import android.os.Build
-import android.support.annotation.RequiresApi
-import android.view.Gravity
+import android.preference.PreferenceManager
 import android.view.WindowManager
-import android.widget.ImageView
-import android.widget.Toast
 import kotlinx.android.synthetic.*
 import java.io.InterruptedIOException
-import java.nio.channels.InterruptedByTimeoutException
+import java.net.URL
 
+@Suppress("DEPRECATION")
+var url = "http://www.mahbubiftekhar.co.uk/receiver.php"
 
 @Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
-    private var advertisements = ArrayList<Int>()
-    private var imageView: ImageView? = null
     private var continueThread = true
-
+    private var userGoThrough = false
     override fun onBackPressed() {
         clearFindViewByIdCache()
         val intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_HOME)
         startActivity(intent)
+    }
+
+    override fun onDestroy() {
+        try {
+            updateTextThread.interrupt()
+        } catch (e: Exception) {
+
+        }
+        super.onDestroy()
     }
 
     private fun switchToAdmin() {
@@ -45,82 +50,105 @@ class MainActivity : AppCompatActivity() {
         return networkInfo != null && networkInfo.isConnected
     }
 
+    @SuppressLint("ApplySharedPref")
+    private fun saveInt(key: String, value: Int) {
+        /* Function to save an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val editor = sharedPreferences.edit()
+        editor.putInt(key, value)
+        editor.commit()
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide() //hide actionbar
-        //window.decorView.setBackgroundColor(Color.parseColor("#24E8EA"))
+        userGoThrough = false
+        async {
+            saveInt("user", 1)
+        }
+        val a = loadInt("urlnum")
+
+        when (a) {
+            1 -> {
+                url = "http://www.mahbubiftekhar.co.uk/receiver.php"
+                saveInt("urlnum", 1)
+            }
+            2 -> {
+                url = "http://www.mahbubiftekhar.co.uk/receiver2.php"
+                toast("WARNING!!!: receiver2 1&1")
+                saveInt("urlnum", 2)
+            }
+            3 -> {
+                url = "http://homepages.inf.ed.ac.uk/s1539308/receiver.php"
+                toast("WARNING!!!: homepages receiver")
+                saveInt("urlnum", 3)
+            }
+            4 -> {
+                url = "https://proparoxytone-icing.000webhostapp.com/receiver.php"
+                toast("WARNING!!!: 000webHost receiver")
+                saveInt("urlnum", 4)
+            }
+        }
+
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) //This will keep the screen on, overriding users settings
         verticalLayout {
-            imageView(R.drawable.robotour_small) {
+            imageView(R.drawable.robotour_img_small) {
                 backgroundColor = Color.TRANSPARENT //Removes gray border
+                onLongClick {
+                    switchToAdmin()
+                    true
+                }
+                horizontalPadding = dip(10)
+                verticalPadding = dip(15)
             }
             button("START") {
                 textSize = 32f
-                background = ResourcesCompat.getDrawable(resources, R.drawable.buttonxml, null)
+                //background = ResourcesCompat.getDrawable(resources, R.drawable.rb2, null) Using XML
+                background = buttonBg() // Using kotlin - better ;)
+                lparams { width = matchParent; horizontalMargin = dip(5); topMargin = dip(5) }
                 onClick {
-                    if (isNetworkConnected()) {
+                    if (!userGoThrough) {
+                        toast("RoboTour not online")
+                    } else if (isNetworkConnected()) {
                         continueThread = false
-                        interuptPicturesThread()
-                        pictureThread.interrupt()
                         startActivity<SelectLanguageActivity>()
                     } else {
-                        Toast.makeText(applicationContext, "Check network connection then try again", Toast.LENGTH_LONG).show()
+                        toast("No Network - Please investigate")
                     }
                 }
                 onLongClick {
-
-                    interuptPicturesThread()
-                    switchToAdmin()
-
+                    startActivity<InfoForumDemoActivity>()
                     true
                 }
-            }
-            imageView = imageView {
-                backgroundColor = Color.TRANSPARENT //Removes gray border
-                gravity = Gravity.CENTER_HORIZONTAL
             }
         }
     }
 
-    override fun onResume() {
-        advertisements.clear()
-        advertisements.add(R.drawable.your_ad_here)
-        advertisements.add(R.drawable.new_exhibit)
-        advertisements.add(R.drawable.gift_shop)
-        pictureThread.start()
-        super.onResume()
+    private fun loadInt(key: String): Int {
+        /*Function to load an SharedPreference value which holds an Int*/
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx)
+        return sharedPreferences.getInt(key, 1)
     }
 
-    override fun onStop() {
-        pictureThread.interrupt()
-        super.onStop()
-    }
-
-    private val pictureThread: Thread = object : Thread() {
-        /*This thread will update the pictures, this feature can be sold as an advertisement opportunity as well*/
-        var a = 0
-
-        @RequiresApi(Build.VERSION_CODES.O)
+    private val updateTextThread: Thread = object : Thread() {
+        /*This thread is used to update the header*/
+        /*Will update the header automatically*/
         override fun run() {
-            while (!Thread.currentThread().isInterrupted) {
-                println("+++ running here main activity")
-                if (a > (advertisements.size - 1)) {
-                    //Reset A to avoid null pointers
-                    a = 0
-                }
+            while (!isInterrupted) {
                 try {
-                    //UI thread MUST be updates on the UI thread, other threads may not update the UI thread
-                    runOnUiThread {
-                        imageView?.setImageResource(advertisements[a])
+                    async {
+                        val a = URL(url).readText()
+                        userGoThrough = a[18].toString() == 1.toString() || a[18].toString().toInt() == 2
                     }
-                    Thread.sleep(3000)
-                    a++
+                    try {
+                        Thread.sleep(1000)
+                    } catch (e: Exception) {
+
+                    }
                 } catch (e: InterruptedException) {
                     Thread.currentThread().interrupt()
                 } catch (e: InterruptedIOException) {
-                    Thread.currentThread().interrupt()
-                } catch (e: InterruptedByTimeoutException) {
                     Thread.currentThread().interrupt()
                 }
             }
@@ -128,7 +156,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun interuptPicturesThread() {
-        pictureThread.interrupt()
+    override fun onResume() {
+        userGoThrough = false
+        if (updateTextThread.state == Thread.State.NEW) {
+            updateTextThread.start()
+        }
+        super.onResume()
+    }
+
+    private fun buttonBg() = GradientDrawable().apply {
+        shape = GradientDrawable.RECTANGLE
+        cornerRadius = 100f
+        setColor(resources.getColor(R.color.roboTourTeal))
+        setStroke(2, Color.BLACK)
     }
 }
