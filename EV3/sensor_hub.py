@@ -55,6 +55,8 @@ class SensorHub():
 		self.last_poll += 1
 
 		tries = 0
+		start = time.perf_counter()
+
 
 		start = time.perf_counter()
 
@@ -69,6 +71,15 @@ class SensorHub():
 			if(not w < 0):
 				break
 
+
+
+		while True:
+			
+			w = self.send_request()
+			# see if response received
+			if(not w < 0):
+				break
+			
 			if(tries >= self.tries_limit):
 				print("Hub not responsive")
 				self.connected = False
@@ -118,6 +129,26 @@ class SensorHub():
 
 	# method for receiving the full data frame over serial
 	def get_frame(self):
+
+		# for timeout purposes
+		waiting = 0
+		dt = 0.00001 # 10us
+		cycles = 0
+
+		read_wait = 0
+		byte_count = 0
+
+		# record starting time
+		start = time.perf_counter()
+		while True:
+			# calculate elapsed time
+			waiting = time.perf_counter() - start
+			if self.serial_port.inWaiting() > 0:
+
+				read_wait -= time.perf_counter()
+				# convert the incoming byte to 
+				val = int(self.serial_port.read(1)[0])
+				read_wait += time.perf_counter()
 
 
 		# for timeout purposes
@@ -180,6 +211,7 @@ class SensorHub():
 			self.frame_dropped = True
 			self.dropped_frames += 1
 			print("Error processing frame: {}".format(frame))
+
 
 class SensorHubFast():
 

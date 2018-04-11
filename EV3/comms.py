@@ -1,13 +1,15 @@
 #! /usr/bin/env python3
 # Core imports
-#from urllib.parse import urlencode
-#from urllib.request import Request, urlopen
-#from urllib import request, parse
-import urllib.request, urllib.parse
-import  _thread
+# from urllib.parse import urlencode
+# from urllib.request import Request, urlopen
+# from urllib import request, parse
+import urllib.request
+import urllib.parse
+# import _thread
 import time
 
 class Server():
+
     #  THIS WILL CONTAIN THE ARTPIECES THAT THE USER
     #  WANTS TO GO TO, THIS WILL NOT CHANGE DURING THE TRIP
     def __init__(self, link_option='1&1'):
@@ -27,6 +29,7 @@ class Server():
         self.commands = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F",
                          "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F"]
         #                 13   14   15   16   17   18   19   20   21   22   23   24   25
+
         self.id_map = {
             '0': 0,
             '1': 1,
@@ -38,8 +41,10 @@ class Server():
             '7': 7,
             '8': 8,
             '9': 9,
+
             '10': 15,
             '12': 14,
+
             'Skip': 10,
             'Stop': 11,
             'Cancel': 12,
@@ -47,12 +52,14 @@ class Server():
             'Toilet': 14,
             'Exit': 15,
             'User 1': 16,
+
             'User 2': 17,
             'Two user mode': 18,
             'Listen ready': 19,
             'Obstacle detected': 20,
             'onTour': 21,
             'Change': 25
+
         }
 
     def get_commands(self):
@@ -64,16 +71,19 @@ class Server():
     # Helper function that does a http post request
     def http_post(self, position, message):
         data = bytes(urllib.parse.urlencode({"command" + str(position): message}).encode())
+
         urllib.request.urlopen(self.link, data)
 
     # Helper function that does HTTP get request
     def http_get(self):
         f = urllib.request.urlopen(self.link)  # open url
+
         myfile = f.read()  # read url contents
         self.command = myfile.decode("utf-8")  # convert bytearray to string
         return self.command
 
     def start_up_single(self):
+
         self.commands = ["F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F",
                          "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F", "F"]
         self.update_pictures_to_go()
@@ -82,13 +92,16 @@ class Server():
         while self.user_1_check() != "T":
             self.update_commands()
             time.sleep(1)
+
         self.update_pictures_to_go()
 
     def start_up_double(self):
         self.update_commands()
+
         while self.user_1_check() != "T" or self.user_2_check() != 'T':
             self.update_commands()
             time.sleep(1)
+
         self.update_pictures_to_go()
 
     # Updates the picturesToGoTO as an array, T means that the user wish's to go to the painting, F means they do not,
@@ -96,20 +109,24 @@ class Server():
     def update_pictures_to_go(self):
         self.picturesToGoTO = self.commands[0:10]
 
+
     # This will be used to constantly update the list AFTER the first instance
     def update_commands(self):
         data = self.http_get()
         for i in range(0, len(self.commands)):
             self.commands[i] = data[i]
 
+
     # Resets the entire list online,
     # should be called once the robot is finnished giving the tour and returns to the
     def reset_list_on_server(self):
         print("Resetting Server")
+
         for x in range(0, 25):
             # Updating the list online
             self.http_post(x, "F")
         self.update_commands
+
 
     def check_position(self, position):  # get command of Toilet, Stop etc.
         return self.commands[self.id_map[position]]
@@ -130,6 +147,7 @@ class Server():
     def set_stop_false(self):
         self.http_post(self.id_map['Stop'], "F")
 
+
     def set_obstacle_true(self):
         self.http_post(self.id_map['Obstacle detected'], "T")
 
@@ -142,6 +160,7 @@ class Server():
         while self.command[self.id_map['Stop']] == 'T':
             self.update_commands()
             time.sleep(1)
+
         print("Continue")
 
     ############
@@ -160,6 +179,7 @@ class Server():
 
     # Update the users screen with the artPiece they should be displayed - simply pass in the next optimal artPiece and
     # the rest is sorted
+
     def update_art_piece(self, next_art_work):  # input string
         if self.previousArtPiece != "-1":
             self.http_post(self.id_map[self.previousArtPiece], "F")
