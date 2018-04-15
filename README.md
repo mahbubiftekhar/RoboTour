@@ -75,7 +75,7 @@ Give an example
 
 ## Group Members
 
-* **Alice Wu** -  *Robotics Software Developer*
+* **[Alice Wu](https://github.com/AliceWoooo)** -  *Robotics Software Developer*
 * **David Spears** - *Android Developer/UI Designer* 
 * **Devidas Lavrik** - *Lego Builder/PID Expert* 
 * **Finn Zhan Chen** - *Business Analyst* - 
