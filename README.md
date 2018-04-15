@@ -1,4 +1,6 @@
-![Screenshot](robotour_small.png)
+
+<img src="/Logo.png" title="sample" width="200" height="170" />
+
 
 <h1 style="text-align: center;"><span style="color: #ff0000;"><strong><span style="color: #000000;"> SDP- GROUP 18</span> </strong></span></h1>
 <p style="text-align: center;">&nbsp;</p>
@@ -7,6 +9,8 @@
 <h1>RoboTour</h1>
 
 RoboTour is a robotic tour guide that assists people in environments such as museums or art galleries. The system comprises of an autonomous robotic guide, a purpose built Android application, and a web server mediating the communication between the two. RoboTour can be controlled by up to two Android devices. The app allows users to interact with RoboTour intuitively in multiple languages. RoboTour has been designed for minimal maintenance, once the initial setup has been performed. 
+
+[Introduction Video](https://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be)
 
 
 
@@ -30,11 +34,20 @@ Our robot is able to interact with visitors and guide them to the piece of art t
 ### The App
 The app is backwards compatible with older versions of Android, the app will work with Android SDK version 17 onwards (users also require 20mb free space and an internet connection). The app was developed in Android Studio 3.1 using Kotlin. 
 
+### Screenshots
+
+<img src="/screens/s1.png" title="sample" width="200" height="390" /> <img src="/screens/s2.png" title="sample" width="200" height="390" /> <img src="/screens/s3.png" title="sample" width="200" height="390" />   <img src="/screens/s4.png" title="sample" width="200" height="390" />
+<br>
+<br>
+<br>
+
+<img src="/screens/s5.png" title="sample" width="200" height="390" /><img src="/screens/s6.png" title="sample" width="200" height="390" /><img src="/screens/s7.png" title="sample" width="200" height="390" /><img src="/screens/s8.png" title="sample" width="200" height="390" />
+
 ### The Robot
 The robot is a differential drive platform, i.e. the movement is achieved with two motorised drive wheels. Varying the rotational speed of the wheels independently, allowed us to introduce rotation of the chassis in addition to the linear translation. Additionally, two rear wheels are added for stability and weight support. They were designed with the aim of minimising the friction and disturbance to the robot control.
 
 ### Installing
-Toinstall the app on an Android device,installation from unknown sources must be enabled.This feature                                   is turned off by default on stock Android, and can be turned on by following these steps:   
+To install the app on an Android device,installation from unknown sources must be enabled.This feature                                   is turned off by default on stock Android, and can be turned on by following these steps:   
 Device Settings ​-> ​Advanced Settings ​-> ​Security ​->​ Enable Unknown Sources   
 To download the app visit the following link from your phone: 
 homepages.inf.ed.ac.uk/s1553593/download.php  
@@ -56,18 +69,23 @@ Give an example
 
 * 
 
+##  
+
  
 
 ## Group Members
 
-* **Alice Wu** - *Initial work* 
-* **David Spears** - *Initial work* 
-* **Devidas Lavrik** - *Initial work* 
-* **Finn Zhan Chen** - *Initial work* - 
-* **Mahbub Iftekhar** - *Initial work* - [https://www.mahbubiftekhar.co.uk/](https://www.mahbubiftekhar.co.uk/)
-* **Mariyana Cholakova** - *Initial work* 
-* **Michal  Dauernhauer** - *Initial work*
+* **Alice Wu** -  *Robotics Software Developer*
+* **David Spears** - *Android Developer/UI Designer* 
+* **Devidas Lavrik** - *Lego Builder/PID Expert* 
+* **Finn Zhan Chen** - *Business Analyst* - 
+* **Mahbub Iftekhar** - *Team Manager/Android Developer* - [https://www.mahbubiftekhar.co.uk/](https://www.mahbubiftekhar.co.uk/)
+* **Mariyana Cholakova** - *Designer/Admin* 
+* **Michal  Dauernhauer** - *Custom Sensor Guru*
 
+
+## Contact us
+You are welcome to visit out [Facebook page](https://www.facebook.com/RoboTour/) or send us an e-mail on: 
 
 
 
