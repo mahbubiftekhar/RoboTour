@@ -79,7 +79,7 @@ Give an example
 * **David Spears** - *Android Developer/UI Designer* 
 * **Devidas Lavrik** - *Lego Builder/PID Expert* 
 * **Finn Zhan Chen** - *Business Analyst* - 
-* **Mahbub Iftekhar** - *Team Manager / Android Developer* - [Mahbub Iftekhar](https://www.mahbubiftekhar.co.uk/)
+* **[Mahbub Iftekhar](https://www.mahbubiftekhar.co.uk/)** - *Team Manager / Android Developer*
 * **Mariyana Cholakova** - *Designer/Admin* 
 * **Michal  Dauernhauer** - *Custom Sensor Guru*
 
