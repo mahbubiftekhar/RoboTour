@@ -47,7 +47,7 @@ The app is backwards compatible with older versions of Android, the app will wor
 The robot is a differential drive platform, i.e. the movement is achieved with two motorised drive wheels. Varying the rotational speed of the wheels independently, allowed us to introduce rotation of the chassis in addition to the linear translation. Additionally, two rear wheels are added for stability and weight support. They were designed with the aim of minimising the friction and disturbance to the robot control.
 
 ### Installing
-To install the app on an Android device,installation from unknown sources must be enabled.This feature                                   is turned off by default on stock Android, and can be turned on by following these steps:   
+To install the app on an Android device,installation from unknown sources must be enabled.This feature                       is turned off by default on stock Android, and can be turned on by following these steps:   
 Device Settings ​-> ​Advanced Settings ​-> ​Security ​->​ Enable Unknown Sources   
 To download the app visit the following link from your phone: 
 homepages.inf.ed.ac.uk/s1553593/download.php  
@@ -79,7 +79,7 @@ Give an example
 * **David Spears** - *Android Developer/UI Designer* 
 * **Devidas Lavrik** - *Lego Builder/PID Expert* 
 * **Finn Zhan Chen** - *Business Analyst* - 
-* **Mahbub Iftekhar** - *Team Manager/Android Developer* - [https://www.mahbubiftekhar.co.uk/](https://www.mahbubiftekhar.co.uk/)
+* **Mahbub Iftekhar** - *Team Manager / Android Developer* - [Mahbub Iftekhar](https://www.mahbubiftekhar.co.uk/)
 * **Mariyana Cholakova** - *Designer/Admin* 
 * **Michal  Dauernhauer** - *Custom Sensor Guru*
 
