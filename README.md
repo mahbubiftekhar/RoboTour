@@ -78,7 +78,7 @@ Give an example
 * **[Alice Wu](https://github.com/AliceWoooo)** -  *Robotics Software Developer*
 * **David Spears** - *Android Developer/UI Designer* 
 * **Devidas Lavrik** - *Lego Builder/PID Expert* 
-* **Finn Zhan Chen** - *Business Analyst* - 
+* **[Finn Zhan Chen](http://finnzhanchen.com/)** - *Business Analyst & Software Developer*
 * **[Mahbub Iftekhar](https://www.mahbubiftekhar.co.uk/)** - *Team Manager / Android Developer*
 * **Mariyana Cholakova** - *Designer/Admin* 
 * **Michal  Dauernhauer** - *Custom Sensor Guru*
