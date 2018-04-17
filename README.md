@@ -2,11 +2,9 @@
 <p align="center"><img src="/Logo.png" title="sample" width="220" height="170" align="center" /></p>
 
 
-<h1  align="center" style="text-align: center;"><span  align="center" style="color: #ff0000;"><strong><span align="center" style="color: #000000;"> SDP- GROUP 18</span> </strong></span></h1>
+<h1  align="center" style="text-align: center;"><span  align="center" style="color: #ff0000;"><strong><span align="center" style="color: #000000;"> SDP- GROUP 18 2017/2018</span> </strong></span></h1>
 <p style="text-align: center;">&nbsp;</p>
 
-
-<h1 align="center">RoboTour</h1>
 
 RoboTour is a robotic tour guide that assists people in environments such as museums or art galleries. The system comprises of an autonomous robotic guide, a purpose built Android application, and a web server mediating the communication between the two. RoboTour can be controlled by up to two Android devices. The app allows users to interact with RoboTour intuitively in multiple languages. RoboTour has been designed for minimal maintenance, once the initial setup has been performed. 
 
