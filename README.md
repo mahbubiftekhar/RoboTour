@@ -2,7 +2,7 @@
 <p align="center"><img src="/Logo.png" title="sample" width="220" height="170" align="center" /></p>
 
 
-<h1  align="center" style="text-align: center;"><span  align="center" style="color: #ff0000;"><strong><span align="center" style="color: #000000;"> SDP- GROUP 18 2017/2018</span> </strong></span></h1>
+<h1  align="center" style="text-align: center;"><span  align="center" style="color: #ff0000;"><strong><span align="center" style="color: #000000;"> SDP - GROUP 18 - 2017/2018</span> </strong></span></h1>
 <p style="text-align: center;">&nbsp;</p>
 
 
@@ -20,9 +20,6 @@ RoboTour provides 4 key features to enhance the user’s experience
 * **Plays audio description of art pieces in the language the user selected** 
 * **Provides recommendations and optimal route planning routes**
 
-```
-Give examples
-```
 ### Target Users
 RoboTour assists people who have one of the following problems:
 •	They’re a museum visitor who needs directional assistance
@@ -60,31 +57,19 @@ The robot is a differential drive platform, i.e. the movement is achieved with t
 
 
 ### Installing
-To install the app on an Android device,installation from unknown sources must be enabled.This feature                       is turned off by default on stock Android, and can be turned on by following these steps:   
+To install the app on an Android device,installation from unknown sources must be enabled.This feature                       is turned off by default on stock Android, and can be turned on by following these steps: 
+
 Device Settings ​-> ​Advanced Settings ​-> ​Security ​->​ Enable Unknown Sources   
 To download the app visit the following link from your phone: 
-homepages.inf.ed.ac.uk/s1553593/download.php  
+https://www.mahbubiftekhar.com/download.php  
 
 A file called RoboTour.apk will begin downloading automatically.   
 Once the apk is downloaded, go to the Downloads folder on your phone and click on the apk or select it from the notifications bar. Follow the installation instructions. Once installed the app will be in your App drawer under RoboTour. Tap the app to open it. 
 
 Explain 
 
-```
-Give an example
-```
 
 
-
-
-
-## Usage
-
-* 
-
-##  
-
- 
 
 ## Group Members
 
