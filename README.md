@@ -31,7 +31,7 @@ There are three main components to RoboTour:
 * Android App - Responsible for allowing the user to select paintings they wish to go to and send commands to the robot.
 * Server: All android devices communicate to the robot via the server. The server is responsible for mediating and storing commands between all Android devices and the robot. The purpose of having the server is to allow multiple android devices to communicate with the robot. 
 * Robot: Oversees path planning and navigation around the museum
-<img src="/AdditionalPhotos/table.png" title="sample" width="600" height="120" align="center" />
+<img src="/AdditionalPhotos/table.png" title="sample" width="600" height="120" />
 
 ### The App
 The app is backwards compatible with older versions of Android, the app will work with Android SDK version 17 onwards (users also require 20mb free space and an internet connection). The app was developed in Android Studio 3.1 using Kotlin. 
@@ -50,7 +50,7 @@ The robot is a differential drive platform, i.e. the movement is achieved with t
 
 
 
- <img src="/AdditionalPhotos/DSC_0943.JPG" title="sample" width="300" height="190" align="center" />
+ <img src="/AdditionalPhotos/DSC_0943.JPG" title="sample" width="300" height="190" />
 <br>
 
 ### 
