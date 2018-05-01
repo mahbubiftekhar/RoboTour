@@ -12,6 +12,14 @@ RoboTour is a robotic tour guide that assists people in environments such as mus
 
 [![IMAGE ALT TEXT](http://img.youtube.com/vi/is1U0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "Video Title")
 
+
+### Award
+The project was developed for System Design Project at University of Edinburgh.
+All 20 projects were assessed by external judges from industry (e.g. Google, Amazon, Accenture, KAL, Sky).
+Team RoboTour was awarded Technical Innovation Prize.
+(https://www.ed.ac.uk/informatics/news-events/stories/2018/students-showcase-projects-to-industry-experts)
+
+
 ### Specification
 RoboTour provides 4 key features to enhance the user’s experience
 
