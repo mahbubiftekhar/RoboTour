@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/mic_button"
+        android:title="@string/speech"
+        android:icon="@drawable/icon_mic_white"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/search_button"
+        android:title="@string/search"
+        android:icon="@drawable/icon_search_white"
+        app:showAsAction="ifRoom"/>
+</menu>
