@@ -8,9 +8,9 @@
 
 RoboTour is a robotic tour guide that assists people in environments such as museums or art galleries. The system comprises of an autonomous robotic guide, a purpose built Android application, and a web server mediating the communication between the two. RoboTour can be controlled by up to two Android devices. The app allows users to interact with RoboTour intuitively in multiple languages. RoboTour has been designed for minimal maintenance, once the initial setup has been performed. 
 
-[Introduction Video](https://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be)
+[Introduction Video](https://www.youtube.com/watch?v=iU0O0e72A&feature=youtu.be)
 
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/is1U0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "Video Title")
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/iU0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "Video Title")
 
 ### [SDP - 2017/2018 ](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm)
 The System Design Project is intended to give students practical experience of 
@@ -50,14 +50,14 @@ There are three main components to RoboTour:
 * Android App - Responsible for allowing the user to select paintings they wish to go to and send commands to the robot.
 * Server: All android devices communicate to the robot via the server. The server is responsible for mediating and storing commands between all Android devices and the robot. The purpose of having the server is to allow multiple android devices to communicate with the robot. 
 * Robot: Oversees path planning and navigation around the museum
-<img src="/AdditionalPhotos/table.jpg" title="RoboTour" width="600" height="120" />
+<img src="/IMAGES/table.jpg" title="RoboTour" width="600" height="120" />
 
 ### The App
 The app is backwards compatible with older versions of Android, the app will work with Android SDK version 17 onwards (users also require 20mb free space and an internet connection). The app was developed in Android Studio 3.1 using Kotlin. 
 
 ### Screenshots
 
-<img src="/screens/s1.png" title="RoboTour" width="200" height="390" /> <img src="/IMAGES/s2.png" title="RoboTour" width="200" height="390" /> <img src="/IMAGES/s3.png" title="RoboTour" width="200" height="390" />   <img src="/IMAGES/s4.png" title="RoboTour" width="200" height="390" />
+<img src="/IMAGES/s1.png" title="RoboTour" width="200" height="390" /> <img src="/IMAGES/s2.png" title="RoboTour" width="200" height="390" /> <img src="/IMAGES/s3.png" title="RoboTour" width="200" height="390" />   <img src="/IMAGES/s4.png" title="RoboTour" width="200" height="390" />
 <br>
 <br>
 <br>
@@ -70,8 +70,8 @@ The robot is a differential drive platform, i.e. the movement is achieved with t
 
 
  <img src="/IMAGES/DSC_0943.JPG" title="RoboTour" width="300" height="190" />
- <img src="/IMAGES/Brochure3Rounded.JPG" title="RoboTour" width="300" height="190" />
- <img src="/IMAGES/robot.JPG" title="RoboTour" width="300" height="190" />
+ <img src="/IMAGES/Brochure3Rounded.png" title="RoboTour" width="300" height="190" />
+ <img src="/IMAGES/robot.png" title="RoboTour" width="300" height="190" />
 
 <br>
 
@@ -93,7 +93,7 @@ Once the apk is downloaded, go to the Downloads folder on your phone and click o
 
 * **[Mahbub Iftekhar](https://www.mahbubiftekhar.co.uk/)** - *Team Manager / Android Developer*
 * **[David Spears](https://github.com/davidspeers)** - *Android Developer/UI Designer* 
-* **[Michal Dauernhauer](https://github.com/michuszkud** - *Embedded Developer & Custom Sensor Guru*
+* **[Michal Dauernhauer](https://github.com/michuszkud)** - *Embedded Developer & Custom Sensor Guru*
 * **[Alice Wu](https://github.com/AliceWoooo)** -  *Robotics Software Developer*
 * **[Devidas Lavrik](https://github.com/DLavrik)** - *Lego Builder & PID Expert* 
 * **[Finn Zhan Chen](http://finnzhanchen.com/)** - *Business Analyst*
