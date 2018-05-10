@@ -7,18 +7,3 @@
 /build
 /captures
 .externalNativeBuild
-
-# pycache
-*/__pycache__/*
-#for sensor
-*.o
-*.elf
-*.eep
-*.hex
-.*
-*~
-
-# for logging
-/tests/logs/*
-/tests/graphs/*
-*.png

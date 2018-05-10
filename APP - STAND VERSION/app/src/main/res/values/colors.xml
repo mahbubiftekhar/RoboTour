@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#00C9FF</color>
+    <color name="ogcolorPrimaryDark">#006994</color>
+    <color name="colorPrimaryDark">#3E50B4</color>
+    <color name="ogcolorAccent">#FF4081</color>
+    <color name="colorAccent">#00C9FF</color>
+    <color name="mybackground">#FFFFFF</color>
+    <color name="oldRoboTourTeal">#24E8EA</color>
+    <color name="roboTourTeal">#00C9FF</color>
+    <color name="highlighted">#42F462</color>
+    <color name="androidsBackground">#FFFF</color>
+    <color name="greyedOut">#414141</color>
+    <color name="greyedOutText">#7A7A7A</color>
+</resources>
