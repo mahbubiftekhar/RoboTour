@@ -10,7 +10,7 @@ RoboTour is a robotic tour guide that assists people in environments such as mus
 
 [Introduction Video](https://www.youtube.com/watch?v=iU0O0e72A&feature=youtu.be)
 
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/iU0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "RoboTour")
+[![Watch RoboTour in action](img src="/IMAGES/robotour2.png")](http://www.youtube.com/watchv=is1U0O0e72A&feature=youtu.be "RoboTour")
 
 ### [SDP - 2017/2018 ](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm)
 The System Design Project is intended to give students practical experience of 
@@ -51,7 +51,7 @@ There are three main components to RoboTour:
 * Android App - Responsible for allowing the user to select paintings they wish to go to and send commands to the robot.
 * Server: All android devices communicate to the robot via the server. The server is responsible for mediating and storing commands between all Android devices and the robot. The purpose of having the server is to allow multiple android devices to communicate with the robot. 
 * Robot: Oversees path planning and navigation around the museum
-<img src="/IMAGES/table.jpg" title="RoboTour" width="600" height="120" />
+<img src="/IMAGES/table.png" title="RoboTour" width="600" height="120" />
 
 ### The App
 The app is backwards compatible with older versions of Android, the app will work with Android SDK version 17 onwards (users also require 20mb free space and an internet connection). The app was developed in Android Studio 3.1 using Kotlin. 
