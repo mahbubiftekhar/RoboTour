@@ -10,12 +10,13 @@ RoboTour is a robotic tour guide that assists people in environments such as mus
 
 [Introduction Video](https://www.youtube.com/watch?v=iU0O0e72A&feature=youtu.be)
 
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/iU0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "Video Title")
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/iU0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "RoboTour")
 
 ### [SDP - 2017/2018 ](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm)
 The System Design Project is intended to give students practical experience of 
 
 (a) building a large scale system 
+<br>
 <br>
 (b) working as members of a team. 
 
