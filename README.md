@@ -11,6 +11,7 @@ RoboTour is a robotic tour guide that assists people in environments such as mus
 [Introduction Video](https://www.youtube.com/watch?v=iU0O0e72A&feature=youtu.be)
 
 [![IMAGE ALT TEXT](http://img.youtube.com/vi/is1U0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "Video Title")
+
 (Directed by Finn, Actors: Alice, Mahbub and Michal)
 
 ### [SDP - 2017/2018 ](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm)
