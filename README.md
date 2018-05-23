@@ -10,9 +10,7 @@ RoboTour is a robotic tour guide that assists people in environments such as mus
 
 [Introduction Video](https://www.youtube.com/watch?v=iU0O0e72A&feature=youtu.be)
 
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/is1U0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "Video Title")
-
-(Directed by Finn, Actors: Alice, Mahbub and Michal)
+[![RoboTour Promotional Video - Directed by Finn, Actors: Alice, Mahbub and Michal](http://img.youtube.com/vi/is1U0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "Video Title")
 
 ### [SDP - 2017/2018 ](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm)
 The System Design Project is intended to give students practical experience of 
@@ -27,14 +25,12 @@ At the end, of course, each group demonstrates its implemented system and gives 
 (http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm)
 
 
-### Award - Technical Innovation 
+### [Award - Technical Innovation Prize](https://www.ed.ac.uk/informatics/news-events/stories/2018/students-showcase-projects-to-industry-experts) 
 The project was developed for System Design Project at University of Edinburgh.
 All 20 projects were assessed by external judges from industry (e.g. Google, Amazon, Accenture, KAL, Sky).
 Team RoboTour was awarded  [Technical Innovation Prize](https://www.ed.ac.uk/informatics/news-events/stories/2018/students-showcase-projects-to-industry-experts)
-(https://www.ed.ac.uk/informatics/news-events/stories/2018/students-showcase-projects-to-industry-experts)
 
-
-### Specification
+### [Specificatione](https://github.com/mahbubiftekhar/RoboTour/blob/master/DOCUMENTS/Submissions/ProjectPlan.pdf) 
 RoboTour provides four key features to enhance the user’s experience
 
 * **Multi-language support in Human-Robot Interaction via speech and app** 
@@ -48,17 +44,15 @@ RoboTour assists people who have one of the following problems:
 •    Or they’re a visitor who cannot read the displays in the museum whether this is because they cannot read the language or because they have problems with their vision.
 Our robot can interact with visitors and guide them to the piece of art they are looking for by moving with the user through the museum and pointing out the art piece upon arrival.
 
-### Software Structure
+### [Software Structure](https://github.com/mahbubiftekhar/RoboTour/blob/master/DOCUMENTS/Submissions/TechnicalReport.pdf) 
 There are three main components to RoboTour: 
 * Android App - Responsible for allowing the user to select paintings they wish to go to and send commands to the robot.
 * Server: All Android devices communicate to the robot via the server. The server is responsible for mediating and storing commands between all Android devices and the robot. The purpose of having the server is to allow multiple android devices to communicate with the robot. 
 * Robot: Oversees path planning and navigation around the museum
 <img src="/IMAGES/table.png" title="RoboTour" width="600" height="120" />
 
-### The App
+### [The App](https://mahbubiftekhar.co.uk/download.php) 
 The app is backwards compatible with older versions of Android; the app will work with Android SDK version 17 onwards (users also require 20mb free space and an internet connection). The app was developed in Android Studio 3.1 using Kotlin. 
-
-### Screenshots
 
 <img src="/IMAGES/s1.png" title="RoboTour" width="200" height="390" /> <img src="/IMAGES/s2.png" title="RoboTour" width="200" height="390" /> <img src="/IMAGES/s3.png" title="RoboTour" width="200" height="390" />   <img src="/IMAGES/s4.png" title="RoboTour" width="200" height="390" />
 <br>
@@ -73,11 +67,12 @@ The robot is a differential drive platform, i.e. the movement is achieved with t
 
 
  <img src="/IMAGES/DSC_0943.JPG" title="RoboTour" width="300" height="190" />
+ <br>
  <img src="/IMAGES/Brochure3Rounded.png" title="RoboTour" width="300" height="190" />
+ <br>
  <img src="/IMAGES/robot.png" title="RoboTour" width="300" height="190" />
 
 <br>
-
 ### 
 
 
@@ -94,17 +89,16 @@ Once the app is downloaded, go to the Downloads folder on your phone and click o
 
 ## Group Members
 
-* **[Mahbub Iftekhar](https://www.mahbubiftekhar.co.uk/)** - *Team Manager / Android Developer*
-* **[David Spears](https://github.com/davidspeers)** - *Android Developer/UI Designer* 
+* **[Mahbub Iftekhar](https://www.mahbubiftekhar.co.uk/)** - *Team Manager & Android Developer*
+* **[David Spears](https://github.com/davidspeers)** - *Android Developer & UI Designer* 
 * **[Michal Dauernhauer](https://github.com/michuszkud)** - *Embedded Developer & Custom Sensor Guru*
 * **[Alice Wu](https://github.com/AliceWoooo)** -  *Robotics Software Developer*
 * **[Devidas Lavrik](https://github.com/DLavrik)** - *Lego Builder & PID Expert* 
 * **[Finn Zhan Chen](http://finnzhanchen.com/)** - *Business Analyst*
-* **[Mariyana Cholakova](https://github.com/chMariyana)** - *Designer/Admin* 
+* **[Mariyana Cholakova](https://github.com/chMariyana)** - *Designer & Admin* 
 
 ## Contact us
 You are welcome to visit out [Facebook page](https://www.facebook.com/RoboTour/) or send us an e-mail on robotour.sdp@gmail.com 
-
 
 
 ## Reference
@@ -120,6 +114,3 @@ You are welcome to visit out [Facebook page](https://www.facebook.com/RoboTour/)
 * Skiena, S. (1990). Dijkstra’s algorithm. Implementing Discrete Mathematics: Combinatorics and Graph Theory with Mathematica, Reading, MA: Addison-Wesley, 225-227.
 
 * Gilles-bertrand.com. (2018). Dijkstra algorithm: How to implement it with Python (solved with all explanations) ? | Gilles' Blog. [online] Available at: http://www.gilles-bertrand.com/2014/03/dijkstra-algorithm-python-example-source-code-shortest-path.html [Accessed 11 Apr. 2018].
-
-
-
