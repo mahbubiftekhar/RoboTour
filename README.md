@@ -73,8 +73,7 @@ The robot is a differential drive platform, i.e. the movement is achieved with t
  <img src="/IMAGES/robot.png" title="RoboTour" width="300" height="190" />
 
 <br>
-### 
-
+ 
 
 ### Installing The App
 To install the app on an Android device, installation from unknown sources must be enabled. This feature is turned off by default on stock Android, and can be turned on by following these steps: 
