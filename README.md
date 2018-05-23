@@ -8,9 +8,9 @@
 
 RoboTour is a robotic tour guide that assists people in environments such as museums or art galleries. The system comprises an autonomous robotic guide, a purpose-built Android application, and a web server mediating the communication between the two. RoboTour can be controlled by up to two Android devices and followed by many more. The app allows users to interact with RoboTour intuitively in multiple languages. RoboTour has been designed for minimal maintenance; once the initial setup has been performed. 
 
-[RoboTour Promotional Video - Directed by Finn, Actors: Alice, Mahbub and Michal](https://www.youtube.com/watch?v=iU0O0e72A&feature=youtu.be)
+[RoboTour Promotional Video](https://www.youtube.com/watch?v=iU0O0e72A&feature=youtu.be)
 
-[![Alt Text Here](http://img.youtube.com/vi/is1U0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "Video Title")
+[![Directed by Finn, Actors: Alice, Mahbub and Michal](http://img.youtube.com/vi/is1U0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "Video Title")
 
 ### [SDP - 2017/2018 ](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm)
 The System Design Project is intended to give students practical experience of 
