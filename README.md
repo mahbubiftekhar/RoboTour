@@ -6,11 +6,11 @@
 <p style="text-align: center;">&nbsp;</p>
 
 
-RoboTour is a robotic tour guide that assists people in environments such as museums or art galleries. The system comprises an autonomous robotic guide, a purpose-built Android application, and a web server mediating the communication between the two. RoboTour can be controlled by up to two Android devices. The app allows users to interact with RoboTour intuitively in multiple languages. RoboTour has been designed for minimal maintenance, once the initial setup has been performed. 
+RoboTour is a robotic tour guide that assists people in environments such as museums or art galleries. The system comprises an autonomous robotic guide, a purpose-built Android application, and a web server mediating the communication between the two. RoboTour can be controlled by up to two Android devices and followed by many more. The app allows users to interact with RoboTour intuitively in multiple languages. RoboTour has been designed for minimal maintenance; once the initial setup has been performed. 
 
-[Introduction Video](https://www.youtube.com/watch?v=iU0O0e72A&feature=youtu.be)
+[RoboTour Promotional Video - Directed by Finn, Actors: Alice, Mahbub and Michal](https://www.youtube.com/watch?v=iU0O0e72A&feature=youtu.be)
 
-[![RoboTour Promotional Video - Directed by Finn, Actors: Alice, Mahbub and Michal](http://img.youtube.com/vi/is1U0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "Video Title")
+[![Alt Text Here](http://img.youtube.com/vi/is1U0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "Video Title")
 
 ### [SDP - 2017/2018 ](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm)
 The System Design Project is intended to give students practical experience of 
@@ -28,9 +28,9 @@ At the end, of course, each group demonstrates its implemented system and gives 
 ### [Award - Technical Innovation Prize](https://www.ed.ac.uk/informatics/news-events/stories/2018/students-showcase-projects-to-industry-experts) 
 The project was developed for System Design Project at University of Edinburgh.
 All 20 projects were assessed by external judges from industry (e.g. Google, Amazon, Accenture, KAL, Sky).
-Team RoboTour was awarded  [Technical Innovation Prize](https://www.ed.ac.uk/informatics/news-events/stories/2018/students-showcase-projects-to-industry-experts)
+Team RoboTour was awarded the [Technical Innovation Prize](https://www.ed.ac.uk/informatics/news-events/stories/2018/students-showcase-projects-to-industry-experts)
 
-### [Specificatione](https://github.com/mahbubiftekhar/RoboTour/blob/master/DOCUMENTS/Submissions/ProjectPlan.pdf) 
+### [Specifications](https://github.com/mahbubiftekhar/RoboTour/blob/master/DOCUMENTS/Submissions/ProjectPlan.pdf) 
 RoboTour provides four key features to enhance the user’s experience
 
 * **Multi-language support in Human-Robot Interaction via speech and app** 
@@ -42,7 +42,7 @@ RoboTour provides four key features to enhance the user’s experience
 RoboTour assists people who have one of the following problems:
 •    They’re a museum visitor who needs directional assistance
 •    Or they’re a visitor who cannot read the displays in the museum whether this is because they cannot read the language or because they have problems with their vision.
-Our robot can interact with visitors and guide them to the piece of art they are looking for by moving with the user through the museum and pointing out the art piece upon arrival.
+RoboTour robot can interact with visitors and guide them to the piece of art they are looking for by moving with the user through the museum and pointing out the art piece upon arrival.
 
 ### [Software Structure](https://github.com/mahbubiftekhar/RoboTour/blob/master/DOCUMENTS/Submissions/TechnicalReport.pdf) 
 There are three main components to RoboTour: 
