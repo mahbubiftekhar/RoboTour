@@ -30,7 +30,7 @@ It is a 20 credit course with design, construction and assessment through the se
 More detail about the course and how it will run this year are in these slides from the introductory lecture held in semester 1 Professional Issues.
 <br>
 <br>
-## The Project
+The Project
 <br>
 <br>
 SDP 2017/2018's task is to use Lego and an Arduino to design an assistive robotic device, with an appropriate software interface.
@@ -39,7 +39,7 @@ SDP 2017/2018's task is to use Lego and an Arduino to design an assistive roboti
 Flexibility was given to set your own goals for this task, but here is an example of what you could attempt: a person indicates an object on the floor with a laser pointer, and the robot picks it up and returns it to the person.
 <br>
 <br>
-## Groups
+Groups
 <br>
 <br>
 The class is assigned to groups of 7 or 8, each responsible for the development of a single robot. Assessment involves group marks for product (performance and documentation of the robot systems).
