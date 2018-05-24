@@ -2,7 +2,7 @@
 <p align="center"><img src="/IMAGES/Logo.png" title="RoboTour" width="245" height="170" align="center" /></p>
 
 
-<h1  align="center" style="text-align: center;"><span  align="center" style="color: #ff0000;"><strong><span align="center" style="color: #000000;"> [SDP - GROUP 18 - 2017/18](https://www.youtube.com/watch?v=iU0O0e72A&feature=youtu.be)
+<h1  align="center" style="text-align: center;"><span  align="center" style="color: #ff0000;"><strong><span align="center" style="color: #000000;"> SDP - GROUP 18 - 2017/18
 </span> </strong></span></h1>
 <p style="text-align: center;">&nbsp;</p>
 
@@ -46,7 +46,7 @@ Each group was have an assigned mentor, with whom they meet around once a week, 
 The project involves applying and combining material from several courses to complete a complex design and implementation task. 
 At the end, of course, each group demonstrates its implemented system and gives a formal presentation to an audience of the students, supervisors, and visitors from industry (E.g. Google, Amazon, KAL, Robotical).
 
-[DRPS SDP 2018](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm)
+[DRPS SDP 2017/2018](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm)
 
 
 ### [Award - Technical Innovation Prize](https://www.ed.ac.uk/informatics/news-events/stories/2018/students-showcase-projects-to-industry-experts) 
@@ -102,8 +102,7 @@ The robot is a differential drive platform, i.e. the movement is achieved with t
 <br>
  
 
-### Installing The App
-To install the app on an Android device, installation from [Unknown Sources](https://www.androidcentral.com/unknown-sources) must be enabled. This feature is turned off by default on stock Android, and can be turned on by following these steps: 
+### [Installing The App](https://github.com/mahbubiftekhar/RoboTour/blob/master/DOCUMENTS/Submissions/UserGuide.pdf)To install the app on an Android device, installation from [Unknown Sources](https://www.androidcentral.com/unknown-sources) must be enabled. This feature is turned off by default on stock Android, and can be turned on by following these steps: 
 
 Device Settings ​-> ​Advanced Settings ​-> ​Security ​->​ Enable Unknown Sources   
 To download the app visit the following link from your phone: 
@@ -127,7 +126,7 @@ Once the app is downloaded, go to the Downloads folder on your phone and click o
 You are welcome to visit out [Facebook page](https://www.facebook.com/RoboTour/) or send us an e-mail on robotour.sdp@gmail.com 
 
 
-## Reference
+## References
 
 * GitHub. (2018). Kotlin/anko. [online] Available at: https://github.com/Kotlin/anko [Accessed 9 Apr. 2018].
 
