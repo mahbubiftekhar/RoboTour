@@ -69,9 +69,11 @@ RoboTour provides four key features to enhance the user’s experience
 ### [Target Users](https://github.com/mahbubiftekhar/RoboTour/blob/master/DOCUMENTS/Submissions/ProjectPlan.pdf) 
 RoboTour assists people who have one of the following problems:
 <br>
+<br>
 •    They’re a museum visitor who needs directional assistance
 <br>
 •    Or they’re a visitor who cannot read the displays in the museum whether this is because they cannot read the language or because they have problems with their vision.
+<br>
 <br>
 RoboTour robot can interact with visitors and guide them to the piece of art they are looking for by moving with the user through the museum and pointing out the art piece upon arrival.
 
