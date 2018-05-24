@@ -30,14 +30,18 @@ It is a 20 credit course with design, construction and assessment through the se
 More detail about the course and how it will run this year are in these slides from the introductory lecture held in semester 1 Professional Issues.
 <br>
 <br>
-The Project
+## The Project
+<br>
+<br>
 SDP 2017/2018's task is to use Lego and an Arduino to design an assistive robotic device, with an appropriate software interface.
 <br>
 <br>
 Flexibility was given to set your own goals for this task, but here is an example of what you could attempt: a person indicates an object on the floor with a laser pointer, and the robot picks it up and returns it to the person.
 <br>
 <br>
-Groups
+## Groups
+<br>
+<br>
 The class is assigned to groups of 7 or 8, each responsible for the development of a single robot. Assessment involves group marks for product (performance and documentation of the robot systems).
 <br>
 <br>
@@ -102,7 +106,11 @@ The robot is a differential drive platform, i.e. the movement is achieved with t
 <br>
  
 
-### [Installing The App](https://github.com/mahbubiftekhar/RoboTour/blob/master/DOCUMENTS/Submissions/UserGuide.pdf)To install the app on an Android device, installation from [Unknown Sources](https://www.androidcentral.com/unknown-sources) must be enabled. This feature is turned off by default on stock Android, and can be turned on by following these steps: 
+### [Installing The App](https://github.com/mahbubiftekhar/RoboTour/blob/master/DOCUMENTS/Submissions/UserGuide.pdf)
+<br>
+To install the app on an Android device, installation, you are required to enable [Unknown Sources](https://www.androidcentral.com/unknown-sources).
+<br>
+This feature is turned off by default on stock Android, and can be turned on by following these steps: 
 
 Device Settings ​-> ​Advanced Settings ​-> ​Security ​->​ Enable Unknown Sources   
 To download the app visit the following link from your phone: 
