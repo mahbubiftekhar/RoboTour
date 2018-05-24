@@ -2,7 +2,8 @@
 <p align="center"><img src="/IMAGES/Logo.png" title="RoboTour" width="245" height="170" align="center" /></p>
 
 
-<h1  align="center" style="text-align: center;"><span  align="center" style="color: #ff0000;"><strong><span align="center" style="color: #000000;"> SDP - GROUP 18 - 2017/2018</span> </strong></span></h1>
+<h1  align="center" style="text-align: center;"><span  align="center" style="color: #ff0000;"><strong><span align="center" style="color: #000000;"> [SDP - GROUP 18 - 2017/18](https://www.youtube.com/watch?v=iU0O0e72A&feature=youtu.be)
+</span> </strong></span></h1>
 <p style="text-align: center;">&nbsp;</p>
 
 
@@ -20,9 +21,32 @@ The System Design Project is intended to give students practical experience of
 <br>
 (b) working as members of a team. 
 
+The [Systems Design Project ](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm) is a University of Edinburgh, Semester 2 module, SDP is a group project involving construction of an item of significant complexity under conditions designed to give insights into industrial teamwork.
+<br>
+<br>
+It is a 20 credit course with design, construction and assessment through the semester, ending in a demonstration day with industry visitors.
+<br>
+<br>
+More detail about the course and how it will run this year are in these slides from the introductory lecture held in semester 1 Professional Issues.
+<br>
+<br>
+The Project
+SDP 2017/2018's task is to use Lego and an Arduino to design an assistive robotic device, with an appropriate software interface.
+<br>
+<br>
+Flexibility was given to set your own goals for this task, but here is an example of what you could attempt: a person indicates an object on the floor with a laser pointer, and the robot picks it up and returns it to the person.
+<br>
+<br>
+Groups
+The class is assigned to groups of 7 or 8, each responsible for the development of a single robot. Assessment involves group marks for product (performance and documentation of the robot systems).
+<br>
+<br>
+Each group was have an assigned mentor, with whom they meet around once a week, and who offers advice and monitors progress, but - importantly - does not lead or manage the group. Advice on how the group should organise themselves for good project management will be provided. Problems within the group should first be brought to the attention of your mentor; if you have an issue with your mentor, you should bring this to the attention of the SDP TA (see below).
+
 The project involves applying and combining material from several courses to complete a complex design and implementation task. 
-At the end, of course, each group demonstrates its implemented system and gives a formal presentation to an audience of the students, supervisors, and visitors from industry.
-(http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm)
+At the end, of course, each group demonstrates its implemented system and gives a formal presentation to an audience of the students, supervisors, and visitors from industry (E.g. Google, Amazon, KAL, Robotical).
+
+[DRPS SDP 2018](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm)
 
 
 ### [Award - Technical Innovation Prize](https://www.ed.ac.uk/informatics/news-events/stories/2018/students-showcase-projects-to-industry-experts) 
@@ -38,10 +62,13 @@ RoboTour provides four key features to enhance the user’s experience
 * **Plays audio description of art pieces in the language the user selected** 
 * **Provides recommendations and optimal route planning routes**
 
-### Target Users
+### [Target Users](https://github.com/mahbubiftekhar/RoboTour/blob/master/DOCUMENTS/Submissions/ProjectPlan.pdf) 
 RoboTour assists people who have one of the following problems:
+<br>
 •    They’re a museum visitor who needs directional assistance
+<br>
 •    Or they’re a visitor who cannot read the displays in the museum whether this is because they cannot read the language or because they have problems with their vision.
+<br>
 RoboTour robot can interact with visitors and guide them to the piece of art they are looking for by moving with the user through the museum and pointing out the art piece upon arrival.
 
 ### [Software Structure](https://github.com/mahbubiftekhar/RoboTour/blob/master/DOCUMENTS/Submissions/TechnicalReport.pdf) 
@@ -61,22 +88,22 @@ The app is backwards compatible with older versions of Android; the app will wor
 
 <img src="/IMAGES/s5.png" title="RoboTour" width="200" height="390" /><img src="/IMAGES/s6.png" title="RoboTour" width="200" height="390" /><img src="/IMAGES/s7.png" title="RoboTour" width="200" height="390" /><img src="/IMAGES/s8.png" title="RoboTour" width="200" height="390" />
 
-### The Robot
+### [The Robot](https://github.com/mahbubiftekhar/RoboTour/blob/master/DOCUMENTS/Submissions/UserGuide.pdf) 
 The robot is a differential drive platform, i.e. the movement is achieved with two motorised drive wheels. Varying the rotational speed of the wheels independently, allowed us to introduce rotation of the chassis in addition to the linear translation. Additionally, two rear wheels are added for stability and weight support. They were designed with the aim of minimising the friction and disturbance to the robot control.
 
 
 
- <img src="/IMAGES/DSC_0943.JPG" title="RoboTour" width="300" height="190" />
+ <img src="/IMAGES/DSC_0943.JPG" title="RoboTour: Start Position" width="300" height="190" />
  <br>
- <img src="/IMAGES/Brochure3Rounded.png" title="RoboTour" width="300" height="190" />
+ <img src="/IMAGES/Brochure3Rounded.png" title="RoboTour: Mona Lisa" width="300" height="190" />
  <br>
- <img src="/IMAGES/robot.png" title="RoboTour" width="300" height="190" />
+ <img src="/IMAGES/robot.png" title="RoboTour: Labelled Diagram" width="300" height="190" />
 
 <br>
  
 
 ### Installing The App
-To install the app on an Android device, installation from unknown sources must be enabled. This feature is turned off by default on stock Android, and can be turned on by following these steps: 
+To install the app on an Android device, installation from [Unknown Sources](https://www.androidcentral.com/unknown-sources) must be enabled. This feature is turned off by default on stock Android, and can be turned on by following these steps: 
 
 Device Settings ​-> ​Advanced Settings ​-> ​Security ​->​ Enable Unknown Sources   
 To download the app visit the following link from your phone: 
