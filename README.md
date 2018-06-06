@@ -151,7 +151,7 @@ You are welcome to visit out [Facebook page](https://www.facebook.com/RoboTour/)
 * Gilles-bertrand.com. (2018). Dijkstra algorithm: How to implement it with Python (solved with all explanations) ? | Gilles' Blog. [online] Available at: http://www.gilles-bertrand.com/2014/03/dijkstra-algorithm-python-example-source-code-shortest-path.html [Accessed 11 Apr. 2018].
 
 
-MIT License
+## MIT License
 
 Copyright (c) 2018 RoboTour Authors 
 
