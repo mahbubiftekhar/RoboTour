@@ -125,8 +125,8 @@ Once the app is downloaded, go to the Downloads folder on your phone and click o
 ## Group Members
 
 * **[Mahbub Iftekhar](https://www.mahbubiftekhar.co.uk/)** - *Team Manager & Android Developer*
-* **[David Spears](https://github.com/davidspeers)** - *Android Developer & UI Designer* 
-* **[Michal Dauernhauer](https://github.com/michuszkud)** - *Embedded Developer & Custom Sensor Guru*
+* **[David Speers](https://github.com/davidspeers)** - *Android Developer & UI Designer* 
+* **[Michal Dauenhauer](https://github.com/michuszkud)** - *Embedded Developer & Custom Sensor Guru*
 * **[Alice Wu](https://github.com/AliceWoooo)** -  *Robotics Software Developer*
 * **[Devidas Lavrik](https://github.com/DLavrik)** - *Lego Builder & PID Expert* 
 * **[Finn Zhan Chen](http://finnzhanchen.com/)** - *Business Analyst*
