@@ -115,10 +115,7 @@ To install the app on an Android device, installation, you are required to enabl
 This feature is turned off by default on stock Android, and can be turned on by following these steps: 
 
 Device Settings ​-> ​Advanced Settings ​-> ​Security ​->​ Enable Unknown Sources   
-To download the app visit the following link from your phone: 
-https://www.mahbubiftekhar.com/download.php  
 
-A file called RoboTour.apk will begin downloading automatically.   
 Once the app is downloaded, go to the Downloads folder on your phone and click on the apk or select it from the notifications bar. Follow the installation instructions. Once installed the app will be in your App drawer under RoboTour. Tap the app to open it. 
 
 
