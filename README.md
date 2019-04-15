@@ -7,7 +7,7 @@
 <p style="text-align: center;">&nbsp;</p>
 
 
-RoboTour is a robotic tour guide that assists people in environments such as museums or art galleries. The system comprises an autonomous robotic guide, a purpose-built Android application, and a web server mediating the communication between the two. RoboTour can be controlled by up to two Android devices and followed by many more. The app allows users to interact with RoboTour intuitively in multiple languages. RoboTour has been designed for minimal maintenance; once the initial setup has been performed. 
+RoboTour is a robotic tour guide that assists people in environments such as museums or art galleries. The system comprises an autonomous robotic guide, a purpose-built Android application, and a web server mediating the communication between the two. Up to two Android devices can control RoboTour and followed by many more. The app allows users to interact with RoboTour intuitively in multiple languages. RoboTour has been designed for minimal maintenance; once the initial setup has been performed. 
 
 [RoboTour Promotional Video](https://www.youtube.com/watch?v=iU0O0e72A&feature=youtu.be)
 
@@ -21,7 +21,7 @@ The System Design Project is intended to give students practical experience of
 <br>
 (b) working as members of a team. 
 
-The [Systems Design Project ](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm) is a University of Edinburgh, Semester 2 module, SDP is a group project involving construction of an item of significant complexity under conditions designed to give insights into industrial teamwork.
+The [Systems Design Project ](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm) is a University of Edinburgh, Semester 2 module, SDP is a group project involving the construction of an item of significant complexity under conditions designed to give insights into industrial teamwork.
 <br>
 <br>
 It is a 20 credit course with design, construction and assessment through the semester, ending in a demonstration day with industry visitors.
@@ -42,10 +42,10 @@ Flexibility was given to set your own goals for this task, but here is an exampl
 Groups
 <br>
 <br>
-The class is assigned to groups of 7 or 8, each responsible for the development of a single robot. Assessment involves group marks for product (performance and documentation of the robot systems).
+The class is assigned to groups of 7 or 8, each responsible for the development of a single robot. Assessment involves group marks for the product (performance and documentation of the robot systems).
 <br>
 <br>
-Each group was have an assigned mentor, with whom they meet around once a week, and who offers advice and monitors progress, but - importantly - does not lead or manage the group. Advice on how the group should organise themselves for good project management will be provided. Problems within the group should first be brought to the attention of your mentor; if you have an issue with your mentor, you should bring this to the attention of the SDP TA (see below).
+Each group had an assigned mentor, with whom they meet around once a week, and who offers advice and monitors progress, but - importantly - does not lead or manage the group. Advice on how the group should organise themselves for good project management will be provided. Problems within the group should first be brought to the attention of your mentor; if you have an issue with your mentor, you should bring this to the attention of the SDP TA (see below).
 
 The project involves applying and combining material from several courses to complete a complex design and implementation task. 
 At the end, of course, each group demonstrates its implemented system and gives a formal presentation to an audience of the students, supervisors, and visitors from industry (E.g. Google, Amazon, KAL, Robotical).
@@ -54,7 +54,7 @@ At the end, of course, each group demonstrates its implemented system and gives 
 
 
 ### [Award - Technical Innovation Prize](https://www.ed.ac.uk/informatics/news-events/stories/2018/students-showcase-projects-to-industry-experts) 
-The project was developed for System Design Project at University of Edinburgh.
+The project was developed for System Design Project at the University of Edinburgh.
 All 20 projects were assessed by external judges from industry (e.g. Google, Amazon, Accenture, KAL, Sky).
 Team RoboTour was awarded the [Technical Innovation Prize](https://www.ed.ac.uk/informatics/news-events/stories/2018/students-showcase-projects-to-industry-experts)
 
@@ -95,7 +95,7 @@ The app is backwards compatible with older versions of Android; the app will wor
 <img src="/IMAGES/s5.png" title="RoboTour" width="200" height="390" /><img src="/IMAGES/s6.png" title="RoboTour" width="200" height="390" /><img src="/IMAGES/s7.png" title="RoboTour" width="200" height="390" /><img src="/IMAGES/s8.png" title="RoboTour" width="200" height="390" />
 
 ### [The Robot](https://github.com/mahbubiftekhar/RoboTour/blob/master/DOCUMENTS/Submissions/UserGuide.pdf) 
-The robot is a differential drive platform, i.e. the movement is achieved with two motorised drive wheels. Varying the rotational speed of the wheels independently, allowed us to introduce rotation of the chassis in addition to the linear translation. Additionally, two rear wheels are added for stability and weight support. They were designed with the aim of minimising the friction and disturbance to the robot control.
+The robot is a differential drive platform, i.e. the movement is achieved with two motorised drive wheels. Varying the rotational speed of the wheels independently, allowed us to introduce rotation of the chassis in addition to the linear translation. Additionally, two rear wheels are added for stability and weight support. They were designed with the aim of minimising the friction and disturbance of the robot control.
 
 
 
@@ -145,7 +145,7 @@ You are welcome to visit out [Facebook page](https://www.facebook.com/RoboTour/)
 
 * Skiena, S. (1990). Dijkstra’s algorithm. Implementing Discrete Mathematics: Combinatorics and Graph Theory with Mathematica, Reading, MA: Addison-Wesley, 225-227.
 
-* Gilles-bertrand.com. (2018). Dijkstra algorithm: How to implement it with Python (solved with all explanations) ? | Gilles' Blog. [online] Available at: http://www.gilles-bertrand.com/2014/03/dijkstra-algorithm-python-example-source-code-shortest-path.html [Accessed 11 Apr. 2018].
+* Gilles-bertrand.com. (2018). Dijkstra algorithm: How to implement it with Python (solved with all explanations)? | Gilles' Blog. [online] Available at: http://www.gilles-bertrand.com/2014/03/dijkstra-algorithm-python-example-source-code-shortest-path.html [Accessed 11 Apr. 2018].
 
 
 ## MIT License
