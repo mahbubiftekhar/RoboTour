@@ -11,7 +11,7 @@ RoboTour is a robotic tour guide that assists people in environments such as mus
 
 [RoboTour Promotional Video](https://www.youtube.com/watch?v=iU0O0e72A&feature=youtu.be)
 
-[![Directed by Finn, Actors: Alice, Mahbub and Michal](http://img.youtube.com/vi/is1U0O0e72A/0.jpg)](http://www.youtube.com/watch?v=is1U0O0e72A&feature=youtu.be "Directed by Finn, Actors: Alice, Mahbub and Michal")
+[![Directed by Finn, Actors: Alice, Mahbub and Michal](http://img.youtube.com/vi/is1U0O0e72A/0.jpg)](https://youtu.be/hma03HVH12Y "Directed by Finn, Actors: Alice, Mahbub and Michal")
 
 ### [SDP - 2017/2018 ](http://www.drps.ed.ac.uk/17-18/dpt/cxinfr09032.htm)
 The System Design Project is intended to give students practical experience of 
